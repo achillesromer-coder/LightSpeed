@@ -24,7 +24,10 @@ from lightspeed_runtime.corpus_test_orchestrator import (
     CorpusTestPlanError, assess_frontier_unit, plan_cascade,
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
-from lightspeed_runtime.cgx_object_context import CGXObjectContextError, resolve_object_context
+from lightspeed_runtime.cgx_object_context import (CGXObjectContextError, resolve_object_context,
+    twin_source_review_index, resolve_scoped_twin_context)
+from lightspeed_runtime.cgx_cross_analysis import (CGXCrossAnalysisError, atlas_review_workset,
+    hydrate_atlas_review_rows)
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.node_exchange import (
     NodeExchangeError,
@@ -1632,7 +1635,93 @@ def create_app(root: Path | str) -> FastAPI:
         )
 
     @app.get("/api/v1/object-context/{query}")
-    async def read_object_context(query: str, domain: str | None = None):
+    async def read_object_context(
+        query: str, domain: str | None = None, review_mode: str | None = None,
+        task_id: str | None = None, expected_index_sha256: str | None = None,
+        expected_occurrence_sha256: str | None = None, expected_source_sha256: str | None = None,
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        # Retain the legacy lookup; exact source review is owner-session only.
+        # No owner-confirmation fallback, no task lease or public grant.
+        if review_mode is not None or any(v is not None for v in
+                (task_id,expected_index_sha256,expected_occurrence_sha256,expected_source_sha256)):
+            if not owner_session or credential_store is None:
+                raise HTTPException(status_code=403,detail="Owner session required for source review")
+            def owner():
+                return _verified_owner_actor(None,session_token=owner_session,
+                    credential_store=credential_store,session_store=owner_sessions)
+            actor=owner()
+            def recheck():
+                if owner()!=actor:raise HTTPException(status_code=403,detail="Owner scope changed")
+                return True
+            if review_mode not in ("twin-index","twin","atlas-index","atlas") or domain is not None:
+                raise HTTPException(status_code=400,detail="Invalid source review mode")
+            is_index=review_mode.endswith("-index")
+            if is_index:
+                if query!="index" or any(v is not None for v in
+                        (task_id,expected_index_sha256,expected_occurrence_sha256,expected_source_sha256)):
+                    raise HTTPException(status_code=400,detail="Invalid index review request")
+            else:
+                if (not task_id or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",task_id)
+                    or not expected_index_sha256 or not re.fullmatch(r"[a-f0-9]{64}",expected_index_sha256)
+                    or not expected_occurrence_sha256 or not re.fullmatch(r"[a-f0-9]{64}",expected_occurrence_sha256)
+                    or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",query)
+                    or (review_mode=="atlas" and (not expected_source_sha256 or not re.fullmatch(r"[a-f0-9]{64}",expected_source_sha256)))
+                    or (review_mode=="twin" and expected_source_sha256 is not None)):
+                    raise HTTPException(status_code=400,detail="Exact source review binding required")
+            result={}
+            try:
+                if review_mode=="twin-index":
+                    result={"index":twin_source_review_index()}
+                elif review_mode=="twin":
+                    def allowed(t,k,s,i,h):
+                        return (t==task_id and k==query and s=="owner-session-review"
+                                and i==expected_index_sha256 and h==expected_occurrence_sha256 and recheck())
+                    context,receipt=resolve_scoped_twin_context(query,task_id=task_id,
+                        scope_revision="owner-session-review",expected_index_sha256=expected_index_sha256,
+                        expected_occurrence_sha256=expected_occurrence_sha256,authorise=allowed)
+                    result={"object_context":context,"review_receipt":receipt}
+                else:
+                    from lightspeed_runtime.cgx_object_context import REPO_ROOT
+                    path=REPO_ROOT/"cgx/component_atlas/component_geometry_atlas_v0_1.json"
+                    if not path.resolve().is_relative_to(REPO_ROOT.resolve()):
+                        raise CGXCrossAnalysisError("atlas source outside repository")
+                    recheck()
+                    with path.open("rb") as stream:raw=stream.read(5*1024*1024+1)
+                    if not 1<=len(raw)<=5*1024*1024:
+                        raise CGXCrossAnalysisError("atlas source budget")
+                    import hashlib
+                    stamp=hashlib.sha256(raw).hexdigest()
+                    if is_index:
+                        result={"index":atlas_review_workset(raw,expected_sha256=stamp)}
+                    else:
+                        if stamp!=expected_source_sha256:
+                            raise CGXCrossAnalysisError("atlas source revision mismatch")
+                        def allowed(t,k,s,r,i):
+                            return (t==task_id and k==query and s==stamp and r=="owner-session-review"
+                                    and i==expected_index_sha256 and recheck())
+                        values,receipt=hydrate_atlas_review_rows(raw,expected_sha256=stamp,
+                            expected_workset_sha256=expected_index_sha256,selected=[query],task_id=task_id,
+                            scope_revision="owner-session-review",max_bytes=65536,authorise=allowed)
+                        data=values[query]
+                        if hashlib.sha256(data).hexdigest()!=expected_occurrence_sha256:
+                            raise CGXCrossAnalysisError("atlas occurrence revision mismatch")
+                        result={"atlas_row":json.loads(data),"review_receipt":receipt}
+            except (CGXObjectContextError,CGXCrossAnalysisError) as exc:
+                raise HTTPException(status_code=409,detail="Source review revision or identity held") from exc
+            except PermissionError as exc:
+                raise HTTPException(status_code=403,detail="Occurrence review denied") from exc
+            except OSError as exc:
+                raise HTTPException(status_code=503,detail="Source review unavailable") from exc
+            recheck()
+            if not is_index:
+                result["review_binding"]={"mode":review_mode,"occurrence_id":query,"task_id":task_id,
+                    "index_sha256":expected_index_sha256,"occurrence_sha256":expected_occurrence_sha256,
+                    "source_sha256":expected_source_sha256}
+            return JSONResponse({**result,"owner_session_verified":True,"task_lease_verified":False,
+                "execution_performed":False,"external_action_performed":False,
+                "canonical_mutation":False,"authority_transfer":False,"native_admitted":False},
+                headers={"Cache-Control":"no-store"})
         bounded_query = _bounded(query, maximum=160, required=True)
         bounded_domain = _bounded(domain, maximum=32) if domain else None
         try:

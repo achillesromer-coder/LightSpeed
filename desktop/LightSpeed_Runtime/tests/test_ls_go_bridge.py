@@ -2100,3 +2100,59 @@ def test_project_file_revision_and_revoked_owner(tmp_path, monkeypatch):
     monkeypatch.setattr(ls_go_bridge,"open_project_file",revoke)
     denied=client.get(url,params={"expected_metadata_revision":fresh},headers=headers)
     assert denied.status_code==403 and "preview" not in denied.json()
+
+
+
+def test_source_review_owner_session_revision_and_revocation(tmp_path,monkeypatch):
+    database=CommandFixtureDatabase(tmp_path/"review.db")
+    database.execute_query=lambda *a:[]
+    database.execute_update=lambda *a:0
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(database,object()))
+    sessions=ls_go_bridge.OwnerSessionStore()
+    token,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL")
+    change,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL",scope="password_change")
+    monkeypatch.setattr(ls_go_bridge,"OwnerSessionStore",lambda:sessions)
+    monkeypatch.setattr(ls_go_bridge.CredentialStore,"read_record",lambda *_:{"credential_key_id":"TEST-CREDENTIAL"})
+    monkeypatch.setattr(ls_go_bridge,"credential_status",lambda _:{"configured":True,"credential_key_id":"TEST-CREDENTIAL","must_change":False})
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,"fixture-confirmation")
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    base="/api/v1/object-context/"
+    headers={"X-LightSpeed-Session":token}
+    for mode in ("twin","atlas"):
+        params={"review_mode":mode+"-index"}
+        assert client.get(base+"index",params=params).status_code==403
+        assert client.get(base+"index",params=params,headers={"X-LightSpeed-Owner-Confirmation":"fixture-confirmation"}).status_code==403
+        assert client.get(base+"index",params=params,headers={"X-LightSpeed-Session":change}).status_code==403
+        res=client.get(base+"index",params=params,headers=headers)
+        assert res.status_code==200 and res.headers["cache-control"]=="no-store"
+        idx=res.json()["index"];assert res.json()["task_lease_verified"] is False
+        if mode=="twin":
+            key="intersol";field="object_context"
+            p={"expected_index_sha256":idx["review_sha256"],
+               "expected_occurrence_sha256":idx["references"][key]["occurrence_sha256"]}
+        else:
+            key=sorted(idx["references"])[0];field="atlas_row"
+            p={"expected_index_sha256":idx["workset_sha256"],"expected_source_sha256":idx["source_sha256"],
+               "expected_occurrence_sha256":idx["references"][key]["row_sha256"]}
+        p.update(review_mode=mode,task_id="fixture-review")
+        out=client.get(base+key,params=p,headers=headers)
+        assert out.status_code==200,out.text
+        assert field in out.json() and not out.json()["task_lease_verified"] and not out.json()["native_admitted"]
+        assert out.headers["cache-control"]=="no-store"
+        assert out.json()["review_binding"]=={"mode":mode,"occurrence_id":key,"task_id":"fixture-review",
+            "index_sha256":p["expected_index_sha256"],"occurrence_sha256":p["expected_occurrence_sha256"],
+            "source_sha256":p.get("expected_source_sha256")}
+        assert client.get(base+key,params=dict(p,expected_occurrence_sha256="0"*64),headers=headers).status_code==409
+        assert client.get(base+key,params=dict(p,expected_index_sha256="0"*64),headers=headers).status_code==409
+        assert client.get(base+key,params=dict(p,task_id=""),headers=headers).status_code==400
+    original=ls_go_bridge.resolve_scoped_twin_context
+    def revoke(*a,**kw):
+        result=original(*a,**kw)
+        sessions.revoke(token)
+        return result
+    idx=ls_go_bridge.twin_source_review_index()
+    monkeypatch.setattr(ls_go_bridge,"resolve_scoped_twin_context",revoke)
+    response=client.get(base+"intersol",params={"review_mode":"twin","task_id":"fixture-review",
+         "expected_index_sha256":idx["review_sha256"],
+         "expected_occurrence_sha256":idx["references"]["intersol"]["occurrence_sha256"]},headers=headers)
+    assert response.status_code==403 and "object_context" not in response.json()

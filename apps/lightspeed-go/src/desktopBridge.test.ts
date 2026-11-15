@@ -4,6 +4,7 @@ import {
   createCommandEnvelope,
   nodeExchangePresentation,
   objectContextApiPath,
+  sourceReviewApiPath,
   projectFileApiPath,
   remoteAccessPresentation,
   resolveDesktopOrigin,
@@ -119,6 +120,17 @@ describe("LS GO desktop command routing", () => {
       "/api/v1/object-context/M1%20Elevated%20Bypass?domain=romer",
     );
     expect(() => objectContextApiPath("   " )).toThrow("object query is required");
+  });
+
+  it("binds owner source reviews to existing object-context route", () => {
+    const sha="a".repeat(64), other="b".repeat(64);
+    expect(sourceReviewApiPath("twin")).toBe("/api/v1/object-context/index?review_mode=twin-index");
+    const binding={mode:"twin" as const,occurrence_id:"intersol",task_id:"CGX-OBJ-004",
+      index_sha256:sha,occurrence_sha256:other,source_sha256:null};
+    expect(sourceReviewApiPath("twin",binding)).toBe("/api/v1/object-context/intersol?review_mode=twin&task_id=CGX-OBJ-004&expected_index_sha256="+sha+"&expected_occurrence_sha256="+other);
+    expect(()=>sourceReviewApiPath("atlas",binding)).toThrow();
+    expect(()=>sourceReviewApiPath("twin",{...binding,occurrence_id:"../intersol"})).toThrow();
+    expect(()=>sourceReviewApiPath("twin",{...binding,index_sha256:"bad"})).toThrow();
   });
 
   it("encodes project file routes segment-by-segment", () => {
