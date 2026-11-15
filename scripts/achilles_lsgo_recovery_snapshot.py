@@ -128,11 +128,35 @@ def inspect_database(path: Path) -> dict:
             ]
             if sum(x["count"] for x in matches) != total:
                 raise RecoveryHold("INCOMPLETE_IDENTITY_LINKAGE_HOLD")
+            # A common task is only a review candidate, never proof of exact
+            # command identity, permission or a safe replay. Return counts only.
+            task_linkage_available=("task_id" in identities and "task_id" in jobs and "id" in tasks)
+            unassigned_task_classes=None
+            linked_task_mismatches=None
+            jobs_without_identity=None
+            if task_linkage_available:
+                unassigned_task_classes=[{"class":str(kind),"count":int(n)}
+                    for kind,n in db.execute(
+                    "SELECT kind,COUNT(*) FROM ("
+                    "SELECT CASE WHEN i.task_id IS NULL THEN 'NO_TASK_REFERENCE' "
+                    "WHEN NOT EXISTS (SELECT 1 FROM tasks t WHERE t.id=i.task_id) THEN 'MISSING_TASK_REFERENCE' "
+                    "WHEN EXISTS (SELECT 1 FROM jobs j WHERE j.task_id=i.task_id AND j.job_type='ls_go_command') "
+                    "THEN 'EXISTING_TASK_JOB_REVIEW_ONLY' ELSE 'TASK_WITHOUT_LS_GO_JOB_REVIEW_ONLY' END AS kind "
+                    "FROM ls_go_command_identities i WHERE i.job_id IS NULL) GROUP BY kind ORDER BY kind")]
+                if sum(x["count"] for x in unassigned_task_classes)!=unassigned:
+                    raise RecoveryHold("UNASSIGNED_TASK_CLASS_COUNT_DIVERGENCE_HOLD")
+                linked_task_mismatches=int(db.execute(
+                    "SELECT COUNT(*) FROM ls_go_command_identities i JOIN jobs j ON i.job_id=j.id "
+                    "WHERE j.job_type='ls_go_command' AND i.task_id IS NOT j.task_id").fetchone()[0])
+                jobs_without_identity=int(db.execute(
+                    "SELECT COUNT(*) FROM jobs j WHERE j.job_type='ls_go_command' AND NOT EXISTS "
+                    "(SELECT 1 FROM ls_go_command_identities i WHERE i.job_id=j.id)").fetchone()[0])
             verdict = ("UNRESOLVED_RUNNING_JOB_HOLD" if running else
                        "UNCERTAIN_EXECUTION_OUTCOME_HOLD" if uncertain else
                        "INVALID_CLAIM_METADATA_HOLD" if malformed else
                        "FOREIGN_JOB_LINK_HOLD" if foreign else
                        "DUPLICATE_COMMAND_IDENTITY_HOLD" if duplicates else
+                       "LINKED_TASK_IDENTITY_MISMATCH_HOLD" if linked_task_mismatches else
                        "UNLINKED_COMMAND_IDENTITY_REVIEW_HOLD" if unlinked else
                        "INDEPENDENT_SIGNED_LEASE_AND_DBR_HOLD")
             return {
@@ -144,6 +168,11 @@ def inspect_database(path: Path) -> dict:
                 "identity_to_job_linkage": matches,
                 "unlinked_identity_count": unlinked,
                 "unassigned_identity_count": unassigned,
+                "task_linkage_available":task_linkage_available,
+                "unassigned_task_classes":unassigned_task_classes,
+                "linked_task_mismatches":linked_task_mismatches,
+                "ls_go_jobs_without_identity":jobs_without_identity,
+                "automatic_assignment_authorized":False,
                 "dangling_job_reference_count": dangling,
                 "linkage_class_counts": unlinked_classes,
                 "foreign_job_link_count": foreign,

@@ -214,3 +214,26 @@ def test_architect_queue_closure_cannot_be_inferred_from_summary():
     assert not queue_closure_verified(dict(good,actions=[dict(one,status="pending")]))
     assert not queue_closure_verified(dict(good,action_count=2,completed_count=2,actions=[one,one]))
     assert not queue_closure_verified(dict(good,pending_count=False))
+
+
+
+def test_unassigned_task_classification_does_not_grant_replay(tmp_path):
+    p=fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("ALTER TABLE jobs ADD COLUMN task_id INTEGER")
+        db.execute("ALTER TABLE ls_go_command_identities ADD COLUMN task_id INTEGER")
+        db.execute("UPDATE jobs SET task_id=1 WHERE id=1")
+        db.execute("UPDATE ls_go_command_identities SET task_id=1 WHERE command_id='B'")
+        db.executemany("INSERT INTO ls_go_command_identities(command_id,queue_state,job_id,task_id) VALUES (?,'queued',NULL,?)",
+            [("E",1),("F",2),("G",999)])
+    before=hashlib.sha256(p.read_bytes()).hexdigest()
+    out=module.inspect_database(p)
+    assert dict((x["class"],x["count"]) for x in out["unassigned_task_classes"])=={
+        "NO_TASK_REFERENCE":1,"EXISTING_TASK_JOB_REVIEW_ONLY":1,
+        "TASK_WITHOUT_LS_GO_JOB_REVIEW_ONLY":1,"MISSING_TASK_REFERENCE":1}
+    assert out["linked_task_mismatches"]==0 and out["ls_go_jobs_without_identity"]==0
+    assert not out["automatic_assignment_authorized"] and not out["commands_replayed"]
+    assert hashlib.sha256(p.read_bytes()).hexdigest()==before
+    with sqlite3.connect(p) as db:
+        db.execute("UPDATE ls_go_command_identities SET task_id=2 WHERE command_id='B'")
+    assert module.inspect_database(p)["state"]=="LINKED_TASK_IDENTITY_MISMATCH_HOLD"
