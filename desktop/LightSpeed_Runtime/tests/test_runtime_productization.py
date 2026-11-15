@@ -73,9 +73,10 @@ def test_cgx_preflight_retains_repo_script_contract() -> None:
 
     assert 'REPO_ROOT = Path(__file__).resolve().parents[3]' in source
     assert 'SCRIPTS_ROOT = REPO_ROOT / "scripts"' in source
-    assert "sys.path.insert(0, str(SCRIPTS_ROOT))" in source
-    assert "from cgx_assurance_preflight import assess as assurance_assess" in source
-    assert "from resolve_cgx_extensions import resolve as custodial_resolve" in source
+    assert 'r"D:\\LightSpeed\\Tools\\cgx_preflight"' in source
+    assert 'importlib.import_module("cgx_assurance_preflight")' in source
+    assert 'importlib.import_module("resolve_cgx_extensions")' in source
+    assert "CGX preflight policy modules are not installed" in source
 
 
 def test_optional_capability_imports_remain_fail_soft() -> None:
