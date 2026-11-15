@@ -426,6 +426,43 @@ def assess_common_inference_admission(*, resident_active, common_gate_verified,
             "execution_authorized":False,"lock_acquired":False}
 
 
+def run_skill_trial_with_adapter(plan, *, expected_trial_sha256, prompts,
+                                 expected_prompt_commitment, common_session, invoke):
+    """Run precommitted paired cases serially through a trusted caller adapter.
+
+    Common session must be independently provisioned across all participants.
+    The adapter must impose transport timeout and reconcile uncertain server
+    outcomes before permitting another request. Do not use for an active
+    ungated resident worker. No provider authenticity claimed by this wrapper.
+    """
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession
+    if not isinstance(common_session,CommonInferenceSession) or common_session.task_id!=plan.get("task_id"):
+        raise ProfileHold("ACHILLES_TRIAL_SESSION_BINDING_HOLD")
+    rebuilt=prepare_skill_fidelity_trial(plan["task_id"],expected_view_sha256=plan["composition"]["view_sha256"],
+        model=plan["model"],sparse_skills=plan["sparse_skills"])
+    if rebuilt!=plan or plan["trial_sha256"]!=expected_trial_sha256 or skill_trial_prompt_commitment(plan,prompts)!=expected_prompt_commitment:
+        raise ProfileHold("ACHILLES_TRIAL_REVISION_HOLD")
+    expected_order=[(c["case_id"],a) for i,c in enumerate(plan["cases"])
+                    for a in (("full","sparse") if i%2==0 else ("sparse","full"))]
+    if [(p["case_id"],p["arm"]) for p in prompts]!=expected_order:
+        raise ProfileHold("ACHILLES_TRIAL_ORDER_HOLD")
+    observations=[]
+    with common_session as gate:
+        for p in prompts:
+            gate.check_before_request()
+            # No answer key, private source or arbitrary action carried here.
+            observation=invoke({"case_id":p["case_id"],"arm":p["arm"],"prompt":p["prompt"],
+                "prompt_sha256":p["prompt_sha256"],"model":plan["model"],"settings":dict(plan["settings"])})
+            if (type(observation) is not dict or observation.get("case_id")!=p["case_id"]
+                    or observation.get("arm")!=p["arm"] or observation.get("prompt_sha256")!=p["prompt_sha256"]
+                    or observation.get("model")!=plan["model"] or observation.get("settings")!=plan["settings"]):
+                raise ProfileHold("ACHILLES_TRIAL_ADAPTER_BINDING_HOLD")
+            gate.check_before_request()
+            observations.append(observation)
+    return score_skill_fidelity_trial(plan,expected_trial_sha256=expected_trial_sha256,
+        prompts=prompts,observations=observations,expected_prompt_commitment=expected_prompt_commitment)
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     source = parser.add_mutually_exclusive_group(required=True)

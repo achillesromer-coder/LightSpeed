@@ -812,3 +812,26 @@ def test_adaptive_budget_expands_only_unclaimed_default(tmp_path, explicit):
     if explicit is None:
         assert result["usage_accounting"]["ollama_generate_attempts"] == 2
         assert result["usage_accounting"]["total_tokens"] == 652
+
+
+
+def test_common_inference_session_mutual_exclusion_and_revocation(tmp_path):
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession
+    path=tmp_path/"common.lock"
+    state={"auth":True,"ready":True}
+    def make():
+        return CommonInferenceSession(path,task_id="review-001a",scope_revision="r1",
+            authorise=lambda *a:state["auth"],resources_ready=lambda:state["ready"])
+    with make() as a:
+        a.check_before_request()
+        with pytest.raises(LocalFloorRunnerError):
+            with make():pass
+        state["auth"]=False
+        with pytest.raises(LocalFloorRunnerError):a.check_before_request()
+    assert not path.exists()
+    with pytest.raises(LocalFloorRunnerError):
+        with make():pass
+    state["auth"]=True;state["ready"]=False
+    with pytest.raises(LocalFloorRunnerError):
+        with make():pass
+    assert not path.exists()

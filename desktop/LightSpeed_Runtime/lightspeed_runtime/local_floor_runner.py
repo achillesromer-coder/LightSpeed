@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, nullcontext
 import ctypes
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -118,6 +118,56 @@ class SingleSessionLock(AbstractContextManager["SingleSessionLock"]):
         return False
 
 
+class CommonInferenceSession(AbstractContextManager["CommonInferenceSession"]):
+    """Cooperative common gate using the existing exclusive lock primitive.
+
+    All callers must use one owner-provisioned lock path. Caller verifies the
+    host/worker binding and current signed scope independently; this is not
+    installation, an authentication mechanism or a server-side Ollama lock.
+    """
+    def __init__(self, path: Path, *, task_id: str, scope_revision: str,
+                 authorise: Callable, resources_ready: Callable):
+        if (not isinstance(path,Path) or not path.is_absolute()
+            or any(type(v) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
+                   for v in (task_id,scope_revision))):
+            raise LocalFloorRunnerError("invalid shared inference binding")
+        self.path=path
+        self.task_id=task_id
+        self.scope_revision=scope_revision
+        self.authorise=authorise
+        self.resources_ready=resources_ready
+        self.lock=SingleSessionLock(path)
+        self.active=False
+    def _check(self):
+        if self.authorise(self.task_id,self.scope_revision,str(self.path)) is not True:
+            raise LocalFloorRunnerError("common inference scope held")
+        if self.resources_ready() is not True:
+            raise LocalFloorRunnerError("common inference resources held")
+    def __enter__(self):
+        if self.active:raise LocalFloorRunnerError("common inference already active")
+        self._check()
+        self.lock.__enter__()
+        try:self._check()
+        except BaseException:
+            self.lock.__exit__(None,None,None)
+            raise
+        self.active=True
+        return self
+    def check_before_request(self):
+        if not self.active:raise LocalFloorRunnerError("common inference lock not acquired")
+        self._check()
+        # Verify current lock generation/identity, never trust a stale handle.
+        st=self.path.stat(follow_symlinks=False)
+        if self.path.is_symlink() or (st.st_dev,st.st_ino)!=self.lock._lock_identity:
+            raise LocalFloorRunnerError("common inference lock changed")
+        info=json.loads(self.path.read_text(encoding="utf-8"))
+        if info.get("generation")!=self.lock._lock_generation or info.get("pid")!=os.getpid():
+            raise LocalFloorRunnerError("common inference generation changed")
+    def __exit__(self,exc_type,exc,tb):
+        self.active=False
+        return self.lock.__exit__(exc_type,exc,tb)
+
+
 def load_contract(path: Path = DEFAULT_CONTRACT_PATH) -> dict[str, Any]:
     try:
         contract = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -167,6 +217,7 @@ def run_floor(
     memory_snapshot: MemorySnapshot | None = None,
     cpu_snapshot: CpuSnapshot | None = None,
     lock: bool = True,
+    common_session: CommonInferenceSession | None = None,
 ) -> dict[str, Any]:
     if execution_claim_id is not None and not re.fullmatch(r"[0-9a-f]{32}", execution_claim_id):
         raise LocalFloorRunnerError("execution claim id is invalid")
@@ -267,9 +318,18 @@ def run_floor(
     attempts: list[dict[str, Any]] = []
     # Explicit limits and claimed execution are never expanded by this policy.
     adaptive = num_predict is None and max_total_tokens is None and execution_claim_id is None
-    with SingleSessionLock(lock_path, enabled=lock):
+    if (contract.get("policy") or {}).get("require_common_inference_session") is True and common_session is None:
+        raise LocalFloorRunnerError("common inference session required")
+    if common_session is not None and not isinstance(common_session,CommonInferenceSession):
+        raise LocalFloorRunnerError("invalid common inference session")
+    # Keep legacy runner exclusion as well; the common lock can be the same
+    # owner-provisioned path, in which case acquire it only once.
+    same_path=common_session is not None and common_session.path.resolve()==lock_path.resolve()
+    local_session=SingleSessionLock(lock_path, enabled=(lock or common_session is not None)) if not same_path else nullcontext()
+    with local_session, (common_session if common_session is not None else nullcontext()):
         try:
             while True:
+                if common_session is not None:common_session.check_before_request()
                 remaining = max(0.1, timeout_seconds - (time.monotonic() - started))
                 budget = request_body["options"]["num_predict"]
                 attempt = {"budget": budget, "usage": None}

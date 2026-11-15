@@ -165,5 +165,25 @@ def exact_convex_mesh_review(vertices, faces):
             "exact_integer_review":True,"t173_catalogue_admitted":False}
 
 
+def canonical_integer_mesh_review(vertices,faces):
+    """Deterministic coordinate/incidence identity modulo translation and relabeling.
+    No arbitrary rotation, scale, chirality equivalence or T173 admission.
+    """
+    import hashlib
+    metrics=exact_convex_mesh_review(vertices,faces)
+    mins=[min(v[j] for v in vertices) for j in range(3)]
+    shifted=[tuple(v[j]-mins[j] for j in range(3)) for v in vertices]
+    order=sorted(range(len(shifted)),key=shifted.__getitem__)
+    lookup={old:new for new,old in enumerate(order)}
+    loops=[]
+    for face in faces:
+        f=tuple(lookup[i] for i in face)
+        loops.append(min(f[i:]+f[:i] for i in range(len(f))))
+    canonical={"schema":"CGX-INTEGER-MESH-REVIEW/0.1","vertices":[shifted[i] for i in order],
+               "faces":sorted(loops),"coordinate_frame":"fixed_axes_translation_removed"}
+    raw=json.dumps(canonical,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
+    return {"canonical":canonical,"sha256":hashlib.sha256(raw).hexdigest(),"metrics":metrics}
+
+
 if __name__ == '__main__':
     print(json.dumps(verify(ROOT / 'UniSpace'), indent=2))

@@ -62,7 +62,13 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
     return payload
 
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
+    if allowed is None:
+        return
+    if type(allowed) is not list or len(allowed)>1024 or any(type(x) is not str or not x or len(x)>256 for x in allowed):
+        reasons.append(f"lease-{name}-scope-invalid")
+        return
     if not allowed:
+        reasons.append(f"lease-{name}-scope-empty")
         return
     if not requested:
         reasons.append(f"lease-scope-requires-{name}")
@@ -88,6 +94,26 @@ def validate_lease(
     if lease is None:
         return False, ["execution-lease-missing"], summary
 
+    if (type(lease) is not dict or type(execution_class) is not str
+            or execution_class not in EXECUTION_CLASS_RANK
+            or type(cascade_class) is not str or cascade_class not in CASCADE
+            or type(consequential) is not bool
+            or type(planned_floors) is not list or not planned_floors
+            or any(type(x) is not str or not x or len(x)>128 for x in planned_floors)):
+        return False, ["lease-request-or-envelope-invalid"], summary
+    for field in ("domains","execution_depths","allowed_floors"):
+        v=lease.get(field)
+        if type(v) is not list or not v or len(v)>256 or any(type(x) is not str or not x or len(x)>128 for x in v):
+            reasons.append("lease-"+field.replace("_","-")+"-invalid")
+    for field in ("lease_id","issued_by","subject_agent"):
+        v=lease.get(field)
+        if type(v) is not str or not v or len(v)>256:
+            reasons.append("lease-"+field.replace("_","-")+"-invalid")
+    if reasons:return False,reasons,summary
+    if lease["issued_by"].casefold()==agent_id.casefold():
+        reasons.append("lease-self-issued")
+    if execution_class=="READ_ONLY":
+        reasons.append("lease-read-only-cannot-invoke-model")
     lease_class = str(lease.get("lease_class") or "")
     summary = {
         "lease_id": lease.get("lease_id"),
@@ -113,7 +139,7 @@ def validate_lease(
         current = now_utc()
         if end <= start:
             reasons.append("lease-invalid-time-window")
-        elif not (start <= current <= end):
+        elif not (start <= current < end):
             reasons.append("lease-outside-validity-window")
     except (KeyError, ValueError, TypeError):
         reasons.append("lease-time-invalid")
@@ -135,7 +161,14 @@ def validate_lease(
         if missing:
             reasons.append("lease-floor-out-of-scope:" + ",".join(missing))
 
-    scope = lease.get("scope") or {}
+    scope = lease.get("scope")
+    if type(scope) is not dict:
+        return False,reasons+["lease-scope-invalid"],summary
+    for field in ("task_ids","action_classes"):
+        if not scope.get(field):
+            reasons.append("lease-"+field.replace("_","-")+"-required")
+    if type(task_id) is not str or not task_id or len(task_id)>128:
+        reasons.append("lease-exact-task-required")
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
@@ -269,11 +302,15 @@ def main() -> int:
             stop_on_failure=not args.continue_on_failure,
         )
         if args.execute:
-            if effectful:
+            if supervisor_receipt.get("status") != "complete":
+                decision = "HOLD_INCOMPLETE_SUPERVISOR"
+                exit_code = 2
+            elif effectful:
                 decision = "MODEL_PLAN_COMPLETE_CLEARED_FOR_TOOL_GATE"
             else:
                 decision = "COMPUTE_EXECUTED_WITH_ACTION_BLOCKERS" if preflight_holds else "COMPUTE_EXECUTED_CLEAN"
-            exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2
+            if decision != "HOLD_INCOMPLETE_SUPERVISOR":
+                exit_code = 0
         else:
             decision = "DRY_RUN_WITH_BLOCKERS" if preflight_holds else "DRY_RUN_CLEARED"
             exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2

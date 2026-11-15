@@ -393,3 +393,26 @@ def test_provider_occurrence_binding_and_pretransfer_budget():
     with pytest.raises(CGXCrossAnalysisError,match="byte budget"):
         run(budget=1)
     assert calls[-1]["max_bytes"]==1
+
+
+
+def test_review_collection_shared_storage_separate_occurrences():
+    import io,zipfile
+    from lightspeed_runtime.cgx_cross_analysis import write_review_collection,hydrate_review_collection
+    mem=io.BytesIO()
+    payloads={"A":b"shared"*1024,"B":b"shared"*1024,"C":b"other"}
+    with zipfile.ZipFile(mem,"w") as z:
+        d,h=write_review_collection(z,payloads,task_id="review-001a",source_revision="r1")
+        assert d["entries"]["A"]==d["entries"]["B"]
+        assert len(set(z.namelist()))==len(z.namelist())
+    with zipfile.ZipFile(io.BytesIO(mem.getvalue())) as z:
+        def read(selected,auth=lambda *a:True,budget=100000,stamp=h):
+            return hydrate_review_collection(z,d,stamp,task_id="review-001a",source_revision="r1",
+                scope_revision="acl1",selected=selected,max_bytes=budget,authorise=auth)
+        raw,stats=read(["A","C"]);assert raw=={"A":payloads["A"],"C":payloads["C"]}
+        assert not stats["native_admitted"]
+        with pytest.raises(PermissionError):read(["B"],auth=lambda t,k,*a:k=="A")
+        with pytest.raises(CGXCrossAnalysisError):read(["A"],budget=1)
+        with pytest.raises(CGXCrossAnalysisError):read(["A"],stamp="0"*64)
+        seq=iter([True,True,False])
+        with pytest.raises(PermissionError):read(["A"],auth=lambda *a:next(seq))

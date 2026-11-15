@@ -434,8 +434,12 @@ def run_supervised_workflow(
 
     statuses = [str(row.get("status") or "unknown") for row in rows]
     complete = len(rows) == len(plan.floor_sequence)
-    failed = any(status in {"failed", "blocked"} for status in statuses)
-    aggregate_status = "failed" if failed else ("complete" if complete else "partial")
+    expected_status = "dry_run" if dry_run else "completed"
+    ids=[row.get("receipt_id") for row in rows]
+    ids_valid=all(type(k) is str and bool(k) for k in ids) and len(set(ids))==len(ids)
+    successful=complete and ids_valid and all(status==expected_status for status in statuses)
+    failed = any(status!=expected_status for status in statuses) or not ids_valid
+    aggregate_status = "failed" if failed else ("complete" if successful else "partial")
 
     aggregate: dict[str, Any] = {
         "schema_version": SUPERVISOR_SCHEMA,

@@ -314,3 +314,40 @@ def test_common_inference_preflight_never_grants_execution():
     assert gate(common_gate_verified=True)["state"]=="PREFLIGHT_ONLY_GATE_ACQUISITION_REQUIRED"
     assert not gate(common_gate_verified=True)["execution_authorized"]
     with pytest.raises(module.ProfileHold):gate(active_session_count=True)
+
+
+
+def test_trial_adapter_requires_common_gate_and_serial_exact_binding(tmp_path):
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession,LocalFloorRunnerError
+    v=capability_interop_review("Achilles")
+    plan=module.prepare_skill_fidelity_trial("review-001a",expected_view_sha256=v["view_sha256"],
+        model="qwen3:8b",sparse_skills=["skill:cgx-capability-router","skill:cgx-handshake"])
+    stamp=plan["trial_sha256"]
+    prompts=module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",
+        authorise=lambda *a:True)
+    commitment=module.skill_trial_prompt_commitment(plan,prompts)
+    expected={c["case_id"]:c["expected"] for c in plan["cases"]}
+    path=tmp_path/"shared.lock";calls=[];state={"allowed":True}
+    def gate(task="review-001a"):
+        return CommonInferenceSession(path,task_id=task,scope_revision="fixture",
+            authorise=lambda *a:state["allowed"],resources_ready=lambda:True)
+    def adapter(q):
+        assert path.is_file() and "expected" not in q
+        calls.append((q["case_id"],q["arm"]))
+        return {k:q[k] for k in ("case_id","arm","model","settings","prompt_sha256")} | {
+            "result":expected[q["case_id"]],"prompt_tokens":100 if q["arm"]=="sparse" else 500,
+            "output_tokens":10,"latency_ms":100}
+    def run(g,inv=adapter):
+        return module.run_skill_trial_with_adapter(plan,expected_trial_sha256=stamp,prompts=prompts,
+           expected_prompt_commitment=commitment,common_session=g,invoke=inv)
+    with pytest.raises(module.ProfileHold):run(gate("wrong"))
+    state["allowed"]=False
+    with pytest.raises(LocalFloorRunnerError):run(gate())
+    assert not calls and not path.exists()
+    state["allowed"]=True
+    assert run(gate())["candidate_thresholds_met"] and len(calls)==16 and not path.exists()
+    def revoke(q):
+        result=adapter(q);state["allowed"]=False;return result
+    with pytest.raises(LocalFloorRunnerError):run(gate(),revoke)
+    assert len(calls)==17 and not path.exists()

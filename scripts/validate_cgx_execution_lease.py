@@ -81,6 +81,20 @@ def main():
     if not ok:
         failures.append("distributed-operation lease incorrectly inherited prelaunch root receipt requirement: "+",".join(reasons))
 
+    for change in (
+        {"scope":{}}, {"scope":{"task_ids":[],"action_classes":["execute"]}},
+        {"scope":{"task_ids":["CGX-LAUNCH-006"],"action_classes":"execute"}},
+        {"issued_by":"Neo"}, {"domains":"romer"}, {"scope":[]},
+        {"scope":{"task_ids":["CGX-LAUNCH-006b"],"action_classes":["execute"]}},
+    ):
+        x=base_lease();x["root_authority_receipt_ref"]="fixture:root-approval";x.update(change)
+        if check(x)[0]:failures.append("malformed or wrong-scope lease accepted")
+    x=base_lease()
+    ok,reasons,_=validate_lease(x,agent_id="Neo",domain="romer",execution_depth="execute",
+        cascade_class="C2",task_id="CGX-LAUNCH-006",project_id=None,action_class="execute",
+        execution_class="READ_ONLY",planned_floors=["Neo"],consequential=False)
+    if ok or "lease-read-only-cannot-invoke-model" not in reasons:
+        failures.append("read-only lease may invoke model")
     print({"status":"PASS" if not failures else "FAIL","failures":failures})
     return 1 if failures else 0
 

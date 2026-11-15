@@ -871,3 +871,87 @@ def resolve_provider_review_occurrence(occurrence, expected_sha256, provider_rea
                                       prefix=prefix,max_bytes=max_bytes)
     return raw,dict(stats,task_id=task_id,provider_bytes=spent,
                     provider_authentication_performed=False)
+
+
+
+def write_review_collection(archive, payloads, *, task_id, source_revision):
+    """One caller-owned review carrier, multiple named roots, shared object bytes.
+
+    Names are evidence occurrence IDs, not file paths or authority. The
+    returned descriptor must be anchored independently; no native DBR.
+    """
+    import hashlib,json,re,zipfile
+    def token(v):return type(v) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
+    if not token(task_id) or not token(source_revision) or type(payloads) is not dict or not 1<=len(payloads)<=64:
+        raise CGXCrossAnalysisError("invalid collection identity")
+    if any(not token(k) or type(v) is not bytes for k,v in payloads.items()) or sum(map(len,payloads.values()))>5*1024*1024:
+        raise CGXCrossAnalysisError("invalid collection payloads")
+    if archive.namelist():raise CGXCrossAnalysisError("review carrier must be empty")
+    entries={};objects={}
+    for k,raw in sorted(payloads.items()):
+        root,parts=pack_nested_review_payload(raw)
+        entries[k]={"root":root,"sha256":hashlib.sha256(raw).hexdigest(),"bytes":len(raw)}
+        objects.update(parts)
+    for key,data in sorted(objects.items()):
+        info=zipfile.ZipInfo("review/objects/"+key)
+        info.compress_type=zipfile.ZIP_STORED
+        archive.writestr(info,data)
+    descriptor={"schema":"CGX-REVIEW-COLLECTION/0.1","task_id":task_id,
+        "source_revision":source_revision,"entries":entries,"native_admitted":False,"authority_transfer":False}
+    h=hashlib.sha256(json.dumps(descriptor,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")).hexdigest()
+    return descriptor,h
+
+
+def hydrate_review_collection(archive, descriptor, expected_sha256, *,
+                              task_id, source_revision, scope_revision, selected, max_bytes, authorise):
+    """Exact named occurrence reads with cumulative logical fetch budget.
+
+    Caller authenticates the descriptor and live scope. No cross-occurrence
+    permissions or native authority inferred from deduplicated payload bytes.
+    """
+    import hashlib,json,re
+    def token(v):return type(v) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
+    def stamp(v):return type(v) is str and re.fullmatch(r"[a-f0-9]{64}",v)
+    if (not all(token(v) for v in (task_id,source_revision,scope_revision))
+            or not stamp(expected_sha256) or type(max_bytes) is not int or not 1<=max_bytes<=32*1024*1024
+            or type(selected) is not list or not 1<=len(selected)<=64 or any(not token(k) for k in selected)
+            or len(set(selected))!=len(selected)):
+        raise CGXCrossAnalysisError("invalid collection request")
+    if (type(descriptor) is not dict or set(descriptor)!={"schema","task_id","source_revision","entries","native_admitted","authority_transfer"}
+            or descriptor["schema"]!="CGX-REVIEW-COLLECTION/0.1" or descriptor["task_id"]!=task_id
+            or descriptor["source_revision"]!=source_revision or descriptor["native_admitted"] is not False
+            or descriptor["authority_transfer"] is not False or type(descriptor["entries"]) is not dict
+            or not 1<=len(descriptor["entries"])<=64):
+        raise CGXCrossAnalysisError("collection binding mismatch")
+    entries={}
+    for k,v in descriptor["entries"].items():
+        if (not token(k) or type(v) is not dict or set(v)!={"root","sha256","bytes"}
+                or not stamp(v["root"]) or not stamp(v["sha256"]) or type(v["bytes"]) is not int
+                or not 0<=v["bytes"]<=5*1024*1024):
+            raise CGXCrossAnalysisError("invalid collection entry")
+        entries[k]=dict(v)
+    snap={**descriptor,"entries":entries}
+    if (sum(v["bytes"] for v in entries.values())>5*1024*1024
+            or hashlib.sha256(json.dumps(snap,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")).hexdigest()!=expected_sha256):
+        raise CGXCrossAnalysisError("collection descriptor mismatch")
+    if any(k not in entries for k in selected):raise CGXCrossAnalysisError("unknown collection occurrence")
+    def check(k):
+        if authorise(task_id,k,source_revision,scope_revision,expected_sha256) is not True:
+            raise PermissionError("collection occurrence denied or revoked")
+    for k in selected:check(k)
+    if sum(entries[k]["bytes"] for k in selected)>max_bytes:
+        raise CGXCrossAnalysisError("collection payload budget")
+    resolved={};spent=0;objects_read=0
+    for k in sorted(selected):
+        check(k);e=entries[k]
+        if max_bytes<=spent:raise CGXCrossAnalysisError("collection fetch budget")
+        raw,stats=hydrate_nested_review_archive(archive,e["root"],allowed_prefixes=("",),max_bytes=max_bytes-spent)
+        if len(raw)!=e["bytes"] or hashlib.sha256(raw).hexdigest()!=e["sha256"]:
+            raise CGXCrossAnalysisError("collection payload mismatch")
+        spent+=stats["fetched_bytes"];objects_read+=stats["fetched_objects"]
+        check(k);resolved[k]=raw
+    for k in selected:check(k)
+    return resolved,{"descriptor_sha256":expected_sha256,"task_id":task_id,
+        "scope_revision":scope_revision,"selected":sorted(selected),"logical_fetched_bytes":spent,
+        "logical_fetched_objects":objects_read,"expanded_bytes":sum(map(len,resolved.values())),
+        "provider_authentication_performed":False,"native_admitted":False,"authority_transfer":False}

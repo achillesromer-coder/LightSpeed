@@ -189,3 +189,15 @@ def test_missing_required_floor_is_rejected_before_execution(tmp_path):
         assert "missing required floor" in str(exc).lower()
     else:
         raise AssertionError("missing Morpheus proof floor must block the workflow")
+
+
+
+def test_incomplete_or_duplicate_receipts_do_not_clear_supervisor(tmp_path):
+    path=write_contract(tmp_path)
+    for status,duplicate in (("unknown",False),("dry_run",False),("completed",True)):
+        def runner(**kw):
+            return {"receipt_id":"same" if duplicate else "id-"+kw["floor"],
+                    "status":status,"model":"fixture","receipt_path":"fixture"}
+        r=cognigrex_supervisor.run_supervised_workflow("bounded work",contract_path=path,
+            task_id="fixture-task",dry_run=False,runner=runner,persist_learning=False)
+        assert r["status"]=="failed" and not r["canonical_promotion_authorized"]
