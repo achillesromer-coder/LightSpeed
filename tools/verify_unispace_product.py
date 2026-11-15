@@ -95,12 +95,17 @@ def hydrate_nested(archive, root, prefix, *, allowed_paths, max_bytes):
 
 def facet_transition_options(rules, admitted_facets, *, parent, neighbor, direction='next'):
     """Explicit parent/previous/next rule table; no claim of validated T173 mapping."""
-    valid=set(admitted_facets)
-    if any(type(v) is not int or not 1<=v<=173 for v in valid): raise ValueError('Reserved or invalid facet')
-    if parent not in valid or (neighbor is not None and neighbor not in valid) or direction not in ('next','previous'): raise ValueError('Invalid context')
+    def facet(v): return type(v) is int and 1<=v<=173
+    values=tuple(admitted_facets)
+    if any(not facet(v) for v in values): raise ValueError('Reserved or invalid facet')
+    valid=set(values)
+    def member(v): return facet(v) and v in valid
+    if not member(parent) or (neighbor is not None and not member(neighbor)) or direction not in ('next','previous'): raise ValueError('Invalid context')
     out=set()
-    for p,a,b in rules:
-        if p not in valid or any(v is not None and v not in valid for v in (a,b)) or (a is None and b is None): raise ValueError('Unadmitted rule')
+    for rule in rules:
+        if not isinstance(rule,(tuple,list)) or len(rule)!=3: raise ValueError('Invalid rule shape')
+        p,a,b=rule
+        if not member(p) or any(v is not None and not member(v) for v in (a,b)) or (a is None and b is None): raise ValueError('Unadmitted rule')
         match,option=(a,b) if direction=='next' else (b,a)
         if p==parent and match==neighbor: out.add(option)
     return tuple(sorted(out,key=lambda x:-1 if x is None else x))

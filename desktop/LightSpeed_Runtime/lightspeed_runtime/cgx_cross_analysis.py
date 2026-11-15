@@ -645,6 +645,47 @@ def resolve_achilles_revision_context(descriptor, expected_sha256, sections, fet
         return json.dumps(x, sort_keys=True, separators=(",", ":"),
                           ensure_ascii=True, allow_nan=False).encode("ascii")
 
+    def bounded_canonical(value):
+        # Bound preprocessing separately from hydrated object accounting.
+        cap = 8 * 1024 * 1024
+        stack = [(value, 0)]
+        seen = 0
+        estimate = 0
+        while stack:
+            item, depth = stack.pop()
+            seen += 1
+            if depth > 64 or seen + len(stack) > 100000:
+                raise CGXCrossAnalysisError("prior context shape budget")
+            kind = type(item)
+            if kind is str:
+                estimate += 2 + 12 * len(item)
+            elif kind is int:
+                if item.bit_length() > 4096:
+                    raise CGXCrossAnalysisError("prior context integer budget")
+                estimate += 2 + item.bit_length()
+            elif kind in (float, bool, type(None)):
+                estimate += 32
+            elif kind in (list, dict):
+                count = len(item) * (2 if kind is dict else 1)
+                if seen + len(stack) + count > 100000:
+                    raise CGXCrossAnalysisError("prior context node budget")
+                estimate += 2 + count
+                if kind is dict:
+                    for key, child in item.items():
+                        if type(key) is not str:
+                            raise CGXCrossAnalysisError("prior context key type")
+                        stack.extend(((key, depth+1), (child, depth+1)))
+                else:
+                    stack.extend((child, depth+1) for child in item)
+            else:
+                raise CGXCrossAnalysisError("prior context JSON type")
+            if estimate > cap:
+                raise CGXCrossAnalysisError("prior context byte budget")
+        raw = canonical(value)
+        if len(raw) > cap:
+            raise CGXCrossAnalysisError("prior context byte budget")
+        return raw
+
     if (not isinstance(sections, (list, tuple)) or not 1 <= len(sections) <= 64
             or not all(isinstance(k, str) for k in sections)
             or len(set(sections)) != len(sections)
@@ -654,14 +695,17 @@ def resolve_achilles_revision_context(descriptor, expected_sha256, sections, fet
     if not set(sections).issubset(allowed_sections):
         raise PermissionError("revision context scope denied")
     try:
-        if hashlib.sha256(canonical(descriptor)).hexdigest() != expected_sha256:
+        if hashlib.sha256(bounded_canonical(descriptor)).hexdigest() != expected_sha256:
             raise CGXCrossAnalysisError("descriptor hash mismatch")
         if not all(k in descriptor["sections"] for k in sections):
             raise CGXCrossAnalysisError("unknown revision section")
+        bounded_canonical(prior_receipt)
+        if type(prior_receipt) is not dict:
+            raise CGXCrossAnalysisError("invalid prior receipt type")
         proof = dict(prior_receipt)
         claimed = proof.pop("review_sha256")
         if (claimed != expected_prior_review_sha256
-                or hashlib.sha256(canonical(proof)).hexdigest() != claimed
+                or hashlib.sha256(bounded_canonical(proof)).hexdigest() != claimed
                 or proof.get("schema") != "CGX-ACHILLES-REVIEW-CONTEXT/0.1"
                 or proof.get("native_admitted") is not False
                 or proof.get("authority_transfer") is not False
@@ -669,20 +713,30 @@ def resolve_achilles_revision_context(descriptor, expected_sha256, sections, fet
                 or proof.get("evidence_class") != "VERIFIED_REVIEW_INPUT"
                 or not isinstance(prior_values, dict)
                 or set(prior_values) != set(proof["sections"])
-                or hashlib.sha256(canonical(prior_values)).hexdigest() != proof["context_sha256"]):
+                or hashlib.sha256(bounded_canonical(prior_values)).hexdigest() != proof["context_sha256"]):
             raise CGXCrossAnalysisError("prior context verification failed")
 
         cached = {}
         reused = []
+        scratch_reserved = 0
         for name in sorted(sections):
             old = proof["sections"].get(name)
             new = descriptor["sections"][name]
             if old is None or (old["root"], old["payload_sha256"], old["payload_bytes"]) != (
                     new["root"], new["sha256"], new["bytes"]):
                 continue
-            raw = canonical(prior_values[name])
+            raw = bounded_canonical(prior_values[name])
             if len(raw) != new["bytes"] or hashlib.sha256(raw).hexdigest() != new["sha256"]:
                 raise CGXCrossAnalysisError("prior section payload mismatch")
+            # Conservative encoded scratch estimate; no warm repack if over budget.
+            leaves = max(1, (len(raw)+1023)//1024)
+            estimate = len(raw) + 96 * leaves
+            while leaves > 1:
+                leaves = (leaves+2)//3
+                estimate += 256 * leaves
+            if estimate > max_bytes - scratch_reserved:
+                continue
+            scratch_reserved += estimate
             root, parts = pack_nested_review_payload(raw)
             if root != new["root"]:
                 raise CGXCrossAnalysisError("prior section root mismatch")
@@ -720,3 +774,52 @@ def resolve_achilles_revision_context(descriptor, expected_sha256, sections, fet
     transition["review_sha256"] = hashlib.sha256(canonical(transition)).hexdigest()
     return values, receipt, transition, dict(stats, external_bytes=external_bytes,
                                              external_objects=external_objects)
+
+
+
+def resolve_review_occurrence(occurrence, expected_sha256, fetch, authorise, *,
+                              prefix="", max_bytes):
+    """Resolve exact occurrence scope; shared payload is not shared permission.
+
+    Caller authenticates the expected hash and supplies current authorisation.
+    Fetch receives occurrence ID and object hash. No global cache or new
+    authority is created. Rechecks cannot undo a previous provider read.
+    """
+    import hashlib
+    import json
+    import re
+    keys = {"occurrence_id","source_revision","root","scope_revision","allowed_prefixes"}
+    if (type(occurrence) is not dict or set(occurrence) != keys or
+            any(type(occurrence[k]) is not str or not 1 <= len(occurrence[k]) <= 256
+                for k in ("occurrence_id","source_revision","scope_revision")) or
+            type(occurrence["root"]) is not str or
+            not re.fullmatch(r"[0-9a-f]{64}",occurrence["root"]) or
+            type(occurrence["allowed_prefixes"]) is not list or
+            not 1 <= len(occurrence["allowed_prefixes"]) <= 64 or
+            any(type(p) is not str or len(p)>16 or any(c not in "012" for c in p)
+                for p in occurrence["allowed_prefixes"])):
+        raise CGXCrossAnalysisError("invalid occurrence")
+    oid,revision,scope,root=(occurrence[k] for k in
+        ("occurrence_id","source_revision","scope_revision","root"))
+    prefixes=tuple(occurrence["allowed_prefixes"])
+    snap=dict(occurrence_id=oid,source_revision=revision,scope_revision=scope,
+              root=root,allowed_prefixes=list(prefixes))
+    encoded=json.dumps(snap,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
+    if hashlib.sha256(encoded).hexdigest()!=expected_sha256:
+        raise CGXCrossAnalysisError("occurrence hash mismatch")
+    if type(prefix) is not str or not any(prefix.startswith(k) for k in prefixes):
+        raise PermissionError("occurrence prefix denied")
+    def check():
+        if authorise(oid,revision,scope,prefix) is not True:
+            raise PermissionError("occurrence permission denied or revoked")
+    def scoped_fetch(key):
+        check()
+        result=fetch(oid,key)
+        check()
+        return result
+    check()
+    raw,stats=hydrate_nested_review_payload(root,scoped_fetch,prefix,
+                                        allowed_prefixes=prefixes,max_bytes=max_bytes)
+    check()
+    return raw,dict(stats,occurrence_sha256=expected_sha256,
+                    native_admitted=False,authority_transfer=False)

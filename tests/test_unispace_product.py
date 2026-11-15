@@ -72,3 +72,12 @@ class NestedReferenceTests(unittest.TestCase):
         self.assertEqual(module.facet_transition_options(r,v,parent=1,neighbor=3,direction='previous'),(2,))
         self.assertEqual(module.facet_transition_options(r,v,parent=4,neighbor=2),(1,))
         with self.assertRaises(ValueError): module.facet_transition_options(r,v|{174},parent=1,neighbor=2)
+
+def test_facet_strict_types_and_reserved_sentinel():
+    for v in (True,1.0,0,174):
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,2)],[1,2,v],parent=1,neighbor=None)
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,2)],[1,2],parent=v,neighbor=None)
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,v)],[1,2],parent=1,neighbor=None)

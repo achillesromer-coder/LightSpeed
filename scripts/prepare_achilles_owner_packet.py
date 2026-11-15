@@ -93,6 +93,9 @@ def _resolve_plan(instruction: str, task_id: str, planner: Callable | None) -> d
     # Only the explicit RUNTIME_NOT_AVAILABLE fallback may omit this digest.
     if payload.get("instruction_sha256") != _hash(instruction):
         raise ProfileHold("ACHILLES_SUPERVISOR_INSTRUCTION_BINDING_HOLD")
+    expected_workflow = f"cognigrex-{task_id}-{_hash(instruction)[:12]}"
+    if payload.get("workflow_id") != expected_workflow:
+        raise ProfileHold("ACHILLES_SUPERVISOR_TASK_BINDING_HOLD")
     if (payload.get("canonical_promotion_authorized") is not False
         or payload.get("public_publish_authorized") is not False):
         raise ProfileHold("ACHILLES_SELF_PROMOTION_HOLD")
@@ -117,7 +120,7 @@ def prepare_packet(
     instruction = instruction.strip()
     if not instruction or len(instruction) > 65536:
         raise ProfileHold("ACHILLES_INSTRUCTION_SIZE_HOLD")
-    if not task_id or len(task_id) > 128 or any(x in task_id for x in "\r\n\x00"):
+    if not task_id or task_id.strip() != task_id or len(task_id) > 128 or any(x in task_id for x in "\r\n\x00"):
         raise ProfileHold("ACHILLES_TASK_ID_HOLD")
     if not project_id or len(project_id) > 128 or any(x in project_id for x in "\r\n\x00"):
         raise ProfileHold("ACHILLES_PROJECT_ID_HOLD")

@@ -16,7 +16,7 @@ spec.loader.exec_module(module)
 
 def planned(instruction, task_id):
     return {
-        "workflow_id": task_id,
+        "workflow_id": f"cognigrex-{task_id}-{module._hash(instruction)[:12]}",
         "instruction_sha256": module._hash(instruction),
         "floor_sequence": ["Neo", "Architect", "Morpheus"],
         "proof_required": True,
@@ -225,3 +225,13 @@ def test_review_profile_lifecycle_and_rights_escalation_fail_closed(tmp_path, se
     candidate.write_text(json.dumps(profile), encoding="utf-8")
     with pytest.raises(module.ProfileHold, match="ACHILLES_PRIVILEGE_ESCALATION_HOLD"):
         module.load_profile(candidate)
+
+def test_priority_suffix_task_binding_not_inherited():
+    def swapped(instruction, task_id):
+        return planned(instruction, "ACHILLES-UNISPACE-DELIVERY-REVIEW-001b")
+    with pytest.raises(module.ProfileHold, match="TASK_BINDING_HOLD"):
+        module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001a", planner=swapped)
+    a=module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001a", planner=planned)
+    b=module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001b", planner=planned)
+    assert a["idempotency_fingerprint"]!=b["idempotency_fingerprint"]
+    assert not a["execution_request"]["execute"] and not b["execution_request"]["execute"]

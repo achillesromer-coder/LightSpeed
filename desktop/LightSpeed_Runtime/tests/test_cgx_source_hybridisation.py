@@ -314,3 +314,52 @@ def test_achilles_revision_reuse_and_inverse():
         resolve_achilles_revision_context(d2,h2,keys,never_fetch,allowed_sections=keys,max_bytes=1000000,**dict(args,prior_values=dict(before,identity={})))
     with pytest.raises(CGXCrossAnalysisError):
         resolve_achilles_revision_context(d2,h2,keys,never_fetch,allowed_sections=keys,max_bytes=1000000,**dict(args,expected_prior_review_sha256="0"*64))
+
+
+
+def test_revision_preprocessing_limits_before_warm_repack(monkeypatch):
+    import json
+    import lightspeed_runtime.cgx_cross_analysis as m
+    raw=(Path(__file__).resolve().parents[3]/"cgx/domain_templates/achilles_owner_operator_profile.json").read_bytes()
+    d,h,o=m.pack_achilles_profile_review(raw)
+    k=("identity",)
+    vals,receipt,_=m.resolve_achilles_review_context(d,h,k,o.__getitem__,allowed_sections=k,max_bytes=1000000)
+    calls=[]
+    orig=m.pack_nested_review_payload
+    def spy(*a,**kw):
+        calls.append("pack")
+        return orig(*a,**kw)
+    monkeypatch.setattr(m,"pack_nested_review_payload",spy)
+    def run(prior,budget):
+        return m.resolve_achilles_revision_context(d,h,k,o.__getitem__,allowed_sections=k,max_bytes=budget,
+            prior_values=prior,prior_receipt=receipt,expected_prior_review_sha256=receipt["review_sha256"])
+    with pytest.raises(CGXCrossAnalysisError): run(vals,1)
+    assert calls==[]
+    with pytest.raises(CGXCrossAnalysisError,match="byte budget"): run({"identity":"x"*1000000},1000000)
+    cyc=[];cyc.append(cyc)
+    with pytest.raises(CGXCrossAnalysisError,match="shape budget"): run({"identity":cyc},1000000)
+    assert calls==[]
+    assert run(vals,1000000)[0]==vals and calls==["pack"]
+
+
+def test_occurrence_permissions_are_not_payload_identity():
+    import hashlib,json
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload,resolve_review_occurrence
+    root,objects=pack_nested_review_payload(b"shared bytes")
+    def occurrence(oid):
+        x=dict(occurrence_id=oid,source_revision="r1",scope_revision="acl1",root=root,allowed_prefixes=[""])
+        return x,hashlib.sha256(json.dumps(x,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode()).hexdigest()
+    a,ha=occurrence("A"); b,hb=occurrence("B")
+    calls=[]
+    def fetch(oid,k):
+        calls.append(oid)
+        return objects[k]
+    def auth(oid,rev,scope,prefix): return oid=="A" and scope=="acl1"
+    assert resolve_review_occurrence(a,ha,fetch,auth,max_bytes=1000)[0]==b"shared bytes"
+    before=list(calls)
+    with pytest.raises(PermissionError): resolve_review_occurrence(b,hb,fetch,auth,max_bytes=1000)
+    with pytest.raises(CGXCrossAnalysisError): resolve_review_occurrence(b,ha,fetch,auth,max_bytes=1000)
+    assert calls==before
+    def revoked(oid,rev,scope,prefix): return len(calls)==len(before)
+    with pytest.raises(PermissionError): resolve_review_occurrence(a,ha,fetch,revoked,max_bytes=1000)
+    assert len(calls)==len(before)+1
