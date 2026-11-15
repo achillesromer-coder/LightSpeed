@@ -198,7 +198,8 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
         return hashlib.sha256(raw).hexdigest()
 
     def read_source(path):
-        raw = path.read_bytes()
+        with path.open("rb") as stream:
+            raw=stream.read(1024*1024+1)
         if not 1 <= len(raw) <= 1024 * 1024:
             raise CapabilityRegistryError("interop source size")
         return raw
@@ -252,6 +253,53 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
         add("skill:"+name, {"skill_id":name,"source_path":path.relative_to(REPO_ROOT).as_posix(),
                            "source_sha256":digest(data),"source_bytes":len(data),
                            "execution_authorized":False})
+    # Reference the existing floor manifests; do not turn role metadata into a grant.
+    floor_dirs={"Architect":"Z+1_Architect","Neo":"Z+2_Neo","Trinity":"Z+3_Trinity",
+                "Morpheus":"Z-1_Morpheus","Oracle":"Z-2_Oracle","Smith":"Z-3_Smith",
+                "Merovingian":"Z-4_Merovingian","TheConstruct":"Z0_TheConstruct"}
+    mandatory={"dry_run_first","one_active_floor","one_ollama_session","no_secret_values",
+               "no_destructive_moves","no_drive_mutation","no_public_route_mutation",
+               "no_main_merge","no_heavy_runner_without_gate"}
+    role_source_holds=[]
+    for floor in profile.get("floors") or []:
+        if floor not in floor_dirs:
+            role_source_holds.append(floor)
+            continue
+        path=REPO_ROOT/"docs/agent-ingestion/local-agent-homes"/floor_dirs[floor]/"agent_manifest.json"
+        if not path.is_file():
+            role_source_holds.append(floor)
+            continue
+        data=read_source(path)
+        manifest=json.loads(data)
+        gates=manifest.get("gates")
+        function=manifest.get("function")
+        if (manifest.get("lightspeed_floor")!=floor or manifest.get("lightspeed_agent_id")!=floor.lower()
+                or type(gates) is not list or len(gates)>64
+                or not all(type(g) is str and 0<len(g)<=128 for g in gates)
+                or not mandatory.issubset(gates)
+                or type(function) is not str or not 0<len(function)<=512):
+            raise CapabilityRegistryError("specialist source identity or gates changed")
+        add("role:"+floor.lower(),{"role_id":floor.lower(),"floor":floor,
+            "responsibility":function,"standing_gates":sorted(set(gates)),
+            "source_path":path.relative_to(REPO_ROOT).as_posix(),"source_sha256":digest(data),
+            "source_bytes":len(data),"execution_authorized":False,
+            "authority_transfer":False,"live_skill_learning_verified":False})
+    if profile["selector"]=="achilles":
+        path=REPO_ROOT/"cgx/domain_templates/achilles_owner_operator_profile.json"
+        data=read_source(path)
+        owner=json.loads(data)
+        if (owner.get("identity",{}).get("agent")!="Achilles"
+                or owner.get("authority",{}).get("agent_can_self_approve") is not False
+                or owner.get("authority",{}).get("default_execution_class")!="READ_ONLY"
+                or owner.get("lifecycle",{}).get("native_dbr_admission") is not False
+                or owner.get("lifecycle",{}).get("release_authorized") is not False):
+            raise CapabilityRegistryError("Achilles role authority hold")
+        add("role:achilles",{"role_id":"achilles","floor":"Achilles",
+            "responsibility":"Owner/operator review profile",
+            "standing_gates":["read_only","no_self_approval","native_admission_hold","release_hold"],
+            "source_path":path.relative_to(REPO_ROOT).as_posix(),"source_sha256":digest(data),
+            "source_bytes":len(data),"execution_authorized":False,
+            "authority_transfer":False,"live_skill_learning_verified":False})
     for key,surface in sorted(surfaces.items()):
         # Report missing selector exposure explicitly, never widen it.
         add("surface:"+key, {
@@ -268,6 +316,7 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
           "selector":profile["selector"],"floors":list(profile.get("floors") or []),
           "source_sha256":{p.relative_to(REPO_ROOT).as_posix():digest(b) for p,b in zip(paths,raw)},
           "references":dict(sorted(refs.items())),
+          "role_source_holds":sorted(role_source_holds),
           "provider_invocation_performed":False,"authority_transfer":False,
           "native_admitted":False}
     stamp=digest(canonical(view))

@@ -59,3 +59,15 @@ cgx_run_local_work requires confirmed=true, forces heavy=false, and does not gra
 ## Help behavior
 
 For `/help` or `/capabilities`, return the selector's global + selector-specific shortcalls grouped as available, assisted/gated, and missing/unwrapped. Keep the list concise unless the user requests the full registry.
+
+
+## Task composition and specialist source boundaries
+
+Use the existing cgx_get_capabilities interoperability mode to obtain the current
+selector view. Compose selected route, toolkit, skill, surface and role references
+with the exact task_id and view revision. Reuse shared source references rather
+than copying a skill per agent. Floor references describe existing source
+responsibilities and standing gates; they never grant execution permissions.
+Unknown or unavailable specialist source manifests remain held. A composition
+hash or ternary root is evidence of selected metadata, not training, a provider
+lease, an authenticated ACL, minting, or release approval.

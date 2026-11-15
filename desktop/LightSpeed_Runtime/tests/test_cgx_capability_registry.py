@@ -185,3 +185,28 @@ def test_composition_reuses_exact_task_bound_references():
     for keys in ([refs[0],refs[0]],["toolkit:freecad"],[]):
         with pytest.raises(CapabilityRegistryError):compose(keys)
     with pytest.raises(CapabilityRegistryError):compose(stamp="0"*64)
+
+
+
+def test_specialist_role_references_preserve_source_scope():
+    import hashlib
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review, compose_capability_review, REPO_ROOT
+    a=capability_interop_review("Achilles")
+    ls=capability_interop_review("LightSpeed")
+    assert sum(k.startswith("role:") for k in a["references"])==5
+    assert sum(k.startswith("role:") for k in ls["references"])==8
+    assert "role:smith" not in a["references"] and "role:achilles" not in ls["references"]
+    assert a["references"]["role:architect"]==ls["references"]["role:architect"]
+    for key in [k for k in ls["references"] if k.startswith("role:")]:
+        result=capability_interop_review("LightSpeed",reference=key,expected_view_sha256=ls["view_sha256"])
+        meta=result["metadata"]
+        assert hashlib.sha256((REPO_ROOT/meta["source_path"]).read_bytes()).hexdigest()==meta["source_sha256"]
+        assert "no_heavy_runner_without_gate" in meta["standing_gates"]
+        assert not meta["execution_authorized"] and not meta["live_skill_learning_verified"]
+    c=compose_capability_review("Achilles",task_id="review-001c",
+            expected_view_sha256=a["view_sha256"],references=["role:achilles","role:oracle","skill:cgx-capability-router"])
+    assert len(c["references"])==3 and not c["authority_transfer"]
+    with pytest.raises(CapabilityRegistryError):
+        compose_capability_review("Achilles",task_id="review-001c",
+            expected_view_sha256=a["view_sha256"],references=["role:smith"])
