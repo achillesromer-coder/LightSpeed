@@ -27,7 +27,7 @@ from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, co
 from lightspeed_runtime.cgx_object_context import (CGXObjectContextError, resolve_object_context,
     twin_source_review_index, resolve_scoped_twin_context)
 from lightspeed_runtime.cgx_cross_analysis import (CGXCrossAnalysisError, atlas_review_workset,
-    hydrate_atlas_review_rows)
+    hydrate_atlas_review_rows, hydrate_review_collection)
 from lightspeed_runtime.project_artifact_store import stage_project_artifacts
 from lightspeed_runtime.node_exchange import (
     NodeExchangeError,
@@ -1414,6 +1414,60 @@ def _submit_command_transaction(
         ) from exc
 
 
+def _read_pinned_atlas_row(*, stamp, expected_index, expected_occurrence, query,
+                           task_id, recheck):
+    """Optional host-pinned local review carrier; never trust request-supplied paths."""
+    import zipfile
+    root = os.environ.get("LIGHTSPEED_ATLAS_REVIEW_ROOT", "")
+    pin = os.environ.get("LIGHTSPEED_ATLAS_REVIEW_DESCRIPTOR_SHA256", "")
+    workset = os.environ.get("LIGHTSPEED_ATLAS_REVIEW_WORKSET_SHA256", "")
+    if not any((root, pin, workset)):
+        return None
+    if (not root or not Path(root).is_absolute()
+            or not re.fullmatch(r"[a-f0-9]{64}", pin)
+            or not re.fullmatch(r"[a-f0-9]{64}", workset)
+            or workset != expected_index):
+        raise CGXCrossAnalysisError("atlas carrier host pin mismatch")
+    recheck()
+    folder = Path(root).resolve(strict=True)
+    stem = "CGX_Atlas_Review_" + pin[:12]
+    descriptor_path = (folder / (stem + ".json")).resolve(strict=True)
+    archive_path = (folder / (stem + ".zip")).resolve(strict=True)
+    if (descriptor_path.parent != folder or archive_path.parent != folder
+            or archive_path.stat().st_size > 16*1024*1024):
+        raise CGXCrossAnalysisError("atlas carrier outside bounded host root")
+    with descriptor_path.open("rb") as stream:
+        body = stream.read(256*1024+1)
+    if len(body)>256*1024 or hashlib.sha256(body).hexdigest()!=pin:
+        raise CGXCrossAnalysisError("atlas descriptor pin mismatch")
+    try:
+        descriptor=json.loads(body)
+        entry=descriptor["entries"][query]
+        if (descriptor["source_revision"]!=stamp or entry["sha256"]!=expected_occurrence
+                or descriptor["task_id"]!="atlas-closure"):
+            raise CGXCrossAnalysisError("atlas carrier source binding mismatch")
+        def allowed(t,k,r,scope,digest):
+            return (t=="atlas-closure" and k==query and r==stamp
+                    and scope=="owner-session-review" and digest==pin and recheck())
+        with archive_path.open("rb") as stream:
+            if os.fstat(stream.fileno()).st_size>16*1024*1024:
+                raise CGXCrossAnalysisError("atlas carrier size budget")
+            with zipfile.ZipFile(stream) as z:
+                values,receipt=hydrate_review_collection(z,descriptor,pin,
+                    task_id="atlas-closure",source_revision=stamp,
+                    scope_revision="owner-session-review",selected=[query],
+                    max_bytes=65536,authorise=allowed)
+        recheck()
+        data=values[query]
+        if hashlib.sha256(data).hexdigest()!=expected_occurrence:
+            raise CGXCrossAnalysisError("atlas occurrence revision mismatch")
+        return data,{**receipt,"task_id":task_id,"collection_task_id":"atlas-closure",
+                     "source_sha256":stamp,"workset_sha256":workset,
+                     "execution_authorized":False,"physical_instances_qualified":0}
+    except (KeyError,TypeError,ValueError,zipfile.BadZipFile,RuntimeError) as exc:
+        raise CGXCrossAnalysisError("atlas carrier invalid or unavailable") from exc
+
+
 def create_app(root: Path | str) -> FastAPI:
     # Preserve the stable D:\LightSpeed operator namespace. Path.resolve()
     # follows the App junction to its C-drive backing target and makes one
@@ -1700,10 +1754,16 @@ def create_app(root: Path | str) -> FastAPI:
                         def allowed(t,k,s,r,i):
                             return (t==task_id and k==query and s==stamp and r=="owner-session-review"
                                     and i==expected_index_sha256 and recheck())
-                        values,receipt=hydrate_atlas_review_rows(raw,expected_sha256=stamp,
-                            expected_workset_sha256=expected_index_sha256,selected=[query],task_id=task_id,
-                            scope_revision="owner-session-review",max_bytes=65536,authorise=allowed)
-                        data=values[query]
+                        pinned=_read_pinned_atlas_row(stamp=stamp,expected_index=expected_index_sha256,
+                            expected_occurrence=expected_occurrence_sha256,query=query,
+                            task_id=task_id,recheck=recheck)
+                        if pinned is None:
+                            values,receipt=hydrate_atlas_review_rows(raw,expected_sha256=stamp,
+                                expected_workset_sha256=expected_index_sha256,selected=[query],task_id=task_id,
+                                scope_revision="owner-session-review",max_bytes=65536,authorise=allowed)
+                            data=values[query]
+                        else:
+                            data,receipt=pinned
                         if hashlib.sha256(data).hexdigest()!=expected_occurrence_sha256:
                             raise CGXCrossAnalysisError("atlas occurrence revision mismatch")
                         result={"atlas_row":json.loads(data),"review_receipt":receipt}

@@ -145,7 +145,8 @@ def test_atlas_owner_range_and_cardinality_are_exact() -> None:
 
 
 
-def test_atlas_workset_exact_source_and_occurrence_scope():
+def test_atlas_workset_exact_source_and_occurrence_scope(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / 'desktop' / 'LightSpeed_Runtime'))
     import hashlib
     import pytest
     from lightspeed_runtime.cgx_cross_analysis import atlas_review_workset,hydrate_atlas_review_rows,CGXCrossAnalysisError
@@ -214,7 +215,8 @@ def test_object_workset_candidate_source_bindings_no_instance_uplift():
     with pytest.raises(ValueError):m.object_source_review(q,schema)
 
 
-def test_atlas_collection_all_occurrences_sparse_read():
+def test_atlas_collection_all_occurrences_sparse_read(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / 'desktop' / 'LightSpeed_Runtime'))
     import hashlib, io, json, zipfile
     import pytest
     from lightspeed_runtime.cgx_cross_analysis import (

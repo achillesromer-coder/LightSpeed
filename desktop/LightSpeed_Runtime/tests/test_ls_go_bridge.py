@@ -2156,3 +2156,50 @@ def test_source_review_owner_session_revision_and_revocation(tmp_path,monkeypatc
          "expected_index_sha256":idx["review_sha256"],
          "expected_occurrence_sha256":idx["references"]["intersol"]["occurrence_sha256"]},headers=headers)
     assert response.status_code==403 and "object_context" not in response.json()
+
+
+def test_pinned_atlas_carrier_owner_session(tmp_path,monkeypatch):
+    import hashlib,json,zipfile
+    from lightspeed_runtime.cgx_object_context import REPO_ROOT
+    from lightspeed_runtime.cgx_cross_analysis import write_atlas_review_collection
+    database=CommandFixtureDatabase(tmp_path/"review.db")
+    database.execute_query=lambda *a:[]
+    database.execute_update=lambda *a:0
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(database,object()))
+    sessions=ls_go_bridge.OwnerSessionStore()
+    token,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL")
+    monkeypatch.setattr(ls_go_bridge,"OwnerSessionStore",lambda:sessions)
+    monkeypatch.setattr(ls_go_bridge.CredentialStore,"read_record",lambda *_:{"credential_key_id":"TEST-CREDENTIAL"})
+    monkeypatch.setattr(ls_go_bridge,"credential_status",lambda _:{"configured":True,"credential_key_id":"TEST-CREDENTIAL","must_change":False})
+    raw=(REPO_ROOT/"cgx/component_atlas/component_geometry_atlas_v0_1.json").read_bytes()
+    stamp=hashlib.sha256(raw).hexdigest()
+    idx=ls_go_bridge.atlas_review_workset(raw,expected_sha256=stamp)
+    archive=tmp_path/"carrier.zip"
+    with zipfile.ZipFile(archive,"w") as z:
+        d,h=write_atlas_review_collection(z,raw,expected_sha256=stamp,
+            expected_workset_sha256=idx["workset_sha256"],task_id="atlas-closure")
+    stem=tmp_path/("CGX_Atlas_Review_"+h[:12])
+    archive.rename(stem.with_suffix(".zip"))
+    desc=stem.with_suffix(".json")
+    desc.write_bytes(json.dumps(d,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii"))
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_ROOT",str(tmp_path))
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_DESCRIPTOR_SHA256",h)
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_WORKSET_SHA256",idx["workset_sha256"])
+    monkeypatch.setattr(ls_go_bridge,"hydrate_atlas_review_rows",lambda *a,**kw:pytest.fail("whole atlas fallback used"))
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    key=sorted(d["entries"])[0]
+    url="/api/v1/object-context/"+key
+    params=dict(review_mode="atlas", task_id="fixture-review",expected_source_sha256=stamp,
+        expected_index_sha256=idx["workset_sha256"],expected_occurrence_sha256=d["entries"][key]["sha256"])
+    headers={"X-LightSpeed-Session":token}
+    assert client.get(url,params=params).status_code==403
+    response=client.get(url,params=params,headers=headers)
+    assert response.status_code==200,response.text
+    receipt=response.json()["review_receipt"]
+    assert receipt["descriptor_sha256"]==h and receipt["task_id"]=="fixture-review"
+    assert receipt["logical_fetched_bytes"]<len(raw) and not receipt["native_admitted"]
+    assert client.get(url,params=dict(params,expected_index_sha256="0"*64),headers=headers).status_code==409
+    desc.write_bytes(b"{}")
+    assert client.get(url,params=params,headers=headers).status_code==409
+    sessions.revoke(token)
+    assert client.get(url,params=params,headers=headers).status_code==403
