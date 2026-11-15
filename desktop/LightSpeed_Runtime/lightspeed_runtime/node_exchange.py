@@ -579,6 +579,53 @@ def reconcile_remote_health_review(request, observation, *, expected_request_sha
     return receipt
 
 
+
+def plan_transport_handshake(*, links, allowed, payload_bytes, max_metered_bytes=0,
+                             heartbeat_seconds=60):
+    """Select a transport proposal only; observations never grant authority."""
+    modes = ("lan", "bluetooth", "https_relay")
+    if type(allowed) is not list or len(allowed) > 3 or any(
+        type(x) is not str or x not in modes for x in allowed
+    ) or len(set(allowed)) != len(allowed):
+        raise NodeExchangeError("invalid transport policy")
+    for value, limit in ((payload_bytes, 512*1024*1024),
+                         (max_metered_bytes, 512*1024*1024)):
+        if type(value) is not int or not 0 <= value <= limit:
+            raise NodeExchangeError("invalid transfer budget")
+    if type(heartbeat_seconds) is not int or not 15 <= heartbeat_seconds <= 3600:
+        raise NodeExchangeError("invalid heartbeat interval")
+    if type(links) is not list or len(links) > 3:
+        raise NodeExchangeError("invalid link observations")
+    seen, candidates = set(), []
+    for link in links:
+        if type(link) is not dict or set(link) != {
+            "mode", "available", "permission_granted", "metered", "max_payload_bytes"
+        }:
+            raise NodeExchangeError("invalid link observation")
+        mode = link["mode"]
+        if type(mode) is not str or mode not in modes or mode in seen:
+            raise NodeExchangeError("invalid or duplicate link")
+        seen.add(mode)
+        if any(type(link[k]) is not bool for k in
+               ("available", "permission_granted", "metered")):
+            raise NodeExchangeError("invalid link flag")
+        cap = link["max_payload_bytes"]
+        if type(cap) is not int or not 0 <= cap <= 512*1024*1024:
+            raise NodeExchangeError("invalid link capacity")
+        if (mode in allowed and link["available"] and link["permission_granted"]
+            and payload_bytes <= cap and
+            (not link["metered"] or payload_bytes <= max_metered_bytes)):
+            candidates.append(mode)
+    selected = next((mode for mode in allowed if mode in candidates), "offline")
+    plan = {"schema": "CGX-TRANSPORT-PLAN/0.1", "mode": selected,
+            "payload_bytes": payload_bytes, "heartbeat_seconds": heartbeat_seconds,
+            "state": "queue_local" if selected == "offline" else "await_peer_authentication",
+            "peer_authenticated": False, "transport_activated": False,
+            "execution_authorized": False, "authority_transfer": False}
+    plan["plan_sha256"] = _canonical_json_sha256(plan)
+    return plan
+
+
 __all__ = [
     "COMPUTE_RECEIPT_SCHEMA",
     "COMPUTE_SCHEMA",
@@ -589,6 +636,7 @@ __all__ = [
     "TRANSFER_SCHEMA",
     "build_compute_request",
     "build_exchange_status",
+    "plan_transport_handshake",
     "prepare_remote_health_review",
     "reconcile_remote_health_review",
     "build_transfer_envelope",

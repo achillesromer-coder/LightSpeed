@@ -301,3 +301,28 @@ def test_remote_health_review_exact_scope_and_challenge():
     with pytest.raises(PermissionError): review(obs,authorise=lambda *a:next(seq))
     with pytest.raises(NodeExchangeError):
         reconcile_remote_health_review(req,obs,expected_request_sha256="0"*64,authorise=auth,now=now)
+
+
+def test_transport_plan_policy_and_fallback():
+    from lightspeed_runtime.node_exchange import plan_transport_handshake
+    def link(mode, **kw):
+        return dict(mode=mode, available=True, permission_granted=True,
+                    metered=False, max_payload_bytes=1000) | kw
+    links=[link("lan"),link("bluetooth"),link("https_relay",metered=True)]
+    def plan(ls=links, **kw):
+        return plan_transport_handshake(links=ls, **(
+            dict(allowed=["lan","bluetooth","https_relay"],payload_bytes=500) | kw))
+    assert plan()["mode"] == "lan"
+    assert plan(links[1:])["mode"] == "bluetooth"
+    assert plan(links[2:])["mode"] == "offline"
+    assert plan(links[2:],max_metered_bytes=500)["mode"] == "https_relay"
+    assert plan(allowed=["bluetooth","lan"])["mode"] == "bluetooth"
+    assert plan(payload_bytes=1001)["mode"] == "offline"
+    assert plan([link("lan",permission_granted=False)])["mode"] == "offline"
+    assert plan()["state"] == "await_peer_authentication"
+    assert plan() == plan()
+    assert not plan()["peer_authenticated"] and not plan()["execution_authorized"]
+    for kw in (dict(payload_bytes=True),dict(heartbeat_seconds=0),
+               dict(allowed=["lan","lan"]),dict(max_metered_bytes=-1)):
+        with pytest.raises(NodeExchangeError): plan(**kw)
+    with pytest.raises(NodeExchangeError): plan([links[0],links[0]])

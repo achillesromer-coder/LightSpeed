@@ -7,7 +7,11 @@
     "semantic_root": "cgx://cgx.cgx",
     "lightspeed_namespace": "cgx://romer.industries/emassc/lightspeed",
     "surface": "mobile",
-    "selectors": ["Cognigrex", "LightSpeed", "Achilles"],
+    "selectors": [
+      "Cognigrex",
+      "LightSpeed",
+      "Achilles"
+    ],
     "protocol_chain": [
       "CGX-MOBILE-BOOTSTRAP/0.1",
       "CGX-DEVICE-HANDSHAKE/0.1",
@@ -67,10 +71,31 @@
   "transport": {
     "preferred": "authenticated private HTTPS/WSS or equivalent existing CGX transport adapter",
     "local_peer": "authenticated LAN peer transport when present",
-    "envelopes": ["exchange", "transfer", "compute"],
+    "envelopes": [
+      "exchange",
+      "transfer",
+      "compute"
+    ],
     "content_addressed_transfer": true,
     "receiver_hash_readback_required": true,
-    "arbitrary_shell_capability": false
+    "arbitrary_shell_capability": false,
+    "negotiation": {
+      "planner": "lightspeed_runtime.node_exchange.plan_transport_handshake",
+      "user_ordered_modes": [
+        "lan",
+        "bluetooth",
+        "https_relay"
+      ],
+      "optional_relay": true,
+      "fallback": "offline queue proposal",
+      "parameters": [
+        "allowed",
+        "payload_bytes",
+        "max_metered_bytes",
+        "heartbeat_seconds"
+      ],
+      "activation": "planning only; independently authenticate peers and enforce existing leases before transfer; observed link flags are not proof"
+    }
   },
   "activation_gates": [
     "mobile Host/PWA/native handler is physically installed or registered",
