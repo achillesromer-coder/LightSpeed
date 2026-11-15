@@ -227,3 +227,46 @@ def test_existing_achilles_profile_semantic_roundtrip():
         pack_achilles_profile_review(json.dumps(dict(original,identity={"agent":"Other"})).encode())
     with pytest.raises(CGXCrossAnalysisError):
         pack_achilles_profile_review(b'{"x":1,"x":2}')
+
+
+
+def test_accumulative_context_roundtrip_and_aggregate_budget():
+    import json
+    from lightspeed_runtime.cgx_cross_analysis import pack_achilles_profile_review, resolve_achilles_review_context
+    raw=(Path(__file__).resolve().parents[3]/"cgx/domain_templates/achilles_owner_operator_profile.json").read_bytes()
+    d,h,o=pack_achilles_profile_review(raw)
+    selected=("identity","dynamic_system_research","source_contract")
+    calls=[]
+    def fetch(k):
+        calls.append(k)
+        return o[k]
+    values,receipt,stats=resolve_achilles_review_context(d,h,selected,fetch,allowed_sections=selected,max_bytes=1000000)
+    assert values=={k:json.loads(raw)[k] for k in selected}
+    assert len(calls)==len(set(calls))==stats["fetched_objects"]
+    assert not receipt["complete_profile"] and not receipt["reasoning_evaluated"]
+    assert resolve_achilles_review_context(d,h,selected[::-1],o.__getitem__,allowed_sections=selected,max_bytes=1000000)[:2]==(values,receipt)
+    all_sections=tuple(d["sections"])
+    rebuilt,full,_=resolve_achilles_review_context(d,h,all_sections,o.__getitem__,allowed_sections=all_sections,max_bytes=1000000)
+    assert rebuilt==json.loads(raw) and full["complete_profile"]
+    calls.clear()
+    with pytest.raises(PermissionError):
+        resolve_achilles_review_context(d,h,selected,fetch,allowed_sections=("identity",),max_bytes=1000000)
+    assert calls==[]
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_review_context(d,h,selected,o.__getitem__,allowed_sections=selected,max_bytes=stats["fetched_bytes"]-1)
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_review_context(d,h,("identity","identity"),o.__getitem__,allowed_sections=selected,max_bytes=1000000)
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_review_context(d,h,selected,lambda k:b"tampered",allowed_sections=selected,max_bytes=1000000)
+
+
+def test_accumulative_context_reuses_identical_section_objects():
+    import json
+    from lightspeed_runtime.cgx_cross_analysis import pack_achilles_profile_review, resolve_achilles_review_context
+    raw=json.dumps({"identity":{"agent":"Achilles","canonical_semantic_parent":"cgx:root:cognigrex"},
+                    "lifecycle":{"native_dbr_admission":False,"release_authorized":False},
+                    "dynamic_system_research":{},"a":{"same":1},"b":{"same":1}}).encode()
+    d,h,o=pack_achilles_profile_review(raw)
+    v,r,s=resolve_achilles_review_context(d,h,("a","b"),o.__getitem__,allowed_sections=("a","b"),max_bytes=10000)
+    assert v["a"]==v["b"] and len(r["sections"])==2
+    assert s["reused_reads"]==2 and s["fetched_objects"]==2

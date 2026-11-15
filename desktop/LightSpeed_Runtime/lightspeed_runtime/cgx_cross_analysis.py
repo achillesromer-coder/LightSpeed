@@ -544,3 +544,84 @@ def hydrate_achilles_profile_section(descriptor, expected_sha256, section, fetch
         if isinstance(exc, CGXCrossAnalysisError):
             raise
         raise CGXCrossAnalysisError("invalid section descriptor") from exc
+
+
+
+def resolve_achilles_review_context(descriptor, expected_sha256, sections, fetch, *,
+                                    allowed_sections, max_bytes):
+    """Resolve a bounded, source-bound context with shared object reads.
+
+    A receipt identifies verified input values, not a learned fact, a model
+    result, permission, or native DBR. The caller authenticates the expected
+    descriptor and the scope. No persistent store or execution is introduced.
+    """
+    import hashlib
+    import json
+
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=True, allow_nan=False).encode("ascii")
+
+    if (type(max_bytes) is not int or not 1 <= max_bytes <= 32 * 1024 * 1024
+            or not isinstance(sections, (tuple, list)) or not 1 <= len(sections) <= 64
+            or not all(isinstance(k, str) and k for k in sections)
+            or len(set(sections)) != len(sections)
+            or not isinstance(allowed_sections, (tuple, frozenset))
+            or not all(isinstance(k, str) and k for k in allowed_sections)):
+        raise CGXCrossAnalysisError("invalid context selection or budget")
+    if not set(sections).issubset(allowed_sections):
+        raise PermissionError("context scope denied")
+    try:
+        if hashlib.sha256(canonical(descriptor)).hexdigest() != expected_sha256:
+            raise CGXCrossAnalysisError("descriptor hash mismatch")
+        if not all(k in descriptor["sections"] for k in sections):
+            raise CGXCrossAnalysisError("unknown context section")
+    except (TypeError, ValueError, KeyError, AttributeError, RecursionError) as exc:
+        if isinstance(exc, CGXCrossAnalysisError):
+            raise
+        raise CGXCrossAnalysisError("invalid context descriptor") from exc
+
+    cache = {}
+    spent = 0
+    references = 0
+
+    def shared_fetch(key):
+        nonlocal spent, references
+        references += 1
+        if key not in cache:
+            raw = fetch(key)
+            if type(raw) is not bytes or len(raw) > max_bytes - spent:
+                raise CGXCrossAnalysisError("aggregate fetch budget exceeded")
+            if hashlib.sha256(raw).hexdigest() != key:
+                raise CGXCrossAnalysisError("context object hash mismatch")
+            cache[key] = raw
+            spent += len(raw)
+        return cache[key]
+
+    values = {}
+    evidence = {}
+    for name in sorted(sections):
+        value, stats = hydrate_achilles_profile_section(
+            descriptor, expected_sha256, name, shared_fetch,
+            allowed_sections=allowed_sections, max_bytes=max_bytes)
+        values[name] = value
+        entry = descriptor["sections"][name]
+        evidence[name] = {"root": entry["root"], "payload_sha256": entry["sha256"],
+                          "payload_bytes": stats["expanded_bytes"]}
+    value_hash = hashlib.sha256(canonical(values)).hexdigest()
+    complete = set(values) == set(descriptor["sections"])
+    if complete and value_hash != descriptor["canonical_profile_sha256"]:
+        raise CGXCrossAnalysisError("complete semantic reconstruction mismatch")
+    receipt = {
+        "schema": "CGX-ACHILLES-REVIEW-CONTEXT/0.1",
+        "descriptor_sha256": expected_sha256,
+        "source_sha256": descriptor["source_sha256"],
+        "sections": evidence, "context_sha256": value_hash,
+        "complete_profile": complete, "evidence_class": "VERIFIED_REVIEW_INPUT",
+        "native_admitted": False, "reasoning_evaluated": False,
+        "authority_transfer": False,
+    }
+    receipt["review_sha256"] = hashlib.sha256(canonical(receipt)).hexdigest()
+    return values, receipt, {"fetched_bytes": spent, "fetched_objects": len(cache),
+                             "object_references": references,
+                             "reused_reads": references - len(cache)}
