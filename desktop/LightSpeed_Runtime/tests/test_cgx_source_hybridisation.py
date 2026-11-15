@@ -270,3 +270,47 @@ def test_accumulative_context_reuses_identical_section_objects():
     v,r,s=resolve_achilles_review_context(d,h,("a","b"),o.__getitem__,allowed_sections=("a","b"),max_bytes=10000)
     assert v["a"]==v["b"] and len(r["sections"])==2
     assert s["reused_reads"]==2 and s["fetched_objects"]==2
+
+
+
+def test_achilles_revision_reuse_and_inverse():
+    import json
+    from lightspeed_runtime.cgx_cross_analysis import (
+        pack_achilles_profile_review, resolve_achilles_review_context,
+        resolve_achilles_revision_context)
+    raw=(Path(__file__).resolve().parents[3]/"cgx/domain_templates/achilles_owner_operator_profile.json").read_bytes()
+    d,h,o=pack_achilles_profile_review(raw)
+    keys=("identity","source_contract","dynamic_system_research")
+    before,receipt,baseline=resolve_achilles_review_context(d,h,keys,o.__getitem__,allowed_sections=keys,max_bytes=1000000)
+    revised=json.loads(raw)
+    revised["dynamic_system_research"]["synthetic_revision_test_only"]=True
+    d2,h2,o2=pack_achilles_profile_review(json.dumps(revised).encode())
+    after,proof,transition,stats=resolve_achilles_revision_context(
+        d2,h2,keys,o2.__getitem__,allowed_sections=keys,max_bytes=1000000,
+        prior_values=before,prior_receipt=receipt,expected_prior_review_sha256=receipt["review_sha256"])
+    assert after=={k:revised[k] for k in keys}
+    assert transition["reused_sections"]==["identity","source_contract"]
+    assert transition["resolved_sections"]==["dynamic_system_research"]
+    assert stats["external_bytes"]<stats["fetched_bytes"]
+    assert not transition["native_admitted"]
+    cold=resolve_achilles_review_context(d2,h2,keys,o2.__getitem__,allowed_sections=keys,max_bytes=1000000)
+    assert cold[:2]==(after,proof)
+    restored,restored_proof,_,_=resolve_achilles_revision_context(
+        d,h,keys,o.__getitem__,allowed_sections=keys,max_bytes=1000000,
+        prior_values=after,prior_receipt=proof,expected_prior_review_sha256=proof["review_sha256"])
+    assert restored==before and restored_proof==receipt
+    def never_fetch(k):
+        raise AssertionError("unnecessary external read")
+    again,again_proof,_,again_stats=resolve_achilles_revision_context(
+        d,h,keys,never_fetch,allowed_sections=keys,max_bytes=1000000,
+        prior_values=before,prior_receipt=receipt,expected_prior_review_sha256=receipt["review_sha256"])
+    assert again==before and again_proof==receipt and again_stats["external_bytes"]==0
+    args=dict(prior_values=before,prior_receipt=receipt,expected_prior_review_sha256=receipt["review_sha256"])
+    with pytest.raises(PermissionError):
+        resolve_achilles_revision_context(d2,h2,keys,never_fetch,allowed_sections=("identity",),max_bytes=1000000,**args)
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_revision_context(d2,h2,keys,o2.__getitem__,allowed_sections=keys,max_bytes=1,**args)
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_revision_context(d2,h2,keys,never_fetch,allowed_sections=keys,max_bytes=1000000,**dict(args,prior_values=dict(before,identity={})))
+    with pytest.raises(CGXCrossAnalysisError):
+        resolve_achilles_revision_context(d2,h2,keys,never_fetch,allowed_sections=keys,max_bytes=1000000,**dict(args,expected_prior_review_sha256="0"*64))

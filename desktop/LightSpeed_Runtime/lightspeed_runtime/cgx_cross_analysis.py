@@ -625,3 +625,98 @@ def resolve_achilles_review_context(descriptor, expected_sha256, sections, fetch
     return values, receipt, {"fetched_bytes": spent, "fetched_objects": len(cache),
                              "object_references": references,
                              "reused_reads": references - len(cache)}
+
+
+
+def resolve_achilles_revision_context(descriptor, expected_sha256, sections, fetch, *,
+                                     allowed_sections, max_bytes, prior_values,
+                                     prior_receipt, expected_prior_review_sha256):
+    """Reuse verified permitted semantic sections across profile revisions.
+
+    Prior receipts and current descriptor identities must be authenticated by
+    the caller. No permission, source authority or model learning is inherited.
+    The existing aggregate budget includes both cached and externally read
+    object bytes; external read savings are counted separately.
+    """
+    import hashlib
+    import json
+
+    def canonical(x):
+        return json.dumps(x, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=True, allow_nan=False).encode("ascii")
+
+    if (not isinstance(sections, (list, tuple)) or not 1 <= len(sections) <= 64
+            or not all(isinstance(k, str) for k in sections)
+            or len(set(sections)) != len(sections)
+            or not isinstance(allowed_sections, (tuple, frozenset))
+            or type(max_bytes) is not int or not 1 <= max_bytes <= 32 * 1024 * 1024):
+        raise CGXCrossAnalysisError("invalid revision context")
+    if not set(sections).issubset(allowed_sections):
+        raise PermissionError("revision context scope denied")
+    try:
+        if hashlib.sha256(canonical(descriptor)).hexdigest() != expected_sha256:
+            raise CGXCrossAnalysisError("descriptor hash mismatch")
+        if not all(k in descriptor["sections"] for k in sections):
+            raise CGXCrossAnalysisError("unknown revision section")
+        proof = dict(prior_receipt)
+        claimed = proof.pop("review_sha256")
+        if (claimed != expected_prior_review_sha256
+                or hashlib.sha256(canonical(proof)).hexdigest() != claimed
+                or proof.get("schema") != "CGX-ACHILLES-REVIEW-CONTEXT/0.1"
+                or proof.get("native_admitted") is not False
+                or proof.get("authority_transfer") is not False
+                or proof.get("reasoning_evaluated") is not False
+                or proof.get("evidence_class") != "VERIFIED_REVIEW_INPUT"
+                or not isinstance(prior_values, dict)
+                or set(prior_values) != set(proof["sections"])
+                or hashlib.sha256(canonical(prior_values)).hexdigest() != proof["context_sha256"]):
+            raise CGXCrossAnalysisError("prior context verification failed")
+
+        cached = {}
+        reused = []
+        for name in sorted(sections):
+            old = proof["sections"].get(name)
+            new = descriptor["sections"][name]
+            if old is None or (old["root"], old["payload_sha256"], old["payload_bytes"]) != (
+                    new["root"], new["sha256"], new["bytes"]):
+                continue
+            raw = canonical(prior_values[name])
+            if len(raw) != new["bytes"] or hashlib.sha256(raw).hexdigest() != new["sha256"]:
+                raise CGXCrossAnalysisError("prior section payload mismatch")
+            root, parts = pack_nested_review_payload(raw)
+            if root != new["root"]:
+                raise CGXCrossAnalysisError("prior section root mismatch")
+            cached.update(parts)
+            reused.append(name)
+    except (TypeError, ValueError, KeyError, AttributeError, RecursionError) as exc:
+        if isinstance(exc, CGXCrossAnalysisError):
+            raise
+        raise CGXCrossAnalysisError("invalid revision evidence") from exc
+
+    external_bytes = external_objects = 0
+    def revision_fetch(key):
+        nonlocal external_bytes, external_objects
+        if key in cached:
+            return cached[key]
+        raw = fetch(key)
+        if type(raw) is not bytes:
+            raise CGXCrossAnalysisError("invalid external object")
+        external_bytes += len(raw)
+        external_objects += 1
+        return raw
+
+    values, receipt, stats = resolve_achilles_review_context(
+        descriptor, expected_sha256, sections, revision_fetch,
+        allowed_sections=allowed_sections, max_bytes=max_bytes)
+    transition = {
+        "schema": "CGX-ACHILLES-REVIEW-REVISION/0.1",
+        "prior_review_sha256": claimed,
+        "current_review_sha256": receipt["review_sha256"],
+        "reused_sections": reused,
+        "resolved_sections": sorted(set(sections) - set(reused)),
+        "native_admitted": False, "authority_transfer": False,
+        "reasoning_evaluated": False,
+    }
+    transition["review_sha256"] = hashlib.sha256(canonical(transition)).hexdigest()
+    return values, receipt, transition, dict(stats, external_bytes=external_bytes,
+                                             external_objects=external_objects)
