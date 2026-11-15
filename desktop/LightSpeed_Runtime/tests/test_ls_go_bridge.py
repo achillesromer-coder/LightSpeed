@@ -2065,3 +2065,38 @@ def test_frontier_intake_identity_is_bounded_in_existing_command_and_job(tmp_pat
     command['frontier_request']['source_sha256'] = 'a' * 64
     command['frontier_request']['usage']['tool_calls'] = 1
     assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 400
+
+
+
+def test_project_file_revision_and_revoked_owner(tmp_path, monkeypatch):
+    import hashlib
+    project_root=configure_shell(tmp_path)
+    nested=project_root/"README.md"
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(None,None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,"fixture-owner-token")
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    pid=client.get("/api/v1/projects").json()["projects"][0]["project_id"]
+    base=f"/api/v1/projects/{pid}/files"
+    url=base+"/README.md"
+    headers={"X-LightSpeed-Owner-Confirmation":"fixture-owner-token"}
+    def revision():
+        return next(x["metadata_revision"] for x in client.get(base).json()["files"] if x["relative_path"]=="README.md")
+    stamp=revision()
+    assert client.get(url,params={"expected_metadata_revision":stamp}).status_code==403
+    good=client.get(url,params={"expected_metadata_revision":stamp},headers=headers)
+    assert good.status_code==200 and good.headers["cache-control"]=="no-store"
+    assert good.json()["preview_sha256"]==hashlib.sha256(nested.read_bytes()).hexdigest()
+    assert good.json()["file"]["metadata_revision"]==stamp
+    nested.write_bytes(nested.read_bytes()+b"\nfixture change")
+    stale=client.get(url,params={"expected_metadata_revision":stamp},headers=headers)
+    assert stale.status_code==409 and "preview" not in stale.json()
+    assert client.get(url,params={"expected_metadata_revision":"bad"},headers=headers).status_code==400
+    fresh=revision()
+    original=ls_go_bridge.open_project_file
+    def revoke(*a,**kw):
+        result=original(*a,**kw)
+        monkeypatch.delenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,raising=False)
+        return result
+    monkeypatch.setattr(ls_go_bridge,"open_project_file",revoke)
+    denied=client.get(url,params={"expected_metadata_revision":fresh},headers=headers)
+    assert denied.status_code==403 and "preview" not in denied.json()

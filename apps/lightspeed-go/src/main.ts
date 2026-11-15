@@ -294,9 +294,11 @@ let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
 let receiptViewGeneration = 0;
+let fileViewGeneration = 0;
 const clearReceiptView = (): void => {
   receiptViewGeneration++;
-  document.querySelectorAll(".result-receipt-detail").forEach((el) => { el.textContent = ""; });
+  fileViewGeneration++;
+  document.querySelectorAll(".result-receipt-detail, .project-file-result").forEach((el) => { el.textContent = ""; });
 };
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
@@ -530,6 +532,7 @@ const renderPending = (): void => {
 };
 
 const renderProjects = (projects: ProjectRecord[]): void => {
+  fileViewGeneration++;
   const mount = byId("desktop-projects");
   byId("project-count").textContent = String(projects.length);
   mount.innerHTML = renderProjectCards(projects);
@@ -540,6 +543,9 @@ const renderProjects = (projects: ProjectRecord[]): void => {
     if (button.getAttribute("aria-expanded") === "true") {
       button.setAttribute("aria-expanded", "false");
       button.textContent = "Files";
+      fileViewGeneration++;
+      const prior = filesMount.querySelector(".project-file-result");
+      if (prior) prior.textContent = "";
       filesMount.hidden = true;
       return;
     }
@@ -553,6 +559,7 @@ const renderProjects = (projects: ProjectRecord[]): void => {
       bindProjectFileOpenButtons(filesMount, async (selectedProjectId, relativePath, openButton) => {
         const resultMount = filesMount.querySelector<HTMLElement>(".project-file-result");
         if (!resultMount) return;
+        const generation = ++fileViewGeneration;
         const ownerSession = requireOwnerSession();
         if (!ownerSession) {
           resultMount.innerHTML = renderProjectFilesError(
@@ -563,10 +570,20 @@ const renderProjects = (projects: ProjectRecord[]): void => {
         openButton.disabled = true;
         resultMount.innerHTML = `<p class="muted">Opening read-only result…</p>`;
         try {
-          resultMount.innerHTML = renderProjectFileOpenResult(
-            await openDesktopProjectFile(selectedProjectId, relativePath, ownerSession),
-          );
+          const selected = response.files.find((item) => item.relative_path === relativePath);
+          if (selectedProjectId !== response.project.project_id || !selected?.metadata_revision ||
+              !/^[a-f0-9]{64}$/.test(selected.metadata_revision)) {
+            throw new Error("File revision unavailable; refresh the list.");
+          }
+          const opened = await openDesktopProjectFile(selectedProjectId, relativePath, ownerSession, undefined, selected.metadata_revision);
+          if (generation !== fileViewGeneration || ownerSession !== ownerSessionToken || !resultMount.isConnected) return;
+          if (opened.project.project_id !== selectedProjectId || opened.file.relative_path !== relativePath ||
+              opened.file.metadata_revision !== selected.metadata_revision) {
+            throw new Error("File identity or metadata revision changed; refresh the list.");
+          }
+          resultMount.innerHTML = renderProjectFileOpenResult(opened);
         } catch (error) {
+          if (generation !== fileViewGeneration || ownerSession !== ownerSessionToken || !resultMount.isConnected) return;
           resultMount.innerHTML = renderProjectFilesError(
             error instanceof Error ? error.message : "Project file result is unavailable.",
           );

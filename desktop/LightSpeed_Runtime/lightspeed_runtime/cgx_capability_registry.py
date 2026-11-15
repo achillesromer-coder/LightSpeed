@@ -283,3 +283,30 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
             "view_sha256":stamp,"reference":reference,"descriptor":refs[reference],
             "metadata":values[reference],"provider_invocation_performed":False,
             "execution_authorized":False,"authority_transfer":False,"native_admitted":False}
+
+
+
+def compose_capability_review(selector: str, *, task_id: str, expected_view_sha256: str,
+                              references: list[str]) -> dict[str, Any]:
+    """One compact task-bound skill/tool manifest; reference-only, not execution."""
+    import hashlib
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload
+    if type(task_id) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",task_id):
+        raise CapabilityRegistryError("invalid composition task ID")
+    if (type(references) is not list or not 1<=len(references)<=64 or
+            any(type(k) is not str or not 1<=len(k)<=256 for k in references) or
+            len(set(references))!=len(references)):
+        raise CapabilityRegistryError("invalid composition references")
+    view=capability_interop_review(selector)
+    if expected_view_sha256!=view["view_sha256"]:
+        raise CapabilityRegistryError("stale composition view")
+    if any(k not in view["references"] for k in references):
+        raise CapabilityRegistryError("composition reference outside selector")
+    payload={"schema":"CGX-CAPABILITY-COMPOSITION-REVIEW/0.1","task_id":task_id,
+             "selector":view["selector"],"view_sha256":expected_view_sha256,
+             "references":{k:view["references"][k] for k in sorted(references)},
+             "provider_invocation_performed":False,"execution_authorized":False,
+             "authority_transfer":False,"native_admitted":False}
+    raw=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
+    root,_=pack_nested_review_payload(raw)
+    return {**payload,"composition_sha256":hashlib.sha256(raw).hexdigest(),"composition_ternary_root":root}

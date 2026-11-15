@@ -120,6 +120,7 @@ export interface ProjectRecord {
 
 export interface ProjectFileRecord {
   relative_path: string;
+  metadata_revision?: string;
   name: string;
   extension: string;
   mime_type: string;
@@ -781,11 +782,15 @@ export const listDesktopProjects = async (origin = DEFAULT_DESKTOP_ORIGIN): Prom
   };
 };
 
-export const projectFileApiPath = (projectId: string, relativePath?: string): string => {
+export const projectFileApiPath = (projectId: string, relativePath?: string, expectedRevision?: string): string => {
+  if (expectedRevision !== undefined && (relativePath === undefined || !/^[a-f0-9]{64}$/.test(expectedRevision))) {
+    throw new Error("Exact file metadata revision required.");
+  }
   const project = encodeURIComponent(projectId);
   if (relativePath === undefined) return `/api/v1/projects/${project}/files`;
   const path = relativePath.split("/").map((part) => encodeURIComponent(part)).join("/");
-  return `/api/v1/projects/${project}/files/${path}`;
+  const route = `/api/v1/projects/${project}/files/${path}`;
+  return expectedRevision === undefined ? route : `${route}?expected_metadata_revision=${expectedRevision}`;
 };
 
 export const listDesktopProjectFiles = async (
@@ -803,11 +808,13 @@ export const openDesktopProjectFile = async (
   relativePath: string,
   ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
+  expectedRevision?: string,
 ): Promise<ProjectFileOpenResult> =>
   withTimeout<ProjectFileOpenResult>(
-    `${origin}${projectFileApiPath(projectId, relativePath)}`,
+    `${origin}${projectFileApiPath(projectId, relativePath, expectedRevision)}`,
     {
       method: "GET",
+      cache: "no-store",
       headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,

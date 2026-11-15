@@ -46,6 +46,7 @@ from lightspeed_runtime.project_file_browser import (
     ProjectFileBlocked,
     ProjectFileNotFound,
     ProjectFilePathRejected,
+    ProjectFileRevisionChanged,
     ProjectFileUnavailable,
     list_project_files,
     open_project_file,
@@ -2034,13 +2035,14 @@ def create_app(root: Path | str) -> FastAPI:
     async def open_project_file_result(
         project_id: str,
         relative_path: str,
+        expected_metadata_revision: str | None = None,
         owner_confirmation: str | None = Header(
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
         owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
-        _verified_owner_actor(
+        actor = _verified_owner_actor(
             owner_confirmation,
             session_token=owner_session,
             credential_store=credential_store,
@@ -2051,16 +2053,24 @@ def create_app(root: Path | str) -> FastAPI:
                 project_pipeline,
                 project_id=_bounded(project_id, maximum=96, required=True),
                 relative_path=relative_path,
+                expected_metadata_revision=expected_metadata_revision,
             )
         except ProjectFileNotFound as exc:
             raise HTTPException(status_code=404, detail=str(exc))
         except ProjectFileBlocked as exc:
             raise HTTPException(status_code=403, detail=str(exc))
+        except ProjectFileRevisionChanged as exc:
+            raise HTTPException(status_code=409, detail=str(exc))
         except ProjectFilePathRejected as exc:
             raise HTTPException(status_code=400, detail=str(exc))
         except ProjectFileUnavailable as exc:
             raise HTTPException(status_code=503, detail=str(exc))
-        return JSONResponse(result)
+        if _verified_owner_actor(
+            owner_confirmation, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions,
+        ) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(result, headers={"Cache-Control":"no-store"})
 
     @app.get("/api/v1/reviews")
     async def list_reviews(limit: int = 50):

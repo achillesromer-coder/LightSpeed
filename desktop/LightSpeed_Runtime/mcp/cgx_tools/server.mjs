@@ -78,6 +78,8 @@ server.registerTool("cgx_get_capabilities", {
     interoperability: z.boolean().optional().describe("Return source-bound shared capability references instead of the summary"),
     reference: z.string().max(256).optional().describe("Exact metadata reference from current selector view"),
     expected_view_sha256: z.string().regex(/^[a-f0-9]{64}$/).optional(),
+    task_id: z.string().max(128).optional(),
+    references: z.array(z.string().max(256)).min(1).max(64).optional(),
   },
   annotations: { title: "CGX Capabilities", ...readOnly },
 }, async args => textResult(

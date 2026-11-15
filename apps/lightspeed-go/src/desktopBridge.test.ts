@@ -134,6 +134,12 @@ describe("LS GO desktop command routing", () => {
     );
   });
 
+  it("binds FileSpace preview to its selected metadata revision", () => {
+    const sha = "a".repeat(64);
+    expect(projectFileApiPath("project","nested/read me.txt",sha)).toBe("/api/v1/projects/project/files/nested/read%20me.txt?expected_metadata_revision="+sha);
+    expect(() => projectFileApiPath("project","file","bad")).toThrow();
+  });
+
   it("binds receipt retrieval to its selected SHA-256", () => {
     const sha = "a".repeat(64);
     expect(resultReceiptApiPath("receipt", sha)).toBe("/api/v1/results/receipt?expected_sha256=" + sha);

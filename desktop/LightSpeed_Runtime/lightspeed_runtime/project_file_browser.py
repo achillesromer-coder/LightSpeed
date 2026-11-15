@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 import fnmatch
+import hashlib
+import json
+import re
 import mimetypes
 import os
 from pathlib import Path, PurePosixPath, PureWindowsPath
@@ -75,6 +78,10 @@ class ProjectFilePathRejected(ValueError):
 
 
 class ProjectFileBlocked(PermissionError):
+    pass
+
+
+class ProjectFileRevisionChanged(ProjectFilePathRejected):
     pass
 
 
@@ -221,12 +228,20 @@ def _file_kind(path: Path, mime_type: str) -> str:
     return "binary_or_unknown"
 
 
-def _file_record(path: Path, *, relative_path: str) -> dict[str, Any]:
+def _metadata_revision(stat, project_id, relative_path):
+    # Selected metadata revision, not a content hash or independent ACL.
+    fields=[project_id,relative_path,stat.st_dev,stat.st_ino,stat.st_size,
+            stat.st_mtime_ns,stat.st_ctime_ns]
+    return hashlib.sha256(json.dumps(fields,separators=(",",":"),ensure_ascii=True).encode("ascii")).hexdigest()
+
+
+def _file_record(path: Path, *, relative_path: str, project_id: str) -> dict[str, Any]:
     stat = path.stat()
     mime_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
     kind = _file_kind(path, mime_type)
     return {
         "relative_path": relative_path,
+        "metadata_revision": _metadata_revision(stat, project_id, relative_path),
         "name": path.name,
         "extension": path.suffix.casefold(),
         "mime_type": mime_type,
@@ -309,7 +324,7 @@ def list_project_files(
                 directories[:] = []
                 break
             try:
-                files.append(_file_record(resolved_path, relative_path=relative_path))
+                files.append(_file_record(resolved_path, relative_path=relative_path, project_id=project_id))
             except OSError:
                 skipped_count += 1
         if scan_truncated:
@@ -348,7 +363,10 @@ def open_project_file(
     *,
     project_id: str,
     relative_path: str,
+    expected_metadata_revision: str | None = None,
 ) -> dict[str, Any]:
+    if expected_metadata_revision is not None and not re.fullmatch(r"[a-f0-9]{64}",expected_metadata_revision):
+        raise ProjectFilePathRejected("Exact metadata revision required")
     project, project_root = _authorised_project(pipeline, project_id)
     requested = _validated_relative_path(relative_path)
     requested_text = requested.as_posix()
@@ -372,9 +390,17 @@ def open_project_file(
         raise ProjectFilePathRejected("Requested project path is not a file")
 
     try:
-        file_record = _file_record(resolved_path, relative_path=requested_text)
+        file_record = _file_record(resolved_path, relative_path=requested_text, project_id=project_id)
     except OSError as exc:
         raise ProjectFileUnavailable("Project file metadata is unavailable") from exc
+    revision=file_record["metadata_revision"]
+    if expected_metadata_revision is not None and revision!=expected_metadata_revision:
+        raise ProjectFileRevisionChanged("Project file metadata changed; refresh the list")
+    # Reject aliases to blocked targets inside the registered root too.
+    actual_relative=resolved_path.relative_to(project_root).as_posix()
+    if _is_blocked(actual_relative,_blocked_patterns(pipeline)) or any(
+            part in ignored_directories for part in PurePosixPath(actual_relative).parts[:-1]):
+        raise ProjectFileBlocked("Resolved target is withheld")
     preview: dict[str, Any] = {
         "state": "metadata_only",
         "encoding": None,
@@ -384,7 +410,11 @@ def open_project_file(
     if file_record["kind"] == "text":
         try:
             with resolved_path.open("rb") as stream:
+                if _metadata_revision(os.fstat(stream.fileno()),project_id,requested_text)!=revision:
+                    raise ProjectFileRevisionChanged("Project file changed before preview")
                 content = stream.read(MAX_PREVIEW_BYTES + 1)
+                if _metadata_revision(os.fstat(stream.fileno()),project_id,requested_text)!=revision:
+                    raise ProjectFileRevisionChanged("Project file changed during preview")
         except OSError as exc:
             raise ProjectFileUnavailable("Project file preview is unavailable") from exc
         truncated = len(content) > MAX_PREVIEW_BYTES
@@ -401,6 +431,12 @@ def open_project_file(
                 "text": text,
             }
 
+    try:
+        if candidate.resolve(strict=True)!=resolved_path or _metadata_revision(
+                resolved_path.stat(),project_id,requested_text)!=revision:
+            raise ProjectFileRevisionChanged("Project file changed before return")
+    except OSError as exc:
+        raise ProjectFileUnavailable("Project file changed before return") from exc
     return {
         "schema_version": OPEN_SCHEMA,
         "state": "opened_read_only",
@@ -411,6 +447,7 @@ def open_project_file(
         },
         "file": file_record,
         "preview": preview,
+        "preview_sha256": hashlib.sha256(content).hexdigest() if preview["encoding"]=="utf-8" else None,
         "source_mutated": False,
         "boundary": (
             "Owner-confirmed read-only bounded preview; source text is unredacted and may "

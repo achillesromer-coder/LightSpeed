@@ -166,3 +166,22 @@ def test_interop_all_existing_selectors_and_provider_gaps():
         assert got["metadata"]["provider_binding"]=="UNVERIFIED_AT_RUNTIME"
         assert not got["execution_authorized"]
         assert all(k in view["references"] for k in got["metadata"]["route_refs"])
+
+
+
+def test_composition_reuses_exact_task_bound_references():
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review,compose_capability_review
+    a=capability_interop_review("Achilles")
+    refs=["skill:cgx-capability-router","route:ops.health","surface:filespace"]
+    def compose(keys=refs,**kwargs):
+        return compose_capability_review("Achilles",task_id=kwargs.get("task","001c"),
+            expected_view_sha256=kwargs.get("stamp",a["view_sha256"]),references=keys)
+    c=compose()
+    assert c==compose(refs[::-1])
+    assert c["references"]=={k:a["references"][k] for k in refs}
+    assert not c["execution_authorized"] and not c["authority_transfer"]
+    assert c["composition_sha256"]!=compose(task="001d")["composition_sha256"]
+    for keys in ([refs[0],refs[0]],["toolkit:freecad"],[]):
+        with pytest.raises(CapabilityRegistryError):compose(keys)
+    with pytest.raises(CapabilityRegistryError):compose(stamp="0"*64)
