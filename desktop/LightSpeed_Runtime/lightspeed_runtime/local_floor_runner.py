@@ -138,13 +138,14 @@ class CommonInferenceSession(AbstractContextManager["CommonInferenceSession"]):
         self.resources_ready=resources_ready
         self.lock=SingleSessionLock(path)
         self.active=False
+        self.recovery_hold=False
     def _check(self):
         if self.authorise(self.task_id,self.scope_revision,str(self.path)) is not True:
             raise LocalFloorRunnerError("common inference scope held")
         if self.resources_ready() is not True:
             raise LocalFloorRunnerError("common inference resources held")
     def __enter__(self):
-        if self.active:raise LocalFloorRunnerError("common inference already active")
+        if self.active or self.recovery_hold:raise LocalFloorRunnerError("common inference active or recovery held")
         self._check()
         self.lock.__enter__()
         try:self._check()
@@ -154,7 +155,7 @@ class CommonInferenceSession(AbstractContextManager["CommonInferenceSession"]):
         self.active=True
         return self
     def check_before_request(self):
-        if not self.active:raise LocalFloorRunnerError("common inference lock not acquired")
+        if not self.active or self.recovery_hold:raise LocalFloorRunnerError("common inference lock not acquired or recovery held")
         self._check()
         # Verify current lock generation/identity, never trust a stale handle.
         st=self.path.stat(follow_symlinks=False)
@@ -163,8 +164,31 @@ class CommonInferenceSession(AbstractContextManager["CommonInferenceSession"]):
         info=json.loads(self.path.read_text(encoding="utf-8"))
         if info.get("generation")!=self.lock._lock_generation or info.get("pid")!=os.getpid():
             raise LocalFloorRunnerError("common inference generation changed")
+    def fence_uncertain(self):
+        """Retain the existing lock as a durable hold, never infer cancellation."""
+        if not self.active:raise LocalFloorRunnerError("common inference lock not acquired")
+        self.recovery_hold=True
+        fd=self.lock._fd
+        if fd is None:raise LocalFloorRunnerError("common inference descriptor missing")
+        st=os.fstat(fd)
+        if (st.st_dev,st.st_ino)!=self.lock._lock_identity:
+            raise LocalFloorRunnerError("common inference descriptor changed")
+        payload={"pid":os.getpid(),"generation":self.lock._lock_generation,
+                 "state":"RECOVERY_HOLD_SERVER_OUTCOME_UNCERTAIN",
+                 "observed_at":_utc_now_iso(),"task_id":self.task_id,
+                 "scope_revision":self.scope_revision,"server_cancellation_verified":False}
+        raw=json.dumps(payload,sort_keys=True,separators=(",",":")).encode("utf-8")
+        os.lseek(fd,0,os.SEEK_SET)
+        if os.write(fd,raw)!=len(raw):raise LocalFloorRunnerError("incomplete recovery hold marker")
+        os.ftruncate(fd,len(raw))
+        os.fsync(fd)
     def __exit__(self,exc_type,exc,tb):
         self.active=False
+        if self.recovery_hold:
+            # Even a failed marker write must not release an uncertain session.
+            if self.lock._fd is not None:
+                os.close(self.lock._fd);self.lock._fd=None
+            return False
         return self.lock.__exit__(exc_type,exc,tb)
 
 
@@ -363,7 +387,12 @@ def run_floor(
             status = "failed"
             error = str(exc)
             # The request may have reached Ollama even when its response was lost.
-            server_outcome_uncertain = True
+            server_outcome_uncertain = bool(attempts)
+            if common_session is not None and server_outcome_uncertain:
+                common_session.fence_uncertain()
+        except BaseException:
+            if common_session is not None and attempts:common_session.fence_uncertain()
+            raise
     elapsed_ms = int((time.monotonic() - started) * 1000)
 
     receipt = build_receipt(

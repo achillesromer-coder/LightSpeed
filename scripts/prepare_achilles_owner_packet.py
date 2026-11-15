@@ -451,11 +451,16 @@ def run_skill_trial_with_adapter(plan, *, expected_trial_sha256, prompts,
         for p in prompts:
             gate.check_before_request()
             # No answer key, private source or arbitrary action carried here.
-            observation=invoke({"case_id":p["case_id"],"arm":p["arm"],"prompt":p["prompt"],
-                "prompt_sha256":p["prompt_sha256"],"model":plan["model"],"settings":dict(plan["settings"])})
+            try:
+                observation=invoke({"case_id":p["case_id"],"arm":p["arm"],"prompt":p["prompt"],
+                    "prompt_sha256":p["prompt_sha256"],"model":plan["model"],"settings":dict(plan["settings"])})
+            except BaseException:
+                gate.fence_uncertain()
+                raise
             if (type(observation) is not dict or observation.get("case_id")!=p["case_id"]
                     or observation.get("arm")!=p["arm"] or observation.get("prompt_sha256")!=p["prompt_sha256"]
                     or observation.get("model")!=plan["model"] or observation.get("settings")!=plan["settings"]):
+                gate.fence_uncertain()
                 raise ProfileHold("ACHILLES_TRIAL_ADAPTER_BINDING_HOLD")
             gate.check_before_request()
             observations.append(observation)

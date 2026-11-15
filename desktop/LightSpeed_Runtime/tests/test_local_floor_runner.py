@@ -835,3 +835,21 @@ def test_common_inference_session_mutual_exclusion_and_revocation(tmp_path):
     with pytest.raises(LocalFloorRunnerError):
         with make():pass
     assert not path.exists()
+
+
+
+def test_common_uncertain_outcome_retains_existing_lock(tmp_path):
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession
+    path=tmp_path/"common.lock"
+    def make():
+        return CommonInferenceSession(path,task_id="review-001a",scope_revision="fixture",
+            authorise=lambda *a:True,resources_ready=lambda:True)
+    with make() as gate:
+        gate.fence_uncertain()
+        with pytest.raises(LocalFloorRunnerError):gate.check_before_request()
+    marker=json.loads(path.read_text(encoding="utf-8"))
+    assert marker["state"]=="RECOVERY_HOLD_SERVER_OUTCOME_UNCERTAIN"
+    assert marker["server_cancellation_verified"] is False
+    with pytest.raises(LocalFloorRunnerError):
+        with make():pass
+    assert json.loads(path.read_text(encoding="utf-8"))==marker

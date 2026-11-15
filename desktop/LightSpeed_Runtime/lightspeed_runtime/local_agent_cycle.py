@@ -9,6 +9,7 @@ from typing import Any, Callable
 from lightspeed_runtime.local_agent_wakeup import DEFAULT_FLOOR_ORDER
 from lightspeed_runtime.local_floor_runner import (
     DEFAULT_CONTRACT_PATH,
+    CommonInferenceSession,
     LocalFloorRunnerError,
     load_contract,
     resolve_contract_shell_root,
@@ -43,8 +44,15 @@ def run_cycle(
     receipt_target: str = "neo",
     stop_on_failure: bool = False,
     runner: CycleRunner = run_floor,
+    task_id: str | None = None,
+    common_session: CommonInferenceSession | None = None,
 ) -> dict[str, Any]:
+    if common_session is not None and (dry_run or not isinstance(common_session,CommonInferenceSession)
+            or common_session.task_id!=task_id):
+        raise LocalFloorRunnerError("shared session task or execution binding mismatch")
     contract = load_contract(contract_path)
+    if not dry_run and (contract.get("policy") or {}).get("require_common_inference_session") is True and common_session is None:
+        raise LocalFloorRunnerError("cycle requires common inference session")
     available = {
         str(item.get("floor"))
         for item in contract.get("floors") or []
@@ -64,19 +72,21 @@ def run_cycle(
             dry_run=dry_run,
             allow_heavy=allow_heavy,
             receipt_target=receipt_target,
+            **({"common_session":common_session} if common_session is not None else {}),
         )
         row = {
             "sequence": sequence,
             "floor": floor,
             "run_rate_percent": RUN_RATE_PERCENT,
             "status": receipt.get("status"),
+            "server_outcome_uncertain":receipt.get("server_outcome_uncertain") is True,
             "receipt_id": receipt.get("receipt_id"),
             "receipt_path": receipt.get("receipt_path"),
             "model": receipt.get("model"),
             "resource_state": (receipt.get("resource_preflight") or {}).get("execution_state"),
         }
         rows.append(row)
-        if stop_on_failure and receipt.get("status") == "failed":
+        if row["server_outcome_uncertain"] or (stop_on_failure and receipt.get("status") in {"failed","blocked"}):
             break
 
     counts: dict[str, int] = {}
@@ -84,6 +94,12 @@ def run_cycle(
         status = str(row.get("status") or "unknown")
         counts[status] = counts.get(status, 0) + 1
 
+    uncertain=any(row["server_outcome_uncertain"] for row in rows)
+    expected_status="dry_run" if dry_run else "completed"
+    ids=[row["receipt_id"] for row in rows]
+    qualified=(len(rows)==len(DEFAULT_FLOOR_ORDER) and not uncertain
+               and all(type(k) is str and bool(k) for k in ids) and len(set(ids))==len(ids)
+               and counts=={expected_status:len(DEFAULT_FLOOR_ORDER)})
     cycle = {
         "schema_version": "lightspeed-local-agent-cycle-v1",
         "receipt_id": f"local_agent_cycle_{datetime.now(UTC).strftime('%Y%m%dT%H%M%SZ')}",
@@ -99,7 +115,8 @@ def run_cycle(
         "stop_on_failure": stop_on_failure,
         "counts": counts,
         "floors": rows,
-        "complete_cycle": len(rows) == len(DEFAULT_FLOOR_ORDER),
+        "complete_cycle":qualified,
+        "server_outcome_uncertain":uncertain,
         "public_publish_authorized": False,
     }
     path = cycle_receipt_path(contract)

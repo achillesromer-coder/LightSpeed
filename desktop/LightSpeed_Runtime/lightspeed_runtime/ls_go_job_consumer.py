@@ -92,6 +92,24 @@ def _claim_lease_live(claim: dict[str, Any], *, at: datetime | None = None) -> b
     )
 
 
+def _same_claim(left, right):
+    """Type-sensitive exact envelope comparison; no authority inferred from a hash."""
+    if type(left) is not dict or type(right) is not dict:return False
+    try:
+        return json.dumps(left,sort_keys=True,separators=(",",":"),allow_nan=False)==json.dumps(right,sort_keys=True,separators=(",",":"),allow_nan=False)
+    except (TypeError,ValueError,RecursionError):return False
+
+
+def _pool_conflict(conn, job_id):
+    # SQLite transaction serialises new claims with this exact conflict check.
+    # Uncertain work remains held even if its status was externally cancelled.
+    return conn.execute(
+        "SELECT id FROM jobs WHERE job_type=? AND id<>? AND "
+        "(status='running' OR metadata_json LIKE ?) LIMIT 1",
+        ("ls_go_command",job_id,"%ls_go_execution_uncertain%"),
+    ).fetchone() is not None
+
+
 def _safe_id(value: Any) -> str:
     text = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(value or "unknown")).strip("_")
     return text or "unknown"
@@ -501,7 +519,7 @@ class LSGoJobConsumer:
         with connection() as conn:
             conn.execute("BEGIN IMMEDIATE")
             raw_job = conn.execute(
-                "SELECT id, status, params_json, metadata_json, task_id FROM jobs "
+                "SELECT id, status, params_json, metadata_json, task_id, project_id, z_context FROM jobs "
                 "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
             ).fetchone()
             if raw_job is None:
@@ -526,6 +544,10 @@ class LSGoJobConsumer:
             prior_claim = _json_dict(job.get("metadata_json")).get("ls_go_execution_claim")
             if prior_claim is not None:
                 receipt_claim = result.get("execution_claim")
+                if isinstance(prior_claim,dict) and "pool_identity" in prior_claim:
+                    if (not _same_claim(receipt_claim,prior_claim)
+                            or prior_claim["pool_identity"]!={"project_id":job["project_id"],"z_context":job["z_context"]}):
+                        return False
                 if (isinstance(prior_claim, dict) and prior_claim.get("purpose") == "execute"
                         and (prior_claim.get("lease_schema") == CLAIM_LEASE_SCHEMA
                              or isinstance(receipt_claim, dict)
@@ -601,12 +623,12 @@ class LSGoJobConsumer:
         if purpose not in {"execute", "reconcile", "hold"}:
             raise ValueError("unsupported claim purpose")
         connection = getattr(self.db, "get_connection", None)
-        if not callable(connection) or not {"metadata_json", "updated_at", "task_id"}.issubset(self._columns("jobs")):
+        if not callable(connection) or not {"metadata_json", "updated_at", "task_id","project_id","z_context"}.issubset(self._columns("jobs")):
             raise RuntimeError("durable job claim requires transactional DB and identity columns")
         with connection() as conn:
             conn.execute("BEGIN IMMEDIATE")
             row = conn.execute(
-                "SELECT job_type,status,params_json,metadata_json,task_id FROM jobs WHERE id = ?",
+                "SELECT job_type,status,params_json,metadata_json,task_id,project_id,z_context FROM jobs WHERE id = ?",
                 (job_id,),
             ).fetchone()
             if row is None or row["job_type"] != "ls_go_command" or row["status"] not in {
@@ -614,9 +636,15 @@ class LSGoJobConsumer:
             }:
                 return False
             if (row["params_json"] != expected_job.get("params_json")
-                    or row["task_id"] != expected_job.get("task_id")):
+                    or row["task_id"] != expected_job.get("task_id")
+                    or row["project_id"] != expected_job.get("project_id")
+                    or row["z_context"] != expected_job.get("z_context")):
                 raise RuntimeError("queued job identity changed before claim")
+            if _pool_conflict(conn,job_id):
+                return False
             metadata = _json_dict(row["metadata_json"])
+            if metadata.get("ls_go_execution_uncertain"):
+                return False
             params = _json_dict(row["params_json"])
             action_payload = params.get("action_payload")
             frontier_admission = None
@@ -699,7 +727,8 @@ class LSGoJobConsumer:
                     and claim.get("job_params_sha256") == params_hash
                     and (
                         (isinstance(receipt_claim, dict)
-                         and receipt_claim.get("claim_id") == claim.get("claim_id"))
+                         and receipt_claim.get("claim_id") == claim.get("claim_id")
+                         and ("pool_identity" not in claim or _same_claim(receipt_claim,claim)))
                         or (claim.get("purpose") == "reconcile" and receipt_claim is None)
                     )
                 )
@@ -714,6 +743,7 @@ class LSGoJobConsumer:
                     "task_id": row["task_id"],
                     "command_id": command_id,
                     "job_params_sha256": params_hash,
+                    "pool_identity":{"project_id":row["project_id"],"z_context":row["z_context"]},
                     **({"native_budget": dict(FLOOR_NATIVE_BUDGET)}
                        if purpose == "execute" and action_type == "local_floor_wakeup"
                        and bool(params.get("execute", True)) else {}),
@@ -748,7 +778,8 @@ class LSGoJobConsumer:
             raise RuntimeError("terminal result has invalid status")
         receipt_claim = receipt.get("execution_claim")
         if receipt_claim is not None:
-            if not isinstance(receipt_claim, dict) or receipt_claim.get("claim_id") != claim["claim_id"]:
+            if (not isinstance(receipt_claim, dict) or receipt_claim.get("claim_id") != claim["claim_id"]
+                    or ("pool_identity" in claim and not _same_claim(receipt_claim,claim))):
                 raise RuntimeError("terminal receipt claim differs from active claim")
         elif claim["purpose"] == "execute":
             raise RuntimeError("executed result lacks its durable claim")
@@ -760,19 +791,16 @@ class LSGoJobConsumer:
         with self.db.get_connection() as conn:
             conn.execute("BEGIN IMMEDIATE")
             raw_job = conn.execute(
-                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "SELECT status,params_json,metadata_json,task_id,project_id,z_context FROM jobs "
                 "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
             ).fetchone()
             if raw_job is None or raw_job["status"] != "running":
                 raise RuntimeError("claimed job no longer running; terminal write fenced")
             persisted_claim = _json_dict(raw_job["metadata_json"]).get("ls_go_execution_claim")
-            if (not isinstance(persisted_claim, dict)
-                    or persisted_claim.get("claim_id") != claim["claim_id"]
-                    or persisted_claim.get("lease_expires_utc") != claim.get("lease_expires_utc")
-                    or persisted_claim.get("native_budget") != claim.get("native_budget")
-                    or persisted_claim.get("frontier_admission") != claim.get("frontier_admission")
-                    or persisted_claim.get("frontier_budget") != claim.get("frontier_budget")
+            if (not _same_claim(persisted_claim,claim)
+                    or _json_dict(raw_job["metadata_json"]).get("ls_go_execution_uncertain")
                     or raw_job["task_id"] != claim["task_id"]
+                    or ("pool_identity" in claim and claim["pool_identity"]!={"project_id":raw_job["project_id"],"z_context":raw_job["z_context"]})
                     or hashlib.sha256(raw_job["params_json"].encode("utf-8")).hexdigest()
                     != claim["job_params_sha256"]):
                 raise RuntimeError("persisted work claim changed; terminal write fenced")
@@ -931,23 +959,15 @@ class LSGoJobConsumer:
         claim = self._execution_claims[job_id]
         with self.db.get_connection() as conn:
             row = conn.execute(
-                "SELECT status,params_json,metadata_json,task_id FROM jobs "
+                "SELECT status,params_json,metadata_json,task_id,project_id,z_context FROM jobs "
                 "WHERE id = ? AND job_type = ?", (job_id, "ls_go_command"),
             ).fetchone()
         if (row is None or row["status"] != "running"
                 or row["task_id"] != claim["task_id"]
-                or hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()
-                != claim["job_params_sha256"]
-                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("claim_id")
-                != claim["claim_id"]
-                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("lease_expires_utc")
-                != claim.get("lease_expires_utc")
-                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("native_budget")
-                != claim.get("native_budget")
-                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_admission")
-                != claim.get("frontier_admission")
-                or _json_dict(row["metadata_json"]).get("ls_go_execution_claim", {}).get("frontier_budget")
-                != claim.get("frontier_budget")):
+                or ("pool_identity" in claim and claim["pool_identity"]!={"project_id":row["project_id"],"z_context":row["z_context"]})
+                or hashlib.sha256(row["params_json"].encode("utf-8")).hexdigest()!=claim["job_params_sha256"]
+                or _json_dict(row["metadata_json"]).get("ls_go_execution_uncertain")
+                or not _same_claim(_json_dict(row["metadata_json"]).get("ls_go_execution_claim"),claim)):
             raise RuntimeError("source intake execution claim was revoked or changed")
         if not _claim_lease_live(_json_dict(row["metadata_json"]).get("ls_go_execution_claim", {})):
             raise RuntimeError("source intake execution claim lease expired")
@@ -1119,6 +1139,10 @@ class LSGoJobConsumer:
                 envelope_count=envelope_count,
             )
         if action_type == "cognigrex_workflow":
+            if params.get("execute",False) is not False:
+                return {"status":"held","action_type":action_type,
+                        "error":"multi-floor live execution requires a shared admitted execution pool",
+                        "next_action":"Retain the task for qualified bounded per-floor dispatch; no model called."}
             instruction = str(params.get("instruction") or "").strip()
             if not instruction:
                 return {
@@ -1217,6 +1241,10 @@ class LSGoJobConsumer:
                 "next_action": "Reconcile the review receipt through the owning gate.",
             }
         if action_type == "local_agent_cycle":
+            if params.get("execute",True) is not False:
+                return {"status":"held","action_type":action_type,
+                        "error":"multi-floor live execution requires a shared admitted execution pool",
+                        "next_action":"Retain the task for qualified bounded per-floor dispatch; no model called."}
             cycle = run_cycle(
                 dry_run=not bool(params.get("execute", True)),
                 allow_heavy=bool(params.get("allow_heavy", False)),
@@ -1363,6 +1391,7 @@ class LSGoJobConsumer:
             }
         else:
             try:
+                self._require_live_claim(job_id)
                 action_result = self._execute_action(
                     action_type=action_type,
                     params=params,
@@ -1412,8 +1441,27 @@ class LSGoJobConsumer:
         self._finish_claimed_job(job_id, receipt=receipt)
         return receipt
 
+    def execution_pool_review(self) -> dict[str, Any]:
+        """Read-only bounded projection of the existing job pool (not a grant)."""
+        if self.db is None:
+            return {"state":"db_unavailable","pending_count":None,"running_count":None,
+                    "uncertain_count":None,"execution_authorized":False}
+        with self.db.get_connection() as conn:
+            conn.execute("BEGIN")
+            rows=conn.execute("SELECT status,COUNT(*) AS n FROM jobs WHERE job_type=? GROUP BY status",
+                              ("ls_go_command",)).fetchall()
+            counts={row["status"]:int(row["n"]) for row in rows}
+            uncertain=conn.execute("SELECT COUNT(*) AS n FROM jobs WHERE job_type=? AND metadata_json LIKE ?",
+                                   ("ls_go_command","%ls_go_execution_uncertain%")).fetchone()["n"]
+        pending=sum(counts.get(k,0) for k in ("pending","queued","review"))
+        return {"state":"recovery_hold" if counts.get("running",0) or uncertain else "ready_for_claim_review",
+                "pending_count":pending,"running_count":counts.get("running",0),"uncertain_count":int(uncertain),
+                "terminal_count":sum(counts.get(k,0) for k in ("completed","blocked","held")),
+                "execution_authorized":False,"native_admitted":False}
+
     def process_once(self, limit: int = 8) -> dict[str, Any]:
-        jobs = self.pending_jobs(limit=limit)
+        pool=self.execution_pool_review()
+        jobs = self.pending_jobs(limit=limit) if pool["state"]=="ready_for_claim_review" else []
         results: list[dict[str, Any]] = []
         for job in jobs:
             if self._stop.is_set():
@@ -1421,10 +1469,12 @@ class LSGoJobConsumer:
             receipt = self.process_job(job)
             if receipt:
                 results.append(receipt)
+        final_pool=self.execution_pool_review()
         summary = {
             "schema_version": CONSUMER_SCHEMA,
             "checked_utc": utc_now_iso(),
-            "state": "ready" if self.db is not None else "db_unavailable",
+            "state": ("ready" if final_pool["state"]=="ready_for_claim_review" else final_pool["state"]),
+            "execution_pool":final_pool,
             "shell_root": str(self.shell_root),
             "pending_seen": len(jobs),
             "results_written": len(results),

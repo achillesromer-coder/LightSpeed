@@ -351,3 +351,8 @@ def test_trial_adapter_requires_common_gate_and_serial_exact_binding(tmp_path):
         result=adapter(q);state["allowed"]=False;return result
     with pytest.raises(LocalFloorRunnerError):run(gate(),revoke)
     assert len(calls)==17 and not path.exists()
+    state["allowed"]=True
+    def lost(q):raise TimeoutError("fixture lost response")
+    with pytest.raises(TimeoutError):run(gate(),lost)
+    assert json.loads(path.read_text(encoding="utf-8"))["state"]=="RECOVERY_HOLD_SERVER_OUTCOME_UNCERTAIN"
+    with pytest.raises(LocalFloorRunnerError):run(gate())
