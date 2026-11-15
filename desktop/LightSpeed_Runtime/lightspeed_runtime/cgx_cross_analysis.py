@@ -955,3 +955,106 @@ def hydrate_review_collection(archive, descriptor, expected_sha256, *,
         "scope_revision":scope_revision,"selected":sorted(selected),"logical_fetched_bytes":spent,
         "logical_fetched_objects":objects_read,"expanded_bytes":sum(map(len,resolved.values())),
         "provider_authentication_performed":False,"native_admitted":False,"authority_transfer":False}
+
+
+
+def _atlas_review_snapshot(raw, expected_sha256):
+    """Parse bounded exact atlas bytes; preserve occurrence identity and field text."""
+    import hashlib,json,re
+    if (type(raw) is not bytes or not 1<=len(raw)<=5*1024*1024
+            or type(expected_sha256) is not str or not re.fullmatch(r"[a-f0-9]{64}",expected_sha256)
+            or hashlib.sha256(raw).hexdigest()!=expected_sha256):
+        raise CGXCrossAnalysisError("atlas source revision mismatch")
+    def unique(pairs):
+        d={}
+        for k,v in pairs:
+            if k in d:raise CGXCrossAnalysisError("duplicate atlas JSON key")
+            d[k]=v
+        return d
+    try:doc=json.loads(raw,object_pairs_hook=unique)
+    except (ValueError,RecursionError,UnicodeError) as exc:
+        raise CGXCrossAnalysisError("invalid atlas source") from exc
+    if type(doc) is not dict:raise CGXCrossAnalysisError("invalid atlas document")
+    headers=doc.get("headers");rows=doc.get("records")
+    required={"ID","Domain","Family","Component Archetype","Baseline Geometry",
+        "Geometric Parameters","Typical Material Stack","Primary Physics",
+        "Baseline Model / Equation","Ports / Interfaces","Current Manufacturing Route",
+        "Current CGX Build Class","Acceptance Tests","Failure Modes","Evidence State","Source Authority Class"}
+    if (type(headers) is not list or not 16<=len(headers)<=64
+            or any(type(k) is not str or not 1<=len(k)<=128 for k in headers)
+            or len(set(headers))!=len(headers) or not required.issubset(headers)
+            or type(rows) is not list or not 1<=len(rows)<=2048
+            or type(doc.get("record_count")) is not int or doc["record_count"]!=len(rows)):
+        raise CGXCrossAnalysisError("atlas structure mismatch")
+    def encode(d):return json.dumps(d,sort_keys=True,separators=(",",":"),ensure_ascii=True,allow_nan=False).encode("ascii")
+    values={}; references={};groups={}
+    for row in rows:
+        if (type(row) is not dict or set(row)!=set(headers)
+                or any(type(v) is not str or len(v)>16384 for v in row.values())
+                or any(not row[k].strip() for k in required)
+                or not re.fullmatch(r"CGA-[A-Z0-9-]{1,64}",row["ID"])):
+            raise CGXCrossAnalysisError("invalid atlas occurrence")
+        rid=row["ID"]
+        if rid in values:raise CGXCrossAnalysisError("duplicate atlas occurrence")
+        body=encode(row)
+        semantic=hashlib.sha256(encode({k:v for k,v in row.items() if k!="ID"})).hexdigest()
+        root,_=pack_nested_review_payload(body)
+        references[rid]={"row_sha256":hashlib.sha256(body).hexdigest(),"row_ternary_root":root,
+            "row_bytes":len(body),"semantic_sha256":semantic,"domain":row["Domain"],
+            "family":row["Family"],"evidence_state":row["Evidence State"],
+            "build_class":row["Current CGX Build Class"]}
+        groups.setdefault(semantic,[]).append(rid)
+        values[rid]=body
+    # Exact equality of non-ID metadata is only an alias review candidate.
+    # No occurrence is discarded or given another occurrence's permission.
+    aliases=[sorted(v) for v in groups.values() if len(v)>1]
+    index={"schema":"CGX-ATLAS-REVIEW-WORKSET/0.1","source_sha256":expected_sha256,
+        "record_count":len(values),"unique_metadata_count":len(groups),
+        "references":dict(sorted(references.items())),"exact_metadata_alias_candidates":sorted(aliases),
+        "implementation_units_completed":0,"physical_instances_qualified":0,
+        "execution_authorized":False,"native_admitted":False}
+    return {**index,"workset_sha256":hashlib.sha256(encode(index)).hexdigest()},values
+
+
+def atlas_review_workset(raw, *, expected_sha256):
+    """Index every existing atlas occurrence; no synthetic implementation IDs."""
+    return _atlas_review_snapshot(raw,expected_sha256)[0]
+
+
+def hydrate_atlas_review_rows(raw, *, expected_sha256, expected_workset_sha256,
+                               selected, task_id, scope_revision, max_bytes, authorise):
+    """Exact canonical row review, with distinct occurrence permission checks."""
+    import re,hashlib
+    token=lambda v:type(v) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
+    if (not token(task_id) or not token(scope_revision)
+            or type(expected_workset_sha256) is not str or not re.fullmatch(r"[a-f0-9]{64}",expected_workset_sha256)
+            or type(selected) is not list or not 1<=len(selected)<=64
+            or any(type(k) is not str or not re.fullmatch(r"CGA-[A-Z0-9-]{1,64}",k) for k in selected)
+            or len(set(selected))!=len(selected) or type(max_bytes) is not int
+            or not 1<=max_bytes<=1024*1024):
+        raise CGXCrossAnalysisError("invalid atlas review request")
+    def check(k):
+        if authorise(task_id,k,expected_sha256,scope_revision,expected_workset_sha256) is not True:
+            raise PermissionError("atlas occurrence denied or revoked")
+    for k in selected:check(k)
+    index,values=_atlas_review_snapshot(raw,expected_sha256)
+    if index["workset_sha256"]!=expected_workset_sha256 or any(k not in values for k in selected):
+        raise CGXCrossAnalysisError("atlas workset binding mismatch")
+    if sum(len(values[k]) for k in selected)>max_bytes:
+        raise CGXCrossAnalysisError("atlas row budget")
+    out={}
+    for k in sorted(selected):
+        check(k)
+        b=values[k];ref=index["references"][k]
+        root,objects=pack_nested_review_payload(b)
+        inverse,_=hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=1024*1024)
+        if inverse!=b or hashlib.sha256(b).hexdigest()!=ref["row_sha256"] or root!=ref["row_ternary_root"]:
+            raise CGXCrossAnalysisError("atlas row inverse mismatch")
+        out[k]=inverse
+        check(k)
+    for k in selected:check(k)
+    return out,{"task_id":task_id,"scope_revision":scope_revision,
+        "source_sha256":expected_sha256,"workset_sha256":expected_workset_sha256,
+        "selected":sorted(selected),"expanded_bytes":sum(map(len,out.values())),
+        "provider_authentication_performed":False,"native_admitted":False,
+        "execution_authorized":False,"physical_instances_qualified":0}
