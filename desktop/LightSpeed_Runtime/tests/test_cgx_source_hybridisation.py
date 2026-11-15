@@ -127,3 +127,42 @@ def test_existing_route_resolves_compact_and_expanded_receipt():
     assert not compact["payload_persisted"] and not compact["native_admitted"]
     with pytest.raises(CGXCrossAnalysisError): run(17,11,1,32,include_grid="true")
     with pytest.raises(CGXCrossAnalysisError): run(128,128,1,256)
+
+
+
+def test_ternary_recursive_payload_and_sparse_fetch():
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload, hydrate_nested_review_payload
+    raw=b"".join(bytes([i])*64 for i in range(27))
+    root, objects=pack_nested_review_payload(raw,chunk_bytes=64)
+    assert (root,objects)==pack_nested_review_payload(raw,chunk_bytes=64)
+    full, f=hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=100000)
+    sub, s=hydrate_nested_review_payload(root,objects.__getitem__,"12",allowed_prefixes=("1",),max_bytes=10000)
+    assert full==raw and sub==raw[15*64:18*64]
+    assert s["fetched_objects"]<f["fetched_objects"] and s["fetched_bytes"]<f["fetched_bytes"]
+    with pytest.raises(PermissionError):
+        hydrate_nested_review_payload(root,objects.__getitem__,"",allowed_prefixes=("1",),max_bytes=100000)
+    with pytest.raises(CGXCrossAnalysisError):
+        hydrate_nested_review_payload(root,objects.__getitem__,"3",allowed_prefixes=("",),max_bytes=10000)
+    with pytest.raises(CGXCrossAnalysisError):
+        hydrate_nested_review_payload(root,lambda k: b"tampered",allowed_prefixes=("",),max_bytes=10000)
+    with pytest.raises(CGXCrossAnalysisError):
+        hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=1)
+
+
+def test_ternary_repeated_binary_and_empty_roundtrip():
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload, hydrate_nested_review_payload
+    for raw in (b"", bytes(range(64))*81, b"abc"*87):
+        root, objects=pack_nested_review_payload(raw,chunk_bytes=64)
+        out, stats=hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=100000)
+        assert out==raw
+        if len(raw)==64*81: assert stats["fetched_objects"]<10
+
+
+def test_ternary_grid_reference_same_payload_hash():
+    import hashlib,json
+    from lightspeed_runtime.cgx_cross_analysis import fractal_grid_review_receipt,pack_nested_review_payload,hydrate_nested_review_payload
+    r=fractal_grid_review_receipt(31,29,1.2,32,include_grid=True)
+    raw=json.dumps(r["grid"],separators=(",",":")).encode("ascii")
+    root,objects=pack_nested_review_payload(raw)
+    hydrated,_=hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=100000)
+    assert hashlib.sha256(hydrated).hexdigest()==r["payload_sha256"]

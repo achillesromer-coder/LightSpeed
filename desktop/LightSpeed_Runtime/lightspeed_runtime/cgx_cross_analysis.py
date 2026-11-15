@@ -309,3 +309,110 @@ def fractal_grid_review_receipt(width: int, height: int, zoom: float,
     if include_grid:
         result["grid"] = grid
     return result
+
+
+
+def pack_nested_review_payload(raw: bytes, *, chunk_bytes: int = 1024) -> tuple[str, dict[str, bytes]]:
+    """Ternary, content-addressed review DAG over arbitrary bytes.
+
+    Zero is an address digit here, not a minted T173 facet. Nodes are
+    deterministic transport metadata, not qualified physical geometry.
+    """
+    import hashlib
+    import json
+    if type(raw) is not bytes or len(raw) > 5 * 1024 * 1024:
+        raise CGXCrossAnalysisError("invalid payload or size")
+    if type(chunk_bytes) is not int or not 64 <= chunk_bytes <= 4096:
+        raise CGXCrossAnalysisError("invalid chunk size")
+    objects = {}
+    def store(value):
+        key = hashlib.sha256(value).hexdigest()
+        objects[key] = value
+        return key
+    def node(value):
+        return store(json.dumps(value, sort_keys=True, separators=(",", ":")).encode("ascii"))
+    chunks = [raw[i:i+chunk_bytes] for i in range(0,len(raw),chunk_bytes)] or [b""]
+    roots = [node({"kind":"leaf","blob":store(part)}) for part in chunks]
+    while len(roots)>1:
+        roots = [node({"kind":"branch","children":roots[i:i+3]}) for i in range(0,len(roots),3)]
+    return roots[0], objects
+
+
+def hydrate_nested_review_payload(root: str, fetch, prefix: str = "", *,
+                                  allowed_prefixes: tuple[str, ...], max_bytes: int) -> tuple[bytes, dict[str, int]]:
+    """Resolve a subtree by verified hash without fetching unrelated branches.
+
+    The root and allowed prefixes must come from the caller's trusted scope;
+    this function does not authenticate them. Budget covers fetched node/blob bytes.
+    """
+    import hashlib
+    import json
+    import re
+    def valid_key(k):
+        return isinstance(k,str) and re.fullmatch(r"[0-9a-f]{64}",k) is not None
+    def valid_path(p):
+        return isinstance(p,str) and len(p)<=16 and all(c in "012" for c in p)
+    if not valid_key(root) or not valid_path(prefix):
+        raise CGXCrossAnalysisError("invalid root or ternary address")
+    if (not isinstance(allowed_prefixes,tuple) or not all(valid_path(p) for p in allowed_prefixes)
+            or not any(prefix.startswith(p) for p in allowed_prefixes)):
+        raise PermissionError("subtree scope denied")
+    if type(max_bytes) is not int or not 1<=max_bytes<=32*1024*1024:
+        raise CGXCrossAnalysisError("invalid fetch budget")
+    cache = {}
+    spent = 0
+    visits = 0
+    def read(key):
+        nonlocal spent
+        if not valid_key(key):
+            raise CGXCrossAnalysisError("invalid child hash")
+        if key not in cache:
+            raw = fetch(key)
+            if type(raw) is not bytes or len(raw)>max_bytes-spent:
+                raise CGXCrossAnalysisError("fetch budget or payload type")
+            if hashlib.sha256(raw).hexdigest()!=key:
+                raise CGXCrossAnalysisError("object hash mismatch")
+            spent += len(raw)
+            cache[key] = raw
+        return cache[key]
+    def get_node(key):
+        raw=read(key)
+        if len(raw)>512:
+            raise CGXCrossAnalysisError("invalid node size")
+        try:
+            n=json.loads(raw)
+        except (ValueError,UnicodeError) as exc:
+            raise CGXCrossAnalysisError("invalid node") from exc
+        if not isinstance(n,dict):
+            raise CGXCrossAnalysisError("invalid node")
+        if set(n)=={"kind","blob"} and n["kind"]=="leaf" and valid_key(n["blob"]):
+            return n
+        if (set(n)=={"kind","children"} and n["kind"]=="branch" and
+                isinstance(n["children"],list) and 1<=len(n["children"])<=3 and
+                all(valid_key(k) for k in n["children"])):
+            return n
+        raise CGXCrossAnalysisError("invalid node shape")
+    key=root
+    for digit in prefix:
+        n=get_node(key); i=int(digit)
+        if n["kind"]!="branch" or i>=len(n["children"]):
+            raise CGXCrossAnalysisError("address not present")
+        key=n["children"][i]
+    output=bytearray()
+    def walk(k,depth):
+        nonlocal visits
+        visits+=1
+        if depth>16 or visits>200000:
+            raise CGXCrossAnalysisError("expansion limit")
+        n=get_node(k)
+        if n["kind"]=="leaf":
+            raw=read(n["blob"])
+            if len(raw)>4096 or len(output)+len(raw)>5*1024*1024:
+                raise CGXCrossAnalysisError("expanded payload limit")
+            output.extend(raw)
+        else:
+            for child in n["children"]:
+                walk(child,depth+1)
+    walk(key,len(prefix))
+    return bytes(output), {"fetched_bytes":spent,"fetched_objects":len(cache),
+                           "expanded_bytes":len(output)}
