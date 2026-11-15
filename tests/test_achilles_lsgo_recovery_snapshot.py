@@ -170,3 +170,47 @@ def test_running_status_not_hidden_by_group_display_limit(tmp_path):
     assert report["state"] == "UNRESOLVED_RUNNING_JOB_HOLD"
     assert report["consumer_restart_authorized"] is False
     assert report["jobs_dispatched"] == 0
+
+
+
+def test_cancelled_uncertain_work_remains_pool_hold(tmp_path):
+    p=fixture(tmp_path)
+    with sqlite3.connect(p) as db:
+        db.execute("ALTER TABLE jobs ADD COLUMN metadata_json TEXT")
+        db.execute("UPDATE jobs SET status='cancelled',metadata_json=? WHERE id=2",
+            ('{"ls_go_execution_uncertain":{"server_cancellation_verified":false}}',))
+    before=hashlib.sha256(p.read_bytes()).hexdigest()
+    report=module.inspect_database(p)
+    assert report["state"]=="UNCERTAIN_EXECUTION_OUTCOME_HOLD"
+    assert report["uncertain_execution_markers"]==1 and report["unresolved_running_jobs"]==0
+    assert not report["pool_ready_for_claim_review"] and not report["consumer_restart_authorized"]
+    assert report["read_snapshot_transaction"]
+    assert hashlib.sha256(p.read_bytes()).hexdigest()==before
+
+
+def test_missing_or_invalid_metadata_never_proves_pool_ready(tmp_path):
+    p=fixture(tmp_path)
+    report=module.inspect_database(p)
+    assert report["uncertain_execution_markers"] is None
+    assert not report["pool_ready_for_claim_review"]
+    with sqlite3.connect(p) as db:
+        db.execute("ALTER TABLE jobs ADD COLUMN metadata_json TEXT")
+        db.execute("UPDATE jobs SET metadata_json='not json' WHERE id=1")
+    report=module.inspect_database(p)
+    assert report["state"]=="INVALID_CLAIM_METADATA_HOLD"
+    assert report["malformed_job_metadata"]==1
+    assert not report["pool_ready_for_claim_review"]
+
+
+
+def test_architect_queue_closure_cannot_be_inferred_from_summary():
+    from lightspeed_runtime.closure_readiness import queue_closure_verified
+    one={"action_id":"A","status":"completed"}
+    good={"action_count":1,"completed_count":1,"pending_count":0,"actions":[one]}
+    assert queue_closure_verified(good)
+    assert queue_closure_verified(good,expected_ids={"A"})
+    assert not queue_closure_verified(good,expected_ids={"A","B"})
+    assert not queue_closure_verified({"action_count":1,"pending_count":0})
+    assert not queue_closure_verified(dict(good,actions=[dict(one,status="pending")]))
+    assert not queue_closure_verified(dict(good,action_count=2,completed_count=2,actions=[one,one]))
+    assert not queue_closure_verified(dict(good,pending_count=False))

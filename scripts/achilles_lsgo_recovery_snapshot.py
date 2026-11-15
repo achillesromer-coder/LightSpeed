@@ -42,6 +42,7 @@ def inspect_database(path: Path) -> dict:
     try:
         with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True, timeout=3)) as db:
             db.execute("PRAGMA query_only=ON")
+            db.execute("BEGIN")
             names = {row[0] for row in db.execute(
                 "SELECT name FROM sqlite_master WHERE type='table'")}
             if not set(TABLES).issubset(names):
@@ -77,6 +78,27 @@ def inspect_database(path: Path) -> dict:
                 "SELECT COUNT(*) FROM jobs WHERE job_type=? AND status=?",
                 ("ls_go_command", "running"),
             ).fetchone()[0])
+            # Match Smith's conservative pool fence, including cancelled
+            # rows that retain a server-outcome marker. Old schemas cannot
+            # prove the absence of an uncertain claim.
+            metadata_available="metadata_json" in jobs
+            uncertain=None
+            malformed=None
+            if metadata_available:
+                uncertain=int(db.execute(
+                    "SELECT COUNT(*) FROM jobs WHERE job_type=? AND metadata_json LIKE ?",
+                    ("ls_go_command","%ls_go_execution_uncertain%"),
+                ).fetchone()[0])
+                malformed=int(db.execute(
+                    "SELECT COUNT(*) FROM jobs WHERE job_type=? "
+                    "AND metadata_json IS NOT NULL AND trim(metadata_json)<>'' "
+                    "AND CASE WHEN json_valid(metadata_json) THEN json_type(metadata_json)<>'object' ELSE 1 END",
+                    ("ls_go_command",),
+                ).fetchone()[0])
+            pending=int(db.execute(
+                "SELECT COUNT(*) FROM jobs WHERE job_type=? AND status IN ('pending','queued','review')",
+                ("ls_go_command",),
+            ).fetchone()[0])
             unlinked = sum(x["count"] for x in matches if x["job_state"] == "UNLINKED")
             foreign = sum(x["count"] for x in matches if x["job_state"] == "FOREIGN_JOB_TYPE")
             # An unassigned queue identity is not the same as a dangling
@@ -107,6 +129,8 @@ def inspect_database(path: Path) -> dict:
             if sum(x["count"] for x in matches) != total:
                 raise RecoveryHold("INCOMPLETE_IDENTITY_LINKAGE_HOLD")
             verdict = ("UNRESOLVED_RUNNING_JOB_HOLD" if running else
+                       "UNCERTAIN_EXECUTION_OUTCOME_HOLD" if uncertain else
+                       "INVALID_CLAIM_METADATA_HOLD" if malformed else
                        "FOREIGN_JOB_LINK_HOLD" if foreign else
                        "DUPLICATE_COMMAND_IDENTITY_HOLD" if duplicates else
                        "UNLINKED_COMMAND_IDENTITY_REVIEW_HOLD" if unlinked else
@@ -124,6 +148,12 @@ def inspect_database(path: Path) -> dict:
                 "linkage_class_counts": unlinked_classes,
                 "foreign_job_link_count": foreign,
                 "unresolved_running_jobs": running,
+                "pending_jobs":pending,
+                "uncertain_execution_markers":uncertain,
+                "malformed_job_metadata":malformed,
+                "claim_metadata_available":metadata_available,
+                "read_snapshot_transaction":True,
+                "pool_ready_for_claim_review":metadata_available and not (running or uncertain or malformed),
                 "body_fields_read": False, "native_modified": False,
                 "commands_replayed": False, "jobs_dispatched": 0,
                 "singleton_lock_modified": False, "owner_lease_verified": False,

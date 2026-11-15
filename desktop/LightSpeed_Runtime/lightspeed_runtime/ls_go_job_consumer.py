@@ -105,7 +105,9 @@ def _pool_conflict(conn, job_id):
     # Uncertain work remains held even if its status was externally cancelled.
     return conn.execute(
         "SELECT id FROM jobs WHERE job_type=? AND id<>? AND "
-        "(status='running' OR metadata_json LIKE ?) LIMIT 1",
+        "(status='running' OR metadata_json LIKE ? OR "
+        "(metadata_json IS NOT NULL AND trim(metadata_json)<>'' "
+        "AND CASE WHEN json_valid(metadata_json) THEN json_type(metadata_json)<>'object' ELSE 1 END)) LIMIT 1",
         ("ls_go_command",job_id,"%ls_go_execution_uncertain%"),
     ).fetchone() is not None
 
@@ -642,8 +644,15 @@ class LSGoJobConsumer:
                 raise RuntimeError("queued job identity changed before claim")
             if _pool_conflict(conn,job_id):
                 return False
-            metadata = _json_dict(row["metadata_json"])
-            if metadata.get("ls_go_execution_uncertain"):
+            raw_metadata=row["metadata_json"]
+            if raw_metadata is not None and str(raw_metadata).strip():
+                try:
+                    if type(json.loads(raw_metadata)) is not dict:
+                        return False
+                except (ValueError,TypeError):
+                    return False
+            metadata = _json_dict(raw_metadata)
+            if "ls_go_execution_uncertain" in metadata:
                 return False
             params = _json_dict(row["params_json"])
             action_payload = params.get("action_payload")
@@ -1453,9 +1462,13 @@ class LSGoJobConsumer:
             counts={row["status"]:int(row["n"]) for row in rows}
             uncertain=conn.execute("SELECT COUNT(*) AS n FROM jobs WHERE job_type=? AND metadata_json LIKE ?",
                                    ("ls_go_command","%ls_go_execution_uncertain%")).fetchone()["n"]
+            malformed=conn.execute("SELECT COUNT(*) AS n FROM jobs WHERE job_type=? "
+                "AND metadata_json IS NOT NULL AND trim(metadata_json)<>'' "
+                "AND CASE WHEN json_valid(metadata_json) THEN json_type(metadata_json)<>'object' ELSE 1 END",
+                ("ls_go_command",)).fetchone()["n"]
         pending=sum(counts.get(k,0) for k in ("pending","queued","review"))
-        return {"state":"recovery_hold" if counts.get("running",0) or uncertain else "ready_for_claim_review",
-                "pending_count":pending,"running_count":counts.get("running",0),"uncertain_count":int(uncertain),
+        return {"state":"recovery_hold" if counts.get("running",0) or uncertain or malformed else "ready_for_claim_review",
+                "pending_count":pending,"running_count":counts.get("running",0),"uncertain_count":int(uncertain),"malformed_metadata_count":int(malformed),
                 "terminal_count":sum(counts.get(k,0) for k in ("completed","blocked","held")),
                 "execution_authorized":False,"native_admitted":False}
 

@@ -1775,3 +1775,16 @@ def test_pool_holds_ungated_multi_floor_live_dispatch(tmp_path,monkeypatch):
         result=consumer._execute_action(action_type=action,params={"execute":True,"instruction":"fixture"},
             command_id="C",job={"id":1},envelope=None,envelope_count=0)
         assert result["status"]=="held"
+
+
+
+def test_pool_invalid_metadata_fails_closed(tmp_path):
+    shell=tmp_path/"App";configure_shell(shell)
+    db=configure_db(tmp_path/"pool.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO jobs (id,job_type,status,params_json,metadata_json) VALUES (61,'ls_go_command','pending','{}','not json')")
+        conn.execute("INSERT INTO jobs (id,job_type,status,params_json,metadata_json) VALUES (62,'ls_go_command','pending','{}','{}')")
+    c=ls_go_job_consumer.LSGoJobConsumer(shell,db=db)
+    assert c.execution_pool_review()["malformed_metadata_count"]==1
+    assert c.process_once()["results_written"]==0
+    assert all(not c._claim_job(j["id"],expected_job=j) for j in c.pending_jobs())
