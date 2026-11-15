@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+import unicodedata
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,13 +62,39 @@ def load_optional(path: Path | None) -> dict[str, Any] | None:
         raise ValueError(f"expected JSON object: {path}")
     return payload
 
+def valid_lease_claim_text(value: Any) -> bool:
+    # One printable identifier: exclude bidi/format controls, Unicode line
+    # separators and lone surrogates as well as ASCII controls. This is only
+    # structural validation, NOT issuer/signature/DBR authentication.
+    return (isinstance(value, str) and bool(value.strip())
+            and not any(unicodedata.category(ch) in {"Cc", "Cf", "Cs", "Zl", "Zp"}
+                        for ch in value))
+
 def subset_scope(name: str, allowed: list[str] | None, requested: str | None, reasons: list[str]) -> None:
-    if not allowed:
+    # An absent allowlist is not a wildcard for a requested task, project or action.
+    if allowed is None:
+        if requested is not None:
+            reasons.append(f"lease-{name}-scope-missing")
+        return
+    if not isinstance(allowed, list) or not allowed or any(
+        not valid_lease_claim_text(item) for item in allowed
+    ):
+        reasons.append(f"lease-{name}-scope-invalid")
         return
     if not requested:
         reasons.append(f"lease-scope-requires-{name}")
-    elif requested not in set(map(str, allowed)):
+    elif requested not in allowed:
         reasons.append(f"lease-{name}-out-of-scope:{requested}")
+
+def validated_allowlist(name: str, value: Any, reasons: list[str]) -> set[str]:
+    # Lease scope fields must be explicit typed lists; stringification can admit
+    # malformed mixed-type claims as if they were approved identities.
+    if not isinstance(value, list) or not value or any(
+        not valid_lease_claim_text(item) for item in value
+    ):
+        reasons.append(f"lease-{name}-allowlist-invalid")
+        return set()
+    return set(value)
 
 def validate_lease(
     lease: dict[str, Any] | None,
@@ -82,11 +109,37 @@ def validate_lease(
     execution_class: str,
     planned_floors: list[str],
     consequential: bool,
+    object_id: str | None = None,
+    tool_scope: str | None = None,
+    configuration_id: str | None = None,
 ) -> tuple[bool, list[str], dict[str, Any]]:
     reasons: list[str] = []
     summary: dict[str, Any] = {}
     if lease is None:
         return False, ["execution-lease-missing"], summary
+    if not isinstance(lease, dict):
+        return False, ["execution-lease-invalid"], summary
+    # Native callers may supply malformed class labels despite CLI choices.
+    # Return a denial receipt instead of raising KeyError/TypeError before DBR.
+    if not isinstance(execution_class, str) or execution_class not in EXECUTION_CLASS_RANK:
+        return False, ["request-execution-class-invalid"], summary
+    if not isinstance(cascade_class, str) or cascade_class not in CASCADE:
+        return False, ["request-cascade-class-invalid"], summary
+
+    # Required reference fields are typed identifiers only; checking their shape
+    # does not authenticate the issuer, referenced receipt, or native DBR.
+    def require_ref(field: str, reason: str) -> None:
+        value = lease.get(field)
+        if not valid_lease_claim_text(value):
+            reasons.append(reason)
+
+    # Structural identity checks are necessary but NOT issuer authentication.
+    # Cryptographic issuer/RootAuthority verification and replay consumption
+    # remain separate native host gates.
+    for field in ("lease_id", "issued_by", "subject_agent"):
+        value = lease.get(field)
+        if not valid_lease_claim_text(value):
+            reasons.append("lease-" + field.replace("_", "-") + "-invalid")
 
     lease_class = str(lease.get("lease_class") or "")
     summary = {
@@ -117,17 +170,64 @@ def validate_lease(
             reasons.append("lease-outside-validity-window")
     except (KeyError, ValueError, TypeError):
         reasons.append("lease-time-invalid")
-    if domain not in set(map(str, lease.get("domains") or [])):
+    domains = validated_allowlist("domains", lease.get("domains"), reasons)
+    if domain not in domains:
         reasons.append(f"lease-domain-out-of-scope:{domain}")
-    if execution_depth not in set(map(str, lease.get("execution_depths") or [])):
+    depths = validated_allowlist("execution-depths", lease.get("execution_depths"), reasons)
+    if execution_depth not in depths:
         reasons.append(f"lease-execution-depth-out-of-scope:{execution_depth}")
+    # Non-authorising source-level ABI check. The class named by the caller
+    # cannot launder an effectful verb/depth through a weaker lease class.
+    # These 0.1 vocabularies are exact and case-sensitive; new verbs require
+    # an explicit reviewed native mapping, not an arbitrary lease allowlist.
+    known_depths = {"inspect", "propose", "simulate", "execute", "build", "publish"}
+    known_actions = {
+        "read", "query", "review", "inspect", "execute", "compute", "simulate",
+        "digital_write", "write", "mutate", "publish", "publication",
+        "external_action", "physical_actuation",
+    }
+    if execution_depth not in known_depths or any(d not in known_depths for d in depths):
+        reasons.append("lease-execution-depth-unmapped")
+    if action_class not in known_actions:
+        reasons.append("lease-action-class-unmapped")
+    # Minimum capability class is independent of the caller's class label
+    # and the lease's self-declared allowlist. Higher-risk classes still need
+    # their own signed host/tool/safety gates after this structural preflight.
+    minimum_action_class = {
+        "execute": "COMPUTE_ONLY", "compute": "COMPUTE_ONLY",
+        "simulate": "COMPUTE_ONLY",
+        "digital_write": "DIGITAL_WRITE", "write": "DIGITAL_WRITE",
+        "mutate": "DIGITAL_WRITE", "publish": "DIGITAL_WRITE",
+        "publication": "DIGITAL_WRITE",
+        "external_action": "EXTERNAL_ACTION",
+        "physical_actuation": "PHYSICAL_ACTUATION",
+    }
+    minimum_depth_class = {
+        "propose": "COMPUTE_ONLY", "simulate": "COMPUTE_ONLY",
+        "execute": "COMPUTE_ONLY", "build": "DIGITAL_WRITE",
+        "publish": "DIGITAL_WRITE",
+    }
+    for axis, required in (
+        ("action", minimum_action_class.get(action_class)),
+        ("depth", minimum_depth_class.get(execution_depth)),
+    ):
+        if required is None:
+            continue
+        if lease_class in EXECUTION_CLASS_RANK and (
+            EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]
+        ):
+            reasons.append(f"lease-class-{axis}-incompatible")
+        if execution_class in EXECUTION_CLASS_RANK and (
+            EXECUTION_CLASS_RANK[execution_class] < EXECUTION_CLASS_RANK[required]
+        ):
+            reasons.append(f"request-class-{axis}-incompatible")
     ceiling = str(lease.get("max_cascade_class") or "")
     if ceiling not in CASCADE:
         reasons.append("lease-cascade-ceiling-invalid")
     elif CASCADE[cascade_class] > CASCADE[ceiling]:
         reasons.append(f"lease-cascade-exceeded:{cascade_class}>{ceiling}")
 
-    allowed_floors = set(map(str, lease.get("allowed_floors") or []))
+    allowed_floors = validated_allowlist("allowed-floors", lease.get("allowed_floors"), reasons)
     if not allowed_floors:
         reasons.append("lease-allowed-floors-empty")
     else:
@@ -135,35 +235,90 @@ def validate_lease(
         if missing:
             reasons.append("lease-floor-out-of-scope:" + ",".join(missing))
 
-    scope = lease.get("scope") or {}
+    scope = lease.get("scope")
+    if not isinstance(scope, dict):
+        reasons.append("lease-scope-invalid")
+        scope = {}
     subset_scope("task", scope.get("task_ids"), task_id, reasons)
     subset_scope("project", scope.get("project_ids"), project_id, reasons)
     subset_scope("action-class", scope.get("action_classes"), action_class, reasons)
+    # Match the non-authorising JS bootstrap ABI review: an otherwise valid
+    # requested action cannot qualify a lease that also lists an unknown verb.
+    # New CCC action classes require a versioned native mapping, not a wildcard.
+    declared_actions = scope.get("action_classes")
+    if isinstance(declared_actions, list) and any(
+        isinstance(action, str) and action not in known_actions
+        for action in declared_actions
+    ):
+        reasons.append("lease-action-class-unmapped")
+    # A benign requested verb/depth must not qualify a lease whose other
+    # declared capabilities exceed its class. Structural ABI check only:
+    # issuer, revocation, host authority and DBR are NOT authenticated here.
+    if isinstance(declared_actions, list) and lease_class in EXECUTION_CLASS_RANK:
+        for declared_action in declared_actions:
+            # Malformed unhashable entries are rejected by subset_scope;
+            # never raise TypeError before the fail-closed receipt is emitted.
+            if not isinstance(declared_action, str):
+                continue
+            required = minimum_action_class.get(declared_action)
+            if required is not None and EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]:
+                reasons.append("lease-declared-action-class-incompatible")
+                break
+    if lease_class in EXECUTION_CLASS_RANK:
+        for declared_depth in depths:
+            required = minimum_depth_class.get(declared_depth)
+            if required is not None and EXECUTION_CLASS_RANK[lease_class] < EXECUTION_CLASS_RANK[required]:
+                reasons.append("lease-declared-depth-class-incompatible")
+                break
+
+    # Additional request-bound claims are checked only when the caller supplies
+    # the actual target. This is structural preflight, NOT tool authorization.
+    subset_scope("object", scope.get("object_ids"), object_id, reasons)
+    subset_scope("tool", scope.get("tool_scopes"), tool_scope, reasons)
+    subset_scope("configuration", scope.get("configuration_ids"), configuration_id, reasons)
 
     if lease.get("revocable") is not True:
         reasons.append("lease-not-revocable")
     phase = str(lease.get("authority_phase") or "")
     if phase not in {"PRE_LAUNCH","LAUNCH_TRANSITION","DISTRIBUTED_OPERATION","SUCCESSION_OR_RECOVERY"}:
         reasons.append("lease-authority-phase-invalid")
-    if not lease.get("authority_phase_ref"):
-        reasons.append("lease-authority-phase-ref-missing")
+    require_ref("authority_phase_ref", "lease-authority-phase-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["DIGITAL_WRITE"]:
-        if not lease.get("rollback_or_recovery_ref"):
-            reasons.append("lease-rollback-or-recovery-ref-missing")
+        require_ref("rollback_or_recovery_ref", "lease-rollback-or-recovery-ref-missing")
     if EXECUTION_CLASS_RANK[execution_class] >= EXECUTION_CLASS_RANK["EXTERNAL_ACTION"]:
-        if not lease.get("stop_authority_ref"):
-            reasons.append("lease-stop-authority-missing")
-        if not lease.get("safe_state_ref"):
-            reasons.append("lease-safe-state-missing")
+        require_ref("stop_authority_ref", "lease-stop-authority-missing")
+        require_ref("safe_state_ref", "lease-safe-state-missing")
     if consequential:
         for field in ("assurance_receipt_ref", "custodial_receipt_ref", "risk_acceptance_ref"):
-            if not lease.get(field):
-                reasons.append("lease-" + field.replace("_", "-") + "-missing")
-        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"} and not lease.get("root_authority_receipt_ref"):
-            reasons.append("lease-root-authority-receipt-ref-missing")
-    if execution_depth == "publish" and not lease.get("release_receipt_ref"):
-        reasons.append("lease-release-receipt-ref-missing")
+            require_ref(field, "lease-" + field.replace("_", "-") + "-missing")
+        if phase in {"PRE_LAUNCH","LAUNCH_TRANSITION"}:
+            require_ref("root_authority_receipt_ref", "lease-root-authority-receipt-ref-missing")
+    if execution_depth == "publish":
+        require_ref("release_receipt_ref", "lease-release-receipt-ref-missing")
     return not reasons, reasons, summary
+
+def supervisor_receipt_complete(receipt: Any, *, expected_floors: list[str], execute: bool) -> bool:
+    """Structural result check only; no lease, signer or host authenticity implied."""
+    if not isinstance(receipt, dict) or not isinstance(expected_floors, (list, tuple)) or not expected_floors:
+        return False
+    rows = receipt.get("floors")
+    if not isinstance(rows, list) or len(rows) != len(expected_floors):
+        return False
+    expected_status = "completed" if execute else "dry_run"
+    return (
+        receipt.get("status") == "complete"
+        and receipt.get("complete_workflow") is True
+        and receipt.get("requested_execution") is execute
+        and receipt.get("floor_sequence") == list(expected_floors)
+        and all(
+            isinstance(row, dict)
+            and row.get("sequence") == index
+            and row.get("floor") == floor
+            and row.get("status") == expected_status
+            for index, (row, floor) in enumerate(zip(rows, expected_floors), start=1)
+        )
+    )
+
 
 def atomic_write(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -183,6 +338,10 @@ def main() -> int:
     source.add_argument("--instruction-file", type=Path)
     ap.add_argument("--task-id")
     ap.add_argument("--project-id")
+    # Source-review request labels only; never trusted as authenticated target identity.
+    ap.add_argument("--object-id")
+    ap.add_argument("--tool-scope")
+    ap.add_argument("--configuration-id")
     ap.add_argument("--agent-id", default="Neo")
     ap.add_argument("--domain", required=True, choices=["romer", "eco", "emassc", "lightspeed"])
     ap.add_argument("--execution-depth", required=True, choices=["inspect", "propose", "simulate", "execute", "build", "publish"])
@@ -241,9 +400,19 @@ def main() -> int:
             execution_class=args.execution_class,
             planned_floors=list(plan.floor_sequence),
             consequential=consequential,
+            object_id=args.object_id,
+            tool_scope=args.tool_scope,
+            configuration_id=args.configuration_id,
         )
     else:
         lease_ok, lease_reasons, lease_summary = False, [], {}
+
+    # --execute invokes the existing model/supervisor even for an "inspect"
+    # depth. A READ_ONLY lease may qualify metadata inspection but must never
+    # be used to invoke a compute-capable supervisor by relabelling the request.
+    if args.execute and args.execution_class == "READ_ONLY":
+        lease_ok = False
+        lease_reasons.append("lease-read-only-supervisor-invocation-denied")
 
     supervisor_receipt: dict[str, Any] | None = None
     exit_code = 0
@@ -268,15 +437,26 @@ def main() -> int:
             allow_heavy=args.allow_heavy,
             stop_on_failure=not args.continue_on_failure,
         )
-        if args.execute:
-            if effectful:
-                decision = "MODEL_PLAN_COMPLETE_CLEARED_FOR_TOOL_GATE"
-            else:
-                decision = "COMPUTE_EXECUTED_WITH_ACTION_BLOCKERS" if preflight_holds else "COMPUTE_EXECUTED_CLEAN"
-            exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2
+        # Aggregate "complete" only means the supervisor iterated the floor plan;
+        # an unknown/partial floor result is not successful model execution.
+        # Validate each actual floor receipt before issuing a clean/cleared label.
+        result_complete = supervisor_receipt_complete(
+            supervisor_receipt, expected_floors=list(plan.floor_sequence),
+            execute=args.execute,
+        )
+        if not result_complete:
+            decision = "SUPERVISOR_RESULT_UNVERIFIED_HOLD"
+            exit_code = 2
+        elif args.execute:
+            decision = (
+                "MODEL_PLAN_COMPLETE_CLEARED_FOR_TOOL_GATE" if effectful
+                else ("COMPUTE_EXECUTED_WITH_ACTION_BLOCKERS" if preflight_holds
+                      else "COMPUTE_EXECUTED_CLEAN")
+            )
+            exit_code = 0
         else:
             decision = "DRY_RUN_WITH_BLOCKERS" if preflight_holds else "DRY_RUN_CLEARED"
-            exit_code = 0 if supervisor_receipt.get("status") != "failed" else 2
+            exit_code = 0
 
     receipt = {
         "schema": SCHEMA,
@@ -294,6 +474,11 @@ def main() -> int:
             "tags": tags,
             "action_class": action_class,
             "execution_class": args.execution_class,
+            "requested_target_unverified": {
+                "object_id": args.object_id,
+                "tool_scope": args.tool_scope,
+                "configuration_id": args.configuration_id,
+            },
         },
         "planned_floors": list(plan.floor_sequence),
         "decision": decision,

@@ -4,6 +4,22 @@ export const SHELL_SCHEMA = "lightspeed-cognigrex-os-shell-v0.1" as const;
 
 export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources"] as const;
 export type ShellView = (typeof SHELL_VIEWS)[number];
+export const OBJECT_WORKSPACES = [
+  {id:"press",label:"Composition",element:"cgx-press-surface"},
+  {id:"family",label:"Family / macro",element:"cgx-first-spaces-review"},
+  {id:"load",label:"LOAD batches",element:"cgx-load-batch-review"},
+  {id:"catalogue",label:"Library / spatial",element:"object-review-catalogue"},
+  {id:"science",label:"Evidence lens",element:"cgx-review-lens"},
+  {id:"matrix",label:"Technology matrix",element:"type1-catalogue-projection"},
+  {id:"graphs",label:"Object graph",element:"representation-graphs"},
+] as const;
+export type ObjectWorkspace = (typeof OBJECT_WORKSPACES)[number]["id"];
+export function resolveObjectWindows(open: unknown, active: unknown): {open:ObjectWorkspace[],active:ObjectWorkspace} {
+  const allowed = new Set<string>(OBJECT_WORKSPACES.map(x=>x.id));
+  const windows = Array.isArray(open) ? [...new Set(open.filter((x):x is ObjectWorkspace=>typeof x==="string"&&allowed.has(x)))] : ["press","family","load","catalogue"] as ObjectWorkspace[];
+  if (!windows.length) windows.push("press");
+  return {open:windows,active:windows.includes(active as ObjectWorkspace)?active as ObjectWorkspace:windows[0]};
+}
 
 export type WorkflowStageId =
   | "intake"

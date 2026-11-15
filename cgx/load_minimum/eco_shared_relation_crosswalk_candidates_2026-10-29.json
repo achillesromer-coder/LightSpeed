@@ -1,0 +1,151 @@
+{
+  "schema": "CGX-CROSS-FAMILY-RELATION-CANDIDATES/0.1",
+  "stage": "SOURCE_REVIEW_ONLY",
+  "status": "HOLD",
+  "purpose": "Version-pinned evidence-only candidates; no semantic equivalence assertion, canonical Object_ID, owner approval or DBR admission.",
+  "sources": {
+    "domain": {
+      "path": "cgx/domain_templates/eco_relation_registry.json",
+      "git_blob": "47241ad132cc53fa4e90f5b8ec65fe23412be95a",
+      "schema": "CGX-ECO-RELATION-REGISTRY/0.2",
+      "extends": "CGX-RELATION-QUALIFIER/0.1"
+    },
+    "shared": {
+      "path": "cgx/domain_templates/relation_qualifier_contract.json",
+      "git_blob": "989685153af6da031b5e4f09c189834ed8f38de2",
+      "schema": "CGX-RELATION-QUALIFIER/0.2"
+    }
+  },
+  "known_issues": [
+    "ECO_MODIFIES_PROCESS_INTERVENTION_COLLISION",
+    "ECO_QUALIFIER_0_1_VS_SHARED_0_2"
+  ],
+  "candidates": [
+    {
+      "relation_id": "DERIVED_FROM",
+      "domain_family": "evidence",
+      "shared_family": "provenance",
+      "domain_declaration": {
+        "id": "DERIVED_FROM"
+      },
+      "shared_declaration": {
+        "id": "DERIVED_FROM"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "EVIDENCED_BY",
+      "domain_family": "evidence",
+      "shared_family": "provenance",
+      "domain_declaration": {
+        "id": "EVIDENCED_BY"
+      },
+      "shared_declaration": {
+        "id": "EVIDENCED_BY"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "GATED_BY",
+      "domain_family": "recipe_test",
+      "shared_family": "process",
+      "domain_declaration": {
+        "id": "GATED_BY",
+        "rule": "gate identity/state required; gate presence does not prove field clearance"
+      },
+      "shared_declaration": {
+        "id": "GATED_BY"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "HAS_CRITERION",
+      "domain_family": "recipe_test",
+      "shared_family": "process",
+      "domain_declaration": {
+        "id": "HAS_CRITERION",
+        "rule": "criterion remains source/test scoped"
+      },
+      "shared_declaration": {
+        "id": "HAS_CRITERION"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "MITIGATED_BY",
+      "domain_family": "intervention",
+      "shared_family": "risk",
+      "domain_declaration": {
+        "id": "MITIGATED_BY"
+      },
+      "shared_declaration": {
+        "id": "MITIGATED_BY"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "USES_INPUT",
+      "domain_family": "recipe_test",
+      "shared_family": "process",
+      "domain_declaration": {
+        "id": "USES_INPUT",
+        "rule": "input identity does not itself prove field suitability"
+      },
+      "shared_declaration": {
+        "id": "USES_INPUT"
+      },
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_domain_owner": "Athene / Eco-Grex",
+      "candidate_grammar_owner": "Cognigrex parent",
+      "owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    }
+  ],
+  "canonical_relations_minted": 0,
+  "authority_transferred": false,
+  "readback_verified": false
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "CGX-VERCEL-PRODUCTION-SOURCE-BOUNDARY-REVIEW/0.1",
+  "observed_on": "2026-11-06",
+  "provider": "Vercel authenticated deployment source-file inventory",
+  "project": "romer-unispace-public",
+  "deployment_id": "dpl_BRTUwNxyUi7cfm5UM9y7Qaw1GhPV",
+  "deployment_state": "READY",
+  "target": "production",
+  "deployment_url": "romer-unispace-public-5cqg1a8hg-hotdogg3211-9386s-projects.vercel.app",
+  "source_root": "/src",
+  "expected_allowlisted_cgx_files": 12,
+  "expected_sidecars": [
+    "/src/vercel.json"
+  ],
+  "observed_source_file_count": 16,
+  "observed_source_paths": [
+    "/src/cgx/assets/core.js",
+    "/src/cgx/assets/domain-overviews.js",
+    "/src/cgx/assets/domain-viewer.js",
+    "/src/cgx/assets/viewer.css",
+    "/src/cgx/assets/viewer.js",
+    "/src/cgx/asteroid/apophis/app.js",
+    "/src/cgx/asteroid/apophis/index.html",
+    "/src/cgx/asteroid/apophis/style.css",
+    "/src/cgx/doom/index.html",
+    "/src/cgx/ds/index.html",
+    "/src/cgx/eco/index.html",
+    "/src/cgx/fs/index.html",
+    "/src/cgx/index.html",
+    "/src/cgx/ps/index.html",
+    "/src/cgx/romer/index.html",
+    "/src/vercel.json"
+  ],
+  "unexpected_relative_to_current_release_allowlist": [
+    "/src/cgx/asteroid/apophis/app.js",
+    "/src/cgx/asteroid/apophis/index.html",
+    "/src/cgx/asteroid/apophis/style.css"
+  ],
+  "missing_from_current_release_allowlist": [],
+  "source_boundary_result": "DRIFT_HOLD_3_UNALLOWLISTED_SOURCE_FILES",
+  "interpretation": "Authenticated deployment SOURCE inventory, not proof of externally accessible routes or a private-data leak. Do not infer public accessibility or rights from this tree.",
+  "next_acceptance": [
+    "Check Apophis source rights and original authorisation separately",
+    "Run unauthenticated HTTP 200/403/404 and CSP negative checks on deployed paths",
+    "Reconcile production source inventory against independently approved release candidate",
+    "Keep existing deployment unchanged until scoped approval"
+  ],
+  "actions_taken": [
+    "Read Vercel deployment and file tree",
+    "Write review-only receipt"
+  ],
+  "actions_not_taken": [
+    "No production deployment",
+    "No deletion or removal of Apophis assets",
+    "No public mint",
+    "No permission changes"
+  ],
+  "gate_states": {
+    "G01": "HOLD",
+    "G04": "HOLD",
+    "G05": "HOLD",
+    "G07": "HOLD"
+  }
+}

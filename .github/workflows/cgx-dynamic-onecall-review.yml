@@ -1,0 +1,62 @@
+name: CGX bounded dynamic one-call review
+on:
+  pull_request:
+    paths:
+      - "cgx/**"
+      - "apps/lightspeed-go/**"
+      - "desktop/source-manifest.json"
+      - "desktop/LightSpeed_Runtime/**"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/cgx-dynamic-onecall-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  bounded-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Use the exact PR head, never the synthetic merge commit.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Install bounded local test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check pytest
+          npm ci --ignore-scripts --no-audit --no-fund --prefix apps/lightspeed-go
+      - name: Verify dynamic command selector cannot escalate
+        run: python -m unittest cgx.bootstrap.test_cgx_dynamic_batch -v
+      - name: One-call source review against immediate parent commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="$(git rev-parse HEAD^)"
+          python cgx/bootstrap/cgx_dynamic_batch.py --base "$base" --mode verify > "$RUNNER_TEMP/cgx-bounded-review.json"
+          python - "$RUNNER_TEMP/cgx-bounded-review.json" <<'PY'
+          import json,sys
+          receipt=json.load(open(sys.argv[1],encoding="utf-8"))
+          assert receipt["result"]=="SOURCE_REVIEW_TESTS_PASSED_NOT_NATIVE_ADMITTED"
+          assert receipt["jobs"] and all(job["pass"] for job in receipt["jobs"])
+          assert receipt["minted"] is False and receipt["deployed"] is False
+          assert receipt["native_admitted"] is False
+          print("CGX_BOUNDED_REVIEW_PASS",len(receipt["jobs"]),"jobs")
+          PY
+      - name: Preserve non-authorising validation receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-bounded-source-review
+          path: ${{ runner.temp }}/cgx-bounded-review.json
+          if-no-files-found: ignore
+          retention-days: 14

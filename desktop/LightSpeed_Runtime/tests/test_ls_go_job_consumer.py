@@ -1557,6 +1557,40 @@ def test_rfs_emff_dispatch_uses_executor_validator_and_command_identity(
     assert seen["allow_heavy"] is False
 
 
+def test_stale_consumer_lock_with_live_reused_pid_remains_held(tmp_path: Path, monkeypatch):
+    """Source-only singleton negative: age alone never authorises lock removal.
+
+    A recycled PID could belong to an unrelated live process. This test proves
+    fail-closed behaviour, NOT consumer identity or host liveness.
+    """
+    shell = tmp_path / "App"
+    lock = ls_go_job_consumer.heartbeat_path(shell)
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    original = {
+        "schema_version": ls_go_job_consumer.CONSUMER_SCHEMA,
+        "pid": 424242,
+        "heartbeat_utc": "2026-10-30T04:28:00+00:00",
+        "state": "polling",
+    }
+    lock.write_text(json.dumps(original, sort_keys=True), encoding="utf-8")
+    monkeypatch.setattr(ls_go_job_consumer, "_pid_alive", lambda pid: pid == 424242)
+    consumer = ls_go_job_consumer.LSGoJobConsumer(shell, db=object())
+
+    try:
+        consumer._acquire_heartbeat_lock()
+    except RuntimeError as exc:
+        # The current consumer reports the live PID. The separate draft
+        # Achilles singleton hardening (#217) instead requires owner-reviewed
+        # reconciliation for every existing lock, including a reused PID.
+        # Preserve the invariant across both review branches without treating
+        # a PID or an error-message spelling as authenticated ownership.
+        message = str(exc)
+        assert ("already active as PID 424242" in message
+                or "owner-reviewed" in message)
+    else:
+        raise AssertionError("stale timestamp bypassed live-PID singleton hold")
+    assert json.loads(lock.read_text(encoding="utf-8")) == original
+
 def test_smith_receipt_paths_are_injective_for_colliding_labels(tmp_path: Path) -> None:
     from hashlib import sha256
 

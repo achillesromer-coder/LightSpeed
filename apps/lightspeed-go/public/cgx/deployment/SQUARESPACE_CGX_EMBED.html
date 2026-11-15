@@ -1,0 +1,32 @@
+<!-- UniSpace / CGX: insert into a Squarespace Code Block on /cgx and each /cgx/{fs,ds,ps,doom} page.
+     The public viewer is intentionally isolated from all private LS GO endpoints. -->
+<div id="unispace-cgx-embed" style="width:100%;min-height:660px;background:#070d14;border-radius:14px;overflow:hidden">
+  <noscript><a href="https://romer-unispace-public.vercel.app/cgx/" target="_blank" rel="noopener noreferrer">Open UniSpace public viewer</a></noscript>
+</div>
+<script>
+(function () {
+  "use strict";
+  var host = "https://romer-unispace-public.vercel.app";
+  var parts = window.location.pathname.toLowerCase().split("/").filter(Boolean);
+  var allowed = ["fs","ds","ps","doom"];
+  var space = parts[0] === "cgx" && allowed.indexOf(parts[1]) !== -1 ? parts[1] : "";
+  var wrap = document.getElementById("unispace-cgx-embed");
+  if (!wrap || wrap.querySelector("iframe")) return;
+  var frame = document.createElement("iframe");
+  frame.src = host + "/cgx/" + (space ? space + "/" : "");
+  frame.title = "UniSpace · CGX public interactive " + (space || "overview");
+  frame.loading = "lazy";
+  frame.referrerPolicy = "strict-origin-when-cross-origin";
+  frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation");
+  frame.style.cssText = "display:block;width:100%;height:970px;border:0;background:#070d14";
+  wrap.appendChild(frame);
+  window.addEventListener("message", function (event) {
+    if (event.origin !== host || event.source !== frame.contentWindow) return;
+    var data = event.data;
+    if (!data || data.type !== "unispace:height") return;
+    var height = Number(data.height);
+    if (!Number.isFinite(height)) return;
+    frame.style.height = Math.max(660,Math.min(4000,Math.ceil(height) + 8)) + "px";
+  });
+})();
+</script>

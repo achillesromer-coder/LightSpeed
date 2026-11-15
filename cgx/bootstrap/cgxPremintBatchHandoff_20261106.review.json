@@ -1,0 +1,195 @@
+{
+  "schema": "CGX-PREMINT-BATCH-OWNER-HANDOFF/0.1",
+  "date": "2026-11-06",
+  "stage": "REVIEW_BRANCH_TESTED__NO_NATIVE_ADMISSION",
+  "branch": "review/cgx-ls-unified-bootstrap-20261028",
+  "tested_commit": "ddce8705e5f8468091f9e1675df9b8d8b93b56e6",
+  "canonical_parent": "cgx:root:cognigrex",
+  "design_boundary": {
+    "load": "One LOAD.cgx minimal identity and source resolver; not a second parent",
+    "filespace": "Immutable R0 source carriers and qualified source manifests",
+    "dataspace": "Typed assertions/relations, evidence ceiling and ACL",
+    "ccc": "Scoped tool/skill/capability routing with actual installed-vs-registered proof",
+    "lightspeed": "Neo/LS runtime and scoped agent orchestration",
+    "unispace": "Separate rights-filtered user-facing application and semantic views"
+  },
+  "verified_this_batch": {
+    "host": "BouwerBase reconnected, source tests on isolated git worktree; not full runtime acceptance",
+    "tests": [
+      {
+        "name": "Node bootstrap+handshake+Windows host+batch convergence+leaf envelope",
+        "result": "PASS",
+        "passed": 121,
+        "failed": 0
+      },
+      {
+        "name": "Python source-only lease and agent ABI validator",
+        "result": "PASS"
+      },
+      {
+        "name": "Windows CGX Shredder reversible staging tests",
+        "result": "PASS",
+        "passed": 6,
+        "failed": 0
+      }
+    ],
+    "git_source_mutation": {
+      "added_files": 2,
+      "updated_files": 3,
+      "commit": "ddce8705",
+      "pushed_existing_review_branch": true,
+      "production_merge": false
+    },
+    "local_role_api": {
+      "enabled": 14,
+      "total": 14,
+      "authenticated_agent_dispatch": false,
+      "resource_cpu_ceiling": 95,
+      "free_ram_reserve_gib": 1
+    },
+    "review_capability": "Deterministic content-addressed leaf/source manifest with exact R0 reconstruction, bounded work unit, permission-held selective hydration request; no real network transport, no measured compression ratio"
+  },
+  "owner_lanes": [
+    {
+      "lane": "Achilles/Romer",
+      "task": "Reconcile Calls 21-23 with source and host receipts; evidence/rights/security audit and cleanup successor/rollback approvals",
+      "writes": "Owner governance review only"
+    },
+    {
+      "lane": "Cognigrex parent",
+      "task": "Select source-qualified first LOAD candidate, preserve R0 variants, type R1, R2 assertions and dependency identities; negative collision and digest tests",
+      "writes": "CGX parent source review branch only"
+    },
+    {
+      "lane": "Neo/LS",
+      "task": "Reconcile non-mergeable PR206 against main in isolated worktree; verify singleton PID/creation-time/lease owner and service/test receipts; retain existing Python3.11 owner",
+      "writes": "LS/Bootstrap engineering review branch"
+    },
+    {
+      "lane": "Athene/Eco",
+      "task": "Verify original FM source formulas, units and translation variants; preserve unqualified ecology hypotheses",
+      "writes": "Eco review branch only"
+    },
+    {
+      "lane": "UniSpace product",
+      "task": "Integrate existing LOAD H0-H4 view and leaf request interface with exact scope and privacy #158; assess mobile, desktop and offline negative tests",
+      "writes": "UniSpace product review branch only"
+    }
+  ],
+  "cross_lane_rules": [
+    "No duplicate canonical parent, scheduler, DBR or standalone LOAD/UniSpace root",
+    "Use source hash/version, Object_ID or provisional ID, original locator, licence/ACL and source-to-result trace",
+    "Read back provider commit and test results; do not confuse local process presence with healthy agents",
+    "Retain and reconcile existing windows context menu, macOS/Linux review adapters and LS GO grex operator separately",
+    "No speculative equivalence; fiction, empirical source, hypothesis and creative view remain distinct evidence classes"
+  ],
+  "archival_candidates": [
+    {
+      "class": "Multiple old checkout and worktree histories",
+      "status": "RETAIN_IN_PLACE_AUDIT_OWNERSHIP",
+      "required": "exact immutable git refs, consumer-dependency scan, rollback, owner and remote readback"
+    },
+    {
+      "class": "Duplicate-process and watchdog instances",
+      "status": "INVESTIGATE_NO_TERMINATION",
+      "required": "process owner/ports/pid-start/lease/heartbeat, service plan and negative tests"
+    },
+    {
+      "class": "Old first-run wizard implementations",
+      "status": "MIGRATION_HOLD",
+      "required": "same-feature consumer inventory, no-loss config/role parity, source rights and rollback"
+    },
+    {
+      "class": "Old source archives and overlapping libraries",
+      "status": "NO_DELETE_PROVENANCE_REFERENCE_ONLY",
+      "required": "one accepted successor Object_ID, original digest and independent native retrieval"
+    }
+  ],
+  "negative_tests_pending": [
+    "Actual issuer/RootAuthority signing and revocation",
+    "Independent authenticated two-node DBR #161",
+    "Public static private-assets denial #158",
+    "R0/R1/R2/R3 exact current LOAD candidate acceptance",
+    "PR206 merge conflict correction with CI",
+    "Current agent process lease and long-running status",
+    "Current release rights and per-source licence"
+  ],
+  "gate_holds": {
+    "G01": "HOLD",
+    "G02": "HOLD",
+    "G03": "HOLD",
+    "G04": "HOLD",
+    "G05": "HOLD",
+    "G06": "HOLD",
+    "G07": "HOLD",
+    "migration": "HOLD",
+    "source_deletion": "HOLD",
+    "onchain_mint": "HOLD"
+  },
+  "operator_release_reverify_20261106": {
+    "state": "SOURCE_ONLY_FAIL_CLOSED_NOT_PUBLICATION_ACCEPTED",
+    "issue_158": "HOLD_LS_GO_PUBLIC_STATIC_ROUTE_NEEDS_AUTHENTICATED_BOUNDARY",
+    "isolated_cgx_candidate": "12 allowlisted files, 50354 source bytes; locally re-read verified",
+    "ordinary_operator_dist": "REJECTED_AS_PUBLIC_CGX_RELEASE_SOURCE",
+    "after_copy_negative_tests": "tampered leaf, new review/data/index files, modified rights/host authority receipt and changed CSP denied",
+    "tests": "39 public guard tests passed with 1 Windows symlink privilege skip; 393 Node and 14 LOAD Python tests passed",
+    "host_live_http_proof": false,
+    "source_rights_accepted": false,
+    "independent_dbr": false,
+    "native_mint_or_publication": false,
+    "next": "Run Linux CI symlink test and browser runtime; only migrate operator public/data/review through authenticated provider after ownership and consumer readback. No generic operator dist deployment."
+  },
+  "public_viewer_fold_20261106": {
+    "source_pr": 188,
+    "source_head": "675816a21404c8cea3053bf2963c707eadd50500",
+    "target_branch": "review/cgx-ls-unified-bootstrap-20261028",
+    "scope": "28 additive original public-viewer source paths from an isolated review branch; no overwritten existing target paths",
+    "source_provenance": "Existing cgx/review/unispace_public_source_fold_20261020.json retains original PR174 versus PR188 blob lineage",
+    "local_validation": {
+      "bootstrap_load_node": "393 of 393 PASS",
+      "public_vitest": "42 of 42 PASS",
+      "typescript": "PASS",
+      "vite_compile": "PASS_SOURCE_BUILD_ONLY",
+      "public_guard": "34 of 35 PASS, one Windows symlink test SKIPPED for missing privilege; Linux CI must execute it",
+      "isolated_public_bundle": "12 allowlisted files, 50354 source bytes, nonpublishing",
+      "load_registry": "131 references, 45 CCC routes, zero registry drift"
+    },
+    "critical_public_boundary": "Ordinary LS GO Vite build copies public/data, public/review, physical-operations-seed and non-release deployment notes. The general application dist is NOT an approved public artifact. Never deploy it as the CGX public-only candidate.",
+    "release_path": "Fresh separately allowlisted public bundle only, after source rights, real browser negative tests, host ACL and independent publication approval",
+    "authority": "SOURCE_REVIEW_ONLY_NO_PRODUCTION_MERGE_NO_DEPLOY_NO_MINT"
+  },
+  "source_fold_pr205_review_20261106": {
+    "source_pr": 205,
+    "source_head": "465876bcd99a4fa2dc400cead4ad7c5f991410ad",
+    "source_paths": 38,
+    "byte_identical_with_integration": 31,
+    "preserved_integration_divergences": 7,
+    "disposition": "QUALIFIED_SOURCE_OVERLAP_NO_BLIND_MERGE_OR_DELETION",
+    "differences": [
+      "crossFamilyRelationCrosswalk.test.mjs - Windows checkout canonical byte comparison",
+      "loadFractalReference.mjs - equivalent escaped separator literal",
+      "loadOnlineRegistry.test.mjs - canonical Git blob verification",
+      "refreshLoadRegistry.mjs - exact indexed Git blob readback",
+      "unispaceFacetConvergence.mjs - private source scope and rights-hold binding",
+      "unispacePrivateCockpitDom.mjs - non-executing private leaf review",
+      "unispacePrivateCockpitDom.test.mjs - denial and no-source-leak checks"
+    ],
+    "remaining_native_acceptance": "SOURCE_RIGHTS_LEASE_ISSUER_INDEPENDENT_TWO_NODE_DBR_HOLD"
+  },
+  "private_r0_rights_hold_20261106": {
+    "git_review_commit": "a77ef543aef5a6d0650e3cd7ebc0f4b2e5fb8c87",
+    "source_class": "existing_local_CGX_Shredder_review_receipt",
+    "bytes_reconstructed": 2082,
+    "leaves_verified": 1,
+    "private_identity_match": true,
+    "private_status": "PRIVATE_H0_RIGHTS_HOLD",
+    "rights_and_acl": "UNCLASSIFIED_HOLD",
+    "source_bytes_exported": false,
+    "host_verified_native_identity": false,
+    "native_admission_or_live_mint": false,
+    "source_original_mutated": false,
+    "test_scope": "396 Node, 14 Python LOAD, 15 facet and 39 public guard tests with one Windows symlink skip; 120 source manifest hashes, 131 LOAD references",
+    "intent": "Preserve R0 reconstruction evidence without conferring rights, R3 or R4"
+  },
+  "next_batch": "Resume source-rights-qualified LOAD admission and signed lease/independent two-node DBR negative acceptance; ensure LS GO operator static route remains private; only qualified rights and host readback can advance release. No unrestricted production merge, source deletion, signing, mint or deploy."
+}
