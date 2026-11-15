@@ -10,6 +10,7 @@ semantic identities.
 
 from copy import deepcopy
 import json
+import hashlib
 from pathlib import Path
 import re
 import unicodedata
@@ -124,7 +125,17 @@ def resolve_object_context(
     lineage = _read_object(lineage_path)
     manifest = _read_object(manifest_path)
     identities = _read_object(domain_identity_path)
+    return _resolve_context_documents(query,domain,lineage,manifest,identities)
 
+
+def _resolve_context_documents(query,domain,lineage,manifest,identities,*,exact_twin=False):
+    # Do not silently overwrite duplicate occurrence records.
+    for rows in (lineage.get("records"),manifest.get("assets")):
+        if (type(rows) is not list or not 1<=len(rows)<=2048
+                or any(type(row) is not dict or type(row.get("twin_id")) is not str
+                       or not row["twin_id"] for row in rows)
+                or len({row["twin_id"] for row in rows})!=len(rows)):
+            raise CGXObjectContextError("invalid or duplicate twin occurrences")
     assets = {
         str(item["twin_id"]): item
         for item in (manifest.get("assets") or [])
@@ -137,6 +148,10 @@ def resolve_object_context(
     requested_domain = _normalise_domain(domain)
 
     candidates: list[dict[str, Any]] = []
+    direct=[r for r in records if r["twin_id"]==query and
+            (not requested_domain or r.get("semantic_domain")==requested_domain)]
+    if exact_twin or direct:
+        records=direct
     for record in records:
         semantic_domain = str(record.get("semantic_domain") or "")
         if requested_domain and semantic_domain != requested_domain:
@@ -167,7 +182,7 @@ def resolve_object_context(
     if len(candidates) > 1:
         a = (top["exact_score"], top["overlap_score"])
         b = (candidates[1]["exact_score"], candidates[1]["overlap_score"])
-        if a == b and a[0] < 1000:
+        if (a == b or (a[0]==1000 and b[0]==1000)):
             raise CGXObjectContextError(
                 "ambiguous object query; use a twin_id, semantic Object_ID, or more specific name"
             )
@@ -235,4 +250,96 @@ def resolve_object_context(
     }
 
 
-__all__ = ["CGXObjectContextError", "resolve_object_context"]
+def _bound_twin_sources():
+    sources={"lineage":DEFAULT_LINEAGE_PATH,"manifest":DEFAULT_MANIFEST_PATH,
+             "identity":DEFAULT_DOMAIN_IDENTITY_PATH}
+    parsed={};stamps={}
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            if key in result:raise CGXObjectContextError("duplicate source JSON key")
+            result[key]=value
+        return result
+    for name,path in sources.items():
+        if not path.resolve().is_relative_to(REPO_ROOT.resolve()):
+            raise CGXObjectContextError("twin source outside repository")
+        with path.open("rb") as stream:raw=stream.read(5*1024*1024+1)
+        if not 1<=len(raw)<=5*1024*1024:raise CGXObjectContextError("twin source budget")
+        try:doc=json.loads(raw,object_pairs_hook=unique)
+        except (ValueError,UnicodeError,RecursionError) as exc:
+            raise CGXObjectContextError("invalid twin source") from exc
+        if type(doc) is not dict:raise CGXObjectContextError("invalid twin source shape")
+        parsed[name]=doc;stamps[name]=hashlib.sha256(raw).hexdigest()
+    return parsed,stamps
+
+
+def _canonical_digest(value):
+    return hashlib.sha256(json.dumps(value,sort_keys=True,separators=(",",":"),
+        ensure_ascii=True,allow_nan=False).encode("ascii")).hexdigest()
+
+
+def twin_source_review_index():
+    """Review identities and source hashes only; no object mint or provider grant."""
+    docs,stamps=_bound_twin_sources()
+    lineage=docs["lineage"];manifest=docs["manifest"];identities=docs["identity"]
+    refs={};aliases={}
+    if type(lineage.get("records")) is not list or not 1<=len(lineage["records"])<=2048:
+        raise CGXObjectContextError("invalid lineage shape")
+    for row in lineage["records"]:
+        if type(row) is not dict or type(row.get("twin_id")) is not str or type(row.get("semantic_domain")) is not str:
+            raise CGXObjectContextError("invalid twin identity")
+        twin=row["twin_id"];domain=row["semantic_domain"]
+        if twin in refs:raise CGXObjectContextError("duplicate twin identity")
+        context=_resolve_context_documents(twin,domain,lineage,manifest,identities,exact_twin=True)
+        sid=context["semantic_resolution"]["semantic_object_id"]
+        if sid is not None:
+            if type(sid) is not str or not sid:raise CGXObjectContextError("invalid semantic identity")
+            aliases.setdefault((domain,sid),[]).append(twin)
+        refs[twin]={"semantic_domain":domain,"semantic_object_id":sid,
+            "resolution_state":context["semantic_resolution"]["state"],
+            "occurrence_sha256":_canonical_digest(context),
+            "representation_class":context["representation"]["representation_class"]}
+    index={"schema":"CGX-TWIN-SOURCE-REVIEW/0.1","source_sha256":stamps,
+        "references":dict(sorted(refs.items())),
+        "shared_semantic_identities":[{"domain":d,"semantic_object_id":sid,"occurrences":sorted(rows)}
+            for (d,sid),rows in sorted(aliases.items()) if len(rows)>1],
+        "execution_authorized":False,"native_admitted":False}
+    return {**index,"review_sha256":_canonical_digest(index)}
+
+
+def resolve_scoped_twin_context(twin_id,*,task_id,scope_revision,expected_index_sha256,
+                               expected_occurrence_sha256,authorise):
+    """Reconstruct the exact selected twin under independently provided scope.
+
+    Source bytes are read locally from fixed repository locations. Callback
+    authorization is not provider authentication; no live authority is inferred.
+    """
+    token=lambda v:type(v) is str and bool(re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v))
+    stamp=lambda v:type(v) is str and bool(re.fullmatch(r"[a-f0-9]{64}",v))
+    if not all(token(x) for x in (twin_id,task_id,scope_revision)) or not all(stamp(x) for x in (expected_index_sha256,expected_occurrence_sha256)):
+        raise CGXObjectContextError("invalid scoped twin request")
+    def check():
+        if authorise(task_id,twin_id,scope_revision,expected_index_sha256,expected_occurrence_sha256) is not True:
+            raise PermissionError("twin occurrence denied or revoked")
+    check()
+    index=twin_source_review_index()
+    ref=index["references"].get(twin_id)
+    if (index["review_sha256"]!=expected_index_sha256 or ref is None
+            or ref["occurrence_sha256"]!=expected_occurrence_sha256):
+        raise CGXObjectContextError("twin occurrence revision mismatch")
+    check()
+    docs,stamps=_bound_twin_sources()
+    if stamps!=index["source_sha256"]:raise CGXObjectContextError("twin source changed during review")
+    context=_resolve_context_documents(twin_id,ref["semantic_domain"],docs["lineage"],
+        docs["manifest"],docs["identity"],exact_twin=True)
+    if _canonical_digest(context)!=expected_occurrence_sha256:
+        raise CGXObjectContextError("twin resolved context mismatch")
+    check()
+    return context,{"task_id":task_id,"scope_revision":scope_revision,"twin_id":twin_id,
+        "index_sha256":expected_index_sha256,"occurrence_sha256":expected_occurrence_sha256,
+        "source_sha256":stamps,"provider_authentication_performed":False,
+        "execution_authorized":False,"native_admitted":False}
+
+
+__all__ = ["CGXObjectContextError", "resolve_object_context",
+           "twin_source_review_index","resolve_scoped_twin_context"]

@@ -201,6 +201,10 @@ def test_object_workset_candidate_source_bindings_no_instance_uplift():
     assert len(a["objects"])==5 and len(a["source_refs"])==9
     for path,r in a["source_refs"].items():
         assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==r["source_sha256"]
+    by_task={r["task_id"]:r for r in a["objects"]}
+    assert by_task["CGX-OBJ-001"]["existing_identity_references"][0]["semantic_object_id"]=="SPACE-01"
+    assert by_task["CGX-OBJ-004"]["existing_identity_references"][0]["semantic_object_id"]=="INF-001"
+    assert not by_task["CGX-OBJ-003"]["existing_identity_references"]
     for row in a["objects"]:
         assert not row["bound_instance_fields"] and not row["execution_authorized"]
         assert row["unresolved_instance_fields"]==schema["required_fields"]

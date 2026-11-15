@@ -91,7 +91,20 @@ def object_source_review(queue,schema):
     schema_path="cgx/domain_templates/cgp_ies_object_envelope_schema.json"
     # A caller-supplied schema must match the canonical file, not just its name.
     if schema!=load("cgp_ies_object_envelope_schema.json"):raise ValueError("object schema source mismatch")
+    runtime=ROOT/"desktop/LightSpeed_Runtime"
+    if str(runtime) not in sys.path:sys.path.insert(0,str(runtime))
+    from lightspeed_runtime.cgx_object_context import twin_source_review_index
+    twins=twin_source_review_index()
+    # These existing registry identities are partial review bindings, not
+    # equivalent to the full queued target. Shared parent IDs are not minted.
+    for row in results:
+        candidates={"CGX-OBJ-001":["mark_iii"],"CGX-OBJ-004":["intersol"]}.get(row["task_id"],[])
+        row["existing_identity_references"]=[
+            {"twin_id":k,**twins["references"][k],"identity_scope":"PARTIAL_SOURCE_REFERENCE_ONLY"}
+            for k in candidates]
     receipt={"schema":"CGX-FRONTIER-OBJECT-SOURCE-REVIEW/0.1","source_refs":dict(sorted(shared.items())),
+        "twin_index_sha256":twins["review_sha256"],
+        "twin_source_sha256":twins["source_sha256"],
         "schema_ref":source_ref(schema_path),"adapter_ref":source_ref(policy_path),
         "objects":results,"execution_authorized":False,"native_admitted":False}
     raw=json.dumps(receipt,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
