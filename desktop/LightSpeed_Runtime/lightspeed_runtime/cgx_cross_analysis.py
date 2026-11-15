@@ -162,7 +162,8 @@ def build_cross_analysis_plan(
 
 
 __all__ = ["CGXCrossAnalysisError", "build_cross_analysis_plan",
-           "source_hybridisation_candidates", "mandelbrot_grid_candidate"]
+           "source_hybridisation_candidates", "mandelbrot_grid_candidate",
+           "fractal_grid_review_receipt"]
 
 
 def source_hybridisation_candidates(sources: dict[str, bytes]) -> dict[str, Any]:
@@ -269,3 +270,42 @@ def mandelbrot_grid_candidate(width: int, height: int, zoom: float,
         "native_admitted": False,
         "physical_claim": False,
     }
+
+
+def fractal_grid_review_receipt(width: int, height: int, zoom: float,
+                                max_iter: int, *, include_grid: bool = False) -> dict[str, Any]:
+    """Shared numerical review route: compact descriptor plus optional payload.
+
+    The checksum is not an Object_ID, DBR, stored blob or execution authority.
+    Compact output still computes the grid locally; no compression or remote
+    hydration performance is implied.
+    """
+    import hashlib
+    import json
+    if type(include_grid) is not bool:
+        raise CGXCrossAnalysisError("invalid payload selection")
+    result = mandelbrot_grid_candidate(width, height, zoom, max_iter)
+    import numpy as np
+    grid = result.pop("grid")
+    result["parameters"]["zoom"] = float(zoom)
+    payload = json.dumps(grid, separators=(",", ":"), allow_nan=False).encode("ascii")
+    result.update({
+        "schema": "CGX-FRACTAL-GRID-REVIEW-RECEIPT/0.1",
+        "route_id": "science.fractal_grid",
+        "algorithm": "raphael-legacy-pre-update-escape/1",
+        "numpy_version": np.__version__,
+        "payload_sha256": hashlib.sha256(payload).hexdigest(),
+        "payload_bytes": len(payload),
+        "point_count": width * height,
+        "iteration_budget": width * height * max_iter,
+        "payload_persisted": False,
+        "native_admitted": False,
+        "authority_transfer": False,
+    })
+    receipt_bytes = json.dumps(result, sort_keys=True, separators=(",", ":"),
+                               allow_nan=False).encode("ascii")
+    result["review_sha256"] = hashlib.sha256(receipt_bytes).hexdigest()
+    result["payload_included"] = include_grid
+    if include_grid:
+        result["grid"] = grid
+    return result

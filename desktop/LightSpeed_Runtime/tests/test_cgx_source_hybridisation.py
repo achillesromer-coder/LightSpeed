@@ -101,3 +101,29 @@ def test_shared_grid_independent_known_points_and_negative_cases():
             mandelbrot_grid_candidate(*case)
     with pytest.raises(AssertionError):
         checked_legacy_kernel(LEGACY_KERNEL.replace("z = 0", "z = 1").encode())
+
+
+def test_existing_route_resolves_compact_and_expanded_receipt():
+    import hashlib
+    import importlib
+    import json
+    from lightspeed_runtime.cgx_capability_registry import selector_profile
+    for selector in ("Achilles", "Cognigrex"):
+        profile = selector_profile(selector)
+        route = profile["routes"]["science.fractal_grid"]
+        assert route["state"] == "gated" and route["authority_transfer"] is False
+    module, handler = route["handler"].split(":")
+    run = getattr(importlib.import_module(module), handler)
+    compact = run(17,11,1,32)
+    expanded = run(17,11,1.0,32,include_grid=True)
+    assert "grid" not in compact and not compact["payload_included"]
+    assert expanded["payload_included"] and compact["review_sha256"] == expanded["review_sha256"]
+    payload = json.dumps(expanded["grid"],separators=(",",":")).encode("ascii")
+    assert len(payload) == compact["payload_bytes"]
+    assert hashlib.sha256(payload).hexdigest() == compact["payload_sha256"]
+    fields = {k:v for k,v in compact.items() if k not in ("review_sha256","payload_included")}
+    assert hashlib.sha256(json.dumps(fields,sort_keys=True,separators=(",",":")).encode("ascii")).hexdigest() == compact["review_sha256"]
+    assert compact["review_sha256"] != run(17,11,2,32)["review_sha256"]
+    assert not compact["payload_persisted"] and not compact["native_admitted"]
+    with pytest.raises(CGXCrossAnalysisError): run(17,11,1,32,include_grid="true")
+    with pytest.raises(CGXCrossAnalysisError): run(128,128,1,256)
