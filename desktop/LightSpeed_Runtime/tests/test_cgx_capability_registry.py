@@ -210,3 +210,47 @@ def test_specialist_role_references_preserve_source_scope():
     with pytest.raises(CapabilityRegistryError):
         compose_capability_review("Achilles",task_id="review-001c",
             expected_view_sha256=a["view_sha256"],references=["role:smith"])
+
+
+
+def test_remaining_resident_source_boundary():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    mapping={"Athene":"athene","Raphael":"raphael","Romer-Grex":"romer",
+             "Cognigrex":"load","LightSpeed":"unispace"}
+    for selector,role in mapping.items():
+        view=capability_interop_review(selector)
+        ref="resident-review:"+role
+        got=capability_interop_review(selector,reference=ref,expected_view_sha256=view["view_sha256"])
+        assert got["metadata"]["qualification"].endswith("HOLD")
+        assert not got["metadata"]["resident_binding_verified"]
+        assert not got["metadata"]["execution_authorized"]
+
+
+def test_selected_skill_hydration_scope_revision_budget():
+    import hashlib
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review,compose_capability_review,hydrate_composed_skill_review
+    view=capability_interop_review("Achilles")
+    keys=["skill:cgx-capability-router","skill:cgx-handshake"]
+    c=compose_capability_review("Achilles",task_id="review-001c",expected_view_sha256=view["view_sha256"],
+                                references=keys+["role:achilles"])
+    def auth(task,key,scope,digest):
+        return task=="review-001c" and key in keys and scope=="fixture-1" and digest==c["composition_sha256"]
+    def run(selected=keys,**kwargs):
+        return hydrate_composed_skill_review("Achilles",task_id="review-001c",
+            composition=kwargs.get("composition",c),expected_composition_sha256=c["composition_sha256"],
+            selected_skills=selected,scope_revision="fixture-1",
+            max_bytes=kwargs.get("budget",100000),authorise=kwargs.get("auth",auth))
+    raw,receipt=run()
+    assert run(keys[::-1])==(raw,receipt)
+    assert sum(map(len,raw.values()))==receipt["payload_bytes"]
+    assert all(hashlib.sha256(raw[k]).hexdigest()==receipt["skills"][k]["source_sha256"] for k in keys)
+    assert list(run(keys[:1])[0])==keys[:1]
+    assert not receipt["live_skill_learning_verified"]
+    with pytest.raises(PermissionError):run(auth=lambda *a:False)
+    calls=iter([True,True,False])
+    with pytest.raises(PermissionError):run(keys[:1],auth=lambda *a:next(calls))
+    with pytest.raises(CapabilityRegistryError):run(budget=1)
+    with pytest.raises(CapabilityRegistryError):run(["role:achilles"])
+    with pytest.raises(CapabilityRegistryError):run(["skill:cgx-selector"])
+    with pytest.raises(CapabilityRegistryError):run(composition=dict(c,authority_transfer=True))

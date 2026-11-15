@@ -300,6 +300,43 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
             "source_path":path.relative_to(REPO_ROOT).as_posix(),"source_sha256":digest(data),
             "source_bytes":len(data),"execution_authorized":False,
             "authority_transfer":False,"live_skill_learning_verified":False})
+    # Domain and system references are not aliases for the corresponding
+    # resident agent's identity. Retain the unresolved authority distinction.
+    scoped_candidates={
+        "athene":("athene","cgx/domain_templates/agent_assurance_role_matrix.json"),
+        "raphael":("raphael","plugins/source/selector_shortcalls.json"),
+        "romer-grex":("romer","cgx/domain_templates/agent_role_reconciliation.md"),
+        "cognigrex":("load","plugins/source/selector_shortcalls.json"),
+        "lightspeed":("unispace","UniSpace/product.json"),
+    }
+    if profile["selector"] in scoped_candidates:
+        rid,rel=scoped_candidates[profile["selector"]]
+        data=read_source(REPO_ROOT/rel)
+        details={}
+        if rid=="athene":
+            matrix=json.loads(data)
+            rows=[row for row in matrix["roles"] if row.get("agent")=="Athene"]
+            if len(rows)!=1 or not rows[0].get("assurance_role") or not rows[0].get("forbidden"):
+                raise CapabilityRegistryError("Athene assurance mapping missing")
+            details={"assurance_role":rows[0]["assurance_role"],"forbidden":rows[0]["forbidden"]}
+            state="SOURCE_ROLE_MAPPED_RESIDENT_BINDING_HOLD"
+        elif rid=="raphael":
+            details={"selector_route_ids":sorted(profile["routes"])}
+            state="PHYSICS_SELECTOR_RESIDENT_BINDING_HOLD"
+        elif rid=="romer":
+            state="DOMAIN_OWNERSHIP_RECONCILIATION_HOLD"
+        elif rid=="load":
+            state="RESOLVER_SURFACE_RESIDENT_IDENTITY_HOLD"
+        else:
+            product=json.loads(data)
+            if product.get("product")!="UniSpace":
+                raise CapabilityRegistryError("UniSpace source identity changed")
+            details={"product":product["product"],"product_acceptance_verified":False}
+            state="PRODUCT_SURFACE_RESIDENT_IDENTITY_HOLD"
+        add("resident-review:"+rid,{"resident_role_candidate":rid,"qualification":state,
+            "source_path":rel,"source_sha256":digest(data),"source_bytes":len(data),
+            **details,"execution_authorized":False,"authority_transfer":False,
+            "resident_binding_verified":False,"live_skill_learning_verified":False})
     for key,surface in sorted(surfaces.items()):
         # Report missing selector exposure explicitly, never widen it.
         add("surface:"+key, {
@@ -359,3 +396,91 @@ def compose_capability_review(selector: str, *, task_id: str, expected_view_sha2
     raw=json.dumps(payload,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
     root,_=pack_nested_review_payload(raw)
     return {**payload,"composition_sha256":hashlib.sha256(raw).hexdigest(),"composition_ternary_root":root}
+
+
+
+def hydrate_composed_skill_review(selector: str, *, task_id: str, composition: dict,
+                                  expected_composition_sha256: str,
+                                  selected_skills: list[str], scope_revision: str,
+                                  max_bytes: int, authorise) -> tuple[dict[str, bytes],dict]:
+    """Return exact selected shared skill bytes, not native state or execution.
+
+    Caller authenticates the expected composition and live authorisation.
+    Registry metadata discovery still hashes all shared skill sources; only
+    selected skill payloads are returned. Role manifests are never hydrated.
+    """
+    import hashlib
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload
+    if (type(task_id) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",task_id)
+            or type(scope_revision) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",scope_revision)
+            or type(max_bytes) is not int or not 1<=max_bytes<=1024*1024
+            or type(selected_skills) is not list or not 1<=len(selected_skills)<=64
+            or any(type(k) is not str or not re.fullmatch(r"skill:[a-z0-9][a-z0-9_-]{0,127}",k) for k in selected_skills)
+            or len(set(selected_skills))!=len(selected_skills)
+            or type(expected_composition_sha256) is not str
+            or not re.fullmatch(r"[a-f0-9]{64}",expected_composition_sha256)):
+        raise CapabilityRegistryError("invalid selected skill request")
+    # Validate bounded shape before comparing any external composition.
+    fields={"schema","task_id","selector","view_sha256","references","provider_invocation_performed",
+            "execution_authorized","authority_transfer","native_admitted",
+            "composition_sha256","composition_ternary_root"}
+    if (type(composition) is not dict or set(composition)!=fields
+            or type(composition["references"]) is not dict
+            or not 1<=len(composition["references"])<=64
+            or any(type(k) is not str or not 1<=len(k)<=256 for k in composition["references"])
+            or composition["task_id"]!=task_id
+            or composition["composition_sha256"]!=expected_composition_sha256
+            or not set(selected_skills).issubset(composition["references"])):
+        raise CapabilityRegistryError("composition binding mismatch")
+    for key,v in composition.items():
+        if key=="references":continue
+        if type(v) not in (str,bool) or (type(v) is str and len(v)>256):
+            raise CapabilityRegistryError("composition scalar shape")
+    for ref in composition["references"].values():
+        if (type(ref) is not dict or set(ref)!={"sha256","ternary_root","bytes"}
+                or any(type(ref[k]) is not str or not re.fullmatch(r"[a-f0-9]{64}",ref[k])
+                       for k in ("sha256","ternary_root"))
+                or type(ref["bytes"]) is not int or not 0<=ref["bytes"]<=1024*1024):
+            raise CapabilityRegistryError("composition reference shape")
+    keys=sorted(selected_skills)
+    def check(key):
+        if authorise(task_id,key,scope_revision,expected_composition_sha256) is not True:
+            raise PermissionError("skill scope denied or revoked")
+    for key in keys:check(key)
+    rebuilt=compose_capability_review(selector,task_id=task_id,
+        expected_view_sha256=composition["view_sha256"],
+        references=list(composition["references"]))
+    if rebuilt!=composition or rebuilt["composition_sha256"]!=expected_composition_sha256:
+        raise CapabilityRegistryError("composition revision changed")
+    resolved={}
+    evidence={}
+    remaining=max_bytes
+    for key in keys:
+        check(key)
+        meta=capability_interop_review(selector,reference=key,
+            expected_view_sha256=rebuilt["view_sha256"])["metadata"]
+        size=meta["source_bytes"]
+        if type(size) is not int or not 0<size<=remaining:
+            raise CapabilityRegistryError("skill payload byte budget")
+        path=REPO_ROOT/"plugins/source/core-skills"/key.split(":",1)[1]/"SKILL.md"
+        if path.relative_to(REPO_ROOT).as_posix()!=meta["source_path"]:
+            raise CapabilityRegistryError("skill locator mismatch")
+        with path.open("rb") as stream:
+            raw=stream.read(size+1)
+        digest=hashlib.sha256(raw).hexdigest()
+        if len(raw)!=size or digest!=meta["source_sha256"]:
+            raise CapabilityRegistryError("skill source revision changed")
+        check(key)
+        root,_=pack_nested_review_payload(raw)
+        resolved[key]=raw
+        evidence[key]={"source_sha256":digest,"bytes":size,"payload_ternary_root":root}
+        remaining-=size
+    for key in keys:check(key)
+    receipt={"schema":"CGX-COMPOSED-SKILL-REVIEW/0.1","task_id":task_id,
+             "selector":rebuilt["selector"],"composition_sha256":expected_composition_sha256,
+             "scope_revision":scope_revision,"skills":evidence,"payload_bytes":max_bytes-remaining,
+             "caller_scope_authenticated_by_module":False,"execution_authorized":False,
+             "authority_transfer":False,"live_skill_learning_verified":False,"native_admitted":False}
+    encoded=json.dumps(receipt,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii")
+    receipt["review_sha256"]=hashlib.sha256(encoded).hexdigest()
+    return resolved,receipt
