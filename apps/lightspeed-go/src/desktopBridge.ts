@@ -813,9 +813,13 @@ export const openDesktopProjectFile = async (
     10000,
   );
 
-export const resultReceiptApiPath = (resultId?: string): string => {
+export const resultReceiptApiPath = (resultId?: string, expectedSha256?: string): string => {
+  if (expectedSha256 !== undefined && (resultId === undefined || !/^[a-f0-9]{64}$/.test(expectedSha256))) {
+    throw new Error("Exact receipt revision required.");
+  }
   if (resultId === undefined) return "/api/v1/results";
-  return `/api/v1/results/${encodeURIComponent(resultId)}`;
+  const path = `/api/v1/results/${encodeURIComponent(resultId)}`;
+  return expectedSha256 === undefined ? path : `${path}?expected_sha256=${expectedSha256}`;
 };
 
 export const listDesktopResults = async (
@@ -832,11 +836,13 @@ export const openDesktopResult = async (
   resultId: string,
   ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
+  expectedSha256?: string,
 ): Promise<LocalResultOpenResponse> =>
   withTimeout<LocalResultOpenResponse>(
-    `${origin}${resultReceiptApiPath(resultId)}`,
+    `${origin}${resultReceiptApiPath(resultId, expectedSha256)}`,
     {
       method: "GET",
+      cache: "no-store",
       headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,

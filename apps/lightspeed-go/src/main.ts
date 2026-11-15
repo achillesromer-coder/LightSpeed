@@ -293,6 +293,11 @@ let currentAuthorityContract: AuthorityContract | null = null;
 let currentReviews: ReviewRecord[] = [];
 let currentRepresentationGraphs: RepresentationGraph[] = [];
 let ownerSessionToken = "";
+let receiptViewGeneration = 0;
+const clearReceiptView = (): void => {
+  receiptViewGeneration++;
+  document.querySelectorAll(".result-receipt-detail").forEach((el) => { el.textContent = ""; });
+};
 let ownerPasswordChangeToken = "";
 let ownerUsername = "NCNB";
 
@@ -307,6 +312,7 @@ const applyOwnerAuth = (response: OwnerAuthResponse): void => {
   const changeForm = byId<HTMLFormElement>("owner-change-form");
   const logoutButton = byId<HTMLButtonElement>("owner-logout");
   ownerUsername = response.credential?.username || ownerUsername;
+  clearReceiptView();
   ownerSessionToken = response.session_token || "";
   ownerPasswordChangeToken = response.password_change_token || "";
   byId<HTMLInputElement>("owner-password").value = "";
@@ -386,6 +392,7 @@ byId<HTMLFormElement>("owner-change-form").addEventListener("submit", async (eve
 byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   const token = ownerSessionToken;
   ownerSessionToken = "";
+  clearReceiptView();
   ownerPasswordChangeToken = "";
   if (token) {
     try { await logoutDesktopOwner(token); } catch { /* The local session is already cleared. */ }
@@ -584,6 +591,7 @@ const renderResults = (
   response: LocalResultsResponse,
   ownerConfirmationConfigured: boolean,
 ): void => {
+  clearReceiptView();
   const mount = byId("desktop-results");
   const authState = byId("result-auth-state");
   authState.textContent = ownerConfirmationConfigured ? "Owner gate configured" : "Content gate held";
@@ -591,6 +599,7 @@ const renderResults = (
   bindResultReceiptButtons(mount, async (resultId, button) => {
     const detailMount = mount.querySelector<HTMLElement>(".result-receipt-detail");
     if (!detailMount) return;
+    const generation = ++receiptViewGeneration;
     if (!ownerConfirmationConfigured) {
       detailMount.innerHTML = renderResultReceiptsError(
         "Receipt content is held because owner confirmation is not configured on the local bridge.",
@@ -607,10 +616,18 @@ const renderResults = (
     button.disabled = true;
     detailMount.innerHTML = `<p class="muted">Opening owner-confirmed read-only receipt…</p>`;
     try {
-      detailMount.innerHTML = renderResultReceiptOpen(
-        await openDesktopResult(resultId, ownerSession),
-      );
+      const selected = response.results.find((item) => item.result_id === resultId);
+      if (!selected || !/^[a-f0-9]{64}$/.test(selected.sha256)) {
+        throw new Error("Exact receipt revision unavailable; refresh the list.");
+      }
+      const opened = await openDesktopResult(resultId, ownerSession, undefined, selected.sha256);
+      if (generation !== receiptViewGeneration || ownerSession !== ownerSessionToken || !detailMount.isConnected) return;
+      if (opened.identity.result_id !== resultId || opened.identity.sha256 !== selected.sha256) {
+        throw new Error("Receipt identity or revision changed; refresh the list.");
+      }
+      detailMount.innerHTML = renderResultReceiptOpen(opened);
     } catch (error) {
+      if (generation !== receiptViewGeneration || ownerSession !== ownerSessionToken || !detailMount.isConnected) return;
       detailMount.innerHTML = renderResultReceiptsError(
         error instanceof Error ? error.message : "Local result receipt is unavailable.",
       );

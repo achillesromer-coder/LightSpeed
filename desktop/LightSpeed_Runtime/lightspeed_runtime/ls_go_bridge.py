@@ -1954,18 +1954,21 @@ def create_app(root: Path | str) -> FastAPI:
     @app.get("/api/v1/results/{result_id}")
     async def open_local_result(
         result_id: str,
+        expected_sha256: str | None = None,
         owner_confirmation: str | None = Header(
             default=None,
             alias="X-LightSpeed-Owner-Confirmation",
         ),
         owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
     ):
-        _verified_owner_actor(
+        actor = _verified_owner_actor(
             owner_confirmation,
             session_token=owner_session,
             credential_store=credential_store,
             session_store=owner_sessions,
         )
+        if expected_sha256 is not None and not re.fullmatch(r"[0-9a-f]{64}", expected_sha256):
+            raise HTTPException(status_code=400, detail="Exact receipt revision required")
         try:
             result = open_result_receipt(
                 shell_root,
@@ -1977,7 +1980,17 @@ def create_app(root: Path | str) -> FastAPI:
             raise HTTPException(status_code=404, detail=str(exc))
         except ResultReceiptUnavailable as exc:
             raise HTTPException(status_code=503, detail=str(exc))
-        return JSONResponse(result)
+        if expected_sha256 is not None and not hmac.compare_digest(
+            result["identity"]["sha256"], expected_sha256
+        ):
+            raise HTTPException(status_code=409, detail="Receipt revision changed; refresh the list")
+        # Same existing owner gate, checked again immediately before returning.
+        if _verified_owner_actor(
+            owner_confirmation, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions,
+        ) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(result, headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/projects")
     async def list_projects():

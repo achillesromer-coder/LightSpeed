@@ -134,6 +134,13 @@ describe("LS GO desktop command routing", () => {
     );
   });
 
+  it("binds receipt retrieval to its selected SHA-256", () => {
+    const sha = "a".repeat(64);
+    expect(resultReceiptApiPath("receipt", sha)).toBe("/api/v1/results/receipt?expected_sha256=" + sha);
+    expect(() => resultReceiptApiPath("receipt", "bad")).toThrow();
+    expect(() => resultReceiptApiPath(undefined, sha)).toThrow();
+  });
+
   it("distinguishes local outbox staging from an owner-approved Drive write", () => {
     const pending = reviewDecisionOutcomeMessage("review-1", "approve", {
       accepted: true,
