@@ -458,3 +458,89 @@ def hydrate_nested_review_archive(archive, root: str, prefix: str = "", *,
     return hydrate_nested_review_payload(root, fetch, prefix,
                                          allowed_prefixes=allowed_prefixes,
                                          max_bytes=max_bytes)
+
+
+
+def pack_achilles_profile_review(source: bytes):
+    """Review-only semantic projection of the existing Achilles profile.
+
+    Retain the original byte digest. Section roots index canonical JSON values,
+    not original formatting, model weights, native Object_IDs or authority.
+    Uses the existing ternary payload graph rather than a new persistent store.
+    """
+    import hashlib
+    import json
+    if type(source) is not bytes or not 1 <= len(source) <= 1024 * 1024:
+        raise CGXCrossAnalysisError("invalid profile source")
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise CGXCrossAnalysisError("duplicate JSON key")
+            result[key] = value
+        return result
+    def canonical(value):
+        return json.dumps(value, sort_keys=True, separators=(",", ":"),
+                          ensure_ascii=True, allow_nan=False).encode("ascii")
+    try:
+        d = json.loads(source, object_pairs_hook=unique)
+        if (not isinstance(d, dict) or len(d) > 64 or
+                d.get("identity", {}).get("agent") != "Achilles" or
+                d["identity"].get("canonical_semantic_parent") != "cgx:root:cognigrex" or
+                d.get("lifecycle", {}).get("native_dbr_admission") is not False or
+                d["lifecycle"].get("release_authorized") is not False or
+                not isinstance(d.get("dynamic_system_research"), dict)):
+            raise CGXCrossAnalysisError("profile identity or review boundary mismatch")
+        canonical_profile = canonical(d)
+        objects = {}
+        sections = {}
+        for key, value in sorted(d.items()):
+            raw = canonical(value)
+            root, parts = pack_nested_review_payload(raw)
+            objects.update(parts)
+            sections[key] = {"root": root, "sha256": hashlib.sha256(raw).hexdigest(),
+                             "bytes": len(raw)}
+        descriptor = {
+            "schema": "CGX-ACHILLES-SEMANTIC-REVIEW/0.1",
+            "agent": "Achilles", "parent": "cgx:root:cognigrex",
+            "source_sha256": hashlib.sha256(source).hexdigest(),
+            "canonical_profile_sha256": hashlib.sha256(canonical_profile).hexdigest(),
+            "sections": sections, "native_admitted": False,
+            "model_weights_included": False, "authority_transfer": False,
+        }
+        return descriptor, hashlib.sha256(canonical(descriptor)).hexdigest(), objects
+    except (TypeError, ValueError, AttributeError, KeyError, RecursionError) as exc:
+        if isinstance(exc, CGXCrossAnalysisError):
+            raise
+        raise CGXCrossAnalysisError("invalid Achilles profile") from exc
+
+
+def hydrate_achilles_profile_section(descriptor, expected_sha256, section, fetch, *,
+                                     allowed_sections, max_bytes):
+    """Caller must authenticate the expected descriptor and section scope."""
+    import hashlib
+    import json
+    try:
+        raw = json.dumps(descriptor, sort_keys=True, separators=(",", ":"),
+                         ensure_ascii=True, allow_nan=False).encode("ascii")
+        if hashlib.sha256(raw).hexdigest() != expected_sha256:
+            raise CGXCrossAnalysisError("descriptor hash mismatch")
+        if (descriptor.get("schema") != "CGX-ACHILLES-SEMANTIC-REVIEW/0.1" or
+                descriptor.get("agent") != "Achilles" or
+                descriptor.get("parent") != "cgx:root:cognigrex" or
+                descriptor.get("native_admitted") is not False or
+                descriptor.get("authority_transfer") is not False or
+                descriptor.get("model_weights_included") is not False):
+            raise CGXCrossAnalysisError("invalid review descriptor")
+        if not isinstance(allowed_sections, (tuple, frozenset)) or section not in allowed_sections:
+            raise PermissionError("section scope denied")
+        item = descriptor["sections"][section]
+        payload, stats = hydrate_nested_review_payload(item["root"], fetch,
+                                allowed_prefixes=("",), max_bytes=max_bytes)
+        if len(payload) != item["bytes"] or hashlib.sha256(payload).hexdigest() != item["sha256"]:
+            raise CGXCrossAnalysisError("section payload mismatch")
+        return json.loads(payload), stats
+    except (KeyError, TypeError, ValueError, AttributeError, RecursionError) as exc:
+        if isinstance(exc, CGXCrossAnalysisError):
+            raise
+        raise CGXCrossAnalysisError("invalid section descriptor") from exc

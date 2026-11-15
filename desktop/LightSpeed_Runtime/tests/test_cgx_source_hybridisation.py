@@ -203,3 +203,27 @@ def test_review_carrier_rejects_tampering_and_wrong_namespace(tmp_path):
     with zipfile.ZipFile(p) as z:
         with pytest.raises(CGXCrossAnalysisError,match="member"):
             hydrate_nested_review_archive(z,root,allowed_prefixes=("",),max_bytes=100000)
+
+
+
+def test_existing_achilles_profile_semantic_roundtrip():
+    import hashlib,json
+    from lightspeed_runtime.cgx_cross_analysis import pack_achilles_profile_review,hydrate_achilles_profile_section
+    source=(Path(__file__).resolve().parents[3]/"cgx/domain_templates/achilles_owner_operator_profile.json").read_bytes()
+    original=json.loads(source)
+    descriptor,stamp,objects=pack_achilles_profile_review(source)
+    assert (descriptor,stamp,objects)==pack_achilles_profile_review(source)
+    assert descriptor["source_sha256"]==hashlib.sha256(source).hexdigest()
+    rebuilt={}
+    for name in descriptor["sections"]:
+        rebuilt[name],_=hydrate_achilles_profile_section(descriptor,stamp,name,objects.__getitem__,allowed_sections=(name,),max_bytes=1000000)
+    assert rebuilt==original
+    assert not descriptor["native_admitted"] and not descriptor["model_weights_included"]
+    with pytest.raises(PermissionError):
+        hydrate_achilles_profile_section(descriptor,stamp,"authority",objects.__getitem__,allowed_sections=("identity",),max_bytes=1000000)
+    with pytest.raises(CGXCrossAnalysisError,match="descriptor hash"):
+        hydrate_achilles_profile_section(dict(descriptor,agent="Other"),stamp,"identity",objects.__getitem__,allowed_sections=("identity",),max_bytes=1000000)
+    with pytest.raises(CGXCrossAnalysisError):
+        pack_achilles_profile_review(json.dumps(dict(original,identity={"agent":"Other"})).encode())
+    with pytest.raises(CGXCrossAnalysisError):
+        pack_achilles_profile_review(b'{"x":1,"x":2}')
