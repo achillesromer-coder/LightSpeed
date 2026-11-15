@@ -166,3 +166,40 @@ def test_ternary_grid_reference_same_payload_hash():
     root,objects=pack_nested_review_payload(raw)
     hydrated,_=hydrate_nested_review_payload(root,objects.__getitem__,allowed_prefixes=("",),max_bytes=100000)
     assert hashlib.sha256(hydrated).hexdigest()==r["payload_sha256"]
+
+
+
+def test_persisted_review_carrier_and_subset(tmp_path):
+    import zipfile
+    from lightspeed_runtime.cgx_cross_analysis import write_nested_review_archive,hydrate_nested_review_archive
+    path=tmp_path/"review.zip"
+    raw=b"".join(bytes([i])*64 for i in range(27))
+    with zipfile.ZipFile(path,"w") as z:
+        root=write_nested_review_archive(z,raw,chunk_bytes=64)
+        with pytest.raises(CGXCrossAnalysisError): write_nested_review_archive(z,raw)
+    with zipfile.ZipFile(path) as z:
+        out, full=hydrate_nested_review_archive(z,root,allowed_prefixes=("",),max_bytes=100000)
+        part, sub=hydrate_nested_review_archive(z,root,"2",allowed_prefixes=("2",),max_bytes=100000)
+        assert out==raw and part==raw[18*64:]
+        assert sub["fetched_bytes"]<full["fetched_bytes"]
+        with pytest.raises(PermissionError):
+            hydrate_nested_review_archive(z,root,"1",allowed_prefixes=("2",),max_bytes=100000)
+        with pytest.raises(CGXCrossAnalysisError,match="missing"):
+            hydrate_nested_review_archive(z,"0"*64,allowed_prefixes=("",),max_bytes=100000)
+
+
+def test_review_carrier_rejects_tampering_and_wrong_namespace(tmp_path):
+    import hashlib,zipfile
+    from lightspeed_runtime.cgx_cross_analysis import hydrate_nested_review_archive
+    root=hashlib.sha256(b"expected").hexdigest()
+    p=tmp_path/"review.zip"
+    with zipfile.ZipFile(p,"w") as z:
+        z.writestr("review/objects/"+root,b"wrong")
+    with zipfile.ZipFile(p) as z:
+        with pytest.raises(CGXCrossAnalysisError,match="hash mismatch"):
+            hydrate_nested_review_archive(z,root,allowed_prefixes=("",),max_bytes=100000)
+    with zipfile.ZipFile(p,"w") as z:
+        z.writestr("../outside",b"x")
+    with zipfile.ZipFile(p) as z:
+        with pytest.raises(CGXCrossAnalysisError,match="member"):
+            hydrate_nested_review_archive(z,root,allowed_prefixes=("",),max_bytes=100000)

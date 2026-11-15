@@ -416,3 +416,45 @@ def hydrate_nested_review_payload(root: str, fetch, prefix: str = "", *,
     walk(key,len(prefix))
     return bytes(output), {"fetched_bytes":spent,"fetched_objects":len(cache),
                            "expanded_bytes":len(output)}
+
+
+def write_nested_review_archive(archive, raw: bytes, *, chunk_bytes: int = 1024) -> str:
+    """Place review objects in a caller-owned empty ZIP carrier, not a new store."""
+    import zipfile
+    if archive.namelist():
+        raise CGXCrossAnalysisError("review carrier must be empty")
+    root, objects = pack_nested_review_payload(raw, chunk_bytes=chunk_bytes)
+    for key, data in sorted(objects.items()):
+        info = zipfile.ZipInfo("review/objects/" + key)
+        info.compress_type = zipfile.ZIP_STORED
+        archive.writestr(info, data)
+    return root
+
+
+def hydrate_nested_review_archive(archive, root: str, prefix: str = "", *,
+                                  allowed_prefixes: tuple[str, ...], max_bytes: int):
+    """Read selected verified objects from a persisted review carrier.
+
+    No archive extraction, native admission, or independent access authentication.
+    The expected root and access scope are supplied by the trusted caller.
+    """
+    import re
+    infos = archive.infolist()
+    if not infos or len(infos) > 200000:
+        raise CGXCrossAnalysisError("invalid review carrier size")
+    index = {}
+    for info in infos:
+        name = info.filename
+        if (not re.fullmatch(r"review/objects/[0-9a-f]{64}", name)
+                or name in index or not 0 <= info.file_size <= 4096
+                or info.flag_bits & 1):
+            raise CGXCrossAnalysisError("invalid or duplicate review carrier member")
+        index[name] = info
+    def fetch(key):
+        info = index.get("review/objects/" + key)
+        if info is None:
+            raise CGXCrossAnalysisError("missing review object")
+        return archive.read(info)
+    return hydrate_nested_review_payload(root, fetch, prefix,
+                                         allowed_prefixes=allowed_prefixes,
+                                         max_bytes=max_bytes)
