@@ -254,3 +254,21 @@ def test_selected_skill_hydration_scope_revision_budget():
     with pytest.raises(CapabilityRegistryError):run(["role:achilles"])
     with pytest.raises(CapabilityRegistryError):run(["skill:cgx-selector"])
     with pytest.raises(CapabilityRegistryError):run(composition=dict(c,authority_transfer=True))
+
+
+
+def test_hydration_builds_one_snapshot(monkeypatch):
+    import lightspeed_runtime.cgx_capability_registry as m
+    v=m.capability_interop_review("Achilles")
+    keys=["skill:cgx-capability-router","skill:cgx-handshake"]
+    c=m.compose_capability_review("Achilles",task_id="fixture",expected_view_sha256=v["view_sha256"],references=keys)
+    original=m._capability_review_snapshot
+    calls=[]
+    def spy(selector):
+        calls.append(selector)
+        return original(selector)
+    monkeypatch.setattr(m,"_capability_review_snapshot",spy)
+    raw,receipt=m.hydrate_composed_skill_review("Achilles",task_id="fixture",composition=c,
+        expected_composition_sha256=c["composition_sha256"],selected_skills=keys,
+        scope_revision="fixture",max_bytes=100000,authorise=lambda *a:True)
+    assert set(raw)==set(keys) and calls==["Achilles"]

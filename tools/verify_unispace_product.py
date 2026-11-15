@@ -111,5 +111,59 @@ def facet_transition_options(rules, admitted_facets, *, parent, neighbor, direct
     return tuple(sorted(out,key=lambda x:-1 if x is None else x))
 
 
+def exact_convex_mesh_review(vertices, faces):
+    """Bounded integer convex-polyhedron review. Strict outward face ordering.
+    No T173 mapping, licence, catalogue admission, or physical hypothesis proof.
+    Coplanar split faces and non-convex meshes are not supported.
+    """
+    if (type(vertices) is not list or not 4<=len(vertices)<=256 or
+        any(type(v) not in (list,tuple) or len(v)!=3 or
+            any(type(x) is not int or abs(x)>1000000 for x in v) for v in vertices)):
+        raise ValueError("Invalid integer vertex coordinates")
+    points=[tuple(v) for v in vertices]
+    if len(set(points))!=len(points):raise ValueError("Duplicate vertex")
+    if type(faces) is not list or not 4<=len(faces)<=512:
+        raise ValueError("Invalid face count")
+    def sub(a,b):return tuple(x-y for x,y in zip(a,b))
+    def cross(a,b):return (a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0])
+    def dot(a,b):return sum(x*y for x,y in zip(a,b))
+    edges={};used=set();volume6=0;face_keys=set()
+    for face in faces:
+        if (type(face) not in (list,tuple) or not 3<=len(face)<=64 or
+            any(type(i) is not int or not 0<=i<len(points) for i in face) or len(set(face))!=len(face)):
+            raise ValueError("Invalid index incidence")
+        key=frozenset(face)
+        if key in face_keys:raise ValueError("Duplicate face")
+        face_keys.add(key);used.update(face)
+        a=points[face[0]]
+        normal=cross(sub(points[face[1]],a),sub(points[face[2]],a))
+        if normal==(0,0,0):raise ValueError("Degenerate face")
+        for i,v in enumerate(points):
+            side=dot(normal,sub(v,a))
+            if (i in key and side!=0) or (i not in key and side>=0):
+                raise ValueError("Nonplanar, inward or non-supporting face")
+        for j,i in enumerate(face):
+            k=face[(j+1)%len(face)]
+            direction=sub(points[k],points[i])
+            for q in face:
+                if q not in (i,k) and dot(normal,cross(direction,sub(points[q],points[i])))<=0:
+                    raise ValueError("Nonconvex or unordered face loop")
+            edge=tuple(sorted((i,k)))
+            edges.setdefault(edge,[]).append((i,k))
+        for j in range(1,len(face)-1):
+            volume6+=dot(a,cross(points[face[j]],points[face[j+1]]))
+    if len(used)!=len(points) or any(len(v)!=2 or v[0]!=v[1][::-1] for v in edges.values()):
+        raise ValueError("Open or inconsistent edge incidence")
+    reached={0};front=[0];neighbors={i:set() for i in used}
+    for a,b in edges:neighbors[a].add(b);neighbors[b].add(a)
+    while front:
+        for q in neighbors[front.pop()]-reached:reached.add(q);front.append(q)
+    if reached!=used or len(points)-len(edges)+len(faces)!=2 or volume6<=0:
+        raise ValueError("Invalid connected closed volume")
+    return {"vertices":len(points),"edges":len(edges),"faces":len(faces),
+            "euler":2,"six_times_volume":volume6,"coordinate_units":"input_units",
+            "exact_integer_review":True,"t173_catalogue_admitted":False}
+
+
 if __name__ == '__main__':
     print(json.dumps(verify(ROOT / 'UniSpace'), indent=2))

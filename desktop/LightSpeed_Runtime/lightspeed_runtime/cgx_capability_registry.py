@@ -179,8 +179,7 @@ def capability_summary(selector: str) -> dict[str, Any]:
 
 
 
-def capability_interop_review(selector: str, *, reference: str | None = None,
-                             expected_view_sha256: str | None = None) -> dict[str, Any]:
+def _capability_review_snapshot(selector: str) -> tuple[dict, dict]:
     """Read-only shared catalogue projection; no provider invocation or authority.
 
     Stable symbolic IDs reference canonical metadata objects across selectors.
@@ -198,6 +197,8 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
         return hashlib.sha256(raw).hexdigest()
 
     def read_source(path):
+        if not path.resolve().is_relative_to(REPO_ROOT.resolve()):
+            raise CapabilityRegistryError("interop source outside repository")
         with path.open("rb") as stream:
             raw=stream.read(1024*1024+1)
         if not 1 <= len(raw) <= 1024 * 1024:
@@ -357,15 +358,23 @@ def capability_interop_review(selector: str, *, reference: str | None = None,
           "provider_invocation_performed":False,"authority_transfer":False,
           "native_admitted":False}
     stamp=digest(canonical(view))
+    return {**view,"view_sha256":stamp},values
+
+
+def capability_interop_review(selector: str, *, reference: str | None = None,
+                             expected_view_sha256: str | None = None) -> dict[str, Any]:
+    view,values=_capability_review_snapshot(selector)
+    stamp=view["view_sha256"]
+    refs=view["references"]
     if reference is None:
         if expected_view_sha256 is not None:
             raise CapabilityRegistryError("view revision without reference")
-        return {**view,"view_sha256":stamp}
+        return view
     if type(reference) is not str or reference not in refs:
         raise CapabilityRegistryError("reference outside selector view")
     if expected_view_sha256!=stamp:
         raise CapabilityRegistryError("stale or missing selector view revision")
-    return {"schema":"CGX-CAPABILITY-METADATA-REFERENCE/0.1","selector":profile["selector"],
+    return {"schema":"CGX-CAPABILITY-METADATA-REFERENCE/0.1","selector":view["selector"],
             "view_sha256":stamp,"reference":reference,"descriptor":refs[reference],
             "metadata":values[reference],"provider_invocation_performed":False,
             "execution_authorized":False,"authority_transfer":False,"native_admitted":False}
@@ -383,7 +392,13 @@ def compose_capability_review(selector: str, *, task_id: str, expected_view_sha2
             any(type(k) is not str or not 1<=len(k)<=256 for k in references) or
             len(set(references))!=len(references)):
         raise CapabilityRegistryError("invalid composition references")
-    view=capability_interop_review(selector)
+    view,_=_capability_review_snapshot(selector)
+    return _compose_from_snapshot(view,task_id,expected_view_sha256,references)
+
+
+def _compose_from_snapshot(view,task_id,expected_view_sha256,references):
+    import hashlib
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload
     if expected_view_sha256!=view["view_sha256"]:
         raise CapabilityRegistryError("stale composition view")
     if any(k not in view["references"] for k in references):
@@ -447,23 +462,25 @@ def hydrate_composed_skill_review(selector: str, *, task_id: str, composition: d
         if authorise(task_id,key,scope_revision,expected_composition_sha256) is not True:
             raise PermissionError("skill scope denied or revoked")
     for key in keys:check(key)
-    rebuilt=compose_capability_review(selector,task_id=task_id,
-        expected_view_sha256=composition["view_sha256"],
-        references=list(composition["references"]))
+    view,values=_capability_review_snapshot(selector)
+    rebuilt=_compose_from_snapshot(view,task_id,composition["view_sha256"],
+                                  list(composition["references"]))
     if rebuilt!=composition or rebuilt["composition_sha256"]!=expected_composition_sha256:
         raise CapabilityRegistryError("composition revision changed")
     resolved={}
     evidence={}
     remaining=max_bytes
+    if sum(values[k]["source_bytes"] for k in keys)>max_bytes:
+        raise CapabilityRegistryError("skill payload byte budget")
     for key in keys:
         check(key)
-        meta=capability_interop_review(selector,reference=key,
-            expected_view_sha256=rebuilt["view_sha256"])["metadata"]
+        meta=values[key]
         size=meta["source_bytes"]
         if type(size) is not int or not 0<size<=remaining:
             raise CapabilityRegistryError("skill payload byte budget")
         path=REPO_ROOT/"plugins/source/core-skills"/key.split(":",1)[1]/"SKILL.md"
-        if path.relative_to(REPO_ROOT).as_posix()!=meta["source_path"]:
+        if (path.relative_to(REPO_ROOT).as_posix()!=meta["source_path"]
+                or not path.resolve().is_relative_to(REPO_ROOT.resolve())):
             raise CapabilityRegistryError("skill locator mismatch")
         with path.open("rb") as stream:
             raw=stream.read(size+1)

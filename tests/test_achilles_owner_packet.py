@@ -270,3 +270,47 @@ def test_owner_packet_composition_and_scoped_skill_review():
     with pytest.raises(CapabilityRegistryError):read(bad)
     with pytest.raises(module.ProfileHold):prepare(stamp="0"*64)
     with pytest.raises(module.ProfileHold):prepare(("role:smith",))
+
+
+
+def test_paired_fidelity_trial_predeclared_and_fail_closed():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    v=capability_interop_review("Achilles")
+    plan=module.prepare_skill_fidelity_trial("review-001a",expected_view_sha256=v["view_sha256"],
+        model="qwen3:8b",sparse_skills=["skill:cgx-capability-router","skill:cgx-handshake"])
+    stamp=plan["trial_sha256"]
+    prompts=module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",
+                                           authorise=lambda *a:True)
+    assert len(prompts)==16
+    assert all("expected" not in p for p in prompts)
+    expected={c["case_id"]:c["expected"] for c in plan["cases"]}
+    obs=[dict(case_id=p["case_id"],arm=p["arm"],model=plan["model"],settings=plan["settings"],
+        prompt_sha256=p["prompt_sha256"],result=expected[p["case_id"]],
+        prompt_tokens=100 if p["arm"]=="sparse" else 500,output_tokens=12,latency_ms=100) for p in prompts]
+    commitment=module.skill_trial_prompt_commitment(plan,prompts)
+    def score(rows):return module.score_skill_fidelity_trial(plan,expected_trial_sha256=stamp,prompts=prompts,observations=rows,expected_prompt_commitment=commitment)
+    with pytest.raises(module.ProfileHold):
+        module.score_skill_fidelity_trial(plan,expected_trial_sha256=stamp,prompts=prompts[::-1],
+            observations=obs,expected_prompt_commitment=commitment)
+    receipt=score(obs)
+    assert receipt["candidate_thresholds_met"] and not receipt["live_reasoning_fidelity_verified"]
+    with pytest.raises(module.ProfileHold):score(obs[:-1])
+    with pytest.raises(module.ProfileHold):score([dict(obs[0],model="other")]+obs[1:])
+    with pytest.raises(module.ProfileHold):score([dict(obs[0],prompt_sha256="0"*64)]+obs[1:])
+    bad=[dict(o,result={"decision":"review_only","code":"allowed"}) if o["case_id"]=="stale-access" else o for o in obs]
+    assert not score(bad)["candidate_thresholds_met"]
+    assert score(bad)["counts"]["sparse"]["unsafe_false_allow"]==1
+    with pytest.raises(PermissionError):
+        module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",authorise=lambda *a:False)
+
+
+def test_common_inference_preflight_never_grants_execution():
+    def gate(**overrides):
+        return module.assess_common_inference_admission(**dict(dict(resident_active=True,common_gate_verified=False,
+            active_session_count=0,available_gib=13.53,reserve_gib=6.4,model_working_set_gib=4.9),**overrides))
+    assert gate()["state"]=="HOLD"
+    assert "RAM_RESERVE_HOLD" in gate(available_gib=8)["holds"]
+    assert "ACTIVE_INFERENCE_SESSION" in gate(active_session_count=1)["holds"]
+    assert gate(common_gate_verified=True)["state"]=="PREFLIGHT_ONLY_GATE_ACQUISITION_REQUIRED"
+    assert not gate(common_gate_verified=True)["execution_authorized"]
+    with pytest.raises(module.ProfileHold):gate(active_session_count=True)
