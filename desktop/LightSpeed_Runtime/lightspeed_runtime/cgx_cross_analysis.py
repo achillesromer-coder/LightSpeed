@@ -823,3 +823,51 @@ def resolve_review_occurrence(occurrence, expected_sha256, fetch, authorise, *,
     check()
     return raw,dict(stats,occurrence_sha256=expected_sha256,
                     native_admitted=False,authority_transfer=False)
+
+
+
+def resolve_provider_review_occurrence(occurrence, expected_sha256, provider_read, authorise, *,
+                                       task_id, prefix="", max_bytes):
+    """Bind each object read to its occurrence, source revision and task.
+
+    Provider_read is an existing trusted adapter, not an arbitrary tool call.
+    The caller must authenticate the provider and its current scope. An echoed
+    envelope is not independent authentication or proof of atomic revocation.
+    """
+    import re
+    if type(task_id) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",task_id):
+        raise CGXCrossAnalysisError("invalid occurrence task")
+    if type(max_bytes) is not int or not 1<=max_bytes<=32*1024*1024:
+        raise CGXCrossAnalysisError("invalid occurrence budget")
+    if type(occurrence) is not dict:
+        raise CGXCrossAnalysisError("invalid occurrence")
+    # Snapshot the supplied identity; the existing resolver validates its hash.
+    try:
+        identity = {k:occurrence[k] for k in ("occurrence_id","source_revision","scope_revision")}
+    except KeyError as exc:
+        raise CGXCrossAnalysisError("missing occurrence identity") from exc
+    spent=0
+    def gate(oid,revision,scope,subtree):
+        return authorise(task_id,oid,revision,scope,subtree) is True
+    def fetch(oid,key):
+        nonlocal spent
+        if oid!=identity["occurrence_id"]:
+            raise CGXCrossAnalysisError("provider occurrence mismatch")
+        limit=min(4096,max_bytes-spent)
+        if limit<=0:
+            raise CGXCrossAnalysisError("provider read budget exhausted")
+        request={**identity,"task_id":task_id,"prefix":prefix,"object_sha256":key,"max_bytes":limit}
+        response=provider_read(dict(request))
+        if type(response) is not dict or set(response)!=set(request)|{"payload"}:
+            raise CGXCrossAnalysisError("invalid provider response")
+        if any(type(response[k]) is not type(v) or response[k]!=v for k,v in request.items()):
+            raise CGXCrossAnalysisError("provider response binding mismatch")
+        raw=response["payload"]
+        if type(raw) is not bytes or len(raw)>limit:
+            raise CGXCrossAnalysisError("provider response byte budget")
+        spent+=len(raw)
+        return raw
+    raw,stats=resolve_review_occurrence(occurrence,expected_sha256,fetch,gate,
+                                      prefix=prefix,max_bytes=max_bytes)
+    return raw,dict(stats,task_id=task_id,provider_bytes=spent,
+                    provider_authentication_performed=False)

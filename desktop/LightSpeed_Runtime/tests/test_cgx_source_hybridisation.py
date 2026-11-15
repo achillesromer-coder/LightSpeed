@@ -363,3 +363,33 @@ def test_occurrence_permissions_are_not_payload_identity():
     def revoked(oid,rev,scope,prefix): return len(calls)==len(before)
     with pytest.raises(PermissionError): resolve_review_occurrence(a,ha,fetch,revoked,max_bytes=1000)
     assert len(calls)==len(before)+1
+
+
+
+def test_provider_occurrence_binding_and_pretransfer_budget():
+    import hashlib,json
+    from lightspeed_runtime.cgx_cross_analysis import pack_nested_review_payload,resolve_provider_review_occurrence
+    root,objects=pack_nested_review_payload(b"provider fixture")
+    o=dict(occurrence_id="A",source_revision="r1",scope_revision="acl1",root=root,allowed_prefixes=[""])
+    stamp=hashlib.sha256(json.dumps(o,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode()).hexdigest()
+    calls=[]
+    def gate(*a):return a==("review-001b","A","r1","acl1","")
+    def provider(q):
+        calls.append(q)
+        return {**q,"payload":objects[q["object_sha256"]]}
+    def run(read=provider,auth=gate,budget=10000):
+        return resolve_provider_review_occurrence(o,stamp,read,auth,task_id="review-001b",max_bytes=budget)
+    raw,stats=run()
+    assert raw==b"provider fixture" and stats["provider_bytes"]==sum(len(objects[k["object_sha256"]]) for k in calls)
+    assert not stats["provider_authentication_performed"]
+    for key,value in [("occurrence_id","B"),("source_revision","r2"),("scope_revision","acl2"),("task_id","other")]:
+        with pytest.raises(CGXCrossAnalysisError,match="binding mismatch"):
+            run(lambda q:{**provider(q),key:value})
+    before=len(calls)
+    with pytest.raises(PermissionError):run(auth=lambda *a:False)
+    assert len(calls)==before
+    checks=iter([True,True,False])
+    with pytest.raises(PermissionError):run(auth=lambda *a:next(checks))
+    with pytest.raises(CGXCrossAnalysisError,match="byte budget"):
+        run(budget=1)
+    assert calls[-1]["max_bytes"]==1

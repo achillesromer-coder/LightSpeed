@@ -280,3 +280,22 @@ def test_result_receipt_bridge_exposes_auth_state_and_fails_closed(tmp_path, mon
     assert invalid.status_code == 400
     assert missing.status_code == 404
     assert client.get("/api/v1/status").json()["auth"]["configured"] is True
+
+
+
+def test_scoped_receipt_exact_revision_and_revocation(tmp_path,monkeypatch):
+    root=_results_root(tmp_path)
+    path,payload=_write_receipt(root,"LSGO-RESULT-SCOPED")
+    digest=hashlib.sha256(path.read_bytes()).hexdigest()
+    def read(auth= lambda *a: True,sha=digest):
+        return result_receipt_browser.open_scoped_result_review(tmp_path,
+            result_id=path.stem,expected_sha256=sha,task_id="review-001c",
+            scope_revision="scope-1",authorise=auth)
+    got=read(lambda *a:a==("review-001c",path.stem,digest,"scope-1"))
+    assert got["result"]==payload and not got["review_scope"]["authority_transfer"]
+    assert not got["review_scope"]["provider_authentication_performed"]
+    with pytest.raises(result_receipt_browser.ResultReceiptUnavailable):read(sha="0"*64)
+    sequence=iter([True,False])
+    with pytest.raises(PermissionError):read(lambda *a:next(sequence))
+    monkeypatch.setattr(result_receipt_browser,"open_result_receipt",lambda *a,**kw:pytest.fail("denied read"))
+    with pytest.raises(PermissionError):read(lambda *a:False)
