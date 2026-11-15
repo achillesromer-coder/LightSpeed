@@ -464,6 +464,121 @@ def build_exchange_status(
     }
 
 
+
+def _health_token(value, maximum=128):
+    import re
+    if type(value) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:/-]{0,127}", value) or len(value)>maximum:
+        raise NodeExchangeError("invalid health review identifier")
+    return value
+
+
+def _health_time(value):
+    if type(value) is not str or len(value)>40:
+        raise NodeExchangeError("invalid health timestamp")
+    try:
+        t=datetime.fromisoformat(value)
+        if t.tzinfo is None:
+            raise ValueError("offset required")
+        return t.astimezone(UTC)
+    except (ValueError,OverflowError) as exc:
+        raise NodeExchangeError("invalid health timestamp") from exc
+
+
+def prepare_remote_health_review(selector, *, expected_view_sha256, task_id,
+                                 target_ref, scope_revision, nonce, issued_at):
+    """Prepare one fixed read-only provider evidence request; never dispatch."""
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    import re
+    for value in (task_id,target_ref,scope_revision):
+        _health_token(value)
+    if type(nonce) is not str or not re.fullmatch(r"[0-9a-f]{32}",nonce):
+        raise NodeExchangeError("invalid health challenge")
+    _health_time(issued_at)
+    surface=capability_interop_review(selector,reference="surface:remote-desktop",
+                                      expected_view_sha256=expected_view_sha256)
+    route=capability_interop_review(selector,reference="route:ops.health",
+                                    expected_view_sha256=expected_view_sha256)
+    if ("Remote_Desktop_Commander" not in surface["metadata"]["provider_candidates"]
+            or "route:ops.health" not in surface["metadata"]["route_refs"]
+            or route["metadata"].get("ro") is not True):
+        raise NodeExchangeError("health review route unavailable")
+    request={"schema":"CGX-REMOTE-HEALTH-REVIEW/0.1","operation":"read_supervisor_health",
+             "provider":"Remote_Desktop_Commander","selector":surface["selector"],
+             "task_id":task_id,"target_ref":target_ref,"scope_revision":scope_revision,
+             "nonce":nonce,"issued_at":issued_at,"view_sha256":expected_view_sha256,
+             "route_sha256":route["descriptor"]["sha256"],
+             "surface_sha256":surface["descriptor"]["sha256"],
+             "execution_authorized":False,"authority_transfer":False}
+    return request,_canonical_json_sha256(request)
+
+
+def reconcile_remote_health_review(request, observation, *, expected_request_sha256,
+                                   authorise, now):
+    """Validate a caller-supplied fixed health observation, not provider authentication.
+
+    The trusted caller must establish device identity, live account scope and
+    provenance of the observation. A challenge/hash is not signed evidence.
+    No remote command, provider credential, or general executor is accepted.
+    """
+    import math
+    if type(request) is not dict or type(observation) is not dict:
+        raise NodeExchangeError("health review object required")
+    expected_keys={"schema","operation","provider","selector","task_id","target_ref",
+                   "scope_revision","nonce","issued_at","view_sha256","route_sha256",
+                   "surface_sha256","execution_authorized","authority_transfer"}
+    if set(request)!=expected_keys or any(type(v) not in (str,bool) or
+            (type(v) is str and len(v)>256) for v in request.values()):
+        raise NodeExchangeError("invalid health request shape")
+    if _canonical_json_sha256(request)!=expected_request_sha256:
+        raise NodeExchangeError("health request digest mismatch")
+    rebuilt,_=prepare_remote_health_review(request["selector"],
+        expected_view_sha256=request["view_sha256"],task_id=request["task_id"],
+        target_ref=request["target_ref"],scope_revision=request["scope_revision"],
+        nonce=request["nonce"],issued_at=request["issued_at"])
+    if request!=rebuilt:
+        raise NodeExchangeError("health request contract mismatch")
+    if authorise(request["target_ref"],request["scope_revision"],request["task_id"]) is not True:
+        raise PermissionError("health review scope denied or revoked")
+    fields={"target_ref","nonce","observed_at","heartbeat_at","supervisor_pid",
+            "free_ram_gib","minimum_free_ram_gib","logical_processors","reserved_logical",
+            "ceiling_percent"}
+    if set(observation)!=fields:
+        raise NodeExchangeError("unexpected health observation fields")
+    if observation["target_ref"]!=request["target_ref"] or observation["nonce"]!=request["nonce"]:
+        raise NodeExchangeError("health target or challenge mismatch")
+    issued=_health_time(request["issued_at"])
+    observed=_health_time(observation["observed_at"])
+    heartbeat=_health_time(observation["heartbeat_at"])
+    current=_health_time(now)
+    if not (0 <= (current-issued).total_seconds() <= 300
+            and 0 <= (observed-issued).total_seconds() <= 300
+            and -5 <= (current-observed).total_seconds() <= 60
+            and -5 <= (observed-heartbeat).total_seconds() <= 180):
+        raise NodeExchangeError("stale health request or observation")
+    for key in ("supervisor_pid","logical_processors","reserved_logical","ceiling_percent"):
+        if type(observation[key]) is not int:
+            raise NodeExchangeError("invalid health integer")
+    pid,cores,reserved,ceiling=(observation[k] for k in
+        ("supervisor_pid","logical_processors","reserved_logical","ceiling_percent"))
+    if not (1<=pid<=2**31-1 and 1<=cores<=4096 and 0<=reserved<cores and 1<=ceiling<=100):
+        raise NodeExchangeError("invalid health integer range")
+    for key in ("free_ram_gib","minimum_free_ram_gib"):
+        v=observation[key]
+        if type(v) not in (int,float) or not 0<=v<=1048576 or not math.isfinite(v):
+            raise NodeExchangeError("invalid health memory metric")
+    if authorise(request["target_ref"],request["scope_revision"],request["task_id"]) is not True:
+        raise PermissionError("health review scope denied or revoked")
+    receipt={"schema":"CGX-REMOTE-HEALTH-REVIEW-RECEIPT/0.1",
+             "request_sha256":expected_request_sha256,
+             "observation_sha256":_canonical_json_sha256(observation),
+             "state":"SOURCE_BOUND_OBSERVATION_REVIEW",
+             "reserve_satisfied":observation["free_ram_gib"]>=observation["minimum_free_ram_gib"],
+             "provider_authentication_performed":False,"execution_performed":False,
+             "authority_transfer":False,"native_admitted":False}
+    receipt["review_sha256"]=_canonical_json_sha256(receipt)
+    return receipt
+
+
 __all__ = [
     "COMPUTE_RECEIPT_SCHEMA",
     "COMPUTE_SCHEMA",
@@ -474,6 +589,8 @@ __all__ = [
     "TRANSFER_SCHEMA",
     "build_compute_request",
     "build_exchange_status",
+    "prepare_remote_health_review",
+    "reconcile_remote_health_review",
     "build_transfer_envelope",
     "load_node_root_registry",
     "resolve_node_root",

@@ -269,3 +269,35 @@ def test_status_does_not_treat_carrier_as_peer_compute() -> None:
     assert status["transport"]["verified_carriers"] == ["E-volume"]
     assert status["transport"]["peer_transport_verified"] is False
     assert status["compute"]["peer_compute_verified"] is False
+
+
+
+def test_remote_health_review_exact_scope_and_challenge():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    from lightspeed_runtime.node_exchange import prepare_remote_health_review,reconcile_remote_health_review
+    now="2026-01-01T00:00:10+00:00"
+    view=capability_interop_review("Achilles")
+    req,stamp=prepare_remote_health_review("Achilles",expected_view_sha256=view["view_sha256"],
+        task_id="review-001c",target_ref="fixture-host",scope_revision="scope-1",
+        nonce="a"*32,issued_at="2026-01-01T00:00:00+00:00")
+    obs=dict(target_ref="fixture-host",nonce="a"*32,observed_at=now,
+             heartbeat_at=now,supervisor_pid=1,free_ram_gib=10,minimum_free_ram_gib=6.4,
+             logical_processors=16,reserved_logical=4,ceiling_percent=95)
+    def auth(t,s,k): return (t,s,k)==("fixture-host","scope-1","review-001c")
+    def review(o,**kwargs):
+        return reconcile_remote_health_review(req,o,expected_request_sha256=stamp,
+                     authorise=kwargs.get("authorise",auth),now=kwargs.get("now",now))
+    r=review(obs)
+    assert r["reserve_satisfied"] and not r["provider_authentication_performed"]
+    assert not r["authority_transfer"] and review(obs)==r
+    assert not review(dict(obs,free_ram_gib=2))["reserve_satisfied"]
+    for bad in (dict(obs,target_ref="other"),dict(obs,nonce="b"*32),dict(obs,command="no"),
+                dict(obs,supervisor_pid=True),dict(obs,free_ram_gib=float("nan")),
+                dict(obs,heartbeat_at="2025-01-01T00:00:00+00:00")):
+        with pytest.raises(NodeExchangeError): review(bad)
+    with pytest.raises(NodeExchangeError): review(obs,now="2026-01-01T01:00:00+00:00")
+    with pytest.raises(PermissionError): review(obs,authorise=lambda *a:False)
+    seq=iter([True,False])
+    with pytest.raises(PermissionError): review(obs,authorise=lambda *a:next(seq))
+    with pytest.raises(NodeExchangeError):
+        reconcile_remote_health_review(req,obs,expected_request_sha256="0"*64,authorise=auth,now=now)
