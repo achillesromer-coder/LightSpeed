@@ -212,3 +212,37 @@ def test_object_workset_candidate_source_bindings_no_instance_uplift():
     # Explicitly hold the actual self-lifecycle task, regardless of row order.
     next(r for r in q["tasks"] if r["task_id"]=="CGX-OBJ-005")["state"]="HELD"
     with pytest.raises(ValueError):m.object_source_review(q,schema)
+
+
+def test_atlas_collection_all_occurrences_sparse_read():
+    import hashlib, io, json, zipfile
+    import pytest
+    from lightspeed_runtime.cgx_cross_analysis import (
+        atlas_review_workset, write_atlas_review_collection,
+        hydrate_review_collection, CGXCrossAnalysisError)
+    raw=(Path(__file__).resolve().parents[1]/"cgx/component_atlas/component_geometry_atlas_v0_1.json").read_bytes()
+    source=hashlib.sha256(raw).hexdigest()
+    index=atlas_review_workset(raw,expected_sha256=source)
+    expected={r["ID"]:r for r in json.loads(raw)["records"]}
+    stream=io.BytesIO()
+    with zipfile.ZipFile(stream,"w") as z:
+        desc,h=write_atlas_review_collection(z,raw,expected_sha256=source,
+            expected_workset_sha256=index["workset_sha256"],task_id="atlas-closure")
+    assert set(desc["entries"])==set(expected)
+    def auth(task,k,rev,scope,digest):
+        return (task,rev,scope,digest)==("atlas-closure",source,"review",h) and k in expected
+    def read(z,keys,authorise=auth):
+        return hydrate_review_collection(z,desc,h,task_id="atlas-closure",
+            source_revision=source,scope_revision="review",selected=keys,
+            max_bytes=1024*1024,authorise=authorise)
+    keys=sorted(expected)
+    with zipfile.ZipFile(stream) as z:
+        for start in range(0,len(keys),64):
+            out,receipt=read(z,keys[start:start+64])
+            assert all(json.loads(v)==expected[k] for k,v in out.items())
+            assert len(out)==len(keys[start:start+64])
+            assert not receipt["native_admitted"]
+        with pytest.raises(PermissionError):
+            read(z,[keys[0]],lambda *a:False)
+        with pytest.raises(CGXCrossAnalysisError):
+            read(z,keys[:65])

@@ -882,7 +882,7 @@ def write_review_collection(archive, payloads, *, task_id, source_revision):
     """
     import hashlib,json,re,zipfile
     def token(v):return type(v) is str and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
-    if not token(task_id) or not token(source_revision) or type(payloads) is not dict or not 1<=len(payloads)<=64:
+    if not token(task_id) or not token(source_revision) or type(payloads) is not dict or not 1<=len(payloads)<=512:
         raise CGXCrossAnalysisError("invalid collection identity")
     if any(not token(k) or type(v) is not bytes for k,v in payloads.items()) or sum(map(len,payloads.values()))>5*1024*1024:
         raise CGXCrossAnalysisError("invalid collection payloads")
@@ -921,7 +921,7 @@ def hydrate_review_collection(archive, descriptor, expected_sha256, *,
             or descriptor["schema"]!="CGX-REVIEW-COLLECTION/0.1" or descriptor["task_id"]!=task_id
             or descriptor["source_revision"]!=source_revision or descriptor["native_admitted"] is not False
             or descriptor["authority_transfer"] is not False or type(descriptor["entries"]) is not dict
-            or not 1<=len(descriptor["entries"])<=64):
+            or not 1<=len(descriptor["entries"])<=512):
         raise CGXCrossAnalysisError("collection binding mismatch")
     entries={}
     for k,v in descriptor["entries"].items():
@@ -1058,3 +1058,22 @@ def hydrate_atlas_review_rows(raw, *, expected_sha256, expected_workset_sha256,
         "selected":sorted(selected),"expanded_bytes":sum(map(len,out.values())),
         "provider_authentication_performed":False,"native_admitted":False,
         "execution_authorized":False,"physical_instances_qualified":0}
+
+def write_atlas_review_collection(archive, raw, *, expected_sha256,
+                                  expected_workset_sha256, task_id):
+    """Build the existing collection format from exact atlas occurrences.
+
+    The caller must independently anchor the returned descriptor digest.
+    No new registry, native promotion or physical qualification is produced.
+    """
+    index, values = _atlas_review_snapshot(raw, expected_sha256)
+    if index["workset_sha256"] != expected_workset_sha256:
+        raise CGXCrossAnalysisError("atlas workset binding mismatch")
+    descriptor, digest = write_review_collection(
+        archive, values, task_id=task_id, source_revision=expected_sha256)
+    for k, v in descriptor["entries"].items():
+        ref = index["references"][k]
+        if (v["root"], v["sha256"], v["bytes"]) != (
+                ref["row_ternary_root"], ref["row_sha256"], ref["row_bytes"]):
+            raise CGXCrossAnalysisError("atlas collection row mismatch")
+    return descriptor, digest
