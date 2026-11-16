@@ -25,3 +25,7 @@ The native_semantic_review module computes exact composed affine coefficients an
 ## Bounded verification reuse
 
 The batch review entry point verifies and captures a private model/history snapshot, reuses the existing mathematical apply helper within that call, checks the caller-supplied current head before and after each input, and enforces aggregate facet and per-input budgets. No persistent cache, actual lease authentication, native promotion or external dispatch. The head reader is a trusted-caller dependency, not independently authenticated; production integration requires the existing governance boundary. The batch preserves per-input traces and exact results. No partial result is returned after a hold.
+
+## Raphael source and online projection alignment
+
+Native Raphael review binds the existing Type-I equation kernel, geometry search catalogue, atlas workset and locally checked-in GO public projection by source digest, and reuses the existing Raphael sweep capability and atlas hydration. Explicitly selected atlas/kernel/search records are comparison candidates, not validated associations. No arbitrary physics equation evaluation, physical claim, remote publication or new store. Legacy placeholder equations remain held; full T173 and empirical admission require independent evidence. The checked-in public projection equality is not a live website verification.
