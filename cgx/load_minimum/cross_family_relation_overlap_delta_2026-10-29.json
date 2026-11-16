@@ -1,0 +1,396 @@
+{
+  "schema": "CGX-CROSS-FAMILY-RELATION-OVERLAP-DELTA/0.1",
+  "stage": "SOURCE_REVIEW_ONLY",
+  "status": "HOLD",
+  "purpose": "Non-authoritative lexical-overlap supplement to the existing Eco/shared crosswalk; not a second registry, not identity resolution or semantic equivalence.",
+  "source_snapshots": [
+    {
+      "source": "romer",
+      "path": "cgx/domain_templates/romer_relation_registry.json",
+      "git_blob": "7b414c03f5c9517bea574d56ee754edc57da88c1",
+      "schema": "CGX-ROMER-RELATION-REGISTRY/0.3",
+      "extends": "CGX-RELATION-QUALIFIER/0.1"
+    },
+    {
+      "source": "eco",
+      "path": "cgx/domain_templates/eco_relation_registry.json",
+      "git_blob": "47241ad132cc53fa4e90f5b8ec65fe23412be95a",
+      "schema": "CGX-ECO-RELATION-REGISTRY/0.2",
+      "extends": "CGX-RELATION-QUALIFIER/0.1"
+    },
+    {
+      "source": "emassc_ls",
+      "path": "cgx/domain_templates/emassc_ls_relation_registry.json",
+      "git_blob": "d9c885df30b1b39cdfd79d89bb2a2a8d0c6bbfca",
+      "schema": "CGX-EMASSC-LS-RELATION-REGISTRY/0.2",
+      "extends": "CGX-RELATION-QUALIFIER/0.1"
+    },
+    {
+      "source": "shared",
+      "path": "cgx/domain_templates/relation_qualifier_contract.json",
+      "git_blob": "989685153af6da031b5e4f09c189834ed8f38de2",
+      "schema": "CGX-RELATION-QUALIFIER/0.2",
+      "extends": null
+    }
+  ],
+  "prior_crosswalk": {
+    "path": "cgx/load_minimum/eco_shared_relation_crosswalk_candidates_2026-10-29.json",
+    "git_blob": "5c04271749acbb74eed79e426ceeb370005a6d56",
+    "previous_overlap_ids": [
+      "DERIVED_FROM",
+      "EVIDENCED_BY",
+      "GATED_BY",
+      "HAS_CRITERION",
+      "MITIGATED_BY",
+      "USES_INPUT"
+    ]
+  },
+  "findings": {
+    "distinct_lexical_overlaps_all_sources": 17,
+    "previously_recorded_eco_shared_ids": 6,
+    "new_distinct_lexical_overlap_ids": 11,
+    "qualifier_compatibility_hold": [
+      {
+        "source": "romer",
+        "declared": "CGX-RELATION-QUALIFIER/0.1",
+        "current": "CGX-RELATION-QUALIFIER/0.2"
+      },
+      {
+        "source": "eco",
+        "declared": "CGX-RELATION-QUALIFIER/0.1",
+        "current": "CGX-RELATION-QUALIFIER/0.2"
+      },
+      {
+        "source": "emassc_ls",
+        "declared": "CGX-RELATION-QUALIFIER/0.1",
+        "current": "CGX-RELATION-QUALIFIER/0.2"
+      }
+    ],
+    "intra_registry_ambiguity": [
+      {
+        "source": "eco",
+        "relation_id": "MODIFIES",
+        "families": [
+          "process",
+          "intervention"
+        ]
+      }
+    ]
+  },
+  "candidate_owner_lanes": {
+    "romer": "Achilles / Romer-Grex",
+    "eco": "Athene / Eco-Grex",
+    "emassc_ls": "Achilles / EMASSC (LS execution delegated to Neo)",
+    "shared": "Cognigrex parent / cross-family grammar"
+  },
+  "new_overlap_candidates": [
+    {
+      "relation_id": "AFFECTS",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "test_semantics",
+          "source_declaration": {
+            "id": "AFFECTS",
+            "rule": "direction/scope of effect must be attributable"
+          }
+        },
+        {
+          "source": "emassc_ls",
+          "family": "emassc",
+          "source_declaration": {
+            "id": "AFFECTS",
+            "rule": "effect direction/scope requires source or result evidence"
+          }
+        },
+        {
+          "source": "shared",
+          "family": "risk",
+          "source_declaration": {
+            "id": "AFFECTS"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "CONNECTS_TO",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "interface",
+          "source_declaration": {
+            "id": "CONNECTS_TO",
+            "symmetric": true
+          }
+        },
+        {
+          "source": "emassc_ls",
+          "family": "lightspeed",
+          "source_declaration": {
+            "id": "CONNECTS_TO"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "DEPENDS_ON",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "programme",
+          "source_declaration": {
+            "id": "DEPENDS_ON"
+          }
+        },
+        {
+          "source": "eco",
+          "family": "process",
+          "source_declaration": {
+            "id": "DEPENDS_ON"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "MEASURED_BY",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "evidence",
+          "source_declaration": {
+            "id": "MEASURED_BY"
+          }
+        },
+        {
+          "source": "eco",
+          "family": "monitoring",
+          "source_declaration": {
+            "id": "MEASURED_BY"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "OBSERVED_BY",
+      "declarations": [
+        {
+          "source": "eco",
+          "family": "monitoring",
+          "source_declaration": {
+            "id": "OBSERVED_BY"
+          }
+        },
+        {
+          "source": "emassc_ls",
+          "family": "lightspeed",
+          "source_declaration": {
+            "id": "OBSERVED_BY"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "PRECEDES",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "test_semantics",
+          "source_declaration": {
+            "id": "PRECEDES",
+            "rule": "sequence relation does not imply causation"
+          }
+        },
+        {
+          "source": "shared",
+          "family": "process",
+          "source_declaration": {
+            "id": "PRECEDES"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "REPRESENTED_BY",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "publication",
+          "source_declaration": {
+            "id": "REPRESENTED_BY"
+          }
+        },
+        {
+          "source": "shared",
+          "family": "provenance",
+          "source_declaration": {
+            "id": "REPRESENTED_BY"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "REVIEWED_BY",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "enterprise",
+          "source_declaration": {
+            "id": "REVIEWED_BY"
+          }
+        },
+        {
+          "source": "eco",
+          "family": "governance",
+          "source_declaration": {
+            "id": "REVIEWED_BY"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "ROUTES_TO",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "interface",
+          "source_declaration": {
+            "id": "ROUTES_TO"
+          }
+        },
+        {
+          "source": "emassc_ls",
+          "family": "lightspeed",
+          "source_declaration": {
+            "id": "ROUTES_TO"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "TARGETS",
+      "declarations": [
+        {
+          "source": "romer",
+          "family": "spatial",
+          "source_declaration": {
+            "id": "TARGETS"
+          }
+        },
+        {
+          "source": "eco",
+          "family": "intervention",
+          "source_declaration": {
+            "id": "TARGETS"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    },
+    {
+      "relation_id": "USES_CONTROL",
+      "declarations": [
+        {
+          "source": "emassc_ls",
+          "family": "emassc",
+          "source_declaration": {
+            "id": "USES_CONTROL",
+            "rule": "control configuration must be explicit"
+          }
+        },
+        {
+          "source": "shared",
+          "family": "process",
+          "source_declaration": {
+            "id": "USES_CONTROL"
+          }
+        }
+      ],
+      "semantic_equivalence": "UNDETERMINED",
+      "candidate_owner_qualified": false,
+      "source_rights_qualified": false,
+      "source_acl_qualified": false,
+      "canonical_object_id": null,
+      "native_dbr_readback": null,
+      "disposition": "HOLD"
+    }
+  ],
+  "restrictions": [
+    "Preserve all R0 declarations and source versions; lexical equality never merges relation identity.",
+    "Domain ownership does not transfer via a shared relation.",
+    "Inverse, direction, unit, temporal, spatial, configuration and epistemic qualifiers require source-specific compatibility proof.",
+    "No CCC Object_ID mint, Ethereum token, RootAuthority/DBR admission, production merge or host deployment.",
+    "Any owner-approved compatibility mapping must be independently checked against signed native DBR before promotion."
+  ],
+  "new_qualified_object_ids": 0,
+  "authority_transferred": false,
+  "readback_verified": false
+}
