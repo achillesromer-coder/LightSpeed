@@ -1,0 +1,7 @@
+# CGX-IM native geometry review kernel (L5)
+
+Scope: pure deterministic review code inside the existing Achilles package. No native admission, model merge, runtime service, new worker, execution lease, mint, external dispatch or production DBR change. The tetrahedral centroid subdivision is a fixture, not a Raphael T173 catalogue definition. T174/0 sentinel is not a facet object. Existing capability registry and directional contracts remain authoritative for real routes; this kernel accepts only fixture-scope values and explicit synthetic allowed edges. State event evidence strings are fixture labels, not evidence verification. A supplied trusted head anchors replay; real signatures/independent acceptance must be provided by the existing governance plane.
+
+The API composes bounded exact-rational operations through directed incident boundaries, with typed units, scope and coordinate-frame checks. Me/Myself/I are symmetric reciprocal perspectives, not assigned functions. History is immutable in intent, latest unverified/revoked state is held, and a mismatching head or content is rejected. The review kernel is not an actual learning system or general-purpose intelligence. No actual capability resolution or external side effects are authorised here.
+
+Next gate: independent source reconciliation for T173/Trinity/N-resolve/RVUR, integration with real DBR/lease verification, and quality/resource comparisons against an equivalent baseline. Existing model and agent runtime remain unchanged.
