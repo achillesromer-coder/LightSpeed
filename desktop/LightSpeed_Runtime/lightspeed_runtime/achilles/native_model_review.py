@@ -1,7 +1,7 @@
 """CGX-IM compositional model candidates: immutable review lineage, no new runtime."""
 from copy import deepcopy
-from lightspeed_runtime.achilles.native_geometry import digest, require, validate
-from lightspeed_runtime.achilles.native_methods import discover, apply
+from lightspeed_runtime.achilles.native_geometry import Geometry, digest, require, validate
+from lightspeed_runtime.achilles.native_methods import discover, apply, _apply_verified
 from lightspeed_runtime.domain_registry import FLOOR_RUNTIME_MAPPING
 from lightspeed_runtime.cgx_capability_registry import REPO_ROOT
 import json
@@ -112,6 +112,67 @@ def run_active(events, expected_head, models, x, geometry, at, *, allowed, budge
             "result":value,"trace":trace,"cost":budget-remaining,"scope":"fixture",
             "native_admitted":False,"execution_authorized":False}
     return {"record":result,"sha256":digest(result)}
+
+
+def run_batch_review(events, expected_head, models, inputs, geometry, at, *, allowed,
+                     current_head, per_input_budget=243, total_budget=8192):
+    """Bounded fixture batch with one private verified model snapshot.
+
+    The caller supplies an authenticated current-head reader in real integration;
+    this review function cannot authenticate it. No cache survives the call.
+    Abort the entire batch on a changed head, invalid input or exhausted budget.
+    The output matches run_active at each input with its effective budget.
+    """
+    require(type(inputs) in (list,tuple) and 1<=len(inputs)<=512,"batch size")
+    require(type(per_input_budget) is int and 1<=per_input_budget<=243,"input budget")
+    require(type(total_budget) is int and 1<=total_budget<=65536,"batch budget")
+    require(type(geometry) is Geometry and callable(current_head),"batch context")
+    _hash(expected_head)
+    def check():
+        require(current_head()==expected_head,"head changed or revoked")
+    check()
+    # Copy only the referenced bounded candidates, never an unbounded foreign store.
+    require(type(events) is list and 1<=len(events)<=MAX_HISTORY,"history bounds")
+    require(type(models) is dict and 1<=len(models)<=MAX_HISTORY,"store bounds")
+    require(all(type(e) is dict and type(e.get("event")) is dict for e in events),"history shape")
+    history=deepcopy(events)
+    refs={_hash(e["event"]["candidate"]) for e in history}
+    require(refs<=models.keys(),"missing candidate")
+    snapshot={h:verify_model(models[h]) for h in refs}
+    state=resolve_history(history,expected_head,snapshot)
+    require(state["active"] is not None,"model revoked")
+    body=snapshot[state["active"]]["model"]
+    # The geometry is a deterministic fixture. Rebuild privately so a caller
+    # cannot mutate its adjacency or edge permissions during the batch.
+    g=Geometry(geometry.depth)
+    require(geometry.edges==g.edges and geometry.adj==g.adj and geometry.volumes==g.volumes,"geometry changed")
+    edges=frozenset(allowed)
+    require(edges<=g.edges and at in g.leaves,"boundary")
+    values=[deepcopy(validate(x)) for x in inputs]
+    output=[];remaining=total_budget
+    for value in values:
+        check()
+        budget=min(per_input_budget,remaining)
+        require(budget>0,"aggregate batch budget")
+        left=budget;trace=[]
+        for h in body["pipeline"]:
+            require(left>0,"aggregate input budget")
+            out=_apply_verified(body["methods"][h]["method"],h,value,g,at,allowed=edges,budget=left)
+            cost=out["record"]["trace"]["record"]["cost"]
+            require(type(cost) is int and 0<cost<=left,"invalid stage cost")
+            left-=cost;value=out["record"]["result"];trace.append(out)
+        record={"identity":state["identity"],"candidate":state["active"],"history_head":expected_head,
+                "result":value,"trace":trace,"cost":budget-left,"scope":"fixture",
+                "native_admitted":False,"execution_authorized":False}
+        remaining-=record["cost"]
+        output.append({"record":record,"sha256":digest(record)})
+        check()
+    check()
+    receipt={"schema":"CGX-IM-BOUNDED-BATCH-REVIEW/0.1","history_head":expected_head,
+             "candidate":state["active"],"count":len(output),"cost":total_budget-remaining,
+             "result_digests":[v["sha256"] for v in output],"native_admitted":False,
+             "execution_authorized":False,"caller_authentication_verified":False}
+    return output,{"receipt":receipt,"sha256":digest(receipt)}
 
 
 def release_review(events, expected_head, models):

@@ -72,6 +72,11 @@ def apply(envelope, expected_sha256, x, geometry, at, *, allowed, budget=243):
     # Validate canonical content and independently recompute candidate from its bounded cases.
     rebuilt=discover(body["training"],body["holdout"])
     require(rebuilt==envelope and rebuilt["sha256"]==expected_sha256,"method revision")
+    return _apply_verified(body,expected_sha256,x,geometry,at,allowed=allowed,budget=budget)
+
+
+def _apply_verified(body, expected_sha256, x, geometry, at, *, allowed, budget):
+    """Internal helper only: body must come from already verified private snapshot."""
     validate(x);require((x["unit"],x["frame"],x["scope"])==(body["unit"],body["frame"],"fixture"),"input boundary")
     lo,hi=map(_fraction,body["domain"]); require(lo<=_fraction(x)<=hi,"outside tested envelope")
     report=compose(geometry,{"x":{"at":at,"value":x},"slope":{"at":at,"value":body["slope"]},

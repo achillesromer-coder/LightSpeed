@@ -21,3 +21,7 @@ The native_shared_review adapter uses the existing ternary review-collection pac
 ## Bounded semantic equivalence review
 
 The native_semantic_review module computes exact composed affine coefficients and the intersection of all stage envelopes expressed in input coordinates. It compares separately verified candidates without merging evidence, identity, permissions or execution capacity. Equal affine laws are mathematical equivalence on the reported overlap only; disjoint ranges, coordinate/unit differences and single-point agreement are distinct cases. No model replacement or empirical equivalence is claimed. It adds no loader, worker or database. General symbolic, nonlinear and cross-unit equivalence remain held.
+
+## Bounded verification reuse
+
+The batch review entry point verifies and captures a private model/history snapshot, reuses the existing mathematical apply helper within that call, checks the caller-supplied current head before and after each input, and enforces aggregate facet and per-input budgets. No persistent cache, actual lease authentication, native promotion or external dispatch. The head reader is a trusted-caller dependency, not independently authenticated; production integration requires the existing governance boundary. The batch preserves per-input traces and exact results. No partial result is returned after a hold.
