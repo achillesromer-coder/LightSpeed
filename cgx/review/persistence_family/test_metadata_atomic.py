@@ -24,7 +24,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-meta-atomic-') as folder:
  check('metadata has no indexed excerpt',m['semantic_chars']==0)
  check('metadata search returns no plaintext',not db.source_search('Confidential thermal',agent='Raphael'))
  check('metadata underlying index is blank',db.db.execute('SELECT text FROM source_terms WHERE sha=?',(m['sha256'],)).fetchone()==('',))
- denies('metadata cannot restore source',lambda:db.restore_for_agent('Raphael',m['sha256'],r/'restore.txt'),ValueError)
+ denies('metadata cannot restore source',lambda:db.restore_for_agent('Raphael',m['sha256'],r/'restore.txt'),(ValueError,PermissionError))
  check('denied restore creates no file',not (r/'restore.txt').exists())
  full=db.ingest('Raphael',src,root=root,store_bytes=True)
  check('hydration preserves same identity',m['sha256']==full['sha256'])

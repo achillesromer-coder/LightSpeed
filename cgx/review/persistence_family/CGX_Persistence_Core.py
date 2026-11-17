@@ -88,7 +88,7 @@ class FamilyStore:
   self.db.executescript('''
   CREATE TABLE IF NOT EXISTS source(sha TEXT PRIMARY KEY,length INTEGER NOT NULL,mime TEXT NOT NULL,rights TEXT NOT NULL,compressed BLOB,content_note TEXT NOT NULL,first_at TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS source_path(path TEXT PRIMARY KEY,sha TEXT NOT NULL,seen_at TEXT NOT NULL,FOREIGN KEY(sha) REFERENCES source(sha));
-  CREATE TABLE IF NOT EXISTS source_occurrence(id INTEGER PRIMARY KEY AUTOINCREMENT,path TEXT NOT NULL,sha TEXT NOT NULL,rights TEXT NOT NULL,agent TEXT NOT NULL,observed_at TEXT NOT NULL,prior_sha TEXT,FOREIGN KEY(sha) REFERENCES source(sha));
+  CREATE TABLE IF NOT EXISTS source_occurrence(id INTEGER PRIMARY KEY AUTOINCREMENT,path TEXT NOT NULL,sha TEXT NOT NULL,rights TEXT NOT NULL,agent TEXT NOT NULL,observed_at TEXT NOT NULL,prior_sha TEXT,content_granted INTEGER NOT NULL DEFAULT 0,FOREIGN KEY(sha) REFERENCES source(sha));
   CREATE INDEX IF NOT EXISTS occurrence_path ON source_occurrence(path,id);
   CREATE TABLE IF NOT EXISTS source_terms(sha TEXT PRIMARY KEY,text TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS facet(id TEXT PRIMARY KEY,agent TEXT NOT NULL,parent_id TEXT,key TEXT NOT NULL,value_json TEXT NOT NULL,source_sha TEXT NOT NULL,classification TEXT NOT NULL,status TEXT NOT NULL,created_at TEXT NOT NULL);
@@ -100,6 +100,12 @@ class FamilyStore:
   ''')
   # Existing pre-admission databases are migrated in-place, without changing
   # the legacy byte table. Previously stored source rights are never elevated.
+  # Existing review occurrences never recorded content grants. Migrating them
+  # to denied (zero) is deliberate: re-ingest the source with store_bytes=True
+  # under the same owner-approved intake root to establish explicit access.
+  occur_cols={r[1] for r in self.db.execute('PRAGMA table_info(source_occurrence)')}
+  if 'content_granted' not in occur_cols:
+   self.db.execute('ALTER TABLE source_occurrence ADD COLUMN content_granted INTEGER NOT NULL DEFAULT 0')
   cols={r[1] for r in self.db.execute('PRAGMA table_info(source_path)')}
   if 'rights' not in cols:self.db.execute("ALTER TABLE source_path ADD COLUMN rights TEXT NOT NULL DEFAULT 'owner-private'")
   if 'agent' not in cols:self.db.execute("ALTER TABLE source_path ADD COLUMN agent TEXT NOT NULL DEFAULT 'legacy-unverified'")
@@ -159,14 +165,18 @@ class FamilyStore:
     self.db.execute('UPDATE source_terms SET text=? WHERE sha=?',(text,h))
    self.db.execute('INSERT OR IGNORE INTO source_terms VALUES(?,?)',(h,text))
    self.db.execute('INSERT INTO source_path(path,sha,seen_at,rights,agent) VALUES(?,?,?,?,?) ON CONFLICT(path) DO UPDATE SET sha=excluded.sha,seen_at=excluded.seen_at',(rel,h,timestamp(),rights,agent))
-   last=self.db.execute('SELECT sha,rights,agent FROM source_occurrence WHERE path=? ORDER BY id DESC LIMIT 1',(rel,)).fetchone()
-   if last!=(h,rights,agent):
-    self.db.execute('INSERT INTO source_occurrence(path,sha,rights,agent,observed_at,prior_sha) VALUES(?,?,?,?,?,?)',(rel,h,rights,agent,timestamp(),last[0] if last else None))
-   receipt=self._audit_in_transaction(agent,'source-intake',{'sha':h,'size':len(raw),'type':ext,'rights':rights,'path':rel,'prior_sha':current[0] if current else None})
+   last=self.db.execute('SELECT id,sha,rights,agent,content_granted FROM source_occurrence WHERE path=? ORDER BY id DESC LIMIT 1',(rel,)).fetchone()
+   if not last or last[1:4]!=(h,rights,agent):
+    self.db.execute('INSERT INTO source_occurrence(path,sha,rights,agent,observed_at,prior_sha,content_granted) VALUES(?,?,?,?,?,?,?)',(rel,h,rights,agent,timestamp(),last[1] if last else None,int(bool(store_bytes))))
+   elif store_bytes and not last[4]:
+    # Hash-only review of another specialist's same-content blob is NOT a
+    # read grant. A source-level, role-labelled full intake is required.
+    self.db.execute('UPDATE source_occurrence SET content_granted=1 WHERE id=?',(last[0],))
+   receipt=self._audit_in_transaction(agent,'source-intake',{'sha':h,'size':len(raw),'type':ext,'rights':rights,'path':rel,'prior_sha':current[0] if current else None,'content_granted':bool(store_bytes)})
    self.db.execute('COMMIT')
   except Exception:
    self.db.execute('ROLLBACK');raise
-  return {'sha256':h,'size':len(raw),'source':rel,'rights':rights,'reversible':store_bytes or (existing is not None and existing[1] is not None),'semantic_chars':len(text),'status':'INDEXED_REVIEW_NOT_CANONICAL','receipt':receipt}
+  return {'sha256':h,'size':len(raw),'source':rel,'rights':rights,'reversible':store_bytes or (existing is not None and existing[1] is not None),'content_granted':bool(store_bytes),'semantic_chars':len(text),'status':'INDEXED_REVIEW_NOT_CANONICAL','receipt':receipt}
  def restore(self,h:str,out:Path)->dict:
   if not re.fullmatch(r'[0-9a-f]{64}',h):raise ValueError('invalid sha')
   row=self.db.execute('SELECT length,compressed FROM source WHERE sha=?',(h,)).fetchone()
@@ -181,7 +191,7 @@ class FamilyStore:
   # Never overwrite a real original, including after a previous partial restore.
   with out.open('xb') as f:f.write(raw)
   return {'restored':str(out),'sha256':h,'verified':True,'scope':'EXACT_BYTES_ONLY_NO_NTFS_ACL_ADS_OWNER'}
- def occurrences_for_agent(self,agent:str,h:str)->list[dict]:
+ def occurrences_for_agent(self,agent:str,h:str,*,content_only:bool=False)->list[dict]:
   """Return source references explicitly observed by one specialist.
 
   A shell name is NOT an authenticated identity. This is a least-exposure
@@ -190,12 +200,15 @@ class FamilyStore:
   legacy-unverified records grant no specialist access.
   """
   if agent not in ROLES:raise ValueError('unknown specialist role')
-  return [{'path':p,'rights':r,'agent':agent} for p,r in self.db.execute(
-   'SELECT DISTINCT path,rights FROM source_occurrence WHERE sha=? AND agent=? ORDER BY path,rights',(h,agent))]
+  sql='SELECT DISTINCT path,rights,content_granted FROM source_occurrence WHERE sha=? AND agent=?'
+  if content_only:sql+=' AND content_granted=1'
+  sql+=' ORDER BY path,rights,content_granted'
+  return [{'path':p,'rights':r,'agent':agent,'content_granted':bool(granted)}
+          for p,r,granted in self.db.execute(sql,(h,agent))]
  def restore_for_agent(self,agent:str,h:str,out:Path)->dict:
   """Role-filtered local CLI restoration; never a native authorisation."""
-  if not self.occurrences_for_agent(agent,h):
-   raise PermissionError('source not observed by this specialist; explicit native sharing required')
+  if not self.occurrences_for_agent(agent,h,content_only=True):
+   raise PermissionError('source bytes not explicitly ingested by this specialist; hash-only observation grants no content access')
   return self.restore(h,out)
  def source_search(self,q:str,limit=8,*,agent:str|None=None)->list[dict]:
   """Owner review when unscoped; specialist CLI always passes its role."""
@@ -206,7 +219,7 @@ class FamilyStore:
    tokens=set(terms(t));score=len(query&tokens)
    if score:
     start=min((t.lower().find(term) for term in query if term in t.lower()),default=0)
-    occurrences=(self.occurrences_for_agent(agent,h) if agent is not None else
+    occurrences=(self.occurrences_for_agent(agent,h,content_only=True) if agent is not None else
      [{'path':p,'rights':rights,'agent':owner} for p,rights,owner in self.db.execute(
       'SELECT DISTINCT path,rights,agent FROM source_occurrence WHERE sha=? ORDER BY path,rights,agent',(h,))])
     if not occurrences:continue
@@ -221,8 +234,8 @@ class FamilyStore:
   if len(canonical(body))>64*1024:raise ValueError('proposal exceeds budget')
   if kind in ('observation','qualified-facet','training-example') and not source_sha:raise ValueError('source-bound proposal required')
   if source_sha and not self.db.execute('SELECT 1 FROM source WHERE sha=?',(source_sha,)).fetchone():raise ValueError('unknown source sha')
-  if source_sha and not self.occurrences_for_agent(agent,source_sha):
-   raise PermissionError('specialist has no source occurrence; source-bound proposals require owner-reviewed sharing')
+  if source_sha and not self.occurrences_for_agent(agent,source_sha,content_only=True):
+   raise PermissionError('specialist holds no full content-access occurrence; hash-only evidence cannot ground a learning proposal')
   pid=digest(canonical([agent,kind,body,source_sha]))
   # Proposal and unsigned event are one transaction; no orphaned learning
   # candidate may persist if event append or validation fails.
