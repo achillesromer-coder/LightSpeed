@@ -21,3 +21,9 @@ Isolated sandbox acceptance: 39 persistence/CLI assertions and 15 Chromium UI as
 **Required before incorporation:** independent exact-source and rights review, real host state readback, current canonical-head reconciliation, full LOAD discovery, scoped lease/ACL, tests on live device, signed authority and rollback. Do not publish the private raw paper, workbook, tokens, model weights, network peer secrets or local profiles here.
 
 This branch is a **public-safe review pointer only**; the complete private source bytes are not committed to this public repository. Merge only after owner approval and integration through the existing CGX identity and governance lanes.
+
+## Metadata-only privacy and proposal atomicity
+
+The previously reviewed source role-scoping implementation remains unchanged. An intake marked `--metadata-only` stores the SHA and occurrence metadata but does **not** persist the document text in the search index. A subsequent owner-approved full intake may hydrate that same SHA without creating a second payload. Source-bound review proposals and their unsigned event receipts commit in one transaction or roll back together. Neither safeguard authenticates a Windows user, signs a CGX lease, trains a model, or admits native LOAD.
+
+The event-triggered read-only CI runs `test_occurrence_admission.py`, `test_specialist_scope.py` and `test_metadata_atomic.py` without model weights or owner-private sources. The private extended regression includes `test_family.py` and the Raphael browser checks separately. No schedule or local service is created.

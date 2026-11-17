@@ -141,7 +141,7 @@ class FamilyStore:
   after=original.stat(follow_symlinks=False)
   if (before.st_size,before.st_mtime_ns,before.st_ino,before.st_dev)!=(after.st_size,after.st_mtime_ns,after.st_ino,after.st_dev):
    raise RuntimeError('source changed during intake; retry after stabilising original')
-  h=digest(raw);text=text_from(str(original),raw);rel=str(original.resolve())
+  h=digest(raw);text=text_from(str(original),raw) if store_bytes else '';rel=str(original.resolve())
   ext=original.suffix.lower();blob=zlib.compress(raw,9) if store_bytes else None
   note='exact reversible content, NOT NTFS ACL/ADS recovery' if store_bytes else 'hash and metadata only; original bytes required'
   self.db.execute('BEGIN IMMEDIATE')
@@ -154,6 +154,9 @@ class FamilyStore:
    self.db.execute('INSERT OR IGNORE INTO source VALUES(?,?,?,?,?,?,?)',(h,len(raw),ext,rights,blob,note,timestamp()))
    if existing and existing[1] is None and blob is not None:
     self.db.execute('UPDATE source SET compressed=?,content_note=? WHERE sha=?',(blob,note,h))
+    # Earlier metadata-only review omitted textual bytes deliberately.
+    # Hydrating the same owner-approved SHA also hydrates its lexical index.
+    self.db.execute('UPDATE source_terms SET text=? WHERE sha=?',(text,h))
    self.db.execute('INSERT OR IGNORE INTO source_terms VALUES(?,?)',(h,text))
    self.db.execute('INSERT INTO source_path(path,sha,seen_at,rights,agent) VALUES(?,?,?,?,?) ON CONFLICT(path) DO UPDATE SET sha=excluded.sha,seen_at=excluded.seen_at',(rel,h,timestamp(),rights,agent))
    last=self.db.execute('SELECT sha,rights,agent FROM source_occurrence WHERE path=? ORDER BY id DESC LIMIT 1',(rel,)).fetchone()
@@ -221,8 +224,15 @@ class FamilyStore:
   if source_sha and not self.occurrences_for_agent(agent,source_sha):
    raise PermissionError('specialist has no source occurrence; source-bound proposals require owner-reviewed sharing')
   pid=digest(canonical([agent,kind,body,source_sha]))
-  self.db.execute('INSERT OR IGNORE INTO proposals VALUES(?,?,?,?,?,?,?)',(pid,agent,kind,canonical(body).decode('utf8'),source_sha,'REVIEW_ONLY',timestamp()))
-  self.audit(agent,'proposal-review',{'id':pid,'kind':kind,'source':source_sha})
+  # Proposal and unsigned event are one transaction; no orphaned learning
+  # candidate may persist if event append or validation fails.
+  self.db.execute('BEGIN IMMEDIATE')
+  try:
+   self.db.execute('INSERT OR IGNORE INTO proposals VALUES(?,?,?,?,?,?,?)',(pid,agent,kind,canonical(body).decode('utf8'),source_sha,'REVIEW_ONLY',timestamp()))
+   self._audit_in_transaction(agent,'proposal-review',{'id':pid,'kind':kind,'source':source_sha})
+   self.db.execute('COMMIT')
+  except Exception:
+   self.db.execute('ROLLBACK');raise
   return {'id':pid,'status':'REVIEW_ONLY','auto_promoted':False,'trained_model':False}
  def heartbeat(self,agent:str,state:dict|None=None)->dict:
   if agent not in ROLES:raise ValueError('unknown role')
