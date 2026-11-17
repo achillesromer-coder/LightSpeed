@@ -29,7 +29,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-abi-review-') as d:
  hist=db.db.execute('SELECT sha,prior_sha FROM source_occurrence WHERE path=? ORDER BY id',(str(a),)).fetchall()
  ok('occurrence history survives revision',hist==[(p['sha256'],None),(r['sha256'],p['sha256'])])
  ok('old occurrence hash still restorable',db.restore(p['sha256'],root/'old.md')['sha256']==p['sha256'] and (root/'old.md').read_bytes()==old)
- ok('source rights metadata not promoted by dedup',all(not x['public_share_authorised'] for x in db.source_search('physics observation')) and next(x for x in db.source_search('physics observation') if x['sha256']==p['sha256'])['rights']=='review-only')
+ ok('source rights metadata not promoted by dedup',all(not x['public_share_authorised'] for x in db.source_search('physics observation')) and next(x for x in db.source_search('physics observation') if x['sha256']==p['sha256'])['rights']=='MIXED_NONPUBLIC')
  ok('audit chain follows transactional ingestion',db.verify_events()['ok'])
  db.close();db=FamilyStore(home)
  ok('restart preserves history',db.status()['counts']['source_occurrence']==3)

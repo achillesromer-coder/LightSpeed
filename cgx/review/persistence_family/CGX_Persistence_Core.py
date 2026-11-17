@@ -178,14 +178,34 @@ class FamilyStore:
   # Never overwrite a real original, including after a previous partial restore.
   with out.open('xb') as f:f.write(raw)
   return {'restored':str(out),'sha256':h,'verified':True,'scope':'EXACT_BYTES_ONLY_NO_NTFS_ACL_ADS_OWNER'}
- def source_search(self,q:str,limit=8)->list[dict]:
+ def occurrences_for_agent(self,agent:str,h:str)->list[dict]:
+  """Return source references explicitly observed by one specialist.
+
+  A shell name is NOT an authenticated identity. This is a least-exposure
+  review filter, subordinate to Windows ACLs and the native LOAD/lease layer.
+  Older revisions remain visible to the agent that observed them. Imported
+  legacy-unverified records grant no specialist access.
+  """
+  if agent not in ROLES:raise ValueError('unknown specialist role')
+  return [{'path':p,'rights':r,'agent':agent} for p,r in self.db.execute(
+   'SELECT DISTINCT path,rights FROM source_occurrence WHERE sha=? AND agent=? ORDER BY path,rights',(h,agent))]
+ def restore_for_agent(self,agent:str,h:str,out:Path)->dict:
+  """Role-filtered local CLI restoration; never a native authorisation."""
+  if not self.occurrences_for_agent(agent,h):
+   raise PermissionError('source not observed by this specialist; explicit native sharing required')
+  return self.restore(h,out)
+ def source_search(self,q:str,limit=8,*,agent:str|None=None)->list[dict]:
+  """Owner review when unscoped; specialist CLI always passes its role."""
+  if agent is not None and agent not in ROLES:raise ValueError('unknown specialist role')
   query=set(terms(q));results=[]
   for h,t,ln in self.db.execute('SELECT s.sha,st.text,s.length FROM source s JOIN source_terms st ON st.sha=s.sha'):
    if not t:continue
    tokens=set(terms(t));score=len(query&tokens)
    if score:
     start=min((t.lower().find(term) for term in query if term in t.lower()),default=0)
-    occurrences=[{'path':p,'rights':rights,'agent':agent} for p,rights,agent in self.db.execute('SELECT path,rights,agent FROM source_path WHERE sha=? ORDER BY path',(h,))]
+    occurrences=(self.occurrences_for_agent(agent,h) if agent is not None else
+     [{'path':p,'rights':rights,'agent':owner} for p,rights,owner in self.db.execute(
+      'SELECT DISTINCT path,rights,agent FROM source_occurrence WHERE sha=? ORDER BY path,rights,agent',(h,))])
     if not occurrences:continue
     rights_set={o['rights'] for o in occurrences}
     # No content-level rights promotion from deduplication. The only
@@ -198,6 +218,8 @@ class FamilyStore:
   if len(canonical(body))>64*1024:raise ValueError('proposal exceeds budget')
   if kind in ('observation','qualified-facet','training-example') and not source_sha:raise ValueError('source-bound proposal required')
   if source_sha and not self.db.execute('SELECT 1 FROM source WHERE sha=?',(source_sha,)).fetchone():raise ValueError('unknown source sha')
+  if source_sha and not self.occurrences_for_agent(agent,source_sha):
+   raise PermissionError('specialist has no source occurrence; source-bound proposals require owner-reviewed sharing')
   pid=digest(canonical([agent,kind,body,source_sha]))
   self.db.execute('INSERT OR IGNORE INTO proposals VALUES(?,?,?,?,?,?,?)',(pid,agent,kind,canonical(body).decode('utf8'),source_sha,'REVIEW_ONLY',timestamp()))
   self.audit(agent,'proposal-review',{'id':pid,'kind':kind,'source':source_sha})
@@ -250,8 +272,8 @@ def role_main(agent:str,argv=None):
   elif args.command=='verify':out=store.verify_events()
   elif args.command=='proposals':out=store.list_proposals(agent)
   elif args.command=='ingest':out=store.ingest(agent,args.path,root=args.root,rights=args.rights,store_bytes=not args.metadata_only)
-  elif args.command=='restore':out=store.restore(args.sha,args.output)
-  elif args.command=='query':out=store.source_search(' '.join(args.text))
+  elif args.command=='restore':out=store.restore_for_agent(agent,args.sha,args.output)
+  elif args.command=='query':out=store.source_search(' '.join(args.text),agent=agent)
   elif args.command=='propose':out=store.propose(agent,args.kind,json.loads(args.json_file.read_text('utf8')),args.source_sha)
   elif args.command=='run':
    if args.interval<15 or args.interval>3600:raise ValueError('interval must be between 15 and 3600s')
