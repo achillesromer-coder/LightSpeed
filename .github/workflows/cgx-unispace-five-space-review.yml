@@ -1,0 +1,86 @@
+name: CGX UniSpace Five-Space Source Review
+
+on:
+  push:
+    branches:
+      - "review/cgx-unispace-five-facet-mesh-*"
+    paths:
+      - "tools/cgx_unispace_facet_mesh.py"
+      - "tools/cgx_living_consolidation_review.py"
+      - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tests/test_cgx_living_consolidation_review.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_topology.py"
+      - "cgx/domain_templates/**"
+      - ".github/workflows/cgx-unispace-five-space-review.yml"
+  pull_request:
+    branches:
+      - "review/cgx-living-consolidation-*"
+    paths:
+      - "tools/cgx_unispace_facet_mesh.py"
+      - "tools/cgx_living_consolidation_review.py"
+      - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tests/test_cgx_living_consolidation_review.py"
+      - "cgx/domain_templates/**"
+      - ".github/workflows/cgx-unispace-five-space-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  five-space-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          show-progress: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Install audited test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --no-input \
+            --require-hashes --only-binary=:all: \
+            -r tools/merovingian/requirements-ci-linux-py312.lock
+      - name: Compile bounded source and tests
+        run: |
+          python -m py_compile \
+            tools/cgx_unispace_facet_mesh.py \
+            tools/cgx_living_consolidation_review.py \
+            tests/test_cgx_unispace_facet_mesh.py
+      - name: Run facet denial and composition regression
+        run: python -m pytest -q tests/test_cgx_unispace_facet_mesh.py
+      - name: Run existing consolidation and family regression
+        env:
+          PYTHONPATH: "desktop/LightSpeed_Runtime"
+        run: |
+          python -m pytest -q \
+            tests/test_cgx_living_consolidation_review.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_family_topology.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_catalogue_root.py
+      - name: Independent read-only real-source projection
+        run: |
+          python tools/cgx_unispace_facet_mesh.py --repo . \
+            --spaces file_space data_space social_space print_space intelligence_space \
+            > facet-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path("facet-source-review.json").read_text(encoding="utf-8"))
+          m=o["mesh"]
+          p=o["projection"]
+          assert m["state"] == "SOURCE_CONTRACT_MESH_OBSERVED"
+          assert m["facet_count"] == 5
+          assert m["unique_contract_count"] == 12
+          assert m["unique_service_count"] == 7
+          assert p["state"] == "SOURCE_PROJECTION_READY_FOR_REVIEW"
+          assert len(p["requested_spaces"]) == 5
+          assert m["new_database_created"] is False
+          assert m["native_execution_authorized"] is False
+          assert p["semantic_state_mutated"] is False
+          assert p["model_inference_executed"] is False
+          print("Five source-qualified workspace facets; zero native promotion")
+          PY
