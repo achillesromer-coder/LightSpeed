@@ -257,3 +257,35 @@ def test_cross_grex_conflicting_child_identity_rejected(tmp_path):
     path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(ValueError, match="inconsistent child semantic identity"):
         module.review_cgx_domain_contracts(repo, module._tracked(repo))
+
+
+def test_living_review_nests_five_space_facets_in_one_receipt(tmp_path):
+    module = load_module()
+    repo = fixture_repo(tmp_path)
+    carriers = tmp_path / "carriers"
+    carriers.mkdir()
+    data = module.build_living_consolidation_review(repo, carriers)
+    mesh = data["unispace_space_facets"]
+    assert mesh["schema"] == "CGX-UNISPACE-SINGLE-ROOT-FACET-MESH/0.1"
+    assert mesh["state"] == "HOLD_PARENT_UNAVAILABLE"
+    assert mesh["canonical_root_id"] == "cgx:root:cognigrex"
+    assert not mesh["new_database_created"]
+    assert not mesh["native_execution_authorized"]
+    assert data["file_deletion_performed"] is False
+    assert data["safe_delete_candidates"] == []
+    assert data["review_sha256"] == module.build_living_consolidation_review(
+        repo, carriers)["review_sha256"]
+
+
+def test_real_parent_registry_projects_five_spaces_into_existing_review(tmp_path):
+    module = load_module()
+    observed = module.build_living_consolidation_review(ROOT, tmp_path / "no-host")
+    mesh = observed["unispace_space_facets"]
+    assert mesh["state"] == "SOURCE_CONTRACT_MESH_OBSERVED"
+    assert mesh["facet_count"] == 5
+    assert mesh["unique_contract_count"] == 12
+    assert mesh["unique_service_count"] == 7
+    assert not mesh["mint_or_network_authorized"]
+    assert not mesh["model_weights_modified"]
+    assert observed["no_new_database_or_runtime"] is True
+    assert observed["source_modification_performed"] is False
