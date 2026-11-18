@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>UniSpace · Achilles Mobile Node</title>
+<style>
+:root{color-scheme:dark;font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:#0b1118;color:#e8f0f6}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 0,#18313c 0,transparent 55%),#0b1118}
+main{max-width:720px;margin:auto;padding:26px 18px 50px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.brand{font-size:12px;font-weight:800;letter-spacing:.19em;text-transform:uppercase;color:#9fd2d3}
+.pill{font-size:11px;padding:5px 10px;border-radius:30px;background:#302e23;color:#f8d790;border:1px solid #786032}
+h1{font-size:clamp(28px,7vw,46px);line-height:1.12;letter-spacing:-.035em;margin:22px 0 10px}
+.lead{color:#b3c5d0;max-width:590px;margin:0 0 24px}
+.card{background:#17212b;border:1px solid #334554;border-radius:18px;padding:18px;margin:13px 0;box-shadow:0 2px 14px #0002}
+.card h2{font-size:17px;margin:0 0 8px;letter-spacing:-.015em}
+.card p{margin:7px 0 14px;color:#b3c5d0}.small{font-size:12px;color:#aabdc9}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:22px 0}.step{font-size:11px;text-align:center;border-top:3px solid #465968;padding:8px 2px;color:#9cb0bc}
+.step.ready{border-color:#6fc9be;color:#e0f8f5}
+label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}input[type=url]{width:100%;padding:12px;font:inherit;background:#0e1720;border:1px solid #526576;color:#fff;border-radius:9px}
+fieldset{border:0;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.check{display:flex;align-items:flex-start;gap:9px;font-size:13px;background:#101a23;border:1px solid #33424e;border-radius:10px;padding:10px;margin:0;font-weight:400;min-height:52px}
+.check input{margin:3px 0 0;width:16px;height:16px;accent-color:#6fc9be;flex:none}
+.buttons{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+button{cursor:pointer;padding:10px 14px;border:1px solid #56717e;border-radius:9px;background:#24424b;color:#e7fafa;font:600 13px system-ui}
+button.primary{background:#73cbbf;border-color:#73cbbf;color:#081a21}
+button:disabled{opacity:.45;cursor:not-allowed}
+pre{padding:13px;max-height:340px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:#0b131b;border:1px solid #34414b;border-radius:10px;color:#d2e8eb;font:11px/1.45 ui-monospace,Consolas,monospace}
+.status{padding:10px 11px;border-radius:8px;background:#0e1820;color:#d0e7ec;border:1px solid #38505d}
+footer{color:#a0b7c2;font-size:12px;margin:24px 5px}
+@media(max-width:430px){fieldset{grid-template-columns:1fr}main{padding:16px 12px 42px}.card{padding:14px}.steps{gap:4px}.step{font-size:10px}}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div class="brand">UNI<span style="color:#7fc8ba">SPACE</span> / ACHILLES</div><div class="pill" id="state">Not enrolled</div></div>
+<h1>Your mobile CGX endpoint</h1>
+<p class="lead">Use this phone as the owner-facing secondary node for Achilles and UniSpace. Desktop remains the host authority. This offline page creates a privacy-minimal handoff proposal; it does not install a worker, mint an identity, or request privileged Android access.</p>
+<div class="steps"><div class="step ready">1. Offline ready</div><div class="step">2. Secure relay</div><div class="step">3. Host approval</div><div class="step">4. Peer receipt</div></div>
+<section class="card">
+<h2>1 · Device capability request</h2>
+<p>Select only features you intend to authorize later. These choices are <strong>requests</strong>, not evidence that Android has granted access.</p>
+<fieldset id="abilities">
+<label class="check"><input type="checkbox" value="network"> Network status / HTTPS</label>
+<label class="check"><input type="checkbox" value="selected-file-read"> Selected file (picker only)</label>
+<label class="check"><input type="checkbox" value="camera-capture"> Camera (explicit OS permission)</label>
+<label class="check"><input type="checkbox" value="microphone-capture"> Microphone (explicit OS permission)</label>
+<label class="check"><input type="checkbox" value="bluetooth"> Bluetooth (future native bridge)</label>
+<label class="check"><input type="checkbox" value="notifications"> Notifications (later opt-in)</label>
+</fieldset>
+<p class="small">No device fingerprint, GPS, contact list or whole-filesystem access is collected. No selected capability is activated by checking it here.</p>
+</section>
+<section class="card">
+<h2>2 · Private host connection</h2>
+<p>Enter the **private HTTPS origin** provided by the desktop Work session after it has configured TLS and owner authentication. A localhost address on this phone is not BouwerBase.</p>
+<label for="relay">Private relay origin (optional)</label>
+<input id="relay" type="url" placeholder="https://your-private-relay.example" autocomplete="off" spellcheck="false" inputmode="url">
+<div class="buttons"><button id="probe" type="button">Test relay status</button><button id="clear" type="button">Clear connection</button></div>
+<p id="connection" class="status" role="status" aria-live="polite">Offline mode. No network request has been made.</p>
+<p class="small">A reachable status endpoint is not a signed peer handshake. This test sends no token and cannot pair the phone; cross-origin restrictions may block standalone-file access.</p>
+</section>
+<section class="card">
+<h2>3 · Achilles handoff</h2>
+<p>Generate an ephemeral, unsigned proposal to transfer into the desktop Work session. This does not persist private identity, credentials or source content.</p>
+<div class="buttons"><button class="primary" id="make" type="button">Generate safe handoff</button><button id="copy" type="button" disabled>Copy proposal</button><button id="save" type="button" disabled>Save JSON</button></div>
+<pre id="output" aria-live="polite">No proposal generated.</pre>
+<p class="small">After the desktop operator verifies the source root, native lease, peer registration and signed receiver readback, return to the hosted UniSpace surface for a real device handshake. Do not paste passwords, session tokens or private keys into this proposal or into a public chat.</p>
+</section>
+<footer>CGX-MOBILE-SECONDARY-HANDOFF/0.1 · H0 offline coordination · One root: cgx://cgx.cgx · T174/zero non-mintable · Release/authority held until verified</footer>
+</main>
+<script>
+(function(){
+"use strict";
+var $=function(x){return document.getElementById(x)},current=null,lastProbe=null,requestCount=0;
+function setText(id,s){$(id).textContent=s}
+function secureOrigin(raw){
+ var text=String(raw||"").trim();if(!text)return "";
+ var u;try{u=new URL(text)}catch(_){return null}
+ if(u.protocol!=="https:"||u.username||u.password||u.search||u.hash||u.pathname!=="/")return null;
+ var host=u.hostname.toLowerCase();if(host==="localhost"||host.endsWith(".localhost")||host==="[::1]"||host==="::1"||host==="0.0.0.0"||/^127\./.test(host))return null;
+ return u.origin;
+}
+function nonce(){
+ var a=new Uint8Array(16);
+ if(!globalThis.crypto||!crypto.getRandomValues)return null;
+ crypto.getRandomValues(a);return Array.from(a,function(v){return v.toString(16).padStart(2,"0")}).join("");
+}
+function invalidate(){current=null;$("copy").disabled=true;$("save").disabled=true}
+$("relay").addEventListener("input",function(){requestCount++;lastProbe=null;invalidate();setText("connection","Relay changed. No authenticated connection has been established.");setText("state","Not enrolled")});
+$("abilities").addEventListener("change",invalidate);
+$("clear").addEventListener("click",function(){requestCount++;$("relay").value="";lastProbe=null;invalidate();setText("connection","Offline mode. Connection cleared.");setText("state","Not enrolled")});
+$("probe").addEventListener("click",async function(){
+ var origin=secureOrigin($("relay").value);invalidate();lastProbe=null;
+ if(!origin){setText("connection","HOLD: enter a bare private HTTPS origin (no credentials, path, query or fragment).");return}
+ if(!globalThis.fetch){setText("connection","HOLD: this browser cannot perform the requested test.");return}
+ setText("connection","Testing remote status without credentials…");
+ var abort=new AbortController(),guard=setTimeout(function(){abort.abort()},7000);
+ try{
+  requestCount++;var seq=requestCount;
+  var r=await fetch(origin+"/api/v1/status",{method:"GET",mode:"cors",credentials:"omit",cache:"no-store",redirect:"error",signal:abort.signal,headers:{"Accept":"application/json"}});
+  if(seq!==requestCount)return;
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  var data=await r.json();
+  if(!data||data.ok!==true||data.bridge!=="ls-go")throw new Error("not a recognized LS GO status");
+  lastProbe={origin:origin,at:new Date().toISOString(),status_observed:true,peer_authenticated:false};
+  setText("connection","LS GO status returned successfully. Peer identity, owner session and transport remain UNVERIFIED.");
+  setText("state","Relay observed");
+ }catch(e){lastProbe=null;setText("connection","HOLD: relay not verified ("+(e&&e.message?e.message:"network/CORS error")+"). Remain offline.");setText("state","Not enrolled")}
+ finally{clearTimeout(guard)}
+});
+$("make").addEventListener("click",function(){
+ var origin=secureOrigin($("relay").value),n=nonce();
+ if(origin===null){setText("output","HOLD: invalid HTTPS origin.");return}
+ if(!n){setText("output","HOLD: secure random challenge unavailable.");return}
+ var proposed=Array.from($("abilities").querySelectorAll("input:checked")).map(function(x){return x.value});
+ current={
+  schema:"CGX-MOBILE-SECONDARY-HANDOFF/0.1",
+  semantic_root:"cgx://cgx.cgx",surface:"mobile_browser_secondary",
+  owner_interaction_priority:"this_mobile_device",
+  canonical_runtime_authority:"desktop_host_not_transferred",
+  host_node_candidate:"BOUWERBASE",
+  device_identity:"PENDING_PLATFORM_KEYSTORE_AND_SIGNATURE",
+  enrollment_state:"NOT_ENROLLED",challenge_nonce:n,
+  proposed_at_utc:new Date().toISOString(),
+  requested_capabilities:proposed,android_grants_verified:false,
+  relay_origin_candidate:origin||null,
+  relay_status_observation:lastProbe&&origin===lastProbe.origin?lastProbe:null,
+  selected_transport:origin?"https_relay_candidate":"offline_handoff",
+  permissioned_network_execution:false,peer_authenticated:false,
+  current_recovery_verified:false,owner_session_verified:false,
+  independent_lease_verified:false,node_registry_accepted:false,
+  db_or_source_mutated:false,model_training_performed:false,
+  device_management_granted:false,native_mint_authorized:false,
+  data_space_network_mint_authorized:false,public_release_authorized:false,
+  next_gate:"DESKTOP_WORK_AUTHENTICATED_PRIVATE_HTTPS_AND_SIGNED_DEVICE_READBACK"
+ };
+ setText("output",JSON.stringify(current,null,2));
+ $("copy").disabled=false;$("save").disabled=false;
+ setText("state","Handoff prepared");
+});
+$("copy").addEventListener("click",async function(){
+ if(!current)return;try{await navigator.clipboard.writeText(JSON.stringify(current,null,2));$("copy").textContent="Copied"}catch(_){$("copy").textContent="Select text below to copy"}
+});
+$("save").addEventListener("click",function(){
+ if(!current)return;var blob=new Blob([JSON.stringify(current,null,2)+"\n"],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=u;a.download="cgx-mobile-secondary-handoff.json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},800);
+});
+})();
+</script>
+</body></html>
