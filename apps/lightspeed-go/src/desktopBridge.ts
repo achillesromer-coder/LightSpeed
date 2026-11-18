@@ -991,6 +991,22 @@ export interface CgxFamilyTopology {
   installed_carrier_count: number;
   unique_carrier_hash_count: number;
   hash_equal_aliases: Array<{ sha256: string; names: string[] }>;
+  content_groups: Array<{
+    sha256: string;
+    display_name: string;
+    reference_names: string[];
+    bytes: number;
+    collapsed_alias_count: number;
+    same_bytes_not_semantic_equivalence: true;
+    native_object_identity_verified: false;
+    safe_to_delete_aliases: false;
+    presentation_only: true;
+  }>;
+  collapsed_alias_card_count: number;
+  retained_empty_carrier_names: string[];
+  storage_root_is_alias: boolean;
+  safe_delete_candidates: [];
+  deletion_performed: false;
   native_mint_verified: false;
   data_space_network_mint_verified: false;
 }
