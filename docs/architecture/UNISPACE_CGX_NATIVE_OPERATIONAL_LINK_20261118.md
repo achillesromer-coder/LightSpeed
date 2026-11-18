@@ -132,3 +132,35 @@ application or change the public release authorization.
 
 **These are source/release-package changes only** until a normal,
 owner-authorized deployment applies them to the live host.
+
+
+## Subsequent read-only deployment gate — 18 November 2026
+
+The existing `tools/reconcile_live_runtime.py plan` now returns
+`deployment_readiness` with explicit machine-readable blockers. This is
+a presentation/decision aid: it does not stop services, copy bytes, issue
+owner approval or mint anything. An apparently eligible state continues to
+require the operator's confirmed apply, checked backups and rollback plan.
+
+Observed later this day (no installed file copied):
+- 757 tracked mappings, 60 changed installed targets.
+- Source branch `ops/canonical-queue-index-20261115`, 11 commits ahead of
+  `origin/main`, with three pre-existing unrelated working-tree paths.
+- Active managed TCP ports: 4173, 8080 and 8765.
+- Current deterministic deployment blockers:
+  `REVIEW_BRANCH_NOT_ACCEPTED_MAIN`,
+  `MAIN_NOT_ALIGNED_WITH_ORIGIN`,
+  `UNCOMMITTED_OR_UNTRACKED_SOURCE`,
+  `MANAGED_SERVICES_ACTIVE`.
+- Verified nine selector profiles; seven observed installed .cgx carrier
+  filenames, six unique content hashes, one alias set:
+  `LS.cgx` and `LightSpeed.cgx`.
+- Read-only host status: DB, storage, supervisor and eight floors operational;
+  canonical command identity held, representation edge off and no verified
+  independent DataSpace peer.
+
+The current review branch has a draft PR #228, not an approved production
+merge. Keep existing `D:\LightSpeed\Core` live code intact; do not
+install under active service ports or silently promote proposed research
+as native, signed CGX functionality. The reusable manifest and tests remain
+the owner-scoped release candidate.

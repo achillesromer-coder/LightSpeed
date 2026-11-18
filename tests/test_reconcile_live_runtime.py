@@ -79,6 +79,44 @@ def test_mappings_are_bounded_to_approved_tracked_surfaces(tmp_path: Path, modul
     assert not any("test_ui.py" in item for item in targets)
 
 
+def test_deployment_readiness_is_read_only_and_fail_closed(module) -> None:
+    accepted = {
+        "branch": "main",
+        "head": "a" * 40,
+        "origin_main": "a" * 40,
+        "clean": True,
+    }
+    pending = module.deployment_readiness(
+        {**accepted, "branch": "ops/review", "clean": False}, [4173, 8765]
+    )
+    assert pending["status"] == "HOLD"
+    assert pending["blockers"] == [
+        "REVIEW_BRANCH_NOT_ACCEPTED_MAIN",
+        "UNCOMMITTED_OR_UNTRACKED_SOURCE",
+        "MANAGED_SERVICES_ACTIVE",
+    ]
+    assert not pending["runtime_installed"]
+    assert not pending["native_mint_authorized"]
+    ready = module.deployment_readiness(accepted, [])
+    assert ready["status"] == "ELIGIBLE_FOR_OWNER_CONFIRMED_APPLY"
+    assert ready["blockers"] == []
+    assert ready["owner_approval_recorded"] is False
+    assert ready["backup_verified"] is False
+    assert ready["runtime_installed"] is False
+
+
+def test_deployment_readiness_rejects_unaligned_main(module) -> None:
+    state = {
+        "branch": "main",
+        "head": "a" * 40,
+        "origin_main": "b" * 40,
+        "clean": True,
+    }
+    result = module.deployment_readiness(state, [])
+    assert result["status"] == "HOLD"
+    assert result["blockers"] == ["MAIN_NOT_ALIGNED_WITH_ORIGIN"]
+
+
 def test_apply_requires_confirmation(tmp_path: Path, module) -> None:
     repo = init_repo(tmp_path)
     with pytest.raises(RuntimeError, match="confirmed"):

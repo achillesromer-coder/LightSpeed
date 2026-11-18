@@ -273,10 +273,35 @@ def write_json_exclusive(path: Path, payload: dict[str, object]) -> None:
         raise RuntimeError(f"Receipt readback mismatch: {path}")
 
 
+def deployment_readiness(git: dict[str, object], ports: list[int]) -> dict[str, object]:
+    """Read-only eligibility gate, never owner authority or automatic activation."""
+    blockers: list[str] = []
+    if git.get("branch") != "main":
+        blockers.append("REVIEW_BRANCH_NOT_ACCEPTED_MAIN")
+    if git.get("head") != git.get("origin_main"):
+        blockers.append("MAIN_NOT_ALIGNED_WITH_ORIGIN")
+    if git.get("clean") is not True:
+        blockers.append("UNCOMMITTED_OR_UNTRACKED_SOURCE")
+    if ports:
+        blockers.append("MANAGED_SERVICES_ACTIVE")
+    return {
+        "status": "ELIGIBLE_FOR_OWNER_CONFIRMED_APPLY" if not blockers else "HOLD",
+        "blockers": blockers,
+        "owner_approval_recorded": False,
+        "services_were_stopped": False,
+        "backup_verified": False,
+        "runtime_installed": False,
+        "native_mint_authorized": False,
+        "data_space_network_mint_authorized": False,
+        "executable_command": "apply --confirmed only after owner-controlled review and stopped services",
+    }
+
+
 def plan(repo_root: Path, runtime_root: Path) -> tuple[dict[str, object], list[dict[str, object]]]:
     state = git_state(repo_root)
     mappings = build_mappings(repo_root, runtime_root)
     changed = changed_mappings(mappings)
+    ports = open_service_ports()
     payload: dict[str, object] = {
         "schema": SCHEMA,
         "action": "plan",
@@ -286,7 +311,8 @@ def plan(repo_root: Path, runtime_root: Path) -> tuple[dict[str, object], list[d
         "git": state,
         "tracked_mapping_count": len(mappings),
         "changed_mapping_count": len(changed),
-        "open_service_ports": open_service_ports(),
+        "open_service_ports": ports,
+        "deployment_readiness": deployment_readiness(state, ports),
         "changes": [
             {
                 "source": item["mapping"].source_relative,
