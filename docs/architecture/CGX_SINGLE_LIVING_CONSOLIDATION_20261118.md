@@ -145,3 +145,49 @@ filesystem deletion follows from a successful source-only hash match.
 The next gate remains host owner/lease/source provenance and DBR
 readback during reviewed native acceptance; do not install a duplicate
 Cognigrex or flatten independently governed child-domain meanings.
+
+## Narrow local destructive cleanup receipt — 18 November 2026
+
+The owner explicitly authorized a local destructive cleanup, but the
+delete boundary remained **regenerable Python bytecode generated inside
+the isolated review worktree only**. No canonical source, signed/minted
+carrier, reserved Raphael/T174 scaffold, referenced alias, model weight,
+native service, database, untracked owner data or desktop Work checkout
+was eligible for this operation.
+
+**Executed and independently read back:**
+- Tool: `tools/cgx_review_bytecode_cleanup.py`, review commit
+  `bc7dc758099fbb2a42f1e88abb948788df9aee7a`.
+- Scope: four allowlisted `__pycache__` directories under
+  `D:\LightSpeed\Repositories\CGX_Mobile_Review`, on
+  `review/cgx-living-consolidation-20261118`.
+- 73 bytecode files deleted, 2,274,702 bytes; held files = zero.
+- No remaining target cache directory after deletion; Git worktree clean.
+- Before unlinking any file, the tool saved a byte-exact ZIP with
+  73 entries plus one content manifest, verified ZIP readback and SHA-256,
+  and checked each file had not changed.
+- Archive:
+  `D:\LightSpeed\State\Review\CGX_CacheCleanup_20261118\cgx-review-bytecode-8984f105e84418b8.zip`
+- Scan digest:
+  `8984f105e84418b8782a922cce51d79d3e8c0ac3404f3c394d2308c958ca11d9`
+- Independent archive SHA-256:
+  `39a124f5d7f2a6e3e04bc8b86d1ca080da9ba9c77d7b7956721c998c708097c8`
+- A companion `.receipt.json` exists beside the ZIP, containing exact
+  removed counts, state, commit, hash and isolated rollback instructions.
+- BouwerBase bridge remained healthy (HTTP 200), and canonical `.cgx`
+  carrier hash prefixes matched their pre-cleanup values. Source Git
+  files were not modified by the cleanup.
+
+This archive is only for optional bytecode restoration: source-level
+execution remains reproducible from the corresponding Git commit. This
+is not a release archive, minted DataSpace receipt or new persistent
+Cognigrex database. The precise cleanup can be rerun as a dry-run without
+authorization; actual deletion requires the narrow explicit confirmation
+`PURGE_REGENERABLE_REVIEW_BYTECODE_ONLY`. Deletion of semantic or
+scientific artifacts remains **HOLD** pending a verified reference
+graph, rights, independent source preservation and rollback.
+
+The `node_modules` junction, source manifests, existing `dist` build,
+`LS.cgx` / `LightSpeed.cgx` reference aliases, and empty Python package
+markers remain intact. The cache savings may be transient because later
+test runs can safely regenerate Python bytecode.
