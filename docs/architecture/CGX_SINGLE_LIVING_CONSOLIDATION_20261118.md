@@ -84,3 +84,32 @@ identity and source zero-file disposition must be re-audited at that time.
 
 **Current classification:** content-alias presentation consolidation built;
 physical deletion = 0; no FileSpace/DataSpace/mint state mutated.
+
+## Linked digital-twin assets — observed source audit
+
+The existing digital-twin catalogue is referenced directly from
+`data/digital-twin/complete_digital_asset_manifest_2026-09-12.json`,
+rather than being ingested again or copied into a second store.
+
+Read-only scan against the current review worktree:
+
+- 16 registered twin object families;
+- for each: one tracked OBJ, one tracked six-view PNG, eight tracked T1
+  SVG layers (`T1-00` through `T1-07`);
+- 160 of 160 referenced layer files observed with nonzero bytes and SHA-256;
+- zero missing/empty/untracked referenced layers;
+- zero cross-layer identical-byte groups in this manifest's verified inputs;
+- representation classes: 13 `INTERACTION_PROXY`,
+  2 `SOURCE_DERIVED_GEOMETRY`, 1 `SOURCE_DERIVED_PARTIAL`.
+
+The `digital_twin_asset_linkage` field is computed by the existing living
+consolidation review command, with per-layer SHA-256 identities, stable
+relative paths, missing-layer holds and non-authority flags. Nonexistent,
+symlinked, escaping or untracked paths are not silently accepted. The tool
+does not extract unqualified source bytes or assert geometrical equivalence,
+watertight precision, fabrication tolerances, source licensing, native
+CGX mint or independent scientific verification.
+
+Completeness of these 160 **files** is not product completeness. Upstream
+source meshes, engineering CAD, unit validation, derivative provenance,
+rights and physical quality controls remain separate acceptance gates.
