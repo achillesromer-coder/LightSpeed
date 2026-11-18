@@ -33,7 +33,7 @@ jobs:
         run: |
           npm ci --silent
           npm run check
-          npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs tests/owner-progress.test.mjs
+          npm test -- --run tests/unispace-public.test.mjs tests/unispace-domains.test.mjs tests/owner-progress.test.mjs tests/unispace-offline-selector-negative.test.mjs
       - name: Build isolated nonproduction public-only candidate
         run: |
           python apps/lightspeed-go/scripts/cgx_public_bundle_guard.py --output "$RUNNER_TEMP/unispace-cgx-review" > "$RUNNER_TEMP/unispace-review.json"
