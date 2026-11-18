@@ -1,0 +1,49 @@
+{
+  "schema": "CGX-SOURCE-FOLD-NEGATIVE-MATRIX/1",
+  "classification": "PUBLIC_SAFE_FIXTURE_ONLY",
+  "description": "Portable acceptance cases; synthetic examples only. Executable code and owner-specific data remain private.",
+  "positive": [
+    "non-writing preflight",
+    "source version and digest bound",
+    "separate occurrence identity despite shared bytes",
+    "physical duplicate leaf deduplication",
+    "exact source restoration",
+    "idempotent repeat no new index entries",
+    "append newer source revision retaining historical version",
+    "private scope selective hydration",
+    "pristine reference after regression"
+  ],
+  "negative": [
+    "reject changed source SHA/size",
+    "reject revision identity conflict",
+    "reject tampered index",
+    "reject symlink and ancestor traversal",
+    "reject public scope without release gate",
+    "reject unqualified reuse rights",
+    "reject duplicate source/revision",
+    "reject boolean substituted for byte count",
+    "deny unauthorized occurrence hydration",
+    "deny restoration over existing target",
+    "deny unpinned executable reference",
+    "deny spoofed resident role and disabled operation",
+    "deny forward/undeclared task dependencies",
+    "reject tampered or colliding receipt"
+  ],
+  "verification": {
+    "case_classes": [
+      "source",
+      "identity",
+      "privacy",
+      "persistence",
+      "runtime"
+    ],
+    "note": "A fixture PASS is not native admission or evidence that the resident host ran. Actual regression counts, file hashes and source locators are private owner-held receipts.",
+    "source_payload_included": false
+  },
+  "next_gates": [
+    "existing resident supervisor ABI alignment",
+    "authenticated occurrence ACL and revocation",
+    "independent two-node peer/lease/DBR proof",
+    "owner accepted cutover and rollback"
+  ]
+}
