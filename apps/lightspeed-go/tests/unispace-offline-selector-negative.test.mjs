@@ -4,7 +4,8 @@ import { projectOwnerProgress } from "../src/ownerProgressProjection.ts";
 
 // #158: an offline snapshot or a browser-supplied gateway claim is not an ACL grant.
 const envelope = (object_id) => ({
-  gateway: { session_verified:true, host_handshake_verified:true, root_acl_verified:true,
+  gateway: { session_verified:true, issuer_verified:true, session_fresh:true,
+    revocation_current:true, owner_lease_valid:true, host_handshake_verified:true, root_acl_verified:true,
     object_acl_verified:true, source_rights_verified:true },
   source: { object_id, filespace:"Cognigrex.cgx/FileSpace", revision:"a".repeat(64) },
   bridge: { reachable:false },
@@ -204,5 +205,23 @@ test("malformed revisions and prototype-shaped selectors cannot hydrate private 
     const view = projectOwnerProgress(envelope("Cognigrex.cgx:/FileSpace/" + tail));
     assert.equal(view.access, "HOLD_SOURCE_IDENTITY", tail);
     assert.equal(view.progress, null);
+  }
+});
+
+
+// Existing full LOAD and local browser source rights remain externally gated.
+test("offline stale or revoked owner envelope never exposes FileSpace source metadata", () => {
+  const id = "Cognigrex.cgx:/FileSpace/qualified-candidate-1";
+  for (const field of ["issuer_verified", "session_fresh", "revocation_current", "owner_lease_valid"]) {
+    const x = envelope(id);
+    x.gateway[field] = false;
+    x.bridge.reachable = true;
+    const v = projectOwnerProgress(x);
+    assert.equal(v.access, "HOLD_PRIVATE_SCOPE", field);
+    assert.equal(v.source_revision, null);
+    assert.equal(v.progress, null);
+    assert.equal(v.consumer, "CONSUMER_HELD");
+    assert.equal(v.native_admitted, false);
+    assert.equal(v.dispatch_authorized, false);
   }
 });

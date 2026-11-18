@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { projectOwnerProgress } from "../src/ownerProgressProjection.ts";
 
 const full = () => ({
-  gateway: { session_verified:true, host_handshake_verified:true, root_acl_verified:true, object_acl_verified:true, source_rights_verified:true },
+  gateway: { session_verified:true, issuer_verified:true, session_fresh:true, revocation_current:true, owner_lease_valid:true, host_handshake_verified:true, root_acl_verified:true, object_acl_verified:true, source_rights_verified:true },
   source: { object_id:"Cognigrex.cgx:/FileSpace/qualified-candidate-1", filespace:"Cognigrex.cgx/FileSpace", revision:"a".repeat(64) },
   bridge: { reachable:true },
   consumer: { heartbeat_fresh:false, pid_identity_verified:false, lock_verified:false, lease_verified:false, dispatch_ready:false },
@@ -485,4 +485,21 @@ test("forged client authority flags never promote source-only R3 or publish (#15
   const serial=JSON.stringify(view);
   for (const injected of ["signed_root_authority","db_readback_verified","owner_accepted","LIVE_VERIFIED"])
     assert.ok(!serial.includes(injected));
+});
+
+
+// #158 / ACHILLES-UNISPACE-DELIVERY-REVIEW-001d:
+test("current issuer, session, revocation and owner lease are each required for private source projection", () => {
+  for (const field of ["issuer_verified", "session_fresh", "revocation_current", "owner_lease_valid"]) {
+    for (const deniedValue of [false, undefined, "true", 1]) {
+      const x = full();
+      x.gateway[field] = deniedValue;
+      const v = projectOwnerProgress(x);
+      assert.equal(v.access, "HOLD_PRIVATE_SCOPE", field);
+      assert.equal(v.object_id, null);
+      assert.equal(v.progress, null);
+      assert.equal(v.dispatch_authorized, false);
+      assert.equal(v.public_publish_authorized, false);
+    }
+  }
 });

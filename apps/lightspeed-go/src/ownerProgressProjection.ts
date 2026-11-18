@@ -8,6 +8,11 @@
 export interface OwnerProgressEnvelope {
   gateway?: {
     session_verified?: boolean;
+    /** All authority fields below must originate in the authenticated host, not the browser. */
+    issuer_verified?: boolean;
+    session_fresh?: boolean;
+    revocation_current?: boolean;
+    owner_lease_valid?: boolean;
     host_handshake_verified?: boolean;
     root_acl_verified?: boolean;
     object_acl_verified?: boolean;
@@ -78,7 +83,11 @@ const failureClass = (error: unknown): string | null => {
 /** Project only allowlisted scalars. Never spread/serialize the incoming envelope. */
 export function projectOwnerProgress(input: OwnerProgressEnvelope | null | undefined) {
   const g = input?.gateway;
+  // Fail closed on source revocation, stale session or expired host lease.
+  // Client-supplied truthy fields cannot substitute for signed host checks.
   const scoped = g?.session_verified === true &&
+    g.issuer_verified === true && g.session_fresh === true &&
+    g.revocation_current === true && g.owner_lease_valid === true &&
     g.host_handshake_verified === true && g.root_acl_verified === true &&
     g.object_acl_verified === true && g.source_rights_verified === true;
   const held = {
