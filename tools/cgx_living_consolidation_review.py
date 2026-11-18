@@ -16,7 +16,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "desktop/LightSpeed_Runtime"))
+sys.path.insert(0, str(REPO_ROOT / "tools"))
 from lightspeed_runtime.cgx_family_topology import build_cgx_family_topology
+from cgx_unispace_facet_mesh import build_unispace_facet_mesh
 
 SCHEMA = "CGX-LIVING-CONSOLIDATION-REVIEW/0.1"
 
@@ -304,6 +306,7 @@ def build_living_consolidation_review(repo: Path, installed_root: Path) -> dict:
         "tracked_zero_byte_count": len(empty),
         "digital_twin_asset_linkage": review_digital_twin_assets(repo, tracked),
         "cross_grex_contract_linkage": review_cgx_domain_contracts(repo, tracked),
+        "unispace_space_facets": build_unispace_facet_mesh(repo, tracked),
         "retained_zero_byte_source": empty,
         "retained_zero_by_kind": dict(sorted(buckets.items())),
         "installed_carrier_count": topology["installed_carrier_count"],
