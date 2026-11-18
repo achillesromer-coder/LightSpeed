@@ -2065,3 +2065,141 @@ def test_frontier_intake_identity_is_bounded_in_existing_command_and_job(tmp_pat
     command['frontier_request']['source_sha256'] = 'a' * 64
     command['frontier_request']['usage']['tool_calls'] = 1
     assert client.post('/api/v1/ls-go/commands', json=command, headers=headers).status_code == 400
+
+
+
+def test_project_file_revision_and_revoked_owner(tmp_path, monkeypatch):
+    import hashlib
+    project_root=configure_shell(tmp_path)
+    nested=project_root/"README.md"
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(None,None))
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,"fixture-owner-token")
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    pid=client.get("/api/v1/projects").json()["projects"][0]["project_id"]
+    base=f"/api/v1/projects/{pid}/files"
+    url=base+"/README.md"
+    headers={"X-LightSpeed-Owner-Confirmation":"fixture-owner-token"}
+    def revision():
+        return next(x["metadata_revision"] for x in client.get(base).json()["files"] if x["relative_path"]=="README.md")
+    stamp=revision()
+    assert client.get(url,params={"expected_metadata_revision":stamp}).status_code==403
+    good=client.get(url,params={"expected_metadata_revision":stamp},headers=headers)
+    assert good.status_code==200 and good.headers["cache-control"]=="no-store"
+    assert good.json()["preview_sha256"]==hashlib.sha256(nested.read_bytes()).hexdigest()
+    assert good.json()["file"]["metadata_revision"]==stamp
+    nested.write_bytes(nested.read_bytes()+b"\nfixture change")
+    stale=client.get(url,params={"expected_metadata_revision":stamp},headers=headers)
+    assert stale.status_code==409 and "preview" not in stale.json()
+    assert client.get(url,params={"expected_metadata_revision":"bad"},headers=headers).status_code==400
+    fresh=revision()
+    original=ls_go_bridge.open_project_file
+    def revoke(*a,**kw):
+        result=original(*a,**kw)
+        monkeypatch.delenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,raising=False)
+        return result
+    monkeypatch.setattr(ls_go_bridge,"open_project_file",revoke)
+    denied=client.get(url,params={"expected_metadata_revision":fresh},headers=headers)
+    assert denied.status_code==403 and "preview" not in denied.json()
+
+
+
+def test_source_review_owner_session_revision_and_revocation(tmp_path,monkeypatch):
+    database=CommandFixtureDatabase(tmp_path/"review.db")
+    database.execute_query=lambda *a:[]
+    database.execute_update=lambda *a:0
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(database,object()))
+    sessions=ls_go_bridge.OwnerSessionStore()
+    token,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL")
+    change,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL",scope="password_change")
+    monkeypatch.setattr(ls_go_bridge,"OwnerSessionStore",lambda:sessions)
+    monkeypatch.setattr(ls_go_bridge.CredentialStore,"read_record",lambda *_:{"credential_key_id":"TEST-CREDENTIAL"})
+    monkeypatch.setattr(ls_go_bridge,"credential_status",lambda _:{"configured":True,"credential_key_id":"TEST-CREDENTIAL","must_change":False})
+    monkeypatch.setenv(ls_go_bridge.OWNER_CONFIRMATION_ENV,"fixture-confirmation")
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    base="/api/v1/object-context/"
+    headers={"X-LightSpeed-Session":token}
+    for mode in ("twin","atlas"):
+        params={"review_mode":mode+"-index"}
+        assert client.get(base+"index",params=params).status_code==403
+        assert client.get(base+"index",params=params,headers={"X-LightSpeed-Owner-Confirmation":"fixture-confirmation"}).status_code==403
+        assert client.get(base+"index",params=params,headers={"X-LightSpeed-Session":change}).status_code==403
+        res=client.get(base+"index",params=params,headers=headers)
+        assert res.status_code==200 and res.headers["cache-control"]=="no-store"
+        idx=res.json()["index"];assert res.json()["task_lease_verified"] is False
+        if mode=="twin":
+            key="intersol";field="object_context"
+            p={"expected_index_sha256":idx["review_sha256"],
+               "expected_occurrence_sha256":idx["references"][key]["occurrence_sha256"]}
+        else:
+            key=sorted(idx["references"])[0];field="atlas_row"
+            p={"expected_index_sha256":idx["workset_sha256"],"expected_source_sha256":idx["source_sha256"],
+               "expected_occurrence_sha256":idx["references"][key]["row_sha256"]}
+        p.update(review_mode=mode,task_id="fixture-review")
+        out=client.get(base+key,params=p,headers=headers)
+        assert out.status_code==200,out.text
+        assert field in out.json() and not out.json()["task_lease_verified"] and not out.json()["native_admitted"]
+        assert out.headers["cache-control"]=="no-store"
+        assert out.json()["review_binding"]=={"mode":mode,"occurrence_id":key,"task_id":"fixture-review",
+            "index_sha256":p["expected_index_sha256"],"occurrence_sha256":p["expected_occurrence_sha256"],
+            "source_sha256":p.get("expected_source_sha256")}
+        assert client.get(base+key,params=dict(p,expected_occurrence_sha256="0"*64),headers=headers).status_code==409
+        assert client.get(base+key,params=dict(p,expected_index_sha256="0"*64),headers=headers).status_code==409
+        assert client.get(base+key,params=dict(p,task_id=""),headers=headers).status_code==400
+    original=ls_go_bridge.resolve_scoped_twin_context
+    def revoke(*a,**kw):
+        result=original(*a,**kw)
+        sessions.revoke(token)
+        return result
+    idx=ls_go_bridge.twin_source_review_index()
+    monkeypatch.setattr(ls_go_bridge,"resolve_scoped_twin_context",revoke)
+    response=client.get(base+"intersol",params={"review_mode":"twin","task_id":"fixture-review",
+         "expected_index_sha256":idx["review_sha256"],
+         "expected_occurrence_sha256":idx["references"]["intersol"]["occurrence_sha256"]},headers=headers)
+    assert response.status_code==403 and "object_context" not in response.json()
+
+
+def test_pinned_atlas_carrier_owner_session(tmp_path,monkeypatch):
+    import hashlib,json,zipfile
+    from lightspeed_runtime.cgx_object_context import REPO_ROOT
+    from lightspeed_runtime.cgx_cross_analysis import write_atlas_review_collection
+    database=CommandFixtureDatabase(tmp_path/"review.db")
+    database.execute_query=lambda *a:[]
+    database.execute_update=lambda *a:0
+    monkeypatch.setattr(ls_go_bridge,"_try_get_services",lambda _root:(database,object()))
+    sessions=ls_go_bridge.OwnerSessionStore()
+    token,_=sessions.issue(username="NCNB",credential_key_id="TEST-CREDENTIAL")
+    monkeypatch.setattr(ls_go_bridge,"OwnerSessionStore",lambda:sessions)
+    monkeypatch.setattr(ls_go_bridge.CredentialStore,"read_record",lambda *_:{"credential_key_id":"TEST-CREDENTIAL"})
+    monkeypatch.setattr(ls_go_bridge,"credential_status",lambda _:{"configured":True,"credential_key_id":"TEST-CREDENTIAL","must_change":False})
+    raw=(REPO_ROOT/"cgx/component_atlas/component_geometry_atlas_v0_1.json").read_bytes()
+    stamp=hashlib.sha256(raw).hexdigest()
+    idx=ls_go_bridge.atlas_review_workset(raw,expected_sha256=stamp)
+    archive=tmp_path/"carrier.zip"
+    with zipfile.ZipFile(archive,"w") as z:
+        d,h=write_atlas_review_collection(z,raw,expected_sha256=stamp,
+            expected_workset_sha256=idx["workset_sha256"],task_id="atlas-closure")
+    stem=tmp_path/("CGX_Atlas_Review_"+h[:12])
+    archive.rename(stem.with_suffix(".zip"))
+    desc=stem.with_suffix(".json")
+    desc.write_bytes(json.dumps(d,sort_keys=True,separators=(",",":"),ensure_ascii=True).encode("ascii"))
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_ROOT",str(tmp_path))
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_DESCRIPTOR_SHA256",h)
+    monkeypatch.setenv("LIGHTSPEED_ATLAS_REVIEW_WORKSET_SHA256",idx["workset_sha256"])
+    monkeypatch.setattr(ls_go_bridge,"hydrate_atlas_review_rows",lambda *a,**kw:pytest.fail("whole atlas fallback used"))
+    client=TestClient(ls_go_bridge.create_app(tmp_path))
+    key=sorted(d["entries"])[0]
+    url="/api/v1/object-context/"+key
+    params=dict(review_mode="atlas", task_id="fixture-review",expected_source_sha256=stamp,
+        expected_index_sha256=idx["workset_sha256"],expected_occurrence_sha256=d["entries"][key]["sha256"])
+    headers={"X-LightSpeed-Session":token}
+    assert client.get(url,params=params).status_code==403
+    response=client.get(url,params=params,headers=headers)
+    assert response.status_code==200,response.text
+    receipt=response.json()["review_receipt"]
+    assert receipt["descriptor_sha256"]==h and receipt["task_id"]=="fixture-review"
+    assert receipt["logical_fetched_bytes"]<len(raw) and not receipt["native_admitted"]
+    assert client.get(url,params=dict(params,expected_index_sha256="0"*64),headers=headers).status_code==409
+    desc.write_bytes(b"{}")
+    assert client.get(url,params=params,headers=headers).status_code==409
+    sessions.revoke(token)
+    assert client.get(url,params=params,headers=headers).status_code==403

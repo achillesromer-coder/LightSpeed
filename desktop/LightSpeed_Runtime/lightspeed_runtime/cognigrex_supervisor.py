@@ -25,6 +25,7 @@ from typing import Any, Callable, Iterable
 
 from lightspeed_runtime.local_floor_runner import (
     DEFAULT_CONTRACT_PATH,
+    CommonInferenceSession,
     LocalFloorRunnerError,
     load_contract,
     resolve_contract_shell_root,
@@ -373,13 +374,19 @@ def run_supervised_workflow(
     stop_on_failure: bool = True,
     runner: FloorRunner = run_floor,
     persist_learning: bool = True,
+    common_session: CommonInferenceSession | None = None,
 ) -> dict[str, Any]:
     if not instruction.strip():
         raise LocalFloorRunnerError(
             "Cognigrex supervised workflow requires a non-empty instruction"
         )
 
+    if common_session is not None and (dry_run or not isinstance(common_session,CommonInferenceSession)
+            or common_session.task_id!=task_id):
+        raise LocalFloorRunnerError("shared session task or execution binding mismatch")
     contract = load_contract(contract_path)
+    if not dry_run and (contract.get("policy") or {}).get("require_common_inference_session") is True and common_session is None:
+        raise LocalFloorRunnerError("supervisor requires common inference session")
     plan = build_workflow_plan(instruction, task_id=task_id)
     _validate_plan_against_contract(plan, contract)
     overlay = _task_contract_overlay(
@@ -410,11 +417,13 @@ def run_supervised_workflow(
                 dry_run=dry_run,
                 allow_heavy=allow_heavy,
                 receipt_target=receipt_target,
+                **({"common_session":common_session} if common_session is not None else {}),
             )
             row = {
                 "sequence": sequence,
                 "floor": floor,
                 "status": receipt.get("status"),
+                "server_outcome_uncertain":receipt.get("server_outcome_uncertain") is True,
                 "receipt_id": receipt.get("receipt_id"),
                 "receipt_path": receipt.get("receipt_path"),
                 "model": receipt.get("model"),
@@ -424,7 +433,7 @@ def run_supervised_workflow(
                 "elapsed_ms": receipt.get("elapsed_ms"),
             }
             rows.append(row)
-            if stop_on_failure and receipt.get("status") in {"failed", "blocked"}:
+            if row["server_outcome_uncertain"] or (stop_on_failure and receipt.get("status") in {"failed", "blocked"}):
                 break
     finally:
         try:
@@ -434,8 +443,13 @@ def run_supervised_workflow(
 
     statuses = [str(row.get("status") or "unknown") for row in rows]
     complete = len(rows) == len(plan.floor_sequence)
-    failed = any(status in {"failed", "blocked"} for status in statuses)
-    aggregate_status = "failed" if failed else ("complete" if complete else "partial")
+    expected_status = "dry_run" if dry_run else "completed"
+    ids=[row.get("receipt_id") for row in rows]
+    ids_valid=all(type(k) is str and bool(k) for k in ids) and len(set(ids))==len(ids)
+    successful=complete and ids_valid and all(status==expected_status for status in statuses)
+    uncertain=any(row["server_outcome_uncertain"] for row in rows)
+    failed = uncertain or any(status!=expected_status for status in statuses) or not ids_valid
+    aggregate_status = "failed" if failed else ("complete" if successful else "partial")
 
     aggregate: dict[str, Any] = {
         "schema_version": SUPERVISOR_SCHEMA,
@@ -451,6 +465,7 @@ def run_supervised_workflow(
         "allow_heavy": allow_heavy,
         "status": aggregate_status,
         "complete_workflow": complete,
+        "server_outcome_uncertain":uncertain,
         "operational_head": "Neo",
         "canonical_release_gate": "Achilles",
         "primary_floors": list(plan.primary_floors),

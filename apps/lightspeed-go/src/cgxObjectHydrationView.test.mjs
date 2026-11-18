@@ -1,6 +1,6 @@
 import {test} from 'vitest';
 import assert from 'node:assert/strict';
-import {projectCgxOneObjectView as plan} from './cgxObjectHydrationView.mjs';
+import {projectCgxOneObjectView as plan,recheckCgxOneObjectView as recheck} from './cgxObjectHydrationView.mjs';
 // Object_ID, FileSpace and Git blob SHA are real registry metadata; receipt
 // hashes, sessions and rights in this fixture are synthetic, NOT live proof.
 const make=()=>({requested_object_id:'cgx:domain:eco',binding:{semantic_object_id:'cgx:domain:eco',filespace:'Eco.cgx'},source:{provider:'github',repository:'achillesromer-coder/LightSpeed',registry_path:'cgx/domain_templates/domain_child_identity_registry.json',registry_git_blob_sha:'c2e03b1137ba844209e6c80e94c9fc7532f0db11',binding_readback_verified:true,rights:'cleared',visibility:'owner_private',source_sha256:'a'.repeat(64),source_bytes_readback_verified:true},access:{state:'verified_owner',allowed_object_ids:['cgx:domain:eco']},evidence:{r1_parse_receipt_sha256:'b'.repeat(64),r2_overlay_receipt_sha256:'c'.repeat(64),r3_view_receipt_sha256:'d'.repeat(64),owner_private_route_verified:true,dbr_readback_verified:true},requested_layer:'R0',max_bytes:4_000_000});
@@ -18,3 +18,15 @@ test('R3 private route and DBR readback required',()=>{const p=make();p.requeste
 test('inline source, URL and tokens forbidden',()=>{for(const key of ['source_bytes','view_url','token']){const p=make();p[key]='SECRET';check(p,'UNSAFE_INLINE_PAYLOAD');}});
 test('all layers are plans, never admission or publication',()=>{for(const layer of ['R0','R1','R2','R3']){const p=make();p.requested_layer=layer;const v=plan(p);assert.equal(v.state,'PLAN_ONLY_NOT_HYDRATED');assert.equal(v.public_publish_authorized,false);assert.equal(v.execution_performed,false);}});
 test('invalid layer fails closed',()=>{const p=make();p.requested_layer='F';check(p,'UNSUPPORTED_LAYER');});
+
+test('recheck requires unchanged scope and source; no hydration occurs',()=>{
+ const a=make();a.access.scope_revision='fixture-1';const p=plan(a);
+ const b=structuredClone(a);assert.equal(recheck(p,a,b).state,'RECHECKED_PLAN_ONLY_NOT_HYDRATED');
+ assert.equal(recheck(p,a,b).hydration.byte_transfer_performed,false);
+ b.access.state='revoked';assert.equal(recheck(p,a,b).hold_code,'ACCESS_NOT_VERIFIED');
+ b.access.state='verified_owner';b.access.scope_revision='fixture-2';
+ assert.equal(recheck(p,a,b).hold_code,'ACCESS_REVISION_CHANGED');
+ b.access.scope_revision='fixture-1';b.source.source_sha256='f'.repeat(64);
+ assert.equal(recheck(p,a,b).hold_code,'SOURCE_OR_EVIDENCE_CHANGED');
+ assert.equal(recheck({...p,object_id:'different'},a,a).hold_code,'PLAN_BINDING_CHANGED');
+});

@@ -168,5 +168,187 @@
     "policy_extension_rule": "shared parent source + scoped child binding + receipt; capability does not create authority",
     "add_assurance_method": true,
     "assurance_method_rule": "new methods declare question, inputs, outputs, assumptions, applicability, evidence and limitations; they do not create authority or a universal risk score"
+  },
+  "interoperability_surfaces": {
+    "filespace": {
+      "routes": [
+        "files.list",
+        "files.open",
+        "sources.envelope",
+        "cgx.object_context"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "google-drive",
+        "github"
+      ],
+      "provider_candidates": [
+        "Google_Drive",
+        "GitHub",
+        "Microsoft_SharePoint"
+      ],
+      "boundary": "Existing scoped file/reference routes; native occurrence ACL/provider binding still required."
+    },
+    "dataspace": {
+      "routes": [
+        "data.validate",
+        "receipts.list",
+        "receipts.open",
+        "knowns.read",
+        "ops.queue"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "python"
+      ],
+      "provider_candidates": [
+        "Neon",
+        "Supabase",
+        "Google_Drive"
+      ],
+      "boundary": "Existing validation and receipt routes; database operation adapters require independent qualification."
+    },
+    "unispace": {
+      "routes": [
+        "cgx.resolve_context",
+        "cgx.object_context",
+        "node.exchange.status",
+        "runtime.productization"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "ccc"
+      ],
+      "provider_candidates": [
+        "Browser",
+        "Vercel"
+      ],
+      "boundary": "Permissioned projections; no deployment or publication implied."
+    },
+    "remote-desktop": {
+      "routes": [
+        "ops.health",
+        "node.exchange.status",
+        "node.transfer",
+        "node.compute",
+        "local.supervise"
+      ],
+      "toolkits": [
+        "lightspeed",
+        "cgx-core",
+        "python"
+      ],
+      "provider_candidates": [
+        "Remote_Desktop_Commander",
+        "Browser"
+      ],
+      "boundary": "Local routes are not RDC or remote peer proof; require exact typed connector adapter, host scope, lease, and readback."
+    },
+    "agent": {
+      "routes": [
+        "cgx.resolve_context",
+        "cgx.plan_query",
+        "cgx.cross_analysis",
+        "local.supervise",
+        "extensions.plan",
+        "tests.plan"
+      ],
+      "toolkits": [
+        "cgx-core",
+        "lightspeed",
+        "local-llm",
+        "openai",
+        "ccc"
+      ],
+      "provider_candidates": [
+        "OpenAI_Platform",
+        "Automations",
+        "Plugin_Creator",
+        "Plugin_Management"
+      ],
+      "boundary": "Source/skill routing only; connection, scheduling, execution, training and authority remain separately gated."
+    },
+    "engineering": {
+      "routes": [
+        "science.query",
+        "science.fractal_grid",
+        "cad.freecad",
+        "physics.femm",
+        "science.gmat.probe",
+        "extensions.plan"
+      ],
+      "toolkits": [
+        "python",
+        "freecad",
+        "lightspeed",
+        "github"
+      ],
+      "provider_candidates": [
+        "GitHub",
+        "Vercel",
+        "Neon",
+        "Supabase"
+      ],
+      "boundary": "Preserve solver and provider gaps; no arbitrary shell or physical actuation."
+    },
+    "communication": {
+      "routes": [
+        "cgx.minimum_work",
+        "consequence.preflight",
+        "extensions.plan"
+      ],
+      "toolkits": [
+        "email",
+        "calendar",
+        "web"
+      ],
+      "provider_candidates": [
+        "Gmail",
+        "Google_Calendar",
+        "Google_Contacts",
+        "Microsoft_Outlook_Email",
+        "Microsoft_Outlook_Calendar",
+        "Slack",
+        "Circleback",
+        "LinkedIn"
+      ],
+      "boundary": "Provider-specific scope and explicit consequential action gates; no sending or scheduling from metadata."
+    },
+    "creative": {
+      "routes": [
+        "extensions.plan",
+        "portfolio.printable_catalogue"
+      ],
+      "toolkits": [
+        "web",
+        "google-drive",
+        "ccc"
+      ],
+      "provider_candidates": [
+        "Canva",
+        "invideo"
+      ],
+      "boundary": "Provider adapters and source rights require qualification; no automatic publication."
+    },
+    "research": {
+      "routes": [
+        "definitions.search",
+        "knowns.read",
+        "science.query",
+        "cgx.cross_analysis"
+      ],
+      "toolkits": [
+        "web",
+        "python",
+        "google-drive"
+      ],
+      "provider_candidates": [
+        "Google_Drive",
+        "GitHub"
+      ],
+      "boundary": "Original source, revision, rights and proof required."
+    }
   }
 }

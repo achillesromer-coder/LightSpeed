@@ -189,3 +189,51 @@ def test_missing_required_floor_is_rejected_before_execution(tmp_path):
         assert "missing required floor" in str(exc).lower()
     else:
         raise AssertionError("missing Morpheus proof floor must block the workflow")
+
+
+
+def test_incomplete_or_duplicate_receipts_do_not_clear_supervisor(tmp_path):
+    path=write_contract(tmp_path)
+    for status,duplicate in (("unknown",False),("dry_run",False),("completed",True)):
+        def runner(**kw):
+            return {"receipt_id":"same" if duplicate else "id-"+kw["floor"],
+                    "status":status,"model":"fixture","receipt_path":"fixture"}
+        r=cognigrex_supervisor.run_supervised_workflow("bounded work",contract_path=path,
+            task_id="fixture-task",dry_run=False,runner=runner,persist_learning=False)
+        assert r["status"]=="failed" and not r["canonical_promotion_authorized"]
+
+
+
+def test_uncertain_supervisor_stops_even_when_continue_requested(tmp_path):
+    calls=[]
+    def runner(**kw):
+        calls.append(kw["floor"])
+        return {"receipt_id":"fixture","status":"failed","server_outcome_uncertain":True}
+    receipt=cognigrex_supervisor.run_supervised_workflow("review source",contract_path=write_contract(tmp_path),
+        task_id="fixture",dry_run=False,stop_on_failure=False,runner=runner,persist_learning=False)
+    assert len(calls)==1 and receipt["status"]=="failed" and receipt["server_outcome_uncertain"]
+
+
+
+def test_supervisor_forwards_exact_shared_admission(tmp_path):
+    import pytest
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession,LocalFloorRunnerError
+    path=write_contract(tmp_path)
+    contract=json.loads(path.read_text(encoding="utf-8"))
+    contract["policy"]["require_common_inference_session"]=True
+    path.write_text(json.dumps(contract),encoding="utf-8")
+    gate=CommonInferenceSession(tmp_path/"common.lock",task_id="fixture",scope_revision="r1",
+        authorise=lambda *a:True,resources_ready=lambda:True)
+    calls=[]
+    def runner(**kw):
+        assert kw["common_session"] is gate
+        with gate:gate.check_before_request()
+        calls.append(kw["floor"])
+        return {"receipt_id":"id-"+kw["floor"],"status":"completed"}
+    def run(task="fixture",session=None):
+        return cognigrex_supervisor.run_supervised_workflow("review source",contract_path=path,
+            task_id=task,dry_run=False,runner=runner,persist_learning=False,common_session=session)
+    with pytest.raises(LocalFloorRunnerError):run()
+    with pytest.raises(LocalFloorRunnerError):run("other",gate)
+    assert calls==[]
+    assert run(session=gate)["status"]=="complete" and len(calls)>1

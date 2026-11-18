@@ -45,6 +45,7 @@
         "cgx.minimum_work",
         "consequence.preflight",
         "science.query",
+        "science.fractal_grid",
         "tests.plan",
         "local.supervise"
       ],
@@ -62,6 +63,15 @@
       "kind": "runtime",
       "ro": true,
       "handler": "lightspeed_runtime.corpus_test_orchestrator:plan_cascade"
+    },
+    "science.fractal_grid": {
+      "state": "gated",
+      "kind": "runtime",
+      "ro": true,
+      "handler": "lightspeed_runtime.cgx_cross_analysis:fractal_grid_review_receipt",
+      "gate": "Explicit bounded COMPUTE_ONLY review request under existing host policy; no automatic execution",
+      "authority_transfer": false,
+      "limitation": "Dimensionless numerical escape-grid only; no physical claim, persistent blob, native DBR, geometry admission or T173 mapping."
     },
     "science.query": {
       "state": "available",

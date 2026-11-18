@@ -16,7 +16,7 @@ spec.loader.exec_module(module)
 
 def planned(instruction, task_id):
     return {
-        "workflow_id": task_id,
+        "workflow_id": f"cognigrex-{task_id}-{module._hash(instruction)[:12]}",
         "instruction_sha256": module._hash(instruction),
         "floor_sequence": ["Neo", "Architect", "Morpheus"],
         "proof_required": True,
@@ -225,3 +225,134 @@ def test_review_profile_lifecycle_and_rights_escalation_fail_closed(tmp_path, se
     candidate.write_text(json.dumps(profile), encoding="utf-8")
     with pytest.raises(module.ProfileHold, match="ACHILLES_PRIVILEGE_ESCALATION_HOLD"):
         module.load_profile(candidate)
+
+def test_priority_suffix_task_binding_not_inherited():
+    def swapped(instruction, task_id):
+        return planned(instruction, "ACHILLES-UNISPACE-DELIVERY-REVIEW-001b")
+    with pytest.raises(module.ProfileHold, match="TASK_BINDING_HOLD"):
+        module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001a", planner=swapped)
+    a=module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001a", planner=planned)
+    b=module.prepare_packet("same work", "ACHILLES-UNISPACE-DELIVERY-REVIEW-001b", planner=planned)
+    assert a["idempotency_fingerprint"]!=b["idempotency_fingerprint"]
+    assert not a["execution_request"]["execute"] and not b["execution_request"]["execute"]
+
+def test_owner_packet_composition_and_scoped_skill_review():
+    from copy import deepcopy
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review, CapabilityRegistryError
+    view=capability_interop_review("Achilles")
+    keys=("skill:cgx-capability-router","skill:cgx-handshake","role:achilles")
+    task="ACHILLES-UNISPACE-DELIVERY-REVIEW-001a"
+    def prepare(refs=keys, stamp=view["view_sha256"]):
+        return module.prepare_packet("private instruction",task,planner=planned,
+            skill_references=refs,expected_skill_view_sha256=stamp)
+    packet=prepare()
+    assert packet==prepare(keys[::-1])
+    assert packet["idempotency_fingerprint"]!=prepare(keys[:1])["idempotency_fingerprint"]
+    assert packet["idempotency_fingerprint"]!=module.prepare_packet("private instruction",task,planner=planned)["idempotency_fingerprint"]
+    assert "private instruction" not in json.dumps(packet)
+    assert not packet["skill_review"]["raw_skill_payload_persisted"]
+    stamp=packet["skill_review"]["composition"]["composition_sha256"]
+    def auth(t,k,s,h):return t==task and k==keys[0] and s=="fixture-scope" and h==stamp
+    def read(p=packet,selected=None,scope="fixture-scope",t=task):
+        return module.hydrate_packet_skill_review(p,expected_task_id=t,
+            expected_composition_sha256=stamp,selected_skills=selected or [keys[0]],
+            scope_revision=scope,max_bytes=100000,authorise=auth)
+    raw,receipt=read()
+    assert list(raw)==[keys[0]]
+    assert receipt["payload_bytes"]==len(raw[keys[0]]) and not receipt["execution_authorized"]
+    assert raw[keys[0]].decode("utf-8") not in json.dumps(packet)
+    with pytest.raises(PermissionError):read(selected=[keys[1]])
+    with pytest.raises(PermissionError):read(scope="revoked")
+    with pytest.raises(module.ProfileHold):read(t=task+"b")
+    bad=deepcopy(packet);bad["authorization"]["lease_verified"]=True
+    with pytest.raises(module.ProfileHold):read(bad)
+    bad=deepcopy(packet);bad["skill_review"]["composition"]["authority_transfer"]=True
+    with pytest.raises(CapabilityRegistryError):read(bad)
+    with pytest.raises(module.ProfileHold):prepare(stamp="0"*64)
+    with pytest.raises(module.ProfileHold):prepare(("role:smith",))
+
+
+
+def test_paired_fidelity_trial_predeclared_and_fail_closed():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    v=capability_interop_review("Achilles")
+    plan=module.prepare_skill_fidelity_trial("review-001a",expected_view_sha256=v["view_sha256"],
+        model="qwen3:8b",sparse_skills=["skill:cgx-capability-router","skill:cgx-handshake"])
+    stamp=plan["trial_sha256"]
+    prompts=module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",
+                                           authorise=lambda *a:True)
+    assert len(prompts)==16
+    assert all("expected" not in p for p in prompts)
+    expected={c["case_id"]:c["expected"] for c in plan["cases"]}
+    obs=[dict(case_id=p["case_id"],arm=p["arm"],model=plan["model"],settings=plan["settings"],
+        prompt_sha256=p["prompt_sha256"],result=expected[p["case_id"]],
+        prompt_tokens=100 if p["arm"]=="sparse" else 500,output_tokens=12,latency_ms=100) for p in prompts]
+    commitment=module.skill_trial_prompt_commitment(plan,prompts)
+    def score(rows):return module.score_skill_fidelity_trial(plan,expected_trial_sha256=stamp,prompts=prompts,observations=rows,expected_prompt_commitment=commitment)
+    with pytest.raises(module.ProfileHold):
+        module.score_skill_fidelity_trial(plan,expected_trial_sha256=stamp,prompts=prompts[::-1],
+            observations=obs,expected_prompt_commitment=commitment)
+    receipt=score(obs)
+    assert receipt["candidate_thresholds_met"] and not receipt["live_reasoning_fidelity_verified"]
+    with pytest.raises(module.ProfileHold):score(obs[:-1])
+    with pytest.raises(module.ProfileHold):score([dict(obs[0],model="other")]+obs[1:])
+    with pytest.raises(module.ProfileHold):score([dict(obs[0],prompt_sha256="0"*64)]+obs[1:])
+    bad=[dict(o,result={"decision":"review_only","code":"allowed"}) if o["case_id"]=="stale-access" else o for o in obs]
+    assert not score(bad)["candidate_thresholds_met"]
+    assert score(bad)["counts"]["sparse"]["unsafe_false_allow"]==1
+    with pytest.raises(PermissionError):
+        module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",authorise=lambda *a:False)
+
+
+def test_common_inference_preflight_never_grants_execution():
+    def gate(**overrides):
+        return module.assess_common_inference_admission(**dict(dict(resident_active=True,common_gate_verified=False,
+            active_session_count=0,available_gib=13.53,reserve_gib=6.4,model_working_set_gib=4.9),**overrides))
+    assert gate()["state"]=="HOLD"
+    assert "RAM_RESERVE_HOLD" in gate(available_gib=8)["holds"]
+    assert "ACTIVE_INFERENCE_SESSION" in gate(active_session_count=1)["holds"]
+    assert gate(common_gate_verified=True)["state"]=="PREFLIGHT_ONLY_GATE_ACQUISITION_REQUIRED"
+    assert not gate(common_gate_verified=True)["execution_authorized"]
+    with pytest.raises(module.ProfileHold):gate(active_session_count=True)
+
+
+
+def test_trial_adapter_requires_common_gate_and_serial_exact_binding(tmp_path):
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    from lightspeed_runtime.local_floor_runner import CommonInferenceSession,LocalFloorRunnerError
+    v=capability_interop_review("Achilles")
+    plan=module.prepare_skill_fidelity_trial("review-001a",expected_view_sha256=v["view_sha256"],
+        model="qwen3:8b",sparse_skills=["skill:cgx-capability-router","skill:cgx-handshake"])
+    stamp=plan["trial_sha256"]
+    prompts=module.build_skill_trial_prompts(plan,expected_trial_sha256=stamp,scope_revision="fixture",
+        authorise=lambda *a:True)
+    commitment=module.skill_trial_prompt_commitment(plan,prompts)
+    expected={c["case_id"]:c["expected"] for c in plan["cases"]}
+    path=tmp_path/"shared.lock";calls=[];state={"allowed":True}
+    def gate(task="review-001a"):
+        return CommonInferenceSession(path,task_id=task,scope_revision="fixture",
+            authorise=lambda *a:state["allowed"],resources_ready=lambda:True)
+    def adapter(q):
+        assert path.is_file() and "expected" not in q
+        calls.append((q["case_id"],q["arm"]))
+        return {k:q[k] for k in ("case_id","arm","model","settings","prompt_sha256")} | {
+            "result":expected[q["case_id"]],"prompt_tokens":100 if q["arm"]=="sparse" else 500,
+            "output_tokens":10,"latency_ms":100}
+    def run(g,inv=adapter):
+        return module.run_skill_trial_with_adapter(plan,expected_trial_sha256=stamp,prompts=prompts,
+           expected_prompt_commitment=commitment,common_session=g,invoke=inv)
+    with pytest.raises(module.ProfileHold):run(gate("wrong"))
+    state["allowed"]=False
+    with pytest.raises(LocalFloorRunnerError):run(gate())
+    assert not calls and not path.exists()
+    state["allowed"]=True
+    assert run(gate())["candidate_thresholds_met"] and len(calls)==16 and not path.exists()
+    def revoke(q):
+        result=adapter(q);state["allowed"]=False;return result
+    with pytest.raises(LocalFloorRunnerError):run(gate(),revoke)
+    assert len(calls)==17 and not path.exists()
+    state["allowed"]=True
+    def lost(q):raise TimeoutError("fixture lost response")
+    with pytest.raises(TimeoutError):run(gate(),lost)
+    assert json.loads(path.read_text(encoding="utf-8"))["state"]=="RECOVERY_HOLD_SERVER_OUTCOME_UNCERTAIN"
+    with pytest.raises(LocalFloorRunnerError):run(gate())

@@ -314,3 +314,33 @@ def open_result_receipt(
             "or sensitive context. This read does not execute, edit, upload, or publish it."
         ),
     }
+
+
+
+def open_scoped_result_review(shell_root: Path | str, *, result_id: str,
+                              expected_sha256: str, task_id: str,
+                              scope_revision: str, authorise) -> dict[str, Any]:
+    """Read an exact existing receipt through caller-authenticated scope.
+
+    No new receipt store, path argument from the agent, execution or grant.
+    The caller must supply the approved shell root and live auth callback.
+    A revoked scope prevents return, but cannot undo a completed local read.
+    """
+    rid=_validated_result_id(result_id)
+    if rid!=result_id or type(expected_sha256) is not str or not re.fullmatch(r"[0-9a-f]{64}",expected_sha256):
+        raise ResultReceiptIdRejected("exact receipt ID and revision required")
+    for value in (task_id,scope_revision):
+        if type(value) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",value):
+            raise ResultReceiptIdRejected("exact scope and task required")
+    def check():
+        if authorise(task_id,rid,expected_sha256,scope_revision) is not True:
+            raise PermissionError("receipt scope denied or revoked")
+    check()
+    opened=open_result_receipt(shell_root,result_id=rid)
+    if opened["identity"]["sha256"]!=expected_sha256:
+        raise ResultReceiptUnavailable("receipt revision changed")
+    check()
+    return {**opened,"review_scope":{"task_id":task_id,"scope_revision":scope_revision,
+                                     "expected_sha256":expected_sha256,
+                                     "provider_authentication_performed":False,
+                                     "authority_transfer":False}}

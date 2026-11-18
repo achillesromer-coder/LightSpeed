@@ -10,10 +10,10 @@ SCRIPT = REPO_ROOT / "scripts" / "register_weekly_maintenance.ps1"
 def test_registration_uses_canonical_runtime_and_friday_schedule() -> None:
     source = SCRIPT.read_text(encoding="utf-8")
 
-    assert r"C:\LightSpeed_Consolidated\venv\Scripts\python.exe" in source
-    assert r"C:\LightSpeed_Consolidated\LightSpeed_Runtime" in source
+    assert r"D:\LightSpeed\Environment\Scripts\python.exe" in source
+    assert r"D:\LightSpeed\Core" in source
     assert "-m lightspeed_runtime.maintenance" in source
-    assert "--root C:\\LightSpeed_Consolidated\\Desktop_Hooks\\LightSpeed" in source
+    assert "--root D:\\LightSpeed\\App" in source
     assert "-DaysOfWeek Friday" in source
     assert "-At '19:00'" in source
 

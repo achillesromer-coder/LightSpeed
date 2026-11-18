@@ -131,3 +131,144 @@ def test_romer_twin_shortcall_resolves_current_object_context_route():
 def test_shared_tool_plane_exposes_object_resolver():
     routes = load_capability_routes()
     assert "cgx_resolve_object" in routes["shared_tool_plane"]["tools"]
+
+
+
+def test_interop_shared_references_keep_selector_and_authority_boundaries():
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    a=capability_interop_review("Achilles")
+    n=capability_interop_review("Neo")
+    assert a==capability_interop_review("Achilles")
+    assert a["view_sha256"]!=n["view_sha256"]
+    shared=set(a["references"]) & set(n["references"])
+    assert all(a["references"][k]==n["references"][k] for k in shared if not k.startswith("surface:"))
+    key="skill:cgx-capability-router"
+    got=capability_interop_review("Achilles",reference=key,expected_view_sha256=a["view_sha256"])
+    assert got["descriptor"]==a["references"][key]
+    assert not got["execution_authorized"] and not got["authority_transfer"]
+    for bad in (None,n["view_sha256"],"0"*64):
+        with pytest.raises(CapabilityRegistryError):
+            capability_interop_review("Achilles",reference=key,expected_view_sha256=bad)
+    with pytest.raises(CapabilityRegistryError):
+        capability_interop_review("Achilles",reference="toolkit:freecad",expected_view_sha256=a["view_sha256"])
+
+
+def test_interop_all_existing_selectors_and_provider_gaps():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    for selector in load_selector_shortcalls()["selectors"]:
+        view=capability_interop_review(selector)
+        assert sum(k.startswith("skill:") for k in view["references"])==9
+        assert sum(k.startswith("surface:") for k in view["references"])==9
+        assert not view["native_admitted"] and not view["provider_invocation_performed"]
+        got=capability_interop_review(selector,reference="surface:remote-desktop",expected_view_sha256=view["view_sha256"])
+        assert "Remote_Desktop_Commander" in got["metadata"]["provider_candidates"]
+        assert got["metadata"]["provider_binding"]=="UNVERIFIED_AT_RUNTIME"
+        assert not got["execution_authorized"]
+        assert all(k in view["references"] for k in got["metadata"]["route_refs"])
+
+
+
+def test_composition_reuses_exact_task_bound_references():
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review,compose_capability_review
+    a=capability_interop_review("Achilles")
+    refs=["skill:cgx-capability-router","route:ops.health","surface:filespace"]
+    def compose(keys=refs,**kwargs):
+        return compose_capability_review("Achilles",task_id=kwargs.get("task","001c"),
+            expected_view_sha256=kwargs.get("stamp",a["view_sha256"]),references=keys)
+    c=compose()
+    assert c==compose(refs[::-1])
+    assert c["references"]=={k:a["references"][k] for k in refs}
+    assert not c["execution_authorized"] and not c["authority_transfer"]
+    assert c["composition_sha256"]!=compose(task="001d")["composition_sha256"]
+    for keys in ([refs[0],refs[0]],["toolkit:freecad"],[]):
+        with pytest.raises(CapabilityRegistryError):compose(keys)
+    with pytest.raises(CapabilityRegistryError):compose(stamp="0"*64)
+
+
+
+def test_specialist_role_references_preserve_source_scope():
+    import hashlib
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review, compose_capability_review, REPO_ROOT
+    a=capability_interop_review("Achilles")
+    ls=capability_interop_review("LightSpeed")
+    assert sum(k.startswith("role:") for k in a["references"])==5
+    assert sum(k.startswith("role:") for k in ls["references"])==8
+    assert "role:smith" not in a["references"] and "role:achilles" not in ls["references"]
+    assert a["references"]["role:architect"]==ls["references"]["role:architect"]
+    for key in [k for k in ls["references"] if k.startswith("role:")]:
+        result=capability_interop_review("LightSpeed",reference=key,expected_view_sha256=ls["view_sha256"])
+        meta=result["metadata"]
+        assert hashlib.sha256((REPO_ROOT/meta["source_path"]).read_bytes()).hexdigest()==meta["source_sha256"]
+        assert "no_heavy_runner_without_gate" in meta["standing_gates"]
+        assert not meta["execution_authorized"] and not meta["live_skill_learning_verified"]
+    c=compose_capability_review("Achilles",task_id="review-001c",
+            expected_view_sha256=a["view_sha256"],references=["role:achilles","role:oracle","skill:cgx-capability-router"])
+    assert len(c["references"])==3 and not c["authority_transfer"]
+    with pytest.raises(CapabilityRegistryError):
+        compose_capability_review("Achilles",task_id="review-001c",
+            expected_view_sha256=a["view_sha256"],references=["role:smith"])
+
+
+
+def test_remaining_resident_source_boundary():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    mapping={"Athene":"athene","Raphael":"raphael","Romer-Grex":"romer",
+             "Cognigrex":"load","LightSpeed":"unispace"}
+    for selector,role in mapping.items():
+        view=capability_interop_review(selector)
+        ref="resident-review:"+role
+        got=capability_interop_review(selector,reference=ref,expected_view_sha256=view["view_sha256"])
+        assert got["metadata"]["qualification"].endswith("HOLD")
+        assert not got["metadata"]["resident_binding_verified"]
+        assert not got["metadata"]["execution_authorized"]
+
+
+def test_selected_skill_hydration_scope_revision_budget():
+    import hashlib
+    import pytest
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review,compose_capability_review,hydrate_composed_skill_review
+    view=capability_interop_review("Achilles")
+    keys=["skill:cgx-capability-router","skill:cgx-handshake"]
+    c=compose_capability_review("Achilles",task_id="review-001c",expected_view_sha256=view["view_sha256"],
+                                references=keys+["role:achilles"])
+    def auth(task,key,scope,digest):
+        return task=="review-001c" and key in keys and scope=="fixture-1" and digest==c["composition_sha256"]
+    def run(selected=keys,**kwargs):
+        return hydrate_composed_skill_review("Achilles",task_id="review-001c",
+            composition=kwargs.get("composition",c),expected_composition_sha256=c["composition_sha256"],
+            selected_skills=selected,scope_revision="fixture-1",
+            max_bytes=kwargs.get("budget",100000),authorise=kwargs.get("auth",auth))
+    raw,receipt=run()
+    assert run(keys[::-1])==(raw,receipt)
+    assert sum(map(len,raw.values()))==receipt["payload_bytes"]
+    assert all(hashlib.sha256(raw[k]).hexdigest()==receipt["skills"][k]["source_sha256"] for k in keys)
+    assert list(run(keys[:1])[0])==keys[:1]
+    assert not receipt["live_skill_learning_verified"]
+    with pytest.raises(PermissionError):run(auth=lambda *a:False)
+    calls=iter([True,True,False])
+    with pytest.raises(PermissionError):run(keys[:1],auth=lambda *a:next(calls))
+    with pytest.raises(CapabilityRegistryError):run(budget=1)
+    with pytest.raises(CapabilityRegistryError):run(["role:achilles"])
+    with pytest.raises(CapabilityRegistryError):run(["skill:cgx-selector"])
+    with pytest.raises(CapabilityRegistryError):run(composition=dict(c,authority_transfer=True))
+
+
+
+def test_hydration_builds_one_snapshot(monkeypatch):
+    import lightspeed_runtime.cgx_capability_registry as m
+    v=m.capability_interop_review("Achilles")
+    keys=["skill:cgx-capability-router","skill:cgx-handshake"]
+    c=m.compose_capability_review("Achilles",task_id="fixture",expected_view_sha256=v["view_sha256"],references=keys)
+    original=m._capability_review_snapshot
+    calls=[]
+    def spy(selector):
+        calls.append(selector)
+        return original(selector)
+    monkeypatch.setattr(m,"_capability_review_snapshot",spy)
+    raw,receipt=m.hydrate_composed_skill_review("Achilles",task_id="fixture",composition=c,
+        expected_composition_sha256=c["composition_sha256"],selected_skills=keys,
+        scope_revision="fixture",max_bytes=100000,authorise=lambda *a:True)
+    assert set(raw)==set(keys) and calls==["Achilles"]

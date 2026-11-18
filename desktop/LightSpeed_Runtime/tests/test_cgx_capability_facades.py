@@ -152,3 +152,28 @@ def test_cross_analysis_carries_current_object_context_when_subject_resolves():
     assert plan["object_context"] is not None
     assert plan["object_context"]["semantic_resolution"]["semantic_object_id"] == "WT-001"
     assert plan["object_context"]["operations_binding"]["current_record_id"] == "COM-1675"
+
+
+
+def test_twin_identity_occurrence_scope_and_shared_parent():
+    import pytest
+    from lightspeed_runtime.cgx_object_context import (CGXObjectContextError,
+        resolve_object_context,twin_source_review_index,resolve_scoped_twin_context)
+    index=twin_source_review_index()
+    assert len(index["references"])==16
+    assert index["shared_semantic_identities"]==[{"domain":"romer","semantic_object_id":"INF-001",
+        "occurrences":["intersol","romer_spaceport"]}]
+    with pytest.raises(CGXObjectContextError):resolve_object_context("INF-001",domain="romer")
+    assert resolve_object_context("intersol")["resolved_twin_id"]=="intersol"
+    assert resolve_object_context("romer_spaceport")["resolved_twin_id"]=="romer_spaceport"
+    def read(twin,allow=lambda *a:True,stamp=index["review_sha256"]):
+        return resolve_scoped_twin_context(twin,task_id="CGX-OBJ-004",scope_revision="fixture",
+            expected_index_sha256=stamp,expected_occurrence_sha256=index["references"][twin]["occurrence_sha256"],authorise=allow)
+    a,ar=read("intersol");b,br=read("romer_spaceport")
+    assert a["semantic_resolution"]["semantic_object_id"]==b["semantic_resolution"]["semantic_object_id"]
+    assert ar["occurrence_sha256"]!=br["occurrence_sha256"]
+    assert not ar["execution_authorized"]
+    with pytest.raises(PermissionError):read("romer_spaceport",allow=lambda t,k,*a:k=="intersol")
+    with pytest.raises(CGXObjectContextError):read("intersol",stamp="0"*64)
+    seq=iter([True,True,False])
+    with pytest.raises(PermissionError):read("intersol",allow=lambda *a:next(seq))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import argparse
-from contextlib import AbstractContextManager
+from contextlib import AbstractContextManager, nullcontext
 import ctypes
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -118,6 +118,80 @@ class SingleSessionLock(AbstractContextManager["SingleSessionLock"]):
         return False
 
 
+class CommonInferenceSession(AbstractContextManager["CommonInferenceSession"]):
+    """Cooperative common gate using the existing exclusive lock primitive.
+
+    All callers must use one owner-provisioned lock path. Caller verifies the
+    host/worker binding and current signed scope independently; this is not
+    installation, an authentication mechanism or a server-side Ollama lock.
+    """
+    def __init__(self, path: Path, *, task_id: str, scope_revision: str,
+                 authorise: Callable, resources_ready: Callable):
+        if (not isinstance(path,Path) or not path.is_absolute()
+            or any(type(v) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}",v)
+                   for v in (task_id,scope_revision))):
+            raise LocalFloorRunnerError("invalid shared inference binding")
+        self.path=path
+        self.task_id=task_id
+        self.scope_revision=scope_revision
+        self.authorise=authorise
+        self.resources_ready=resources_ready
+        self.lock=SingleSessionLock(path)
+        self.active=False
+        self.recovery_hold=False
+    def _check(self):
+        if self.authorise(self.task_id,self.scope_revision,str(self.path)) is not True:
+            raise LocalFloorRunnerError("common inference scope held")
+        if self.resources_ready() is not True:
+            raise LocalFloorRunnerError("common inference resources held")
+    def __enter__(self):
+        if self.active or self.recovery_hold:raise LocalFloorRunnerError("common inference active or recovery held")
+        self._check()
+        self.lock.__enter__()
+        try:self._check()
+        except BaseException:
+            self.lock.__exit__(None,None,None)
+            raise
+        self.active=True
+        return self
+    def check_before_request(self):
+        if not self.active or self.recovery_hold:raise LocalFloorRunnerError("common inference lock not acquired or recovery held")
+        self._check()
+        # Verify current lock generation/identity, never trust a stale handle.
+        st=self.path.stat(follow_symlinks=False)
+        if self.path.is_symlink() or (st.st_dev,st.st_ino)!=self.lock._lock_identity:
+            raise LocalFloorRunnerError("common inference lock changed")
+        info=json.loads(self.path.read_text(encoding="utf-8"))
+        if info.get("generation")!=self.lock._lock_generation or info.get("pid")!=os.getpid():
+            raise LocalFloorRunnerError("common inference generation changed")
+    def fence_uncertain(self):
+        """Retain the existing lock as a durable hold, never infer cancellation."""
+        if not self.active:raise LocalFloorRunnerError("common inference lock not acquired")
+        self.recovery_hold=True
+        fd=self.lock._fd
+        if fd is None:raise LocalFloorRunnerError("common inference descriptor missing")
+        st=os.fstat(fd)
+        if (st.st_dev,st.st_ino)!=self.lock._lock_identity:
+            raise LocalFloorRunnerError("common inference descriptor changed")
+        payload={"pid":os.getpid(),"generation":self.lock._lock_generation,
+                 "state":"RECOVERY_HOLD_SERVER_OUTCOME_UNCERTAIN",
+                 "observed_at":_utc_now_iso(),"task_id":self.task_id,
+                 "scope_revision":self.scope_revision,"server_cancellation_verified":False}
+        raw=json.dumps(payload,sort_keys=True,separators=(",",":")).encode("utf-8")
+        os.lseek(fd,0,os.SEEK_SET)
+        if os.write(fd,raw)!=len(raw):raise LocalFloorRunnerError("incomplete recovery hold marker")
+        os.ftruncate(fd,len(raw))
+        os.fsync(fd)
+    def __exit__(self,exc_type,exc,tb):
+        self.active=False
+        if self.recovery_hold:
+            # Even a failed marker write must not release an uncertain session.
+            if self.lock._fd is not None:
+                os.close(self.lock._fd);self.lock._fd=None
+            return False
+        return self.lock.__exit__(exc_type,exc,tb)
+
+
 def load_contract(path: Path = DEFAULT_CONTRACT_PATH) -> dict[str, Any]:
     try:
         contract = json.loads(Path(path).read_text(encoding="utf-8"))
@@ -167,6 +241,7 @@ def run_floor(
     memory_snapshot: MemorySnapshot | None = None,
     cpu_snapshot: CpuSnapshot | None = None,
     lock: bool = True,
+    common_session: CommonInferenceSession | None = None,
 ) -> dict[str, Any]:
     if execution_claim_id is not None and not re.fullmatch(r"[0-9a-f]{32}", execution_claim_id):
         raise LocalFloorRunnerError("execution claim id is invalid")
@@ -264,9 +339,47 @@ def run_floor(
     post = http_post or post_ollama_generate
     started = time.monotonic()
     server_outcome_uncertain = False
-    with SingleSessionLock(lock_path, enabled=lock):
+    attempts: list[dict[str, Any]] = []
+    # Explicit limits and claimed execution are never expanded by this policy.
+    adaptive = num_predict is None and max_total_tokens is None and execution_claim_id is None
+    if (contract.get("policy") or {}).get("require_common_inference_session") is True and common_session is None:
+        raise LocalFloorRunnerError("common inference session required")
+    if common_session is not None and not isinstance(common_session,CommonInferenceSession):
+        raise LocalFloorRunnerError("invalid common inference session")
+    # Keep legacy runner exclusion as well; the common lock can be the same
+    # owner-provisioned path, in which case acquire it only once.
+    same_path=common_session is not None and common_session.path.resolve()==lock_path.resolve()
+    local_session=SingleSessionLock(lock_path, enabled=(lock or common_session is not None)) if not same_path else nullcontext()
+    with local_session, (common_session if common_session is not None else nullcontext()):
         try:
-            response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, timeout_seconds)
+            while True:
+                if common_session is not None:common_session.check_before_request()
+                remaining = max(0.1, timeout_seconds - (time.monotonic() - started))
+                budget = request_body["options"]["num_predict"]
+                attempt = {"budget": budget, "usage": None}
+                attempts.append(attempt)
+                response = post(f"{endpoint.rstrip('/')}/api/generate", request_body, remaining)
+                attempt["usage"] = _ollama_usage_accounting(response, ollama_generate_attempted=True)
+                attempt["done_reason"] = response.get("done_reason")
+                truncated = response.get("done") is True and (
+                    response.get("done_reason") == "length" or (
+                        type(response.get("eval_count")) is int and response["eval_count"] >= budget
+                        and bool((contract.get("policy") or {}).get("strict_response_contract"))
+                        and bool(validate_grounded_response(response, str(receipt_path), source_evidence))
+                    )
+                )
+                if not (adaptive and truncated and budget < MAX_NUM_PREDICT and len(attempts) < 3
+                        and timeout_seconds - (time.monotonic() - started) > 5):
+                    break
+                retry_guard = build_resource_preflight(
+                    contract, endpoint=endpoint, probe_ollama=True, timeout_seconds=5.0,
+                    ollama_status_probe=ollama_status_probe, memory_snapshot=memory_snapshot,
+                    cpu_snapshot=cpu_snapshot,
+                )
+                if retry_guard["execution_state"] != "ready" or timeout_seconds - (time.monotonic() - started) <= 5:
+                    break
+                request_body = {**request_body, "options": {**request_body["options"],
+                                    "num_predict": min(MAX_NUM_PREDICT, max(512, budget * 2))}}
             status = "completed"
             error = None
         except (HTTPError, URLError, TimeoutError, OSError, ValueError, LocalFloorRunnerError) as exc:
@@ -274,7 +387,12 @@ def run_floor(
             status = "failed"
             error = str(exc)
             # The request may have reached Ollama even when its response was lost.
-            server_outcome_uncertain = True
+            server_outcome_uncertain = bool(attempts)
+            if common_session is not None and server_outcome_uncertain:
+                common_session.fence_uncertain()
+        except BaseException:
+            if common_session is not None and attempts:common_session.fence_uncertain()
+            raise
     elapsed_ms = int((time.monotonic() - started) * 1000)
 
     receipt = build_receipt(
@@ -297,6 +415,14 @@ def run_floor(
         max_source_excerpt_chars=max_source_excerpt_chars,
         server_outcome_uncertain=server_outcome_uncertain,
     )
+    if len(attempts) > 1:
+        receipt["adaptive_budget_attempts"] = attempts
+        usage = receipt["usage_accounting"]
+        usage["ollama_generate_attempts"] = len(attempts)
+        measured = all(a["usage"] is not None and a["usage"]["total_tokens"] is not None for a in attempts)
+        for key in ("prompt_tokens", "completion_tokens", "total_tokens"):
+            usage[key] = sum(a["usage"][key] for a in attempts) if measured else None
+        usage["state"] = "MEASURED_OLLAMA_RESPONSE" if measured else "UNKNOWN"
     write_receipt(contract, receipt_path, receipt)
     return receipt
 

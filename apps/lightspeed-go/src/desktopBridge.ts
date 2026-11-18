@@ -120,6 +120,7 @@ export interface ProjectRecord {
 
 export interface ProjectFileRecord {
   relative_path: string;
+  metadata_revision?: string;
   name: string;
   extension: string;
   mime_type: string;
@@ -674,6 +675,71 @@ export const resolveDesktopObjectContext = (
     10000,
   );
 
+// Existing bridge route, with authenticated owner review only. Task labels
+// identify the review; they do not confer a signed execution lease.
+export type SourceReviewMode = "twin" | "atlas";
+export interface SourceReviewBinding {
+  mode: SourceReviewMode;
+  occurrence_id: string;
+  task_id: string;
+  index_sha256: string;
+  occurrence_sha256: string;
+  source_sha256: string | null;
+}
+export interface SourceReviewResponse {
+  index?: Record<string, unknown>;
+  object_context?: CGXObjectContext;
+  atlas_row?: Record<string, string>;
+  review_binding?: SourceReviewBinding;
+  review_receipt?: Record<string, unknown>;
+  owner_session_verified: true;
+  task_lease_verified: false;
+  execution_performed: false;
+  external_action_performed: false;
+  canonical_mutation: false;
+  authority_transfer: false;
+  native_admitted: false;
+}
+export const sourceReviewApiPath = (mode: SourceReviewMode, binding?: SourceReviewBinding): string => {
+  if (mode !== "atlas" && mode !== "twin") throw new TypeError("Invalid source review mode");
+  if (!binding) return "/api/v1/object-context/index?review_mode=" + mode + "-index";
+  const token = /^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$/;
+  const sha = /^[a-f0-9]{64}$/;
+  if (binding.mode !== mode || !token.test(binding.occurrence_id) || !token.test(binding.task_id)
+    || !sha.test(binding.index_sha256) || !sha.test(binding.occurrence_sha256)
+    || (mode === "atlas" ? !binding.source_sha256 || !sha.test(binding.source_sha256) : binding.source_sha256 !== null)) {
+    throw new TypeError("Exact source review binding required");
+  }
+  const params = new URLSearchParams({review_mode: mode, task_id: binding.task_id,
+    expected_index_sha256: binding.index_sha256, expected_occurrence_sha256: binding.occurrence_sha256});
+  if (binding.source_sha256) params.set("expected_source_sha256",binding.source_sha256);
+  return objectContextApiPath(binding.occurrence_id) + "?" + params.toString();
+};
+
+export const readDesktopSourceReview = async (
+  mode: SourceReviewMode, ownerSession: string, binding?: SourceReviewBinding,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<SourceReviewResponse> => {
+  if (!ownerSession || ownerSession.length > 256) throw new TypeError("Owner session required");
+  const snapshot = binding ? {...binding} : undefined;
+  const result = await withTimeout<SourceReviewResponse>(origin + sourceReviewApiPath(mode,snapshot),
+    {method:"GET",cache:"no-store",headers:{"X-LightSpeed-Session":ownerSession}},15000);
+  if (result.owner_session_verified !== true || result.task_lease_verified !== false
+      || result.execution_performed !== false || result.external_action_performed !== false
+      || result.canonical_mutation !== false || result.authority_transfer !== false || result.native_admitted !== false)
+    throw new DesktopRequestError(409,"Source review authority boundary changed");
+  if (snapshot) {
+    const actual = result.review_binding;
+    if (!actual || (Object.keys(snapshot) as (keyof SourceReviewBinding)[]).some(key=>actual[key]!==snapshot[key])
+        || (mode==="twin" ? result.object_context?.resolved_twin_id!==snapshot.occurrence_id
+          : result.atlas_row?.ID!==snapshot.occurrence_id))
+      throw new DesktopRequestError(409,"Source review occurrence changed");
+  } else if (!result.index || result.review_binding) {
+    throw new DesktopRequestError(409,"Source review index required");
+  }
+  return result;
+};
+
 export const loginDesktopOwner = (
   username: string,
   password: string,
@@ -781,11 +847,15 @@ export const listDesktopProjects = async (origin = DEFAULT_DESKTOP_ORIGIN): Prom
   };
 };
 
-export const projectFileApiPath = (projectId: string, relativePath?: string): string => {
+export const projectFileApiPath = (projectId: string, relativePath?: string, expectedRevision?: string): string => {
+  if (expectedRevision !== undefined && (relativePath === undefined || !/^[a-f0-9]{64}$/.test(expectedRevision))) {
+    throw new Error("Exact file metadata revision required.");
+  }
   const project = encodeURIComponent(projectId);
   if (relativePath === undefined) return `/api/v1/projects/${project}/files`;
   const path = relativePath.split("/").map((part) => encodeURIComponent(part)).join("/");
-  return `/api/v1/projects/${project}/files/${path}`;
+  const route = `/api/v1/projects/${project}/files/${path}`;
+  return expectedRevision === undefined ? route : `${route}?expected_metadata_revision=${expectedRevision}`;
 };
 
 export const listDesktopProjectFiles = async (
@@ -803,19 +873,25 @@ export const openDesktopProjectFile = async (
   relativePath: string,
   ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
+  expectedRevision?: string,
 ): Promise<ProjectFileOpenResult> =>
   withTimeout<ProjectFileOpenResult>(
-    `${origin}${projectFileApiPath(projectId, relativePath)}`,
+    `${origin}${projectFileApiPath(projectId, relativePath, expectedRevision)}`,
     {
       method: "GET",
+      cache: "no-store",
       headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,
   );
 
-export const resultReceiptApiPath = (resultId?: string): string => {
+export const resultReceiptApiPath = (resultId?: string, expectedSha256?: string): string => {
+  if (expectedSha256 !== undefined && (resultId === undefined || !/^[a-f0-9]{64}$/.test(expectedSha256))) {
+    throw new Error("Exact receipt revision required.");
+  }
   if (resultId === undefined) return "/api/v1/results";
-  return `/api/v1/results/${encodeURIComponent(resultId)}`;
+  const path = `/api/v1/results/${encodeURIComponent(resultId)}`;
+  return expectedSha256 === undefined ? path : `${path}?expected_sha256=${expectedSha256}`;
 };
 
 export const listDesktopResults = async (
@@ -832,11 +908,13 @@ export const openDesktopResult = async (
   resultId: string,
   ownerSession: string,
   origin = DEFAULT_DESKTOP_ORIGIN,
+  expectedSha256?: string,
 ): Promise<LocalResultOpenResponse> =>
   withTimeout<LocalResultOpenResponse>(
-    `${origin}${resultReceiptApiPath(resultId)}`,
+    `${origin}${resultReceiptApiPath(resultId, expectedSha256)}`,
     {
       method: "GET",
+      cache: "no-store",
       headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) },
     },
     10000,

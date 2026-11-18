@@ -269,3 +269,82 @@ def test_status_does_not_treat_carrier_as_peer_compute() -> None:
     assert status["transport"]["verified_carriers"] == ["E-volume"]
     assert status["transport"]["peer_transport_verified"] is False
     assert status["compute"]["peer_compute_verified"] is False
+
+
+
+def test_remote_health_review_exact_scope_and_challenge():
+    from lightspeed_runtime.cgx_capability_registry import capability_interop_review
+    from lightspeed_runtime.node_exchange import prepare_remote_health_review,reconcile_remote_health_review
+    now="2026-01-01T00:00:10+00:00"
+    view=capability_interop_review("Achilles")
+    req,stamp=prepare_remote_health_review("Achilles",expected_view_sha256=view["view_sha256"],
+        task_id="review-001c",target_ref="fixture-host",scope_revision="scope-1",
+        nonce="a"*32,issued_at="2026-01-01T00:00:00+00:00")
+    obs=dict(target_ref="fixture-host",nonce="a"*32,observed_at=now,
+             heartbeat_at=now,supervisor_pid=1,free_ram_gib=10,minimum_free_ram_gib=6.4,
+             logical_processors=16,reserved_logical=4,ceiling_percent=95)
+    def auth(t,s,k): return (t,s,k)==("fixture-host","scope-1","review-001c")
+    def review(o,**kwargs):
+        return reconcile_remote_health_review(req,o,expected_request_sha256=stamp,
+                     authorise=kwargs.get("authorise",auth),now=kwargs.get("now",now))
+    r=review(obs)
+    assert r["reserve_satisfied"] and not r["provider_authentication_performed"]
+    assert not r["authority_transfer"] and review(obs)==r
+    assert not review(dict(obs,free_ram_gib=2))["reserve_satisfied"]
+    for bad in (dict(obs,target_ref="other"),dict(obs,nonce="b"*32),dict(obs,command="no"),
+                dict(obs,supervisor_pid=True),dict(obs,free_ram_gib=float("nan")),
+                dict(obs,heartbeat_at="2025-01-01T00:00:00+00:00")):
+        with pytest.raises(NodeExchangeError): review(bad)
+    with pytest.raises(NodeExchangeError): review(obs,now="2026-01-01T01:00:00+00:00")
+    with pytest.raises(PermissionError): review(obs,authorise=lambda *a:False)
+    seq=iter([True,False])
+    with pytest.raises(PermissionError): review(obs,authorise=lambda *a:next(seq))
+    with pytest.raises(NodeExchangeError):
+        reconcile_remote_health_review(req,obs,expected_request_sha256="0"*64,authorise=auth,now=now)
+
+
+def test_transport_plan_policy_and_fallback():
+    from lightspeed_runtime.node_exchange import plan_transport_handshake
+    def link(mode, **kw):
+        return dict(mode=mode, available=True, permission_granted=True,
+                    metered=False, max_payload_bytes=1000) | kw
+    links=[link("lan"),link("bluetooth"),link("https_relay",metered=True)]
+    def plan(ls=links, **kw):
+        return plan_transport_handshake(links=ls, **(
+            dict(allowed=["lan","bluetooth","https_relay"],payload_bytes=500) | kw))
+    assert plan()["mode"] == "lan"
+    assert plan(links[1:])["mode"] == "bluetooth"
+    assert plan(links[2:])["mode"] == "offline"
+    assert plan(links[2:],max_metered_bytes=500)["mode"] == "https_relay"
+    assert plan(allowed=["bluetooth","lan"])["mode"] == "bluetooth"
+    assert plan(payload_bytes=1001)["mode"] == "offline"
+    assert plan([link("lan",permission_granted=False)])["mode"] == "offline"
+    assert plan()["state"] == "await_peer_authentication"
+    assert plan() == plan()
+    assert not plan()["peer_authenticated"] and not plan()["execution_authorized"]
+    for kw in (dict(payload_bytes=True),dict(heartbeat_seconds=0),
+               dict(allowed=["lan","lan"]),dict(max_metered_bytes=-1)):
+        with pytest.raises(NodeExchangeError): plan(**kw)
+    with pytest.raises(NodeExchangeError): plan([links[0],links[0]])
+
+
+def test_transport_offer_identity_survives_route_switch():
+    from lightspeed_runtime.node_exchange import bind_transport_offer, build_transfer_envelope_from_manifest
+    env=build_transfer_envelope_from_manifest(source_ref="source:abc",source_sha256="a"*64,
+        size_bytes=32,file_name="x.cgx",source_node_id="desktop",target_node_id="mobile",
+        source_root_id="filespace",target_root_id="mobile-cache",transfer_id="NXFER-1")
+    def offer(mode, e=env, **kw):
+        return bind_transport_offer(e,links=[dict(mode=mode,available=True,
+            permission_granted=True,metered=False,max_payload_bytes=100)],
+            **(dict(allowed=["lan","bluetooth"],scope_revision="scope-1",
+            nonce="a"*32,issued_at="2026-11-15T00:00:00+00:00")|kw))
+    a,b,c=offer("lan"),offer("bluetooth"),offer("https_relay")
+    assert [x["plan"]["mode"] for x in (a,b,c)]==["lan","bluetooth","offline"]
+    assert len({x["transfer_identity_sha256"] for x in (a,b,c)})==1
+    assert len({x["offer_sha256"] for x in (a,b,c)})==3
+    assert not a["execution_authorized"] and not a["plan"]["peer_authenticated"]
+    for key,value in (("target_node_id","other"),("source_sha256","b"*64),
+                      ("size_bytes",33),("target_relative_path","other/x.cgx")):
+        assert offer("lan",dict(env,**{key:value}))["transfer_identity_sha256"]!=a["transfer_identity_sha256"]
+    with pytest.raises(NodeExchangeError): offer("lan",dict(env,target_node_id="desktop"))
+    with pytest.raises(NodeExchangeError): offer("lan",nonce="bad")

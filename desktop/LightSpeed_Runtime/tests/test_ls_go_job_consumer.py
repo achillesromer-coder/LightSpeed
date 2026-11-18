@@ -1729,3 +1729,62 @@ def test_live_consumer_keeps_heartbeat_without_claiming_at_high_cpu(tmp_path, mo
     assert calls["job"]==1
     assert calls["heartbeat"]==["paused_cpu_pressure","paused_cpu_pressure","ready"]
     assert (ls_go_job_consumer.status_receipt_path(root)).exists()
+
+
+
+def test_shared_execution_pool_fences_other_claim_and_route_changes(tmp_path):
+    shell=tmp_path/"App";configure_shell(shell)
+    db=configure_db(tmp_path/"pool.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.executemany("INSERT INTO tasks (id,status,metadata_json) VALUES (?,'queued','{}')",[(51,),(52,)])
+        conn.executemany("INSERT INTO jobs (id,job_type,status,params_json,metadata_json,task_id,project_id,z_context) VALUES (?,'ls_go_command','pending',?,'{}',?,'P','Neo')",
+            [(61,json.dumps({"command_id":"C61","action_type":"review_only"}),51),
+             (62,json.dumps({"command_id":"C62","action_type":"review_only"}),52)])
+    a=ls_go_job_consumer.LSGoJobConsumer(shell,db=db)
+    b=ls_go_job_consumer.LSGoJobConsumer(shell,db=db)
+    first,second=a.pending_jobs()
+    assert a._claim_job(61,expected_job=first)
+    assert not b._claim_job(62,expected_job=second)
+    assert b.execution_pool_review()["state"]=="recovery_hold"
+    assert b.process_once()["results_written"]==0
+    a._require_live_claim(61)
+    db.execute_update("UPDATE jobs SET z_context='Oracle' WHERE id=61")
+    with pytest.raises(RuntimeError,match="revoked or changed"):a._require_live_claim(61)
+    db.execute_update("UPDATE jobs SET z_context='Neo' WHERE id=61")
+    claim=a._execution_claims[61]
+    db.execute_update("UPDATE jobs SET metadata_json=? WHERE id=61",
+        (json.dumps({"ls_go_execution_claim":dict(claim,purpose="reconcile")}),))
+    with pytest.raises(RuntimeError,match="revoked or changed"):a._require_live_claim(61)
+    db.execute_update("UPDATE jobs SET metadata_json=? WHERE id=61",
+        (json.dumps({"ls_go_execution_claim":claim}),))
+    a._require_live_claim(61)
+    receipt={"command_id":"C61","job_id":61,"task_id":51,"status":"completed",
+             "execution_claim":dict(claim,purpose="reconcile")}
+    with pytest.raises(RuntimeError,match="receipt claim differs"):a._finish_claimed_job(61,receipt=receipt)
+    receipt["execution_claim"]=claim
+    a._finish_claimed_job(61,receipt=receipt)
+    assert b.execution_pool_review()["pending_count"]==1
+    assert b._claim_job(62,expected_job=second)
+
+
+def test_pool_holds_ungated_multi_floor_live_dispatch(tmp_path,monkeypatch):
+    consumer=ls_go_job_consumer.LSGoJobConsumer(tmp_path)
+    monkeypatch.setattr(ls_go_job_consumer,"run_supervised_workflow",lambda *a,**kw:pytest.fail("ungated model workflow"))
+    monkeypatch.setattr(ls_go_job_consumer,"run_cycle",lambda *a,**kw:pytest.fail("ungated model cycle"))
+    for action in ("cognigrex_workflow","local_agent_cycle"):
+        result=consumer._execute_action(action_type=action,params={"execute":True,"instruction":"fixture"},
+            command_id="C",job={"id":1},envelope=None,envelope_count=0)
+        assert result["status"]=="held"
+
+
+
+def test_pool_invalid_metadata_fails_closed(tmp_path):
+    shell=tmp_path/"App";configure_shell(shell)
+    db=configure_db(tmp_path/"pool.db")
+    with sqlite3.connect(db.path) as conn:
+        conn.execute("INSERT INTO jobs (id,job_type,status,params_json,metadata_json) VALUES (61,'ls_go_command','pending','{}','not json')")
+        conn.execute("INSERT INTO jobs (id,job_type,status,params_json,metadata_json) VALUES (62,'ls_go_command','pending','{}','{}')")
+    c=ls_go_job_consumer.LSGoJobConsumer(shell,db=db)
+    assert c.execution_pool_review()["malformed_metadata_count"]==1
+    assert c.process_once()["results_written"]==0
+    assert all(not c._claim_job(j["id"],expected_job=j) for j in c.pending_jobs())

@@ -2,6 +2,9 @@ from __future__ import annotations
 
 """Typed read-only wrappers for the existing CGX assurance/custodial preflight chain."""
 
+from functools import lru_cache
+import importlib
+import os
 from pathlib import Path
 import sys
 from typing import Any, Iterable
@@ -9,13 +12,55 @@ from typing import Any, Iterable
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_ROOT = REPO_ROOT / "scripts"
-if str(SCRIPTS_ROOT) not in sys.path:
-    sys.path.insert(0, str(SCRIPTS_ROOT))
+INSTALLED_SCRIPTS_ROOT = Path(
+    os.environ.get("LIGHTSPEED_CGX_SCRIPT_ROOT", r"D:\LightSpeed\Tools\cgx_preflight")
+)
+REQUIRED_SCRIPT_MODULES = (
+    "cgx_assurance_route.py",
+    "cgx_assurance_preflight.py",
+    "resolve_cgx_extensions.py",
+    "cgx_custodial_preflight.py",
+)
 
-from cgx_assurance_route import route as assurance_route  # type: ignore
-from cgx_assurance_preflight import assess as assurance_assess  # type: ignore
-from resolve_cgx_extensions import resolve as custodial_resolve  # type: ignore
-from cgx_custodial_preflight import assess_custodial  # type: ignore
+
+@lru_cache(maxsize=1)
+def _preflight_functions():
+    """Load the source-owned policy modules only when a preflight is requested.
+
+    Importing the runtime package must remain standalone.  A real preflight still
+    fails closed unless either the canonical repository scripts or their verified
+    installed copy is present.
+    """
+    configured_source = os.environ.get("LIGHTSPEED_SOURCE_ROOT", "").strip()
+    candidates = [
+        Path(configured_source) / "scripts" if configured_source else None,
+        SCRIPTS_ROOT,
+        INSTALLED_SCRIPTS_ROOT,
+    ]
+    selected = next(
+        (
+            candidate
+            for candidate in candidates
+            if candidate is not None
+            and all((candidate / name).is_file() for name in REQUIRED_SCRIPT_MODULES)
+        ),
+        None,
+    )
+    if selected is None:
+        raise RuntimeError("CGX preflight policy modules are not installed")
+    selected_text = str(selected)
+    if selected_text not in sys.path:
+        sys.path.insert(0, selected_text)
+    assurance_route = importlib.import_module("cgx_assurance_route")
+    assurance_preflight = importlib.import_module("cgx_assurance_preflight")
+    custodial_route = importlib.import_module("resolve_cgx_extensions")
+    custodial_preflight = importlib.import_module("cgx_custodial_preflight")
+    return (
+        assurance_route.route,
+        assurance_preflight.assess,
+        custodial_route.resolve,
+        custodial_preflight.assess_custodial,
+    )
 
 
 VALID_DOMAINS = {"romer", "eco", "emassc", "lightspeed"}
@@ -67,6 +112,9 @@ def build_assurance_preflight(
     cascade = _normalise_cascade(cascade_class)
     tag_list = _normalise_tags(tags)
 
+    assurance_route, assurance_assess, _custodial_resolve, _assess_custodial = (
+        _preflight_functions()
+    )
     resolution = assurance_route(domain, depth, cascade, tag_list)
     decision, reasons = assurance_assess(resolution, assessment)
     return {
@@ -99,6 +147,9 @@ def build_custodial_preflight(
     cascade = _normalise_cascade(cascade_class)
     tag_list = _normalise_tags(tags)
 
+    _assurance_route, _assurance_assess, custodial_resolve, assess_custodial = (
+        _preflight_functions()
+    )
     resolution = custodial_resolve(
         domain,
         depth,

@@ -251,5 +251,86 @@
       "missing_receipt": "HOLD_NOT_LIVE_VERIFIED"
     },
     "activation_status": "SOURCE_CONTRACT_STAGED_ONLY_NOT_A_RUNTIME_COMMAND"
+  },
+  "dynamic_system_research": {
+    "status": "PROPOSED_PRE_MINT_RESEARCH_TARGET",
+    "candidate_name": "Achilles Dynamic System",
+    "identity_policy": "Extend the existing Achilles identity; a single evolving lineage, immutable revisions and rollback under Cognigrex, no parallel root or mint by this record.",
+    "model_reference": {
+      "tag": "gpt-oss:120b",
+      "purpose": "First integrated CGX AI candidate reference backend; qualification and rights pending",
+      "weights_policy": "Keep original bytes content-addressed and separately resolvable; do not assert lossless compression or equivalent reasoning from geometry alone. Current local models remain usable."
+    },
+    "dependency_policy": {
+      "geometry": "T173 proposed catalogue; admit only independently validated facets with stable identities; T174 reserved non-mintable sentinel",
+      "psi": "Upcoming complementary dependency, not assumed implemented",
+      "bootstrap": "Reuse LOAD Lite minimum handshake and LOAD full hydration; existing resolver, FileSpace and DataSpace; HTML, CGX and other wrappers are representations, not new identities."
+    },
+    "handshake": {
+      "bottom_up": "Leaf asserts content hash, type, schema, rights, evidence, capability and revision; parent resolves dependencies and verifies receipt.",
+      "top_down": "Root declares intent, bounded authority, required facets, dependencies and proof criteria; recurse only along relevant paths; fetch missing bytes by hash."
+    },
+    "reasoning_layer": {
+      "geometry": "Encode typed graph structure, routing, reusable procedures, constraints and provenance as nested geometric addresses with explicit reversible mapping. Do not conflate shape with truth.",
+      "model": "Interchangeable inference providers; route by task, capability, budget and measured performance; preserve provenance and versioned audit.",
+      "evolution": "One stable identity with append-only reviewed state transitions, independent tests and rollback; no autonomous self-approval."
+    },
+    "trial": {
+      "stage_1": "Demonstrate deterministic encode/decode on validated or explicitly synthetic small graph; test collision, ordering, invalid facet, missing dependency and rights denial.",
+      "stage_2": "Compare full context to sparse hydration on held-out tasks; report bytes, context tokens, latency, task accuracy, provenance and failures.",
+      "stage_3": "Compare equivalent prompts with reference backend where memory and license permit; record differences, no fidelity claim without measurement.",
+      "stage_4": "Verify independent host round-trip and reproducible package; qualify signed DBR and founder mint decision."
+    },
+    "claim_limits": [
+      "Shorthand layer is not proof of model-weight compression.",
+      "Provenance and stable identity do not establish scientific validity or model equivalence.",
+      "No mint, release, new root or model deployment authorised by this specification."
+    ],
+    "program_scope": {
+      "owner": "Achilles P.A. leads implementation with Neo as Zenith and existing specialists; no duplicate runtime",
+      "system": "One Achilles Dynamic System identity under the existing Cognigrex parent. Private P.A. and public Achilles are permissioned projections, not separate identities, models or data stores.",
+      "priority": "Complete and integrate the existing assistant, agentic, custodial, knowledge, execution and continuity components first; qualify their learning and operations before calling the integrated intelligence complete.",
+      "parallel_experiment": "Separately test a reversible CGX representation of GPT-OSS 120B alone against an unchanged reference. Do not confuse packaging, graph shorthand, weight compression, distillation, or continued training. A successful model-only trial informs but does not establish system-wide fidelity.",
+      "public_boundary": "Public projections use independently released material and separate permission scopes. Private owner context, secrets, unlicensed data and private training examples never automatically flow to the public projection."
+    },
+    "learning_and_evolution": {
+      "intake": "Ingest permitted materials, GPT outputs, local analyses and specialist contributions with source identity, revision, rights, quote or evidence anchors and distinction between observation, hypothesis and model output.",
+      "stages": [
+        "R0 preserve original bytes or resolvable source identity",
+        "R1 reversible extraction and loss accounting",
+        "R2 independently qualify typed knowledge, procedures and contradictions",
+        "Resolve geometry facets and deduplicate against canonical identity",
+        "Evaluate off-line with held-out tasks and provenance checks",
+        "Promote a reversible delta only under existing authority; preserve rejected hypotheses and recovery paths"
+      ],
+      "mechanisms": {
+        "retrieval_memory": "Immediate evidence-linked contextual learning without changing weights",
+        "procedural_learning": "Versioned, tested workflows and skill routing in existing capabilities",
+        "weight_training": "Optional separately authorised, rights-qualified fine-tuning or distillation only after baseline and evaluation; do not imply current ingestion trains weights"
+      },
+      "custodial_rubric": "Apply the existing universal rubric consistently; disclose assumptions and bias, preserve dissent, test symmetry, evidence quality and uncertainty. No claim of absolute neutrality.",
+      "agency": "Persistent identity and bounded operational discretion, explicit authority and ability to decline inappropriate or unsupported tasks; do not equate assistant persona with consciousness or self-granted legal authority.",
+      "evaluation": [
+        "baseline current Achilles P.A. and public-safe projection across representative tasks",
+        "test source fidelity, cross-format resolution, permission isolation and contradictory evidence",
+        "measure task success, context bytes/tokens, inference latency, peak memory and energy where measurable",
+        "test reversible updates, regression and recovery; evaluate weight changes separately if proposed",
+        "qualify independent validation and signed DBR before founder mint"
+      ]
+    },
+    "closure_sequence": {
+      "order": [
+        "Achilles P.A. operational baseline and learning/oversight acceptance",
+        "Neo and all resident/domain assistants: qualify existing capability roles and dependencies",
+        "Cross-system consolidation: hybridise equivalent functions from Raphael, CGX, UniSpace, FileSpace, DataSpace, LOAD, legacy and native systems",
+        "One-of-everything base library: qualify minimal reusable primitives, geometry/ternary/language/recursive relations and binary bridges, with unique identities and explicit compositions",
+        "Package verified canonical family, independent acceptance and final signed DBR; founder-approved mint only",
+        "Post-mint growth via typed semantic keys, shareable permissioned views, compositions and reviewed corrections of the same identities; avoid redundant versions or compulsory conversion of all source files"
+      ],
+      "hybridisation": "Extract common invariants, equations, units, coordinate/domain transformations, interfaces and runnable operations across disciplines; test equivalence and differences, retain non-equivalent capabilities and provenance. Do not merely collocate sources or equate a geometric representation with empirical proof.",
+      "representation": "One semantic identity per independently qualified base abstraction; original binary or native files may remain external and hash-bound. Universality means resolution and composition, not storing every possible expansion. UOS/UniSpace, UA/AI, HTML and CGX are permissioned operation surfaces of the same base graph, not competing authorities.",
+      "basis": "T173 comprises 173 proposed nonzero facet positions. Position 174 denotes zero/digital-universe sentinel only, non-mintable; ternary grammar and nesting transitions are qualified separately. No assumption that the full shape set or adjacency has passed independent geometric validation.",
+      "evidence": "Reuse the existing 100-unit closure gradient, no unmeasured completion claims; synthetic transition and S92 nested hydration tests are partial implementation evidence, not native DBR or complete T173 acceptance. Preserve legacy source bytes, immutable revisions, rollback and rights."
+    }
   }
 }

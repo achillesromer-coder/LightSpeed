@@ -48,3 +48,65 @@ class ProductTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             p = Path(d); self.fixture(p)
             self.assertFalse(module.verify(p)['embedded_code_executed'])
+
+
+class NestedReferenceTests(unittest.TestCase):
+    def test_nested(self):
+        import io
+        files={'a/x':b'x','a/b/y':b'y','z':b'x'}
+        e=[dict(path=k,size_bytes=len(v),sha256=hashlib.sha256(v).hexdigest()) for k,v in files.items()]
+        t=[dict(x,bytes=x['size_bytes'],semantic_path=['synthetic'],cell=x['path']) for x in e]
+        root=module.nested_reference_index(e,t)
+        self.assertEqual(root,module.nested_reference_index(e[::-1],t[::-1]))
+        b=io.BytesIO()
+        with zipfile.ZipFile(b,'w') as z:
+            for k,v in files.items(): z.writestr(k,v)
+        with zipfile.ZipFile(b) as z:
+            self.assertEqual(module.hydrate_nested(z,root,(),allowed_paths=set(files),max_bytes=3),files)
+            self.assertEqual(module.hydrate_nested(z,root,('a','b'),allowed_paths={'a/b/y'},max_bytes=1),{'a/b/y':b'y'})
+            with self.assertRaises(PermissionError): module.hydrate_nested(z,root,('a',),allowed_paths={'a/x'},max_bytes=3)
+            with self.assertRaises(ValueError): module.hydrate_nested(z,root,(),allowed_paths=set(files),max_bytes=2)
+    def test_synthetic_grammar(self):
+        r=[(1,None,2),(1,2,3),(1,2,4),(4,2,1),(1,3,None)]; v={1,2,3,4}
+        self.assertEqual(module.facet_transition_options(r,v,parent=1,neighbor=2),(3,4))
+        self.assertEqual(module.facet_transition_options(r,v,parent=1,neighbor=3,direction='previous'),(2,))
+        self.assertEqual(module.facet_transition_options(r,v,parent=4,neighbor=2),(1,))
+        with self.assertRaises(ValueError): module.facet_transition_options(r,v|{174},parent=1,neighbor=2)
+
+def test_facet_strict_types_and_reserved_sentinel():
+    for v in (True,1.0,0,174):
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,2)],[1,2,v],parent=1,neighbor=None)
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,2)],[1,2],parent=v,neighbor=None)
+        with __import__("pytest").raises(ValueError):
+            module.facet_transition_options([(1,None,v)],[1,2],parent=1,neighbor=None)
+
+
+
+def test_exact_convex_mesh_integer_coordinates_and_incidence():
+    import pytest
+    v=[[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+    f=[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]
+    r=module.exact_convex_mesh_review(v,f)
+    assert (r["vertices"],r["edges"],r["faces"],r["six_times_volume"])==(4,6,4,1)
+    assert not r["t173_catalogue_admitted"]
+    assert module.exact_convex_mesh_review([[10+2*x,20+2*y,30+2*z] for x,y,z in v],f)["six_times_volume"]==8
+    cv=[[0,0,0],[1,0,0],[1,1,0],[0,1,0],[0,0,1],[1,0,1],[1,1,1],[0,1,1]]
+    cf=[[0,3,2,1],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]]
+    cube=module.exact_convex_mesh_review(cv,cf)
+    assert (cube["vertices"],cube["edges"],cube["faces"],cube["six_times_volume"])==(8,12,6,6)
+    for verts,faces in ((v,f[:-1]),(v,[f[0][::-1]]+f[1:]),(v+[v[0]],f),(cv,[[0,2,3,1]]+cf[1:]),([[True,0,0]]+v[1:],f)):
+        with pytest.raises(ValueError):module.exact_convex_mesh_review(verts,faces)
+
+
+
+def test_integer_mesh_canonical_identity_fixed_frame():
+    v=[[0,0,0],[1,0,0],[0,1,0],[0,0,1]]
+    f=[[0,2,1],[0,1,3],[0,3,2],[1,2,3]]
+    a=module.canonical_integer_mesh_review(v,f)
+    order=[3,1,0,2];mapping={old:new for new,old in enumerate(order)}
+    rotated_loops=[list(map(mapping.__getitem__,face[1:]+face[:1])) for face in f[::-1]]
+    b=module.canonical_integer_mesh_review([[10+x,20+y,30+z] for x,y,z in [v[i] for i in order]],rotated_loops)
+    assert a["sha256"]==b["sha256"] and a["canonical"]==b["canonical"]
+    assert a["sha256"]!=module.canonical_integer_mesh_review([[2*x,2*y,2*z] for x,y,z in v],f)["sha256"]

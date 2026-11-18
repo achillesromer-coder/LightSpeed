@@ -4,6 +4,7 @@ import {
   createCommandEnvelope,
   nodeExchangePresentation,
   objectContextApiPath,
+  sourceReviewApiPath,
   projectFileApiPath,
   remoteAccessPresentation,
   resolveDesktopOrigin,
@@ -121,6 +122,17 @@ describe("LS GO desktop command routing", () => {
     expect(() => objectContextApiPath("   " )).toThrow("object query is required");
   });
 
+  it("binds owner source reviews to existing object-context route", () => {
+    const sha="a".repeat(64), other="b".repeat(64);
+    expect(sourceReviewApiPath("twin")).toBe("/api/v1/object-context/index?review_mode=twin-index");
+    const binding={mode:"twin" as const,occurrence_id:"intersol",task_id:"CGX-OBJ-004",
+      index_sha256:sha,occurrence_sha256:other,source_sha256:null};
+    expect(sourceReviewApiPath("twin",binding)).toBe("/api/v1/object-context/intersol?review_mode=twin&task_id=CGX-OBJ-004&expected_index_sha256="+sha+"&expected_occurrence_sha256="+other);
+    expect(()=>sourceReviewApiPath("atlas",binding)).toThrow();
+    expect(()=>sourceReviewApiPath("twin",{...binding,occurrence_id:"../intersol"})).toThrow();
+    expect(()=>sourceReviewApiPath("twin",{...binding,index_sha256:"bad"})).toThrow();
+  });
+
   it("encodes project file routes segment-by-segment", () => {
     expect(projectFileApiPath("project alpha", "results/a file.json")).toBe(
       "/api/v1/projects/project%20alpha/files/results/a%20file.json",
@@ -132,6 +144,19 @@ describe("LS GO desktop command routing", () => {
     expect(resultReceiptApiPath("LSGO RESULT/held")).toBe(
       "/api/v1/results/LSGO%20RESULT%2Fheld",
     );
+  });
+
+  it("binds FileSpace preview to its selected metadata revision", () => {
+    const sha = "a".repeat(64);
+    expect(projectFileApiPath("project","nested/read me.txt",sha)).toBe("/api/v1/projects/project/files/nested/read%20me.txt?expected_metadata_revision="+sha);
+    expect(() => projectFileApiPath("project","file","bad")).toThrow();
+  });
+
+  it("binds receipt retrieval to its selected SHA-256", () => {
+    const sha = "a".repeat(64);
+    expect(resultReceiptApiPath("receipt", sha)).toBe("/api/v1/results/receipt?expected_sha256=" + sha);
+    expect(() => resultReceiptApiPath("receipt", "bad")).toThrow();
+    expect(() => resultReceiptApiPath(undefined, sha)).toThrow();
   });
 
   it("distinguishes local outbox staging from an owner-approved Drive write", () => {

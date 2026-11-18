@@ -142,3 +142,109 @@ def test_atlas_owner_range_and_cardinality_are_exact() -> None:
     assert ATLAS["authority"]["drive_range"] == "A1:V412"
     assert ATLAS["record_count"] == len(ATLAS["records"])
     assert ATLAS["status"].endswith("GAP-CLOSURE-0.4")
+
+
+
+def test_atlas_workset_exact_source_and_occurrence_scope(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / 'desktop' / 'LightSpeed_Runtime'))
+    import hashlib
+    import pytest
+    from lightspeed_runtime.cgx_cross_analysis import atlas_review_workset,hydrate_atlas_review_rows,CGXCrossAnalysisError
+    raw=(BASE/"component_geometry_atlas_v0_1.json").read_bytes()
+    stamp=hashlib.sha256(raw).hexdigest()
+    w=atlas_review_workset(raw,expected_sha256=stamp)
+    assert w["record_count"]==411 and set(w["references"])==set(by_id(ATLAS))
+    assert w==atlas_review_workset(raw,expected_sha256=stamp)
+    assert not w["implementation_units_completed"] and not w["native_admitted"]
+    keys=sorted(w["references"])[:2]
+    def read(sel=keys,budget=100000,authorise=lambda *a:True,source=raw):
+        return hydrate_atlas_review_rows(source,expected_sha256=stamp,
+            expected_workset_sha256=w["workset_sha256"],selected=sel,task_id="CGX-OBJ-005",
+            scope_revision="fixture",max_bytes=budget,authorise=authorise)
+    out,receipt=read()
+    assert {k:json.loads(v) for k,v in out.items()}=={k:by_id(ATLAS)[k] for k in keys}
+    assert not receipt["execution_authorized"]
+    with pytest.raises(PermissionError):read(authorise=lambda t,k,*a:k==keys[0])
+    with pytest.raises(CGXCrossAnalysisError):read(budget=1)
+    with pytest.raises(CGXCrossAnalysisError):read(source=raw+b" ")
+    assert read(keys[::-1])==(out,receipt)
+    seq=iter([True,True,False])
+    with pytest.raises(PermissionError):read(keys[:1],authorise=lambda *a:next(seq))
+    d=json.loads(raw);d["records"][1]["ID"]=d["records"][0]["ID"]
+    changed=json.dumps(d).encode()
+    with pytest.raises(CGXCrossAnalysisError):
+        atlas_review_workset(changed,expected_sha256=hashlib.sha256(changed).hexdigest())
+
+
+def test_launch_frontier_review_preserves_dependency_holds():
+    import importlib.util
+    spec=importlib.util.spec_from_file_location("frontier",ROOT/"scripts/validate_cgp_ies_launch_frontier.py")
+    module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+    q=module.load("cgp_ies_launch_frontier_queue.json")
+    rows={r["task_id"]:r for r in module.frontier_review(q)}
+    assert len(rows)==16
+    assert all(not r["execution_authorized"] for r in rows.values())
+    assert rows["CGX-LAUNCH-009"]["state"]=="DEPENDENCY_HOLD"
+    assert rows["CGX-OBJ-005"]["state"]=="SOURCE_ASSEMBLY_CANDIDATE"
+    assert rows["CGX-LAUNCH-007"]["state"]=="DEPENDENCY_HOLD"
+
+
+
+def test_object_workset_candidate_source_bindings_no_instance_uplift():
+    import hashlib,importlib.util
+    import pytest
+    spec=importlib.util.spec_from_file_location("frontier",ROOT/"scripts/validate_cgp_ies_launch_frontier.py")
+    m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+    q=m.load("cgp_ies_launch_frontier_queue.json")
+    schema=m.load("cgp_ies_object_envelope_schema.json")
+    a=m.object_source_review(q,schema)
+    assert a==m.object_source_review(q,schema)
+    assert len(a["objects"])==5 and len(a["source_refs"])==9
+    for path,r in a["source_refs"].items():
+        assert hashlib.sha256((ROOT/path).read_bytes()).hexdigest()==r["source_sha256"]
+    by_task={r["task_id"]:r for r in a["objects"]}
+    assert by_task["CGX-OBJ-001"]["existing_identity_references"][0]["semantic_object_id"]=="SPACE-01"
+    assert by_task["CGX-OBJ-004"]["existing_identity_references"][0]["semantic_object_id"]=="INF-001"
+    assert not by_task["CGX-OBJ-003"]["existing_identity_references"]
+    for row in a["objects"]:
+        assert not row["bound_instance_fields"] and not row["execution_authorized"]
+        assert row["unresolved_instance_fields"]==schema["required_fields"]
+        assert row["replication_default"]=="0 consequential autonomous children"
+    # Explicitly hold the actual self-lifecycle task, regardless of row order.
+    next(r for r in q["tasks"] if r["task_id"]=="CGX-OBJ-005")["state"]="HELD"
+    with pytest.raises(ValueError):m.object_source_review(q,schema)
+
+
+def test_atlas_collection_all_occurrences_sparse_read(monkeypatch):
+    monkeypatch.syspath_prepend(str(ROOT / 'desktop' / 'LightSpeed_Runtime'))
+    import hashlib, io, json, zipfile
+    import pytest
+    from lightspeed_runtime.cgx_cross_analysis import (
+        atlas_review_workset, write_atlas_review_collection,
+        hydrate_review_collection, CGXCrossAnalysisError)
+    raw=(Path(__file__).resolve().parents[1]/"cgx/component_atlas/component_geometry_atlas_v0_1.json").read_bytes()
+    source=hashlib.sha256(raw).hexdigest()
+    index=atlas_review_workset(raw,expected_sha256=source)
+    expected={r["ID"]:r for r in json.loads(raw)["records"]}
+    stream=io.BytesIO()
+    with zipfile.ZipFile(stream,"w") as z:
+        desc,h=write_atlas_review_collection(z,raw,expected_sha256=source,
+            expected_workset_sha256=index["workset_sha256"],task_id="atlas-closure")
+    assert set(desc["entries"])==set(expected)
+    def auth(task,k,rev,scope,digest):
+        return (task,rev,scope,digest)==("atlas-closure",source,"review",h) and k in expected
+    def read(z,keys,authorise=auth):
+        return hydrate_review_collection(z,desc,h,task_id="atlas-closure",
+            source_revision=source,scope_revision="review",selected=keys,
+            max_bytes=1024*1024,authorise=authorise)
+    keys=sorted(expected)
+    with zipfile.ZipFile(stream) as z:
+        for start in range(0,len(keys),64):
+            out,receipt=read(z,keys[start:start+64])
+            assert all(json.loads(v)==expected[k] for k,v in out.items())
+            assert len(out)==len(keys[start:start+64])
+            assert not receipt["native_admitted"]
+        with pytest.raises(PermissionError):
+            read(z,[keys[0]],lambda *a:False)
+        with pytest.raises(CGXCrossAnalysisError):
+            read(z,keys[:65])

@@ -74,7 +74,31 @@ def _queue_closed(root: Path) -> bool:
         payload = json.loads(queue_path.read_text(encoding="utf-8"))
     except Exception:
         return False
-    return bool(payload.get("action_count")) and int(payload.get("pending_count", 1) or 0) == 0
+    from lightspeed_runtime.execution_queues import ALL_ACTIONS
+    return queue_closure_verified(payload,expected_ids={a["action_id"] for a in ALL_ACTIONS})
+
+
+def queue_closure_verified(payload: dict, *, expected_ids: set[str] | None = None) -> bool:
+    """Require exact completed identities; a missing summary is not closure."""
+    if type(payload) is not dict:
+        return False
+    actions=payload.get("actions")
+    if (type(actions) is not list or not 1<=len(actions)<=10000
+            or type(payload.get("action_count")) is not int
+            or type(payload.get("pending_count")) is not int
+            or type(payload.get("completed_count")) is not int
+            or payload["action_count"]!=len(actions)
+            or payload["pending_count"]!=0
+            or payload["completed_count"]!=len(actions)):
+        return False
+    ids=set()
+    for row in actions:
+        if (type(row) is not dict or type(row.get("action_id")) is not str
+                or not row["action_id"] or len(row["action_id"])>256
+                or row["action_id"] in ids or row.get("status")!="completed"):
+            return False
+        ids.add(row["action_id"])
+    return expected_ids is None or ids==expected_ids
 
 
 def build_closure_readiness(root: Path, *, output_path: Path | None = None) -> dict:
