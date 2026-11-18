@@ -1,0 +1,37 @@
+{
+  "schema": "CGX-BATCH-EXECUTION-RECEIPT/1",
+  "window_start_brisbane": "2026-11-18T16:48:00+10:00",
+  "target_checkpoint_brisbane": "2026-11-18T20:48:00+10:00",
+  "classification": "SOURCE_FREE_PUBLIC_REVIEW_RECEIPT",
+  "source_files_scanned": 64,
+  "unique_exact_byte_objects": 59,
+  "byte_alias_references": 5,
+  "source_bytes_scanned": 70110021,
+  "rebuilds": [
+    {
+      "artifact": "Earth.cgx.html",
+      "sha256": "a9ee89e8e234f3c2426513dad26025c0206401708658c27443b673d4885490ff"
+    },
+    {
+      "artifact": "Eco-Grex.cgx.html",
+      "sha256": "d92944764f89bed84125f3e518a2e52f84bdb50abcc2b561101b2d28d0ebccc1"
+    }
+  ],
+  "workbook_export_sha256": "6f1184e889f5dd0a9c924c15ca12799ca3599179907407ecb9af6cc78ce20450",
+  "regression": {
+    "earth_recursive": 8231,
+    "eco_node": 92,
+    "earth_browser": 94,
+    "eco_browser": 70,
+    "eco_evaluation": 88,
+    "batch_planner": 136,
+    "total": 8711,
+    "uncaught_js_errors": 0,
+    "external_requests": 0
+  },
+  "git_source_claims": "metadata and code review only; private workbooks and content are retained in owner-local source storage",
+  "native_mint": false,
+  "model_fine_tuned": false,
+  "host_execution": false,
+  "public_release": false
+}
