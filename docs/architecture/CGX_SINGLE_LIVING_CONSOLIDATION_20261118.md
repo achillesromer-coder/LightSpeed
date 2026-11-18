@@ -113,3 +113,35 @@ CGX mint or independent scientific verification.
 Completeness of these 160 **files** is not product completeness. Upstream
 source meshes, engineering CAD, unit validation, derivative provenance,
 rights and physical quality controls remain separate acceptance gates.
+
+## Shared cross-Grex contracts — source-qualified parent graph
+
+The same read-only consolidation receipt now resolves the existing
+`cgx/domain_templates/domains.json`,
+`domain_child_identity_registry.json` and
+`cognigrex_parent_topology.json` as a single graph. It checks every
+child against its original domain namespace, parent identity, physical
+carrier filename and principal agent, with per-file SHA-256 for all
+required source registries and shared contracts.
+
+Observed source qualification:
+- Parent semantic root: `cgx:root:cognigrex` / `Cognigrex.cgx`.
+- Three direct domains: Römer / `Romer.cgx` (Neo);
+  Eco / `Eco.cgx` (Athene); EMASSC / `EMASSC.cgx` (Achilles).
+- Each direct domain retains its own semantic library, type registry and
+  relation registry: nine existing source files, all tracked and readable.
+- Forty-eight existing parent shared contracts resolved by exact file
+  reference and SHA-256, with no missing source references.
+- LightSpeed remains nested under EMASSC as
+  `cgx:domain:lightspeed` / `LS.cgx`; alternate
+  `LightSpeed.cgx` is an observed exact-byte alias, not a new domain.
+- Negative tests fail closed on missing lease contract and tampered
+  child-parent identity. The related regression passes 18 backend tests.
+
+This checks **source linkage**, not authenticated runtime admission.
+No cross-Grex semantic authority, source rights, release signature,
+training permission, DataSpace network identity, native mint, or
+filesystem deletion follows from a successful source-only hash match.
+The next gate remains host owner/lease/source provenance and DBR
+readback during reviewed native acceptance; do not install a duplicate
+Cognigrex or flatten independently governed child-domain meanings.

@@ -151,6 +151,132 @@ def review_digital_twin_assets(repo: Path, tracked: list[str]) -> dict:
             "deletion_authorized": False}
 
 
+def review_cgx_domain_contracts(repo: Path, tracked: list[str]) -> dict:
+    """Reconcile parent/child contracts by stable domain ID, not carrier hash."""
+    folder = "cgx/domain_templates/"
+    tracked_set = set(tracked)
+    names = ("domains.json", "domain_child_identity_registry.json",
+             "cognigrex_parent_topology.json")
+    source = {}
+    parsed = {}
+    for name in names:
+        relative = folder + name
+        asset = _asset_record(repo, relative, tracked_set)
+        source[name] = asset
+        if asset["state"] != "OBSERVED_SOURCE_BYTES":
+            return {"state": "HOLD_MISSING_PARENT_CONTRACT",
+                    "sources": source, "children": [], "shared_contracts": [],
+                    "missing_source_paths": [relative],
+                    "semantic_authority_verified": False,
+                    "native_mint_authorized": False}
+        parsed[name] = json.loads((repo / relative).read_text(encoding="utf-8"))
+    manifest = parsed["domains.json"]
+    identity = parsed["domain_child_identity_registry.json"]
+    topology = parsed["cognigrex_parent_topology.json"]
+    if (not isinstance(manifest, dict) or not isinstance(identity, dict) or
+            not isinstance(topology, dict) or
+            not isinstance(manifest.get("domains"), dict) or
+            not isinstance(manifest.get("shared_contracts"), dict) or
+            not isinstance(identity.get("children"), dict) or
+            not isinstance(topology.get("root"), dict) or
+            manifest.get("parent_filespace", {}).get("file") != "Cognigrex.cgx" or
+            identity.get("root", {}).get("semantic_object_id") != "cgx:root:cognigrex"):
+        raise ValueError("invalid or mismatched CGX domain parent contracts")
+    expected = ("romer", "eco", "emassc")
+    if set(manifest["domains"]) != set(expected):
+        raise ValueError("unexpected domain families in parent registry")
+    child_refs = []
+    missing = []
+    root_children = topology["root"].get("children")
+    if not isinstance(root_children, list):
+        raise ValueError("parent topology children unavailable")
+    known = {row.get("id"): row for row in root_children if isinstance(row, dict)}
+    if set(known) != set(expected):
+        raise ValueError("parent topology domain identities disagree")
+    domain_count = 0
+    for domain in expected:
+        d = manifest["domains"][domain]
+        ident = identity["children"].get(domain)
+        ref = known[domain]
+        if not isinstance(d, dict) or not isinstance(ident, dict):
+            raise ValueError("invalid child domain definition")
+        if any(ident.get(k) != v for k, v in {
+            "domain_id": domain,
+            "semantic_object_id": "cgx:domain:" + domain,
+            "filespace": d.get("file"),
+            "namespace": d.get("namespace"),
+            "parent_semantic_object_id": "cgx:root:cognigrex",
+        }.items()) or ref.get("file") != d.get("file"):
+            raise ValueError("inconsistent child semantic identity or carrier filename")
+        if ref.get("principal_agent") != d.get("principal_agent"):
+            raise ValueError("child principal agent disagreement")
+        entry = {}
+        for k in ("semantic_library", "type_registry", "relation_registry"):
+            value = d.get(k)
+            if not isinstance(value, str) or "/" in value or "\\" in value:
+                raise ValueError("invalid child registry reference")
+            relative = folder + value
+            record = _asset_record(repo, relative, tracked_set)
+            entry[k] = record
+            if record["state"] != "OBSERVED_SOURCE_BYTES":
+                missing.append(relative)
+        domain_count += len(entry)
+        child_refs.append({
+            "domain": domain,
+            "semantic_object_id": ident["semantic_object_id"],
+            "filespace": ident["filespace"],
+            "principal_agent": ref["principal_agent"],
+            "registries": entry,
+            "domain_semantic_authority_proven": False,
+            "source_readback_only": True,
+        })
+    nested = manifest["domains"]["emassc"].get("children", {}).get("lightspeed")
+    ls_identity = identity["children"].get("lightspeed")
+    if (not isinstance(nested, dict) or not isinstance(ls_identity, dict) or
+            nested.get("file") != "LS.cgx" or
+            ls_identity.get("filespace") != nested["file"] or
+            ls_identity.get("parent_semantic_object_id") != "cgx:domain:emassc" or
+            ls_identity.get("semantic_object_id") != "cgx:domain:lightspeed"):
+        raise ValueError("LightSpeed child-parent identity mismatch")
+    shared_refs = []
+    values = manifest["shared_contracts"]
+    for key, value in sorted(values.items()):
+        if (not isinstance(key, str) or not key or
+                not isinstance(value, str) or not value.endswith((".json", ".md")) or
+                "/" in value or "\\" in value):
+            raise ValueError("unsafe shared parent contract filename")
+        relative = folder + value
+        record = _asset_record(repo, relative, tracked_set)
+        shared_refs.append({"id": key, **record})
+        if record["state"] != "OBSERVED_SOURCE_BYTES":
+            missing.append(relative)
+    if len({item["path"] for item in shared_refs}) != len(shared_refs):
+        raise ValueError("shared parent contracts must have unique paths")
+    return {
+        "state": "SOURCE_REFERENCES_PRESENT" if not missing else "HOLD_MISSING_CONTRACTS",
+        "parent_semantic_object_id": "cgx:root:cognigrex",
+        "parent_carrier": "Cognigrex.cgx",
+        "contract_sources": source,
+        "children": child_refs,
+        "child_domain_count": len(child_refs),
+        "child_registry_count": domain_count,
+        "nested_lightspeed": {
+            "semantic_object_id": ls_identity["semantic_object_id"],
+            "filespace": nested["file"], "parent_id": "cgx:domain:emassc",
+            "native_admitted": False,
+        },
+        "shared_contract_count": len(shared_refs),
+        "shared_contracts": shared_refs,
+        "missing_source_paths": sorted(set(missing)),
+        "source_hash_readback_only": True,
+        "semantic_authority_verified": False,
+        "native_mint_authorized": False,
+        "source_grants_verified": False,
+        "cross_grex_mutation_performed": False,
+        "no_duplicate_registries_created": True,
+    }
+
+
 def build_living_consolidation_review(repo: Path, installed_root: Path) -> dict:
     repo = Path(repo).resolve(strict=True)
     installed_root = Path(installed_root).absolute()
@@ -177,6 +303,7 @@ def build_living_consolidation_review(repo: Path, installed_root: Path) -> dict:
         "tracked_source_count": len(tracked),
         "tracked_zero_byte_count": len(empty),
         "digital_twin_asset_linkage": review_digital_twin_assets(repo, tracked),
+        "cross_grex_contract_linkage": review_cgx_domain_contracts(repo, tracked),
         "retained_zero_byte_source": empty,
         "retained_zero_by_kind": dict(sorted(buckets.items())),
         "installed_carrier_count": topology["installed_carrier_count"],

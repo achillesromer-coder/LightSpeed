@@ -182,3 +182,78 @@ def test_digital_twin_rejects_duplicate_and_escaping_identity(tmp_path):
                        capture_output=True)
         with pytest.raises(ValueError):
             module.review_digital_twin_assets(repo, module._tracked(repo))
+
+
+def test_parent_cgx_registry_relationships_source_complete():
+    module = load_module()
+    result = module.review_cgx_domain_contracts(ROOT, module._tracked(ROOT))
+    assert result["state"] == "SOURCE_REFERENCES_PRESENT"
+    assert result["parent_semantic_object_id"] == "cgx:root:cognigrex"
+    assert result["child_domain_count"] == 3
+    assert result["child_registry_count"] == 9
+    assert result["shared_contract_count"] == 48
+    assert not result["missing_source_paths"]
+    assert {x["domain"] for x in result["children"]} == {"romer", "eco", "emassc"}
+    assert result["nested_lightspeed"] == {
+        "semantic_object_id": "cgx:domain:lightspeed",
+        "filespace": "LS.cgx",
+        "parent_id": "cgx:domain:emassc",
+        "native_admitted": False,
+    }
+    assert all(x["state"] == "OBSERVED_SOURCE_BYTES"
+               for x in result["shared_contracts"])
+    assert all(not x["domain_semantic_authority_proven"]
+               for x in result["children"])
+    assert result["semantic_authority_verified"] is False
+    assert result["native_mint_authorized"] is False
+    assert result["source_grants_verified"] is False
+    assert result["cross_grex_mutation_performed"] is False
+
+
+def _mini_domain_contract_fixture(tmp_path):
+    import shutil
+    import json
+    module = load_module()
+    source = ROOT / "cgx/domain_templates"
+    dest = tmp_path / "mini"
+    target = dest / "cgx/domain_templates"
+    target.mkdir(parents=True)
+    named = {"domains.json", "domain_child_identity_registry.json",
+             "cognigrex_parent_topology.json"}
+    manifest = json.loads((source / "domains.json").read_text(encoding="utf-8"))
+    named.update(manifest["shared_contracts"].values())
+    for entry in manifest["domains"].values():
+        named.update(entry[k] for k in ("semantic_library",
+                                        "type_registry", "relation_registry"))
+    for name in named:
+        shutil.copyfile(source / name, target / name)
+    subprocess.run(["git", "init", "-b", "main", str(dest)],
+                   check=True, capture_output=True)
+    subprocess.run(["git", "-C", str(dest), "add", "."],
+                   check=True, capture_output=True)
+    return module, dest, target
+
+
+def test_cross_grex_missing_contract_is_hold_not_new_identity(tmp_path):
+    module, repo, target = _mini_domain_contract_fixture(tmp_path)
+    expected = module.review_cgx_domain_contracts(repo, module._tracked(repo))
+    assert expected["state"] == "SOURCE_REFERENCES_PRESENT"
+    missing = target / "execution_lease_contract.json"
+    missing.unlink()
+    review = module.review_cgx_domain_contracts(repo, module._tracked(repo))
+    assert review["state"] == "HOLD_MISSING_CONTRACTS"
+    assert "cgx/domain_templates/execution_lease_contract.json" in review["missing_source_paths"]
+    assert not review["native_mint_authorized"]
+    assert not review["source_grants_verified"]
+
+
+def test_cross_grex_conflicting_child_identity_rejected(tmp_path):
+    import json
+    import pytest
+    module, repo, target = _mini_domain_contract_fixture(tmp_path)
+    path = target / "domain_child_identity_registry.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    data["children"]["eco"]["parent_semantic_object_id"] = "cgx:domain:romer"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(ValueError, match="inconsistent child semantic identity"):
+        module.review_cgx_domain_contracts(repo, module._tracked(repo))
