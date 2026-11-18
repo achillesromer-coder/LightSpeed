@@ -14,6 +14,7 @@ import json
 import os
 from pathlib import Path
 import re
+import stat
 import sqlite3
 import sys
 import time
@@ -74,8 +75,20 @@ def get_source_bytes(p:Path,root:Path|None=None)->bytes:
  relative_parts = p.relative_to(root.expanduser().resolve(strict=True)).parts if root else p.parts[-2:]
  if p.name.lower() in SKIP_NAMES or any(x.lower() in SKIP_PARTS for x in relative_parts[:-1]):raise PermissionError('protected path')
  if p.suffix.lower() not in READABLE|BIN_INDEX:raise ValueError('unsupported file type; use explicit metadata-only source record')
- if p.stat().st_size>MAX_BYTES:raise ValueError('source too large for bounded intake')
- return p.read_bytes()
+ # A path-level size check followed by read_bytes() is a race: the file
+ # can grow between stat() and the unbounded read. Bind both the size budget
+ # and regular-file check to the opened descriptor instead.
+ flags=os.O_RDONLY|getattr(os,'O_BINARY',0)|getattr(os,'O_NOFOLLOW',0)
+ with os.fdopen(os.open(p,flags),'rb') as stream:
+  first=os.fstat(stream.fileno())
+  if not stat.S_ISREG(first.st_mode):raise ValueError('not a regular source file')
+  if first.st_size>MAX_BYTES:raise ValueError('source too large for bounded intake')
+  raw=stream.read(MAX_BYTES+1)
+  last=os.fstat(stream.fileno())
+  if len(raw)>MAX_BYTES:raise ValueError('source grew beyond bounded intake limit')
+  if (first.st_size,first.st_mtime_ns,first.st_ino,first.st_dev)!=(last.st_size,last.st_mtime_ns,last.st_ino,last.st_dev) or len(raw)!=last.st_size:
+   raise RuntimeError('source changed during bounded read; retry after stabilising original')
+ return raw
 
 class FamilyStore:
  def __init__(self,home:Path=DEFAULT_HOME):
