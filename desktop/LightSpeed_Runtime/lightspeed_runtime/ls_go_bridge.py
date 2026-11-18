@@ -26,6 +26,7 @@ from lightspeed_runtime.corpus_test_orchestrator import (
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
 from lightspeed_runtime.cgx_capability_registry import CapabilityRegistryError
+from lightspeed_runtime.cgx_family_topology import build_cgx_family_topology
 from lightspeed_runtime.cgx_surface_projection import (
     build_unispace_surface_manifest, plan_temporary_subagent_batch,
 )
@@ -1715,6 +1716,28 @@ def create_app(root: Path | str) -> FastAPI:
                 credential_store=credential_store, session_store=owner_sessions) != actor:
             raise HTTPException(status_code=403, detail="Owner scope changed")
         return JSONResponse(surface, headers={"Cache-Control": "no-store"})
+
+    @app.get("/api/v1/cgx/family/topology")
+    async def read_cgx_family_topology(
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Only source identities and content-hash aliases; no hydration or mint."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(
+            None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions,
+        )
+        try:
+            topology = build_cgx_family_topology()
+        except (CapabilityRegistryError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail="CGX family source review held") from exc
+        if _verified_owner_actor(
+            None, session_token=owner_session, credential_store=credential_store,
+            session_store=owner_sessions,
+        ) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(topology, headers={"Cache-Control": "no-store"})
 
     @app.post("/api/v1/cgx/temporary-batch/plan")
     async def plan_cgx_temporary_batch(

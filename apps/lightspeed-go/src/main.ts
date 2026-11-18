@@ -27,6 +27,7 @@ import {
   planNodeTransfer,
   readDesktopStatus,
   readCgxDynamicSurface,
+  readCgxFamilyTopology,
   readPendingCommands,
   remoteAccessPresentation,
   removePendingCommand,
@@ -48,6 +49,7 @@ import {
   type ReviewRecord,
 } from "./desktopBridge";
 import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import { mountCgxNativeCheckpointUi } from "./cgxNativeCheckpointUi";
 import {
   bindProjectBrowseButtons,
   bindProjectFileOpenButtons,
@@ -869,7 +871,38 @@ const refreshDesktop = async (): Promise<void> => {
           const routes = surface.routes.map((route) =>
             `<span class="badge" title="${escapeHtml(route.gate)}">${escapeHtml(route.id)} · ${escapeHtml(route.state)}</span>`
           ).join(" ");
-          capabilityMount.innerHTML = `<p class="eyebrow">Backend-derived CGX capabilities</p><h2>${surface.route_count} scoped routes · review-only</h2><p class="muted">Revision ${escapeHtml(surface.source_view_sha256.slice(0, 12))} · no execution or mint authorization inferred.</p><div class="flow">${roles}</div><div class="flow" style="flex-wrap:wrap">${routes}</div>`;
+          capabilityMount.innerHTML = `<p class="eyebrow">Backend-derived CGX capabilities</p><h2>${surface.route_count} scoped routes · review-only</h2><p class="muted">Revision ${escapeHtml(surface.source_view_sha256.slice(0, 12))} · no execution or mint authorization inferred.</p><div class="flow">${roles}</div><details><summary>Registered capability catalogue</summary><div class="flow" style="flex-wrap:wrap">${routes}</div></details>`;
+          mountCgxNativeCheckpointUi(capabilityMount, surface, session, () => session === ownerSessionToken);
+          try {
+            const family = await readCgxFamilyTopology(session);
+            if (session === ownerSessionToken && capabilityMount.isConnected) {
+              const familyPanel = document.createElement("details");
+              const selectorRows = family.selectors.map((entry) =>
+                '<li><strong>' + escapeHtml(entry.selector) + '</strong> · ' +
+                entry.available_routes + ' available / ' + entry.gated_routes +
+                ' gated · native admission pending</li>'
+              ).join("");
+              const aliasRows = family.hash_equal_aliases.map((item) =>
+                '<li>' + item.names.map((name) => escapeHtml(name)).join(' ≡ ') +
+                ' · same source hash</li>'
+              ).join("");
+              familyPanel.innerHTML =
+                '<summary>CGX family · ' + family.selector_count + ' registered selectors</summary>' +
+                '<p class="muted">' + family.installed_carrier_count +
+                ' observed .cgx filenames / ' + family.unique_carrier_hash_count +
+                ' unique source hashes. Installed carrier ≠ native mint.</p>' +
+                '<ul>' + selectorRows + '</ul>' +
+                (aliasRows ? '<p class="muted">Content-equal carriers:</p><ul>' + aliasRows + '</ul>' : '');
+              capabilityMount.appendChild(familyPanel);
+            }
+          } catch {
+            if (session === ownerSessionToken && capabilityMount.isConnected) {
+              const note = document.createElement("p");
+              note.className = "muted";
+              note.textContent = "Family topology pending deployment or source admission.";
+              capabilityMount.appendChild(note);
+            }
+          }
         }
       } catch {
         capabilityMount.textContent = "CGX capability projection unavailable; registry or owner session held.";

@@ -94,6 +94,68 @@ def _desktop_file_allowed(relative: PurePosixPath) -> bool:
     return relative.suffix.casefold() in DESKTOP_ALLOWED_SUFFIXES
 
 
+# An immutable, hash-verified deployment projection of the existing registry.
+# Source files remain canonical in Git; installed Core gets read-only metadata,
+# not a second mutable capability registry or a copy of private source blobs.
+CGX_CATALOGUE_FIXED = (
+    "cgx/domain_templates/plugin_capability_routes.json",
+    "cgx/domain_templates/toolkit_registry.json",
+    "cgx/domain_templates/achilles_owner_operator_profile.json",
+    "cgx/domain_templates/agent_assurance_role_matrix.json",
+    "cgx/domain_templates/agent_role_reconciliation.md",
+    "plugins/source/selector_shortcalls.json",
+    "plugins/source/selector_packages.json",
+    "UniSpace/product.json",
+)
+
+
+def catalogue_snapshot_paths(repo_root: Path, tracked: list[str]) -> list[str]:
+    present = set(tracked)
+    if not set(CGX_CATALOGUE_FIXED).issubset(present):
+        # Some isolated test fixtures intentionally contain no CGX catalogue.
+        if not present.intersection(CGX_CATALOGUE_FIXED):
+            return []
+        raise RuntimeError("CGX catalogue requires complete pinned source manifests")
+    selected = set(CGX_CATALOGUE_FIXED)
+    packages = json.loads(
+        (repo_root / "plugins/source/selector_packages.json").read_text(encoding="utf-8")
+    )
+    skills = packages.get("shared_skills")
+    if (not isinstance(skills, list) or not 1 <= len(skills) <= 32
+            or len(set(skills)) != len(skills)
+            or any(not isinstance(k, str) or not k or
+                   any(ch not in "abcdefghijklmnopqrstuvwxyz0123456789-_" for ch in k)
+                   for k in skills)):
+        raise RuntimeError("CGX shared skill source catalogue is not bounded")
+    for skill in skills:
+        rel = f"plugins/source/core-skills/{skill}/SKILL.md"
+        if rel not in present:
+            raise RuntimeError(f"CGX skill manifest missing from tracked source: {skill}")
+        selected.add(rel)
+
+    selector_data = json.loads(
+        (repo_root / "plugins/source/selector_shortcalls.json").read_text(encoding="utf-8")
+    )
+    floors = {str(f) for profile in selector_data["selectors"].values()
+              for f in profile.get("floors", [])}
+    covered = set()
+    for rel in tracked:
+        parts = PurePosixPath(rel).parts
+        if (len(parts) == 5 and parts[:3] ==
+                ("docs", "agent-ingestion", "local-agent-homes")
+                and parts[-1] == "agent_manifest.json"):
+            record = json.loads((repo_root / rel).read_text(encoding="utf-8"))
+            floor = record.get("lightspeed_floor")
+            if floor in floors:
+                selected.add(rel)
+                covered.add(floor)
+    if covered != floors:
+        raise RuntimeError("CGX selector floor manifests are incomplete for installation")
+    if len(selected) > 64:
+        raise RuntimeError("CGX catalogue snapshot exceeds bounded source count")
+    return sorted(selected)
+
+
 def build_mappings(repo_root: Path, runtime_root: Path) -> list[Mapping]:
     mappings: list[Mapping] = []
     prefixes = (
@@ -140,7 +202,12 @@ def build_mappings(repo_root: Path, runtime_root: Path) -> list[Mapping]:
             PurePosixPath("Tools/cgx/domain_templates/cgp_ies_domain_adapter_registry.json"),
     }
 
-    for name in tracked_files(repo_root):
+    tracked = tracked_files(repo_root)
+    for rel in catalogue_snapshot_paths(repo_root, tracked):
+        name = PurePosixPath(rel)
+        explicit[name] = PurePosixPath("Core/cgx_catalogue") / name
+
+    for name in tracked:
         source_rel = PurePosixPath(name)
         target_rel: PurePosixPath | None = explicit.get(source_rel)
         if target_rel is None:

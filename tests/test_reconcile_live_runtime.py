@@ -171,3 +171,39 @@ def test_receipt_writer_is_exclusive_and_readback_verified(tmp_path: Path, modul
     assert json.loads(path.read_text(encoding="utf-8")) == {"ok": True}
     with pytest.raises(FileExistsError):
         module.write_json_exclusive(path, {"ok": False})
+
+
+def test_installed_cgx_catalogue_snapshot_can_resolve_without_git_checkout(
+    tmp_path: Path, monkeypatch, module,
+) -> None:
+    """Only source-authorised metadata, not DB/credentials, is packaged."""
+    repo = Path(__file__).resolve().parents[1]
+    runtime = tmp_path / "installed"
+    mappings = module.build_mappings(repo, runtime)
+    catalogues = [x for x in mappings if x.target_relative.startswith("Core/cgx_catalogue/")]
+    assert len(catalogues) == 25
+    assert all("credentials" not in x.target_relative.lower() and
+               "/data/" not in x.target_relative.lower()
+               for x in catalogues)
+    import shutil
+    for item in catalogues:
+        item.target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(item.source, item.target)
+    sys.path.insert(0, str(repo / "desktop" / "LightSpeed_Runtime"))
+    from lightspeed_runtime.cgx_catalogue_root import resolve_cgx_catalogue_root
+    from lightspeed_runtime import cgx_capability_registry as registry
+
+    installed_module = runtime / "Core" / "lightspeed_runtime" / "cgx_capability_registry.py"
+    installed_module.parent.mkdir(parents=True, exist_ok=True)
+    root = resolve_cgx_catalogue_root(installed_module)
+    assert root == runtime / "Core" / "cgx_catalogue"
+    monkeypatch.setattr(registry, "REPO_ROOT", root)
+    monkeypatch.setattr(registry, "DEFAULT_ROUTES_PATH",
+                        root / "cgx/domain_templates/plugin_capability_routes.json")
+    monkeypatch.setattr(registry, "DEFAULT_SHORTCALLS_PATH",
+                        root / "plugins/source/selector_shortcalls.json")
+    view, _values = registry._capability_review_snapshot("LightSpeed")
+    assert view["selector"] == "lightspeed"
+    assert "role:neo" in view["references"]
+    assert "route:cgx.plan_query" in view["references"]
+    assert view["native_admitted"] is False
