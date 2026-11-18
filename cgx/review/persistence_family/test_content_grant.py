@@ -45,7 +45,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-content-grant-') as directory:
  ok('metadata-to-full upgrade retains source sha',full['sha256']==ra['sha256'])
  ok('metadata-to-full upgrade keeps occurrence history length',store.status()['counts']['source_occurrence']==cnt)
  ok('new content grant enables scoped retrieval',len(store.source_search('coherence',agent='Neo'))==1)
- ok('new content grant enables reversible restore',store.restore_for_agent('Neo',ra['sha256'],root/'neo-restored.md')['verified'] and (root/'neo-restored.md').read_bytes()==original)
+ ok('new content grant enables reversible restore',store.restore_for_agent('Neo',ra['sha256'],Path('neo-restored.md'))['verified'] and (store.home/'restores'/'Neo'/'neo-restored.md').read_bytes()==original)
  ok('new content grant enables proposed review only',store.propose('Neo','observation',{'claim':'review'},ra['sha256'])['status']=='REVIEW_ONLY')
  store.ingest('Athene',c,root=inputs,store_bytes=False)
  ok('Athene metadata alone is not a grant',store.source_search('coherence',agent='Athene')==[])

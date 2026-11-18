@@ -38,7 +38,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-role-scope-') as d:
  x=store.source_search('physics',agent='Raphael')
  ok('Raphael sees only its own occurrence',len(x)==1 and len(x[0]['occurrences'])==1 and x[0]['occurrences'][0]['path']==str(rap))
  ok('different agent keeps distinct rights',x[0]['rights']=='owner-private' and store.source_search('physics',agent='Athene')[0]['rights']=='review-only')
- ok('Athene can restore observed same bytes',store.restore_for_agent('Athene',a['sha256'],root/'restored.out')['verified'] and (root/'restored.out').read_bytes()==rap.read_bytes())
+ ok('Athene can restore observed same bytes',store.restore_for_agent('Athene',a['sha256'],Path('restored.out'))['verified'] and (home/'restores'/'Athene'/'restored.out').read_bytes()==rap.read_bytes())
  # History survives a same-path revision and still belongs to the observing role.
  rap.write_text('Raphael updated quantum physics test source',encoding='utf8')
  newer=store.ingest('Raphael',rap,root=src)
@@ -57,6 +57,6 @@ with tempfile.TemporaryDirectory(prefix='cgx-role-scope-') as d:
  ok('Raphael CLI own query',p.returncode==0 and len(json.loads(p.stdout))==1)
  p=run('Neo','restore',newer['sha256'],str(root/'unsafe.out'))
  ok('Neo CLI forbidden restoration',p.returncode!=0 and not (root/'unsafe.out').exists())
- p=run('Raphael','restore',newer['sha256'],str(root/'good.out'))
- ok('Raphael CLI own restore',p.returncode==0 and (root/'good.out').read_bytes()==rap.read_bytes())
+ p=run('Raphael','restore',newer['sha256'],'good.out')
+ ok('Raphael CLI own restore',p.returncode==0 and (home/'restores'/'Raphael'/'good.out').read_bytes()==rap.read_bytes())
 print(json.dumps({'passed':len(passed),'checks':passed,'scope':'local role-labelled review only','native_acl_verified':False,'issuer_verified':False},indent=2))

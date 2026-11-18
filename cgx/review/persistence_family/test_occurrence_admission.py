@@ -28,14 +28,14 @@ with tempfile.TemporaryDirectory(prefix='cgx-abi-review-') as d:
  ok('superseded source preserved',r['sha256']!=p['sha256'] and db.status()['counts']['source']==2)
  hist=db.db.execute('SELECT sha,prior_sha FROM source_occurrence WHERE path=? ORDER BY id',(str(a),)).fetchall()
  ok('occurrence history survives revision',hist==[(p['sha256'],None),(r['sha256'],p['sha256'])])
- ok('old occurrence hash still restorable',db.restore(p['sha256'],root/'old.md')['sha256']==p['sha256'] and (root/'old.md').read_bytes()==old)
+ ok('old occurrence hash still restorable',db.restore(p['sha256'],Path('old.md'))['sha256']==p['sha256'] and (home/'restores'/'owner-review'/'old.md').read_bytes()==old)
  ok('source rights metadata not promoted by dedup',all(not x['public_share_authorised'] for x in db.source_search('physics observation')) and next(x for x in db.source_search('physics observation') if x['sha256']==p['sha256'])['rights']=='MIXED_NONPUBLIC')
  ok('audit chain follows transactional ingestion',db.verify_events()['ok'])
  db.close();db=FamilyStore(home)
  ok('restart preserves history',db.status()['counts']['source_occurrence']==3)
  ok('restart preserves audit chain',db.verify_events()['ok'])
  h=p['sha256'];compressed=bytearray(db.db.execute('SELECT compressed FROM source WHERE sha=?',(h,)).fetchone()[0]);compressed[-2]^=1;db.db.execute('UPDATE source SET compressed=? WHERE sha=?',(bytes(compressed),h))
- fails('corrupted compressed source blocked',lambda:db.restore(h,root/'corrupt.md'),Exception)
+ fails('corrupted compressed source blocked',lambda:db.restore(h,Path('corrupt.md')),Exception)
  ok('corrupt restore does not create output',not (root/'corrupt.md').exists())
  db.close()
  # Legacy review cache upgrade keeps raw bytes and labels restricted.
@@ -55,7 +55,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-abi-review-') as d:
  ok('legacy table migrates losslessly',old_db.status()['counts']['source']==1 and old_db.status()['counts']['source_occurrence']==1)
  occ=old_db.db.execute('SELECT rights,agent FROM source_occurrence LIMIT 1').fetchone()
  ok('legacy role unverified and nonpublic',occ==('owner-private','legacy-unverified'))
- ok('legacy byte recovery retained',old_db.restore(sha,root/'legacy.out')['verified'] and (root/'legacy.out').read_bytes()==prior)
+ ok('legacy byte recovery retained',old_db.restore(sha,Path('legacy.out'))['verified'] and (legacy/'restores'/'owner-review'/'legacy.out').read_bytes()==prior)
  # Ingestion and receipt share one transaction: a receipt failure rolls back all source state.
  fresh=src/'rollback.md';fresh.write_text('rollback gated', 'utf8')
  original_audit=old_db._audit_in_transaction

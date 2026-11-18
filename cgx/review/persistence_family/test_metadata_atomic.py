@@ -30,7 +30,7 @@ with tempfile.TemporaryDirectory(prefix='cgx-meta-atomic-') as folder:
  check('hydration preserves same identity',m['sha256']==full['sha256'])
  check('source entry deduplicated',db.status()['counts']['source']==1)
  check('full intake indexes searchable text',len(db.source_search('Confidential thermal',agent='Raphael'))==1)
- check('full intake yields exact bytes',db.restore_for_agent('Raphael',full['sha256'],r/'restore.txt')['verified'] and (r/'restore.txt').read_bytes()==src.read_bytes())
+ check('full intake yields exact bytes',db.restore_for_agent('Raphael',full['sha256'],Path('restore.txt'))['verified'] and (db.home/'restores'/'Raphael'/'restore.txt').read_bytes()==src.read_bytes())
  check('other role cannot see source',not db.source_search('Confidential',agent='Neo'))
  before=(db.status()['counts']['proposals'],db.status()['counts']['events'])
  orig=db._audit_in_transaction

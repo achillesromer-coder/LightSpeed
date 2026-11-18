@@ -190,7 +190,9 @@ class FamilyStore:
   except Exception:
    self.db.execute('ROLLBACK');raise
   return {'sha256':h,'size':len(raw),'source':rel,'rights':rights,'reversible':store_bytes or (existing is not None and existing[1] is not None),'content_granted':bool(store_bytes),'semantic_chars':len(text),'status':'INDEXED_REVIEW_NOT_CANONICAL','receipt':receipt}
- def restore(self,h:str,out:Path)->dict:
+ def _restore(self,h:str,out:Path,*,role:str|None=None)->dict:
+  # Source review export is confined to a private recovery tree. This is NOT
+  # native Windows ACL/lease authentication and must not be exposed as HTTP.
   if not re.fullmatch(r'[0-9a-f]{64}',h):raise ValueError('invalid sha')
   row=self.db.execute('SELECT length,compressed FROM source WHERE sha=?',(h,)).fetchone()
   if not row or row[1] is None:raise ValueError('not stored reversibly')
@@ -200,10 +202,48 @@ class FamilyStore:
   if len(raw)>MAX_BYTES or not decoder.eof or decoder.unconsumed_tail or decoder.unused_data:
    raise ValueError('compressed source corrupt or exceeds bounded recovery')
   if len(raw)!=row[0] or digest(raw)!=h:raise ValueError('stored source content hash mismatch')
-  out=Path(out);out.parent.mkdir(parents=True,exist_ok=True)
-  # Never overwrite a real original, including after a previous partial restore.
+  out=self._restore_destination(out,role=role)
+  # Exclusive creation protects existing sources and earlier recovery receipts.
+  # Native ACL, handle-based race protection and issuer checks are still HOLD.
   with out.open('xb') as f:f.write(raw)
   return {'restored':str(out),'sha256':h,'verified':True,'scope':'EXACT_BYTES_ONLY_NO_NTFS_ACL_ADS_OWNER'}
+ def restore(self,h:str,out:Path)->dict:
+  """Owner-review recovery, relative to <state>/restores/owner-review only."""
+  return self._restore(h,out)
+ def _restore_destination(self,out:Path,*,role:str|None)->Path:
+  """Never export into arbitrary host locations or through directory links."""
+  value=str(out);relative=Path(out)
+  if (not value or value=='.' or relative.is_absolute() or not relative.parts
+      or '\\' in value or ':' in value or '\x00' in value
+      or any(part in ('..','.') for part in relative.parts)):
+   raise PermissionError('restore requires a relative path beneath the private recovery root')
+  reserved={'CON','PRN','AUX','NUL'}|{f'COM{i}' for i in range(1,10)}|{f'LPT{i}' for i in range(1,10)}
+  for part in relative.parts:
+   if (part.endswith(('.', ' ')) or part.lower() in SKIP_NAMES
+       or part.lower() in SKIP_PARTS or part.split('.')[0].upper() in reserved):
+    raise PermissionError('protected recovery output name')
+  if self.home.is_symlink():raise PermissionError('linked family state root denied')
+  base=self.home/'restores'
+  if base.is_symlink():raise PermissionError('linked recovery root denied')
+  base.mkdir(mode=0o700,exist_ok=True)
+  root=base/(role if role is not None else 'owner-review')
+  if root.is_symlink():raise PermissionError('linked specialist recovery root denied')
+  root.mkdir(mode=0o700,exist_ok=True)
+  real_root=root.resolve(strict=True)
+  if not real_root.is_relative_to(self.home.resolve(strict=True)):
+   raise PermissionError('recovery root outside owner state')
+  parent=root
+  for component in relative.parts[:-1]:
+   parent=parent/component
+   if parent.is_symlink():raise PermissionError('linked recovery parent denied')
+   parent.mkdir(mode=0o700,exist_ok=True)
+   if not parent.is_dir() or not parent.resolve(strict=True).is_relative_to(real_root):
+    raise PermissionError('recovery parent escapes private root')
+  target=parent/relative.name
+  if target.is_symlink():raise PermissionError('linked recovery target denied')
+  if not target.parent.resolve(strict=True).is_relative_to(real_root):
+   raise PermissionError('recovery destination escapes private root')
+  return target
  def occurrences_for_agent(self,agent:str,h:str,*,content_only:bool=False)->list[dict]:
   """Return source references explicitly observed by one specialist.
 
@@ -222,7 +262,7 @@ class FamilyStore:
   """Role-filtered local CLI restoration; never a native authorisation."""
   if not self.occurrences_for_agent(agent,h,content_only=True):
    raise PermissionError('source bytes not explicitly ingested by this specialist; hash-only observation grants no content access')
-  return self.restore(h,out)
+  return self._restore(h,out,role=agent)
  def source_search(self,q:str,limit=8,*,agent:str|None=None)->list[dict]:
   """Owner review when unscoped; specialist CLI always passes its role."""
   if agent is not None and agent not in ROLES:raise ValueError('unknown specialist role')

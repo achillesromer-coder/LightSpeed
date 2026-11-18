@@ -36,3 +36,4 @@ jobs:
           python test_specialist_scope.py
           python test_metadata_atomic.py
           python test_content_grant.py
+          python test_restore_boundary.py
