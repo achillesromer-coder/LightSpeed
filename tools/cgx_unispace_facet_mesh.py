@@ -237,7 +237,11 @@ def plan_facet_projection(mesh: dict[str, Any], spaces: Collection[str],
     held = []
     for space in unique:
         entry = indexed[space]
-        if entry["state"] != "SOURCE_CONTRACTS_PRESENT":
+        if (entry["state"] != "SOURCE_CONTRACTS_PRESENT"
+                or any(c.get("state") != "SOURCE_BYTES_OBSERVED"
+                       or not isinstance(c.get("sha256"), str)
+                       or len(c["sha256"]) != 64
+                       for c in entry["contract_bindings"])):
             held.append(space)
         for contract in entry["contract_bindings"]:
             cid = contract["contract_id"]
