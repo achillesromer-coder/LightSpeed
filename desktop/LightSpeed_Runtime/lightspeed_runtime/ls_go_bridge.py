@@ -24,6 +24,9 @@ from lightspeed_runtime.corpus_test_orchestrator import (
     CorpusTestPlanError, assess_frontier_unit, plan_cascade,
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
+from lightspeed_runtime.cgx_surface_projection import (
+    build_unispace_surface_manifest, plan_temporary_subagent_batch,
+)
 from lightspeed_runtime.cgx_object_context import (CGXObjectContextError, resolve_object_context,
     twin_source_review_index, resolve_scoped_twin_context)
 from lightspeed_runtime.cgx_cross_analysis import (CGXCrossAnalysisError, atlas_review_workset,
@@ -1687,6 +1690,49 @@ def create_app(root: Path | str) -> FastAPI:
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
+
+    @app.get("/api/v1/cgx/surface")
+    async def read_cgx_surface(
+        selector: str = "LightSpeed",
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Owner-scoped, backend-generated presentation metadata; never dispatch."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions)
+        try:
+            surface = build_unispace_surface_manifest(selector)
+        except (CapabilityRegistryError, OSError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail="CGX selector revision held") from exc
+        if _verified_owner_actor(None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(surface, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/cgx/temporary-batch/plan")
+    async def plan_cgx_temporary_batch(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Review a task-bound composition; not a mint, lease or execution."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions)
+        allowed = {"selector", "task_id", "run_id", "expected_view_sha256",
+                   "role_ids", "route_ids", "cpu_threads", "memory_mib",
+                   "max_jobs", "ttl_seconds"}
+        if set(body) - allowed:
+            raise HTTPException(status_code=400, detail="Unrecognised review fields")
+        try:
+            candidate = plan_temporary_subagent_batch(**body)
+        except (CapabilityRegistryError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail="Invalid or stale temporary composition") from exc
+        if _verified_owner_actor(None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(candidate, headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/object-context/{query}")
     async def read_object_context(

@@ -952,6 +952,27 @@ export const decideDesktopReview = async (
     7000,
   );
 
+export interface CgxDynamicSurface {
+  schema: "CGX-UNISPACE-DYNAMIC-SURFACE/0.1";
+  selector: string;
+  source_view_sha256: string;
+  route_count: number;
+  routes: Array<{ id: string; state: string; kind: string; read_only: boolean; needs_review: boolean; gate: string; execution_enabled: false }>;
+  roles: Array<{ id: string; floor: string; responsibility: string; execution_enabled: false }>;
+  role_source_holds: string[];
+  native_mint_authorized: false;
+  execution_authorized: false;
+}
+export const readCgxDynamicSurface = (
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<CgxDynamicSurface> =>
+  withTimeout<CgxDynamicSurface>(
+    `${origin}/api/v1/cgx/surface?selector=LightSpeed`,
+    { method: "GET", headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) } },
+    10000,
+  );
+
 export const reviewDecisionOutcomeMessage = (
   reviewId: string,
   decision: ReviewDecision,
