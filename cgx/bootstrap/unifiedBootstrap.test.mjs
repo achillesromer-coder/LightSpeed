@@ -152,3 +152,34 @@ test('resume receipt rejects unknown, duplicate and malformed completed steps',(
   assert.equal(p.reason,'INVALID_RECEIPT_STEPS');
  }
 });
+
+test('undeclared authority changes cannot be hidden by cosmetic-only change lists',()=>{
+ const previous={theme:'dark',source_hash:'old',rights:{acl:'owner_only'},lease:{issuer:'owner'},dbr:'r1'};
+ for(const changed of [
+  {...previous,theme:'light',source_hash:'new'},
+  {...previous,rights:{acl:'public'}},
+  {...previous,lease:{issuer:'self'}},
+  {...previous,dbr:'r2'},
+  {...previous,future_capability:{runtime:'unreviewed'}}
+ ]){
+  const p=planOngoingSetup({family,current:changed,previous,changes:['theme']});
+  assert.equal(p.mode,'REVERIFY_AUTHORITY');assert.equal(p.observed_authority_drift,true);
+  assert.equal(p.mutation,false);assert.equal(p.install,false);
+ }
+});
+test('state comparison preserves cosmetic-only and object key-order independence',()=>{
+ const previous={root:{id:'cgx:root',revision:1},rights:{acl:'owner_only'},theme:'dark'};
+ const current={rights:{acl:'owner_only'},root:{revision:1,id:'cgx:root'},theme:'light',layout:'graph'};
+ const p=planOngoingSetup({family,current,previous,changes:['theme','layout']});
+ assert.equal(p.mode,'INCREMENTAL_CHECK');assert.equal(p.observed_authority_drift,false);
+ assert.equal(planOngoingSetup({family,current:{source_hash:'b'},previous:{source_hash:'a'},changes:[]}).mode,'REVERIFY_AUTHORITY');
+});
+test('malformed or opaque snapshots fail closed instead of reusing receipt',()=>{
+ const cyc={};cyc.self=cyc;
+ const sparse=Array(2);sparse[1]='x';
+ for(const current of [cyc,{lease:undefined},{lease:NaN},{rights:()=>true},
+   {lease:new Date('2026-11-18T00:00:00Z')},{rights:sparse}]){
+  const p=planOngoingSetup({family,current,previous:{},changes:['theme']});
+  assert.equal(p.state,'DENIED');assert.equal(p.reason,'INVALID_RESUME_STATE');
+ }
+});

@@ -73,18 +73,57 @@ export function planCGXSetup(config={}){
   user_guidance:mandatory.length?"Continue read-only source reconciliation until accepted native host and family root are verified.":"Run actual host preflight with signed policy, independent tests, and current DBR readback before any apply."
  };
 }
+// Review-only state comparison: no issuer, lease or host authority is inferred.
+// Declared cosmetic changes cannot conceal unreported rights/ABI/source drift.
+function canonicalResumeState(state){
+ const seen=new WeakSet();let count=0;
+ const normalize=(value,depth)=>{
+  if(++count>4096||depth>16)throw new TypeError('resume state exceeds review bounds');
+  if(value===null||typeof value==='string'||typeof value==='boolean')return value;
+  if(typeof value==='number'&&Number.isFinite(value))return value;
+  if(!Array.isArray(value)&&!isObj(value))throw new TypeError('unsupported resume value');
+  if(seen.has(value))throw new TypeError('cyclic resume state');
+  seen.add(value);
+  let out;
+  if(Array.isArray(value)){
+   if(value.length>4096||Object.keys(value).length!==value.length)
+    throw new TypeError('noncanonical resume array');
+   out=Array.from({length:value.length},(_,i)=>normalize(value[i],depth+1));
+  }else{
+   if(Object.getPrototypeOf(value)!==Object.prototype&&Object.getPrototypeOf(value)!==null)
+    throw new TypeError('non-plain resume state object');
+   const keys=Object.keys(value).sort();
+   if(keys.length>4096)throw new TypeError('oversized resume object');
+   out=Object.fromEntries(keys.map(k=>{
+    if(['__proto__','prototype','constructor'].includes(k))throw new TypeError('unsafe state key');
+    return [k,normalize(value[k],depth+1)];
+   }));
+  }
+  seen.delete(value);return out;
+ };
+ // These two top-level view fields are the only exempt differences.
+ const safe=Object.fromEntries(Object.keys(state).filter(k=>k!=='theme'&&k!=='layout').map(k=>[k,state[k]]));
+ const serialized=JSON.stringify(normalize(safe,0));
+ if(serialized.length>262144)throw new TypeError('oversized resume snapshot');
+ return serialized;
+}
 export function planOngoingSetup({family,current,previous=null,changes=[]}={}){
  if(!FAMILIES.has(family)||!isObj(current)||!(previous===null||isObj(previous))||!safeArray(changes))
   return {state:"DENIED",reason:"INVALID_RESUME_CONTEXT"};
- // Changes to provenance, permissions, host binding or tool ABI must not reuse old authority checks.
- // Incremental checks are reserved for explicitly classified cosmetic changes.
- // Unknown change categories (including future plugin/ABI/rights fields) fail closed.
+ // Unexpected source, rights, parent, DBR, lease, host or future ABI changes
+ // must invalidate cosmetic-only reuse, even if omitted from 'changes'.
+ let observedAuthorityDrift=false;
+ if(previous!==null){
+  try{observedAuthorityDrift=canonicalResumeState(current)!==canonicalResumeState(previous);}
+  catch{return {state:"DENIED",reason:"INVALID_RESUME_STATE"};}
+ }
  const cosmetic=new Set(["theme","layout"]);
- const restart=changes.some(x=>!cosmetic.has(x));
+ const restart=observedAuthorityDrift||changes.some(x=>!cosmetic.has(x));
  return {schema:"CGX-ONGOING-SETUP-PLAN/0.1",state:"READ_ONLY",
   family,mode:restart?"REVERIFY_AUTHORITY":"INCREMENTAL_CHECK",
-  requested_changes:changes,run_wizard_from_scratch:false,
+  requested_changes:changes,observed_authority_drift:observedAuthorityDrift,
+  run_wizard_from_scratch:false,
   recheck:["current signed scope","parent identity and DBR","installed vs registered capabilities",
-  "changed source revisions/hashes","LOAD hydration cache validity","per-child LS GO/UI binding"],
+   "changed source revisions/hashes","LOAD hydration cache validity","per-child LS GO/UI binding"],
   mutation:false,source_copy:false,delete:false,install:false};
 }
