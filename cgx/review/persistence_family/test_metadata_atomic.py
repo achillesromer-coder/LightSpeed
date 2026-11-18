@@ -46,4 +46,29 @@ with tempfile.TemporaryDirectory(prefix='cgx-meta-atomic-') as folder:
  check('proposal plus event committed',db.status()['counts']['proposals']==before[0]+1 and db.status()['counts']['events']==before[1]+1)
  check('review receipt chain remains unsigned',db.verify_events()['signed'] is False)
  db.close()
+
+# A deterministic regression for the former unbounded read_bytes() path.
+# All data are synthetic and stay inside the isolated test directory.
+from unittest.mock import patch
+from CGX_Persistence_Core import get_source_bytes,MAX_BYTES,digest
+with tempfile.TemporaryDirectory(prefix='cgx-bounded-r0-') as folder:
+ r=Path(folder);small=r/'stable.txt';small.write_bytes(b'bounded original source')
+ with patch.object(Path,'read_bytes',side_effect=AssertionError('unbounded Path.read_bytes forbidden')):
+  raw=get_source_bytes(small,r)
+ check('R0 uses descriptor-bounded read, not Path.read_bytes',raw==b'bounded original source')
+ check('bounded read retains exact SHA256',digest(raw)==digest(b'bounded original source'))
+ at_limit=r/'limit.txt';at_limit.write_bytes(b'x'*MAX_BYTES)
+ check('exact intake limit permitted',len(get_source_bytes(at_limit,r))==MAX_BYTES)
+ over_limit=r/'over.txt'
+ with over_limit.open('wb') as f:f.truncate(MAX_BYTES+1)
+ denies('oversized original rejected before ingestion',lambda:get_source_bytes(over_limit,r),ValueError)
+ check('original over-budget data retained',over_limit.stat().st_size==MAX_BYTES+1)
+ alt=r/'outside.txt';alt.write_text('outside original','utf8')
+ other=r/'sub';other.mkdir()
+ denies('source outside explicit intake root denied',lambda:get_source_bytes(alt,other),PermissionError)
+ link=r/'alias.txt'
+ try:link.symlink_to(small)
+ except (OSError,NotImplementedError):pass
+ else:denies('symlink source rejected',lambda:get_source_bytes(link,r),PermissionError)
+
 print(json.dumps({'passed':len(passed),'checks':passed,'native_admitted':False,'host_modified':False},indent=2))
