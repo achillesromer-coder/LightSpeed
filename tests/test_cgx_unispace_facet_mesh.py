@@ -170,3 +170,15 @@ def test_projection_detects_conflicting_shared_contract_source(tmp_path):
     ref["sha256"] = "0" * 64
     with pytest.raises(m.FacetHold, match="conflicting shared contract"):
         m.plan_facet_projection(mesh, ["social_space", "file_space"])
+
+
+def test_tampered_contract_readiness_never_promotes_source_hold(tmp_path):
+    repo, _ = fixture_repo(tmp_path)
+    mesh = m.build_unispace_facet_mesh(repo)
+    bound = next(f for f in mesh["facets"] if f["id"] == "data_space")
+    bound["contract_bindings"][0]["state"] = "HOLD_SOURCE_UNAVAILABLE"
+    assert bound["state"] == "SOURCE_CONTRACTS_PRESENT"
+    planned = m.plan_facet_projection(mesh, ["data_space"])
+    assert planned["state"] == "HOLD_MISSING_CONTRACTS"
+    assert planned["held_spaces"] == ["data_space"]
+    assert planned["native_approval"] is False
