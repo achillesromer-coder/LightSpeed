@@ -1,0 +1,73 @@
+{
+  "schema": "CGX-SOURCE-FOLD-PUBLIC-REVIEW-CONTRACT/1",
+  "classification": "PUBLIC_SAFE_SOURCE_REVIEW",
+  "description": "Typed source occurrence binding over an existing content-addressed ternary leaf store; no additional root or runtime",
+  "identity": {
+    "source_id": "stable qualified owner/source reference",
+    "revision": "immutable per-source revision",
+    "byte_hash": "SHA-256 of exact original bytes",
+    "occurrence": "source_id + revision + rights + scope independent of byte deduplication"
+  },
+  "ingest": {
+    "input": "explicit allowlisted relative source paths; no recursive implicit private-corpus ingestion",
+    "limits": {
+      "max_items": 256,
+      "max_file_bytes": 500000000,
+      "max_total_bytes": 900000000,
+      "leaf_bytes": 65536,
+      "branch_factor": 3
+    },
+    "guards": [
+      "reject linked or escaped paths",
+      "reject unqualified rights",
+      "bind read bytes to declared revision and digest",
+      "preserve original R0 unchanged",
+      "atomic private index and fail-closed writer lock",
+      "immutable same-ID same-revision policy"
+    ]
+  },
+  "resolve": {
+    "guards": [
+      "authenticate caller separately from content hash",
+      "check specific occurrence grant before selective hydration",
+      "deny revoked or stale occurrence revision",
+      "validate hashes at leaf and reconstructed-file boundaries",
+      "deny overwrite or transfer of authority from equal bytes"
+    ],
+    "clarification": "This contract does not authenticate an OS caller, sign a DBR, admit a CGX object or grant model execution."
+  },
+  "acceptance": {
+    "regressions": [
+      "exact read/write round-trip",
+      "physical byte dedup without identity merge",
+      "scope-denial and revoked-grant negative cases",
+      "tampered digest and stale-revision refusal",
+      "repeat ingest no-op",
+      "dependency and rollback/readback",
+      "disposable test copies, never mutate pinned source"
+    ],
+    "stages": [
+      "SOURCE_VERIFIED",
+      "REVIEW_STAGED",
+      "REGRESSION_TESTED",
+      "ACL_ACCEPTED",
+      "LEASE_AND_DBR_READBACK",
+      "OWNER_ACCEPTED",
+      "NATIVE_ADMITTED"
+    ],
+    "current_stage": "REVIEW_STAGED"
+  },
+  "permissions": {
+    "model_generated_instructions_authoritative": false,
+    "native_mint": false,
+    "public_release": false,
+    "physical_actuation": false,
+    "source_payloads_in_public_repo": false
+  },
+  "compatibility": {
+    "root": "existing Cognigrex.cgx",
+    "runtime": "existing supervised LightSpeed runtime",
+    "knowledge": "existing LOAD/CCC/FileSpace substrate",
+    "distribution": "private CGX-AI reference plus separately qualified updates"
+  }
+}
