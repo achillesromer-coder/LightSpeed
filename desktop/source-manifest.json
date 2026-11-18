@@ -3296,9 +3296,9 @@
       "sha256": "8efc3372e032bcb1c156c93aa67b7fbe77a63ee696b77e021cd74be6a29a7f50"
     },
     {
-      "bytes": 110372,
+      "bytes": 119659,
       "path": "LightSpeed_Runtime/lightspeed_runtime/ls_go_bridge.py",
-      "sha256": "4cf10cbfdb40df011f948b940dbe52e8f58150755556cabfa97114404c28e0f8"
+      "sha256": "0d364a2f9ca855b8c5f4729365abf39beb7550c346dcca75b054b1afbe3d3779"
     },
     {
       "bytes": 11584,
@@ -3536,9 +3536,9 @@
       "sha256": "9f664956431ff7596d6fa80c9aa78c0db4ae725084675dfb19b77a196da5f438"
     },
     {
-      "bytes": 26310,
+      "bytes": 26394,
       "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_capability_registry.py",
-      "sha256": "dee45907875eb0900a21b37085d79c6f644c870ac5078af21fd47ed5cb8ef064"
+      "sha256": "325055c7755258f8d4fb2ab1d72d992d8c6c8dd634573c0c93f60070760696b1"
     },
     {
       "bytes": 52257,
@@ -3689,6 +3689,56 @@
       "bytes": 3254,
       "path": "LightSpeed_Runtime/tests/test_source_intake_remote.py",
       "sha256": "9d03d8991a7db573dacee13044ad58136e6dadaa2ebba16394321424eef04790"
+    },
+    {
+      "bytes": 8197,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_geometry.py",
+      "sha256": "a32ae3979d587bc2bb5f459857e55188ea1b0cfb4a94c49828937b686e097050"
+    },
+    {
+      "bytes": 4476,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_methods.py",
+      "sha256": "2a33b37155cb4b1513d9a4014ac6aa6c95a705d9119de7358f1a4cb4f999cd7f"
+    },
+    {
+      "bytes": 10982,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_model_review.py",
+      "sha256": "d7df7050c60e2bc4a0a7fc67c6aea6241a72ccb04ee0b53c68c7075cf2bcec5e"
+    },
+    {
+      "bytes": 3493,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_semantic_review.py",
+      "sha256": "21856f1beccc675911033d517992d273ea91fc59e5ee6d42a1d47c79c59aa578"
+    },
+    {
+      "bytes": 6228,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_shared_review.py",
+      "sha256": "97727d2d89bf3d496d268ef971905b6515f1ca9d07d3a9bd0fe0165b9145027c"
+    },
+    {
+      "bytes": 1260,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_catalogue_root.py",
+      "sha256": "7f955f93e19e6fb3f4c7fd04c03e32d63e31f282c74a6fe9e6117df7d1465c27"
+    },
+    {
+      "bytes": 4315,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_family_topology.py",
+      "sha256": "dedf8e50f58ff8e4b2d134f22312f14f65f14d720e9c83c22ef833186e7b4bbe"
+    },
+    {
+      "bytes": 11649,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_native_checkpoint.py",
+      "sha256": "cf30729763eb2615d2cfccda8af3558c3a6b31d447811e09ffd69d400c5a07d2"
+    },
+    {
+      "bytes": 11635,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_persistence_preflight.py",
+      "sha256": "b224751aea07100efcd0521a79a41ec56a7f2aa40843dae99aec60a4779efa53"
+    },
+    {
+      "bytes": 6451,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_surface_projection.py",
+      "sha256": "c40c0039c06ce605194a5dc2cacc6fec5a836959d8af77a4d8396c409b51dc0e"
     }
   ],
   "schema_version": 1
