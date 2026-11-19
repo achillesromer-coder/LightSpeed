@@ -115,6 +115,7 @@ const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/st
 const html=fs.readFileSync(process.argv[1],"utf8");
 const source=html.match(/<script>([\s\S]*?)<\/script>/)[1];
 let fetchCalls=0;
+let clipboardText="";
 const elems={};
 function element(id){
  if(!elems[id])elems[id]={value:"",textContent:"",disabled:false,hidden:false,events:{},
@@ -126,13 +127,25 @@ function element(id){
 const context={
  document:{getElementById:element,createElement(){return {click(){},remove(){}}},body:{appendChild(){}}},
  URL,Uint8Array,Date,Array,Blob,console,crypto:require("node:crypto").webcrypto,
- setTimeout,clearTimeout,navigator:{clipboard:{writeText:async()=>{}}},
+ setTimeout,clearTimeout,navigator:{clipboard:{writeText:async text=>{clipboardText=text}}},
  fetch(){fetchCalls++;throw new Error("unexpected network request")}
 };
 vm.runInNewContext(source,context,{timeout:2000});
 assert.equal(fetchCalls,0,"must not fetch on page load");
+assert.equal(element("copy-review").disabled,true);
+element("review-a1").value="Y";
+element("notes-a1").value=" \nA3 Y ";
+element("review-a2").value="N";
+element("notes-a2").value="Maintenance window";
+element("notes-a3").value="Pending text";
+element("owner-review").events.input();
+assert.equal(element("review-output").textContent,"A1 Y — A3 Y\nA2 N — Maintenance window");
+assert.equal(element("copy-review").disabled,false);
+element("copy-review").events.click();
+assert.equal(clipboardText,"A1 Y — A3 Y\nA2 N — Maintenance window");
 element("make").events.click();
 let offline=JSON.parse(element("output").textContent);
+assert.equal(element("output").textContent.includes("Maintenance window"),false);
 assert.equal(offline.selected_transport,"offline_handoff");
 assert.equal(offline.enrollment_state,"NOT_ENROLLED");
 assert.equal(offline.peer_authenticated,false);
@@ -156,6 +169,10 @@ assert.equal(online.relay_origin_candidate,"https://relay.example");
 assert.equal(online.peer_authenticated,false);
 assert.equal(online.owner_session_verified,false);
 assert.equal(fetchCalls,0,"building handoff must not initiate a network request");
+element("review-a1").value="";
+element("review-a2").value="forged";
+element("owner-review").events.input();
+assert.equal(element("copy-review").disabled,true);
 """
     result = subprocess.run(
         ["node", "-e", harness, str(PAGE)], capture_output=True, text=True, timeout=10

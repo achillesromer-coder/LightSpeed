@@ -30,6 +30,10 @@ pre{padding:13px;max-height:340px;overflow:auto;white-space:pre-wrap;overflow-wr
 .status{padding:10px 11px;border-radius:8px;background:#0e1820;color:#d0e7ec;border:1px solid #38505d}
 footer{color:#a0b7c2;font-size:12px;margin:24px 5px}
 @media(max-width:430px){fieldset{grid-template-columns:1fr}main{padding:16px 12px 42px}.card{padding:14px}.steps{gap:4px}.step{font-size:10px}}
+.decision{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 12px;margin:14px 0}
+.decision label{margin:0}
+.decision input{grid-column:1/-1}
+.decision select,.decision input{min-height:44px;padding:8px;color:inherit;background:#101a23;border:1px solid #526576;border-radius:8px;font:inherit}
 </style>
 </head>
 <body>
@@ -66,6 +70,28 @@ footer{color:#a0b7c2;font-size:12px;margin:24px 5px}
 <div class="buttons"><button class="primary" id="make" type="button">Generate safe handoff</button><button id="copy" type="button" disabled>Copy proposal</button><button id="save" type="button" disabled>Save JSON</button></div>
 <pre id="output" aria-live="polite">No proposal generated.</pre>
 <p class="small">After the desktop operator verifies the source root, native lease, peer registration and signed receiver readback, return to the hosted UniSpace surface for a real device handshake. Do not paste passwords, session tokens or private keys into this proposal or into a public chat.</p>
+</section>
+<section class="card" id="owner-review">
+<h2>4 · Owner review for chat</h2>
+<p>Choose Y or N and add optional notes. Copy the draft into your Achilles chat to record your decision. The draft stays in this page until you copy it.</p>
+<div class="decision">
+<label for="review-a1">A1 · Native source reconciliation</label>
+<select id="review-a1"><option value="">Pending</option><option value="Y">Y</option><option value="N">N</option></select>
+<input id="notes-a1" type="text" maxlength="240" placeholder="Optional notes" aria-label="A1 notes" autocomplete="off">
+</div>
+<div class="decision">
+<label for="review-a2">A2 · BouwerBase cutover</label>
+<select id="review-a2"><option value="">Pending</option><option value="Y">Y</option><option value="N">N</option></select>
+<input id="notes-a2" type="text" maxlength="240" placeholder="Optional notes" aria-label="A2 notes" autocomplete="off">
+</div>
+<div class="decision">
+<label for="review-a3">A3 · Private Android pairing</label>
+<select id="review-a3"><option value="">Pending</option><option value="Y">Y</option><option value="N">N</option></select>
+<input id="notes-a3" type="text" maxlength="240" placeholder="Optional notes" aria-label="A3 notes" autocomplete="off">
+</div>
+<div class="buttons"><button id="copy-review" type="button" disabled>Copy chat draft</button></div>
+<pre id="review-output" aria-live="polite">Choose at least one decision.</pre>
+<p id="review-status" class="small" role="status">Draft only. Host execution requires its authenticated approval flow.</p>
 </section>
 <footer>CGX-MOBILE-SECONDARY-HANDOFF/0.1 · H0 offline coordination · One root: cgx://cgx.cgx · T174/zero non-mintable · Release/authority held until verified</footer>
 </main>
@@ -146,6 +172,32 @@ $("save").addEventListener("click",function(){
  if(!current)return;var blob=new Blob([JSON.stringify(current,null,2)+"\n"],{type:"application/json"}),u=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=u;a.download="cgx-mobile-secondary-handoff.json";document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},800);
 });
+var reviewIds=["a1","a2","a3"],reviewText="";
+function updateReview(){
+ var lines=[];
+ reviewIds.forEach(function(id){
+  var decision=$("review-"+id).value;
+  if(decision!=="Y"&&decision!=="N")return;
+  var notes=$("notes-"+id).value.replace(/[\r\n\u2028\u2029]+/g," ").trim().slice(0,240);
+  lines.push(id.toUpperCase()+" "+decision+(notes?" — "+notes:""));
+ });
+ reviewText=lines.join("\n");
+ setText("review-output",reviewText||"Choose at least one decision.");
+ setText("review-status","Draft only. Host execution requires its authenticated approval flow.");
+ $("copy-review").disabled=!reviewText;
+}
+$("owner-review").addEventListener("input",updateReview);
+$("copy-review").addEventListener("click",async function(){
+ if(!reviewText)return;
+ var copied=reviewText;
+ try{
+  await navigator.clipboard.writeText(copied);
+  if(copied===reviewText)setText("review-status","Draft copied. Paste it into your Achilles chat to record it.");
+ }catch(_){
+  if(copied===reviewText)setText("review-status","Select and copy the draft text above.");
+ }
+});
+updateReview();
 })();
 </script>
 </body></html>

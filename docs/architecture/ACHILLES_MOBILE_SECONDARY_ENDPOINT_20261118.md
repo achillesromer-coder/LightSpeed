@@ -24,6 +24,10 @@ modify the shared active checkout or the installed runtime.
 - The existing `cgx-mobile-node` and `cgx-handshake` skills remain the
   source contracts. This adds a surface for completing the **initial
   handoff**, not a new native agent or runtime.
+- The owner review panel drafts A1–A3 Y/N decisions and optional notes for
+  manual transfer into the owner's chat. The form keeps notes in page memory
+  and excludes them from the device handoff JSON and relay status request.
+  Chat drafts carry no host authentication or execution authority.
 
 ## Desktop Work handoff
 
