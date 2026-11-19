@@ -1,0 +1,40 @@
+name: CGX Persistence Source Review
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "cgx/review/persistence_family/**"
+      - ".github/workflows/cgx-persistence-review.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cgx-persistence-review-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  source-review:
+    name: Bounded role isolation and occurrence recovery
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout review source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Python 3.12
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Verify review-only suite without model weights or native host
+        working-directory: cgx/review/persistence_family
+        run: |
+          python -m compileall -q .
+          python test_occurrence_admission.py
+          python test_specialist_scope.py
+          python test_metadata_atomic.py
+          python test_content_grant.py
+          python test_restore_boundary.py
+          python test_native_occurrence_crosswalk.py

@@ -1,0 +1,29 @@
+name: CGX family source review
+on:
+  push:
+    paths:
+      - 'cgx/review/persistence_family/**'
+      - '.github/workflows/cgx-family-source-review.yml'
+  pull_request:
+    paths:
+      - 'cgx/review/persistence_family/**'
+      - '.github/workflows/cgx-family-source-review.yml'
+permissions:
+  contents: read
+jobs:
+  source-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Source identity and native negative tests
+        working-directory: cgx/review/persistence_family
+        run: |
+          python -B test_occurrence_admission.py
+          python -B test_specialist_scope.py
+          python -B test_metadata_atomic.py
