@@ -103,6 +103,8 @@ class TestNativeOccurrenceCrosswalk(unittest.TestCase):
             occ(rights="public"),
             occ(path="../private\ntrace"),
             occ(granted="true"),
+            occ(agent=[]),
+            occ(rights=[]),
         ]:
             with self.subTest(row=row):
                 with self.assertRaises(CrosswalkHold):
