@@ -45,7 +45,8 @@ def normalize(item: dict) -> dict:
     if (not isinstance(path, str) or not 0 < len(path) <= 4096
             or any(x in path for x in ("\0", "\r", "\n"))):
         raise CrosswalkHold("source path invalid")
-    if agent not in ROLES or rights not in RIGHTS:
+    if (not isinstance(agent, str) or agent not in ROLES
+            or not isinstance(rights, str) or rights not in RIGHTS):
         raise CrosswalkHold("unrecognized review role or rights")
     if granted is not None and type(granted) is not bool:
         raise CrosswalkHold("invalid review content-grant field")
