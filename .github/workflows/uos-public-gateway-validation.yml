@@ -1,0 +1,30 @@
+name: CGX UOS Public Gateway Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "docs/romer-web-hooks/uos_universal_gateway_embed.html"
+      - "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md"
+      - "tests/uos_universal_gateway.test.mjs"
+      - ".github/workflows/uos-public-gateway-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  route-gateway:
+    name: Verify standalone public gateway
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+      - name: Test URL resolution, safety and route uniqueness
+        run: node --test tests/uos_universal_gateway.test.mjs
