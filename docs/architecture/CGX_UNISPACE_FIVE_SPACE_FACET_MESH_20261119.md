@@ -39,3 +39,9 @@ python tools/cgx_living_consolidation_review.py --repo . --carriers /path/to/obs
 The synthetic Git-index tests cover five facets, exact dependency deduplication, deterministic output, missing and untracked contracts, invalid canonical parents, escaped source paths, duplicate services, conflicting shared definitions and prohibited operations.
 
 **Next gate:** Desktop Work reviews the candidate against [native ABI source PR #228](https://github.com/achillesromer-coder/LightSpeed/pull/228), [consolidation PR #230](https://github.com/achillesromer-coder/LightSpeed/pull/230), and [manifest fix PR #231](https://github.com/achillesromer-coder/LightSpeed/pull/231). Only its existing owner-supervised host path may deploy, validate signer/leases or promote product claims.
+
+## Closeout reconciliation — 19 November 2026
+
+- The separate [manifest repair PR #231](https://github.com/achillesromer-coder/LightSpeed/pull/231) is **closed without merge as superseded**. Native [PR #228](https://github.com/achillesromer-coder/LightSpeed/pull/228) now contains the same complete 748-entry `desktop/source-manifest.json` source set and its newer `local_floor_runner.py` hash, as confirmed by independent record-path comparison.
+- Current native source head for this reconciliation: `60baabc94d43291187ef1382f18a6a02fc506fa6`. GitHub Actions reported four green native PR workflows at that head. A native CI pass does not constitute live Core installation, licence review or security/lease acceptance.
+- Dependency order for this source-only five-space capability mesh remains: owner review of existing consolidation [PR #230](https://github.com/achillesromer-coder/LightSpeed/pull/230), this draft PR #232, and reconciliation with the continuously evolving native #228 (not the now-retired #231). No merge/deployment was performed by this note.
