@@ -7,6 +7,7 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 PAGE = ROOT / "apps/lightspeed-go/public/achilles-mobile.cgx.html"
+PACKAGED_PAGE = ROOT / "apps/lightspeed-go/dist/achilles-mobile.cgx.html"
 
 
 class ScriptParser(HTMLParser):
@@ -59,7 +60,7 @@ def test_relay_is_opt_in_without_credentials_or_localhost():
     assert 'host.endsWith(".localhost")' in script
     assert 'host==="[::1]"' in script
     assert '/^127\\./.test(host)' in script
-    assert "requestCount++" in script
+    assert "++requestCount" in script
     assert 'credentials:"omit"' in script
     assert 'cache:"no-store"' in script
     assert 'redirect:"error"' in script
@@ -70,6 +71,10 @@ def test_relay_is_opt_in_without_credentials_or_localhost():
     assert "authorization" not in script.lower()
     assert 'type="password"' not in html.lower()
     assert 'name="token"' not in html.lower()
+
+
+def test_desktop_reconciler_input_matches_mobile_source():
+    assert PACKAGED_PAGE.read_bytes() == PAGE.read_bytes()
 
 
 def test_android_permissions_are_requests_not_grants():
@@ -115,6 +120,7 @@ const fs=require("node:fs"),vm=require("node:vm"),assert=require("node:assert/st
 const html=fs.readFileSync(process.argv[1],"utf8");
 const source=html.match(/<script>([\s\S]*?)<\/script>/)[1];
 let fetchCalls=0;
+let requests=[];
 let clipboardText="";
 const elems={};
 function element(id){
@@ -126,9 +132,12 @@ function element(id){
 }
 const context={
  document:{getElementById:element,createElement(){return {click(){},remove(){}}},body:{appendChild(){}}},
- URL,Uint8Array,Date,Array,Blob,console,crypto:require("node:crypto").webcrypto,
+ URL,Uint8Array,Date,Array,Blob,AbortController,console,crypto:require("node:crypto").webcrypto,
  setTimeout,clearTimeout,navigator:{clipboard:{writeText:async text=>{clipboardText=text}}},
- fetch(){fetchCalls++;throw new Error("unexpected network request")}
+ fetch(url, options){
+  fetchCalls++;
+  return new Promise((resolve,reject)=>requests.push({url,options,resolve,reject}));
+ }
 };
 vm.runInNewContext(source,context,{timeout:2000});
 assert.equal(fetchCalls,0,"must not fetch on page load");
@@ -173,6 +182,35 @@ element("review-a1").value="";
 element("review-a2").value="forged";
 element("owner-review").events.input();
 assert.equal(element("copy-review").disabled,true);
+(async()=>{
+ const status={ok:true,bridge:"ls-go"};
+ const old=element("probe").events.click();
+ assert.equal(requests[0].options.credentials,"omit");
+ element("clear").events.click();
+ requests[0].reject(new Error("old request"));
+ await old;
+ assert.equal(element("connection").textContent,"Offline mode. Connection cleared.");
+
+ element("relay").value="https://first.example";
+ element("relay").events.input();
+ const first=element("probe").events.click();
+ let finishBody;
+ requests[1].resolve({ok:true,json:()=>new Promise(resolve=>{finishBody=resolve})});
+ await new Promise(resolve=>setImmediate(resolve));
+ assert.equal(typeof finishBody,"function");
+
+ element("relay").value="https://second.example";
+ element("relay").events.input();
+ const second=element("probe").events.click();
+ requests[2].resolve({ok:true,json:async()=>status});
+ await second;
+ finishBody(status);
+ await first;
+ element("make").events.click();
+ const proposal=JSON.parse(element("output").textContent);
+ assert.equal(proposal.relay_status_observation.origin,"https://second.example");
+ assert.equal(proposal.relay_status_observation.peer_authenticated,false);
+})().catch(error=>{console.error(error);process.exitCode=1});
 """
     result = subprocess.run(
         ["node", "-e", harness, str(PAGE)], capture_output=True, text=True, timeout=10

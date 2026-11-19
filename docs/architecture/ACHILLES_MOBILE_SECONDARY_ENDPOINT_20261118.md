@@ -10,6 +10,10 @@ modify the shared active checkout or the installed runtime.
 - `apps/lightspeed-go/public/achilles-mobile.cgx.html` is a single-file,
   offline-capable H0 staging surface. It can be opened on Android immediately,
   subject to the browser's normal local-file handling.
+- The existing Vite build copies the page to
+  `apps/lightspeed-go/dist/achilles-mobile.cgx.html`, which the desktop
+  reconciler includes in its tracked installation inputs. The bootstrap test
+  checks byte equality with the source page.
 - It creates a short-lived random **unsigned coordination nonce**, records
   user-selected permission *requests*, and exports a scrubbed JSON handoff.
   This is not Android keystore identity or an authenticated device grant.
