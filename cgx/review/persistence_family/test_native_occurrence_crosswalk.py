@@ -56,8 +56,9 @@ class TestNativeOccurrenceCrosswalk(unittest.TestCase):
         self.assertEqual(result["same_bytes_distinct_occurrence_sha"], [SHA])
         self.assertNotEqual(result["records"][0]["provisional_occurrence_ref"],
                             result["records"][1]["provisional_occurrence_ref"])
-        self.assertTrue(all(not x["native_content_access_authorized"]
-                            for x in result["records"]))
+        self.assertIs(result["native_content_access_authorized"], False)
+        for record in result["records"]:
+            self.assertIs(record["content_access_authorized"], False)
 
     def test_metadata_only_never_becomes_content_grant(self):
         result = plan_occurrences([occ(granted=False)])
