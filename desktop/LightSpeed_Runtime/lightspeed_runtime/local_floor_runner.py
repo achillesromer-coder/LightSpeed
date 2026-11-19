@@ -276,6 +276,7 @@ def run_floor(
         )
         request_body = build_ollama_request(
             contract, floor_row, num_predict=num_predict, source_evidence=source_evidence,
+            receipt_target=receipt_target,
         )
     except LocalFloorRunnerError as exc:
         source_error = str(exc)
@@ -433,6 +434,7 @@ def build_ollama_request(
     *,
     num_predict: int | None = None,
     source_evidence: list[dict[str, Any]] | None = None,
+    receipt_target: str = "neo",
 ) -> dict[str, Any]:
     conn = floor.get("ollama_connection") or {}
     policy = contract.get("policy") or {}
@@ -447,7 +449,7 @@ def build_ollama_request(
 
     request = {
         "model": str(conn.get("model") or ""),
-        "prompt": build_floor_prompt(contract, floor, source_evidence=sources),
+        "prompt": build_floor_prompt(contract, floor, source_evidence=sources, receipt_target=receipt_target),
         "stream": False,
         "think": False,
         "keep_alive": 0,
@@ -571,11 +573,12 @@ def _citation_quote_candidates(excerpt: str) -> list[str]:
 def build_floor_prompt(
     contract: dict[str, Any], floor: dict[str, Any], *,
     source_evidence: list[dict[str, Any]] | None = None,
+    receipt_target: str = "neo",
 ) -> str:
     sources = verified_source_context(contract) if source_evidence is None else source_evidence
     training = floor.get("training_context") or {}
     draw = floor.get("assimilation_draw") or {}
-    receipt_route = resolve_receipt_path(contract, floor, receipt_target="neo")
+    receipt_route = resolve_receipt_path(contract, floor, receipt_target=receipt_target)
     priority_paths = draw.get("priority_paths") or []
     path_lines = [f"- {item.get('relative_path', item.get('name', 'unknown'))}" for item in priority_paths[:12]]
     if not path_lines:
@@ -613,6 +616,7 @@ def build_floor_prompt(
             "and copy it exactly and unchanged into quote. Do not choose an unrelated schema/header as proof. Do not "
             "combine lines, reformat JSON, add escapes manually, or paraphrase it. "
             "Use the source's exact path and digest. An empty list is valid only with no sources.",
+            f'Copy this JSON field into the response: "safe_artifact_route": {json.dumps(str(receipt_route))}',
         ]
     )
 

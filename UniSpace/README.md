@@ -1,5 +1,17 @@
 # UniSpace
 
+UniSpace is a local-first workspace for tracing a source through a specialist's
+review and back to the evidence behind a result. The downloadable `.cgx`
+reference lets a reviewer verify the archive offline. The November release
+candidate connects the agent catalogue, carrier families and task checkpoints
+to one LightSpeed runtime. Its review interface derives each role's controls
+from the registered capabilities and shows which actions need approval.
+
+The [native integration and launch record](../docs/architecture/UNISPACE_CGX_NATIVE_OPERATIONAL_LINK_20261118.md)
+describes what an operator can verify in source, what requires installation,
+and which capabilities still need live acceptance. Network identity, LOAD,
+physical print and autonomous agent scheduling remain development targets.
+
 This is the product entry folder. `CGX.cgx` is the exact owner-designated S91
 product reference, published with explicit owner permission. It contains the
 existing archive, specifications, implementation, tests and frontier records.
