@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>FileSpace tutorial · UniSpace</title><link rel="stylesheet" href="unispace.css"></head>
+<body><header><a class="brand" href="index.html">UniSpace</a><nav><a href="#open">Open FileSpace</a></nav></header>
+<main><section id="open"><p class="edition">FileSpace / S91</p><h1>Your first carrier</h1>
+<ol><li>Keep <b>CGX.cgx</b> with this tutorial. If you downloaded the kit, extract its folder and open <b>FileSpace.html</b> in a browser.</li>
+<li>Select the carrier below. The reader checks its identity and opens the contents index locally. No account is required.</li>
+<li>Choose a geometric quadrant, then select a file to inspect its cell. Export the original bytes, or export the matching files as a source-linked JSON series.</li></ol>
+<label for="carrier">Open CGX.cgx</label> <input id="carrier" type="file" accept=".cgx"><p id="handshake" role="status">Waiting for a carrier.</p></section>
+<section id="workspace" hidden><h2>Explore FileSpace</h2><p id="identity"></p>
+<div id="quadrants" class="sets" aria-label="Geometric quadrants"></div>
+<label>Filter paths <input type="search" id="query" placeholder="e.g. spec/CGX"></label>
+<p id="matches" aria-live="polite"></p><label for="members">Matching files</label>
+<select id="members" size="7" style="display:block;width:100%"></select>
+<p id="coordinate"></p>
+<button id="preview">Read selected file</button> <button id="export">Export original file</button> <button id="series">Export filtered series</button>
+<p id="action" role="status"></p><pre id="excerpt" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:18rem;overflow:auto"></pre></section>
+<footer><p>The reader needs a browser with local file selection, SHA-256 and raw DEFLATE support. Series exports are limited to 64 files and 512 KiB of source bytes. Narrow the filter for larger sets.</p><a href="index.html">Product overview</a></footer>
+</main><script src="filespace.js"></script></body></html>
