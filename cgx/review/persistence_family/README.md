@@ -27,3 +27,30 @@ This branch is a **public-safe review pointer only**; the complete private sourc
 The previously reviewed source role-scoping implementation remains unchanged. An intake marked `--metadata-only` stores the SHA and occurrence metadata but does **not** persist the document text in the search index. A subsequent owner-approved full intake may hydrate that same SHA without creating a second payload. Source-bound review proposals and their unsigned event receipts commit in one transaction or roll back together. Neither safeguard authenticates a Windows user, signs a CGX lease, trains a model, or admits native LOAD.
 
 The event-triggered read-only CI runs `test_occurrence_admission.py`, `test_specialist_scope.py` and `test_metadata_atomic.py` without model weights or owner-private sources. The private extended regression includes `test_family.py` and the Raphael browser checks separately. No schedule or local service is created.
+
+## Native occurrence crosswalk — source-only review
+
+`CGX_Native_Occurrence_Crosswalk.py` converts *existing review*
+`source_occurrence` and agent-scoped `source_search` metadata into
+provisional, SHA-derived occurrence references for the **existing**
+Cognigrex/LightSpeed operational database `lightspeed_unified.db`.
+It does **not** import or instantiate `FamilyStore`, read source bytes,
+open a database, create a second authority or grant a review specialist
+native content access. Private path strings are never exported in its
+receipt, and exact-byte deduplication cannot merge distinct occurrence
+owners/rights.
+
+Unscoped and legacy review rows without `content_granted` remain **HOLD**;
+metadata-only entries cannot see source content, and a purported
+`public-licence-verified` label never proves a current release grant.
+Even a fully qualified review row produces **only** an adapter proposal;
+the receipt explicitly sets native ACL, issuer, lease, content access,
+model training, execution, mint and public release to false.
+
+`test_native_occurrence_crosswalk.py` exercises this source adapter,
+including a real isolated `FamilyStore` fixture and cross-role SHA reuse.
+The existing persistence-review CI runs it. Before any native mutation,
+a separately developed host adapter must bind the individual occurrence
+to authenticated LOAD/FileSpace permissions, verified owner lease,
+signed DBR and revoked/expired-grant denial, without installing the
+review-only `family.sqlite3` as a second canonical database.
