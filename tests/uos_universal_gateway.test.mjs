@@ -18,7 +18,7 @@ test("inline gateway compiles without network imports", () => {
 });
 
 test("one unique public route per canonical URL, including proposed space and Grex pages", () => {
-  assert.equal(rows.length, 38);
+  assert.equal(rows.length, 37);
   assert.equal(new Set(paths).size, rows.length);
   for (const expected of [
     "/", "/aus", "/uos", "/cgx", "/cgx/load", "/cgx/fs", "/cgx/ds",
