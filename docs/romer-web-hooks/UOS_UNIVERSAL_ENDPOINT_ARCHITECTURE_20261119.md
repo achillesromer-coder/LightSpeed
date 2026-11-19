@@ -25,7 +25,7 @@ a new JS application, daemon, model, registry, database or task consumer.
 | /cgx/fs, /cgx/ds, /cgx/ps, /cgx/profile | Space portals | FileSpace / DataSpace / PrintSpace / ProfileSpace | Candidate |
 | /cgx/ccc, /cgx/cyc, /cgx/doom | Workflow/demo | CCC / CYC / game | Candidate |
 | /cgx/achilles, /cgx/neo, /cgx/athene, /cgx/raphael, /cgx/eco, /cgx/romer | Grex / research | Existing selectors | Candidate |
-| /docs | Evidence and documentation | Cognigrex | Candidate |
+| /docs | Existing public document listing | Cognigrex | Publicly indexed; individual rights review required |
 
 Exact lower-case path match precedes a bounded virtual /uos/{facet} match.
 Unknown, cross-origin, encoded, traversal or oversized URL cases fail closed
@@ -110,3 +110,55 @@ Never automatically merge PR #228 or deploy the live Core as part of this.
 [ ] Public release assets, rights, signatures and owner approval.
 [ ] Independent DataSpace peer authentication and heartbeat implementation.
 [ ] Native UOS source acceptance and controlled live deployment.
+
+## 2026-11-19 live website delta (public retrieval, not editor verification)
+
+Verified linked routes include /green, /green/future, /green/embedded,
+/green/second-cycle, /gmat, /mpl-engine, /raphael, /lightspeedhome and /docs.
+The former /green-initiative naming is retained as historical reference, not
+a guaranteed active alias. The public command centre's displayed operating
+and scientific validation labels are not independent evidence of deployed
+services or empirical claims.
+
+The /docs page publicly lists document titles including founders/operating
+agreements, IP reports and research files. Do not ingest, mirror or licence
+attachments just because their URLs are visible: review each source for
+permission, data classification, authorship and public release suitability.
+
+The LightSpeed command centre links six paths that presently return HTTP 404:
+
+| Missing link | Candidate future UOS selector | Confirmed site fallback |
+| --- | --- | --- |
+| /w1-data | /uos/w1 | /lightspeedhome |
+| /w2-data | /uos/w2 | /lightspeedhome |
+| /w3-data | /uos/w3 | /lightspeedhome |
+| /w4-data | /uos/w4 | /lightspeedhome |
+| /w5-data | /uos/w5 | /lightspeedhome |
+| /w6-data | /uos/w6 | /lightspeedhome |
+
+The /uos/w1-w6 virtual selectors are NOT real Squarespace routes until an
+authorised editor creates and publishes suitable pages. A public source
+table cannot repair an HTTP 404 or confer access to a private DataSpace.
+Retain /lightspeedhome as the published navigation fallback until the
+specific targets have been independently tested at HTTP 200.
+
+### Source-level regression
+- Fixed the route extraction regex to include "/" and detect the six
+  missing-404 routes; 51 unique source routes are now represented.
+- Added VM-executed URL routing tests for home, ecology, uppercase path,
+  virtual facet, unknown route and 404 evidence labels.
+- Dedicated secret-free and deploy-free GitHub Actions workflow passed:
+  run 44450285774, head 730aff768c82426b5561c6f2c4fade6684ccdf18.
+- Source tests do not establish Squarespace publishing, browser CSP
+  compatibility, native runtime deployment or peer transport.
+- Desktop Commander indicated 31% monthly call allowance remaining
+  at this check; no remote machine mutations were performed.
+
+### Next release gates
+1. Authenticated Squarespace page-ID inventory, backups and preview.
+2. Public document rights/claims classification before llms.txt or
+   public data indexing.
+3. Create Not Linked /uos pilot, then repair six missing W1-W6 routes.
+4. Test mobile layout, sandbox/code-block script policy and existing LS GO.
+5. Independently authorise signed DataSpace peer identity, heartbeat,
+   revocation, local runtime acceptance and publication/mint separately.
