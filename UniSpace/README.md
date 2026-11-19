@@ -1,5 +1,8 @@
 # UniSpace
 
+Open the [product landing page](index.html) to explore the S91 contents, download
+the carrier and compare a local copy against its published checksum.
+
 UniSpace is a local-first workspace for tracing a source through a specialist's
 review and back to the evidence behind a result. The downloadable `.cgx`
 reference lets a reviewer verify the archive offline. The November release
