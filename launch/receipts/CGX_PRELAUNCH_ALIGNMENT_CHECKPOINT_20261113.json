@@ -1,0 +1,62 @@
+{
+  "schema": "cgx-prelaunch-alignment-checkpoint-v1",
+  "created_utc": "2026-11-13T10:14:22.395Z",
+  "state": "checkpoint_only_not_dbr_acceptance",
+  "authority": {
+    "semantic_parent": "Cognigrex.cgx",
+    "canonical_object_id": "cgx:root:cognigrex",
+    "github_role": "source_tests_contracts",
+    "drive_role": "durable_memory_receipts_and_staging",
+    "host_role": "native_runtime_and_operational_carrier",
+    "html_role": "derived_receipt_bound_projection"
+  },
+  "host": {
+    "device": "BOUWERBASE",
+    "carrier_path": "C:\\Cognigrex\\Cognigrex.cgx",
+    "pre_reboot_verified": true,
+    "bytes": 3657250,
+    "sha256": "722558c274416c8e3d7e555575fb7fa43e0538aca72d6875ee06bb1486175db5",
+    "snapshot_path": "D:\\LightSpeed\\State\\CGX_Prelaunch\\20261113T100842Z\\Cognigrex_S92_pre_reboot.cgx",
+    "receipt_path": "D:\\LightSpeed\\State\\CGX_Prelaunch\\20261113T100842Z\\PRE_REBOOT_RECEIPT.json",
+    "reboot_requested_and_issued": true,
+    "post_reboot_readback": "pending_remote_agent_reconnection",
+    "promotion_allowed": false
+  },
+  "github": {
+    "repository": "achillesromer-coder/LightSpeed",
+    "remote_main_at_audit": "e46ca5e888dac9035f41f4b52a1cdd297b4c8cac",
+    "pre_reboot_local_canonical_head": "eee015e26997a843b80cabd5106694b58559fd4c",
+    "target_branch": "ops/cgx-prelaunch-consolidation-20261113",
+    "public_product": {
+      "state": "S91",
+      "sha256": "1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f",
+      "bytes": 3609020,
+      "runtime_activated": false,
+      "complete_product_acceptance": false
+    }
+  },
+  "drive": {
+    "cgx_root_id": "1J4_veNftsmEy8nxx2moH9lwrupoiKWPb",
+    "historical_phase_a_id": "1sVEO4cUJqst043K9E40Sy_6DFhxpUHeA",
+    "private_intake_staging_id": "1GeKUySPmID0Ea9QB-G42ksKYeR6an3_s",
+    "recovery_id": "1h1selt4tSI_vxL5fmNPMG6XCCbRwUvPn",
+    "validation_id": "1m1q_meF-PiTc1EfA_3fyO4X3WEDSfnUL",
+    "s92_validation_candidate_id": "1qHjs52mH2S-PU4E5auqurIzfIXpxwA0G",
+    "s92_recovery_candidate_id": "1ap1xHVQ0cDWeJDAVWxvY_VqMkSzwpG6i",
+    "alignment_rule": "preserve_ids_sharing_and_history_until_host_hash_readback"
+  },
+  "family_boundaries": {
+    "raphael": "candidate_model_and_simulation_family_not_empirical_proof",
+    "romer": "operational_family_requires_reconciled_authority_and_receipt_gated_transfer",
+    "domain_child_builder": "allowed_only_for_exact_accepted_s92_hash_and_internal_roots"
+  },
+  "open_gates": [
+    "post_reboot_host_readback",
+    "clean_worktree_from_current_origin_main",
+    "bounded_validation_suite",
+    "isolated_domain_child_generation",
+    "package_hash_and_reopen_verification",
+    "drive_destination_hash_readback",
+    "reviewed_dbr_promotion"
+  ]
+}
