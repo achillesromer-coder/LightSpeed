@@ -1,0 +1,42 @@
+name: Web4 Protocol Canon Topology
+
+on:
+  pull_request:
+    paths:
+      - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
+      - "scripts/validate_web4_protocol_canon.py"
+      - "scripts/validate_cgx_type1_chain_review.py"
+      - "scripts/cgx_coin_archive_preflight.py"
+      - "tests/test_cgx_coin_archive_preflight.py"
+      - "tests/test_cgx_type1_chain_review.py"
+      - "docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json"
+      - ".github/workflows/web4-protocol-canon.yml"
+  push:
+    branches: [main]
+    paths:
+      - "docs/web4/COIN_PROTOCOL_CANON_2026-07-29.*"
+      - "scripts/validate_web4_protocol_canon.py"
+      - "scripts/validate_cgx_type1_chain_review.py"
+      - "scripts/cgx_coin_archive_preflight.py"
+      - "tests/test_cgx_coin_archive_preflight.py"
+      - "tests/test_cgx_type1_chain_review.py"
+      - "docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json"
+      - ".github/workflows/web4-protocol-canon.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-topology:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate public-safe protocol topology and negative gates
+        run: |
+          python scripts/validate_web4_protocol_canon.py
+          python scripts/validate_cgx_type1_chain_review.py --review docs/web4/CGX_TYPE1_CHAIN_READINESS_REVIEW_20261111.json --coin docs/web4/COIN_PROTOCOL_CANON_2026-07-29.json
+          python -m unittest discover -s tests -p test_cgx_type1_chain_review.py -v
+          python -m unittest discover -s tests -p test_cgx_coin_archive_preflight.py -v
