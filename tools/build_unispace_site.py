@@ -25,6 +25,32 @@ def digest(path):
 def write_json(path, value):
     path.write_bytes((json.dumps(value, indent=2, ensure_ascii=False)+"\n").encode())
 
+def package_skill_files(site, selector):
+    """Keep package-relative names while sharing identical review documents."""
+    package = ROOT / "plugins/packages" / selector
+    manifest = json.loads((package / ".codex-plugin/plugin.json").read_bytes())
+    if manifest["name"] != selector or manifest["skills"] != "./skills/":
+        raise ValueError(f"Unexpected skill package for {selector}")
+    store = site / "assets/skills"
+    store.mkdir(exist_ok=True)
+    files = {}
+    for source in sorted((package / "skills").rglob("*")):
+        if not source.is_file():
+            continue
+        if source.suffix not in {".md", ".json"} or not source.resolve().is_relative_to(package.resolve()):
+            raise ValueError(f"Skill package member requires review: {source}")
+        raw = source.read_bytes()
+        name = hashlib.sha256(raw).hexdigest() + source.suffix
+        target = store / name
+        if not target.exists():
+            target.write_bytes(raw)
+        if target.read_bytes() != raw:
+            raise ValueError(f"Skill document identity conflict: {name}")
+        files[source.relative_to(package).as_posix()] = target.relative_to(site).as_posix()
+    if not any(path.endswith("/SKILL.md") for path in files):
+        raise ValueError(f"No skill instructions for {selector}")
+    return {"version": manifest["version"], "files": files}
+
 def render_family_pages(site):
     families=json.loads((site/"assets/families.json").read_bytes())
     folder=site/"families"
@@ -34,7 +60,11 @@ def render_family_pages(site):
         name=family["selector"]
         if not re.fullmatch(r"[a-z0-9-]+",name): raise ValueError("invalid selector slug")
         routes="".join(f"<tr><td><code>@{name} /{escape(call)}</code></td><td>{escape(route)}</td></tr>" for call,route in family["shortcalls"].items())
-        page=f"""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{name} · UniSpace</title><link rel="stylesheet" href="../unispace.css"><header><a class="brand" href="../index.html">UniSpace</a><a href="../library.html">Review library</a></header><main><section><p class="edition">Selector profile</p><h1>{name}</h1><p>Registered toolkits: {escape(", ".join(family["toolkits"]))}.</p><h2>Shortcalls</h2><table><thead><tr><th>Call</th><th>Registered route</th></tr></thead><tbody>{routes}</tbody></table><p>This page describes routes. Execution depends on the installed host, connected tools and current permissions.</p><a href="../FileSpace.html">Open the shared FileSpace tutorial</a></section></main></html>"""
+        skill_links = "".join(
+            f'<li><a href="../{escape(url)}">{escape(path.split("/")[1])}</a></li>'
+            for path, url in family["skill_package"]["files"].items() if path.endswith("/SKILL.md")
+        )
+        page=f"""<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{name} · UniSpace</title><link rel="stylesheet" href="../unispace.css"><header><a class="brand" href="../index.html">UniSpace</a><a href="../library.html">Review library</a></header><main><section><p class="edition">Selector profile</p><h1>{name}</h1><p>Registered toolkits: {escape(", ".join(family["toolkits"]))}.</p><h2>Skill instructions</h2><ul>{skill_links}</ul><h2>Shortcalls</h2><table><thead><tr><th>Call</th><th>Registered route</th></tr></thead><tbody>{routes}</tbody></table><p>This page describes routes. Execution depends on the installed host, connected tools and current permissions.</p><a href="../FileSpace.html">Open the shared FileSpace tutorial</a></section></main></html>"""
         (folder/(name+".html")).write_bytes(page.encode())
         links.append(f'<li><a href="families/{name}.html">{name}</a></li>')
     page=site/"library.html"
@@ -78,7 +108,8 @@ def catalogue(site):
             url = include(render)
             figures.append(f'<figure><a href="{escape(url)}"><img loading="lazy" width="384" height="216" src="{escape(url)}" alt="{escape(item["label"])}"></a><figcaption>{escape(item["label"])}</figcaption><small>{escape(item["geometry_state"])}</small></figure>')
     selectors = json.loads((ROOT/"plugins/source/selector_shortcalls.json").read_bytes())
-    family_rows = [{"selector":name, "toolkits":s["toolkits"], "shortcalls":s["shortcalls"]}
+    family_rows = [{"selector":name, "toolkits":s["toolkits"], "shortcalls":s["shortcalls"],
+                    "skill_package":package_skill_files(site,name)}
                    for name,s in selectors["selectors"].items()]
     write_json(assets/"families.json", family_rows)
     write_json(assets/"catalogue.json", {"scope":"Supplemental public-source review assets", "source_files":rows,
