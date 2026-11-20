@@ -50,6 +50,7 @@ def build_cgx_family_topology(
     carrier_status = "UNAVAILABLE"
     carriers: list[dict] = []
     excluded: list[str] = []
+    empty_carrier_names: list[str] = []
     if root.is_dir() and not root.is_symlink():
         carrier_status = "OBSERVED_READ_ONLY"
         names = sorted((p for p in root.iterdir() if p.suffix.lower() == ".cgx"),
@@ -61,6 +62,10 @@ def build_cgx_family_topology(
                 excluded.append(p.name)
                 continue
             stat = p.stat()
+            if stat.st_size == 0:
+                empty_carrier_names.append(p.name)
+                excluded.append(p.name)
+                continue
             if not 0 < stat.st_size <= MAX_CARRIER_BYTES:
                 excluded.append(p.name)
                 continue
@@ -84,6 +89,23 @@ def build_cgx_family_topology(
         for digest, names in sorted(groups.items())
         if len(names) > 1
     ]
+    by_name = {item["name"]: item for item in carriers}
+    content_groups = []
+    for digest, names in sorted(groups.items()):
+        ordered = sorted(names, key=lambda name: (name.casefold(), name))
+        representative = ordered[0]
+        content_groups.append({
+            "sha256": digest,
+            "display_name": representative,
+            "reference_names": ordered,
+            "bytes": by_name[representative]["bytes"],
+            "collapsed_alias_count": len(ordered) - 1,
+            "same_bytes_not_semantic_equivalence": True,
+            "native_object_identity_verified": False,
+            "safe_to_delete_aliases": False,
+            "presentation_only": True,
+        })
+    content_groups.sort(key=lambda item: item["display_name"].casefold())
     root_source_sha = {
         "capability_routes": hashlib.sha256(DEFAULT_ROUTES_PATH.read_bytes()).hexdigest(),
         "selector_shortcalls": hashlib.sha256(DEFAULT_SHORTCALLS_PATH.read_bytes()).hexdigest(),
@@ -98,7 +120,13 @@ def build_cgx_family_topology(
         "unique_carrier_hash_count": len(groups),
         "carriers": carriers,
         "hash_equal_aliases": aliases,
+        "content_groups": content_groups,
+        "collapsed_alias_card_count": len(carriers) - len(content_groups),
         "excluded_carrier_names": excluded,
+        "retained_empty_carrier_names": empty_carrier_names,
+        "storage_root_is_alias": root.is_dir() and root.absolute() != root.resolve(),
+        "safe_delete_candidates": [],
+        "deletion_performed": False,
         "source_observation_only": True,
         "carrier_write_performed": False,
         "database_write_performed": False,
