@@ -49,6 +49,63 @@ function describe() {
   ui('preview').disabled = ui('export').disabled = !row;
   ui('excerpt').textContent = ui('action').textContent = '';
 }
+let geometryRevision = 0;
+async function selectGeometry(state, slot) {
+  const revision = ++geometryRevision;
+  const row = state.geometry.roles.find(r => r.slot === slot);
+  const ctx = ui('mesh-view').getContext('2d');
+  ctx.clearRect(0,0,480,280);
+  ui('role').value = String(slot);
+  ui('trits').value = slot.toString(3).padStart(5,'0');
+  ui('show-role').disabled = ui('show-mesh').disabled = true;
+  if (!row) {
+    ui('geometry-note').textContent = '00000 · Empty · source position 174 · nonmintable';
+    return;
+  }
+  try {
+    const record=state.rows.find(r=>r.path===row.mesh);
+    const mesh=JSON.parse(text.decode(await checked(state,record)));
+    if (revision!==geometryRevision || state!==session) return;
+    const points=mesh.v.map(([x,y,z])=>[0.866*x+0.5*z,0.25*x+0.866*y-0.433*z]);
+    const extent=points.reduce((v,[x,y])=>Math.max(v,Math.abs(x),Math.abs(y)),0);
+    if(!Number.isFinite(extent)||extent<=0)throw Error('Invalid mesh extent.');
+    ctx.strokeStyle='#14695d';ctx.lineWidth=1;
+    for(const face of mesh.f){
+      ctx.beginPath();
+      face.forEach((index,i)=>{const [x,y]=points[index];const px=240+x*125/extent,py=140-y*125/extent;
+        if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);});
+      ctx.closePath();ctx.stroke();
+    }
+    ui('geometry-note').textContent=row.id+' · '+row.name+' · '+points.length+' vertices · '+mesh.f.length+' faces · private review';
+    for(const [button,path] of [['show-role',row.role],['show-mesh',row.mesh]]){
+      ui(button).disabled=false;
+      ui(button).onclick=()=>{ui('quadrants').firstElementChild.click();ui('query').value=path;filter();ui('members').focus();};
+    }
+  }catch(error){if(revision===geometryRevision && state===session)ui('geometry-note').textContent=error.message;}
+}
+async function prepareGeometry(state){
+  const index=state.rows.find(r=>r.path==='raphael/index.json');
+  if(!index)return;
+  const profile=JSON.parse(text.decode(await checked(state,index)));
+  if(state!==session)return;
+  if(profile.profile!=='unispace-private-ternary-review-v1')throw Error('Unrecognized geometric shorthand.');
+  state.geometry=profile;
+  ui('role').replaceChildren(new Option('Empty','0'),...profile.roles.map(r=>new Option(r.id+' · '+r.name,String(r.slot))));
+  ui('geometry').hidden=false;
+  ui('role').onchange=()=>selectGeometry(state,Number(ui('role').value));
+  ui('resolve-address').onclick=()=>{
+    const value=ui('trits').value,slot=parseInt(value,3);
+    if(!/^[012]{5}$/.test(value)||slot>173){
+      ++geometryRevision;
+      ui('mesh-view').getContext('2d').clearRect(0,0,480,280);ui('role').selectedIndex=-1;
+      ui('show-role').disabled=ui('show-mesh').disabled=true;
+      ui('geometry-note').textContent='Unassigned address. Choose 00000 through 20102.';
+      return;
+    }
+    selectGeometry(state,slot);
+  };
+  await selectGeometry(state,0);
+}
 function filter() {
   const q = ui('query').value.toLowerCase();
   visible = session.rows.filter(r => (!quadrant || r.quadrant === quadrant) && r.path.toLowerCase().includes(q));
@@ -61,7 +118,7 @@ function filter() {
 }
 ui('carrier').onchange = async () => {
   const ticket = ++generation, file = ui('carrier').files[0];
-  session = undefined; ui('workspace').hidden = true;
+  session = undefined; ui('workspace').hidden = true; ui('geometry').hidden=true; ++geometryRevision;
   ui('handshake').textContent = 'Waiting for a carrier.';
   if (!file) return;
   try {
@@ -91,7 +148,7 @@ ui('carrier').onchange = async () => {
       const b = document.createElement('button'); b.type='button'; b.textContent=k || 'All quadrants';
       b.setAttribute('aria-pressed',String(!k)); b.onclick=()=>{quadrant=k;for(const x of b.parentNode.children)x.setAttribute('aria-pressed',String(x===b));filter();};return b;
     }));
-    filter(); ui('workspace').hidden=false;
+    filter(); await prepareGeometry(state); if(ticket!==generation)return; ui('workspace').hidden=false;
     ui('handshake').textContent='Verified '+match.name+' · '+state.rows.length+' tracked files indexed. Select a file to read its contents.';
   } catch(e) { if(ticket===generation)ui('handshake').textContent=e.message; }
 };

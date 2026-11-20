@@ -7,6 +7,11 @@
 <li>Choose a geometric quadrant, then select a file to inspect its cell. Export the original bytes, or export the matching files as a source-linked JSON series.</li></ol>
 <label for="carrier">Open CGX.cgx</label> <input id="carrier" type="file" accept=".cgx"><p id="handshake" role="status">Waiting for a carrier.</p></section>
 <section id="workspace" hidden><h2>Explore FileSpace</h2><p id="identity"></p>
+<section id="geometry" hidden><h3>Raphael geometry</h3><p>Select a role or enter its five-digit ternary review address. Zero opens the empty state.</p>
+<label>Role <select id="role"></select></label> <label>Ternary address <input id="trits" size="6" maxlength="5" placeholder="00001"></label>
+<button id="resolve-address">Open address</button><p id="geometry-note" role="status"></p>
+<canvas id="mesh-view" width="480" height="280" aria-label="Orthographic wireframe of the selected source mesh" style="width:min(100%,480px);height:auto"></canvas>
+<button id="show-role">Inspect role record</button> <button id="show-mesh">Inspect mesh record</button></section>
 <div id="quadrants" class="sets" aria-label="Geometric quadrants"></div>
 <label>Filter paths <input type="search" id="query" placeholder="e.g. spec/CGX"></label>
 <p id="matches" aria-live="polite"></p><label for="members">Matching files</label>

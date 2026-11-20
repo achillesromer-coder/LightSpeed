@@ -89,7 +89,7 @@ def catalogue(site):
     (site/"library.html").write_bytes(html.encode())
     return len(figures),len(family_rows)
 
-def build(destination):
+def build(destination, raphael_source=None):
     receipt=verify(PRODUCT)
     destination=destination.resolve()
     if destination.exists(): raise ValueError("choose a new output directory")
@@ -109,6 +109,9 @@ def build(destination):
                 (writer/(module+".py")).write_bytes(original.read("runtime/python/"+module+".py"))
         library=Path(tmp)/"review-library"
         shutil.copytree(site/"assets",library/"assets")
+        if raphael_source is not None:
+            from raphael_review_set import populate
+            populate(library,raphael_source)
         # Preserve the portable tutorial in the supplemental CGX filespace too.
         for name in ("FileSpace.html","filespace.js","unispace.css"):
             shutil.copyfile(site/name,library/name)
@@ -148,7 +151,8 @@ kernel.write_carrier(root,Path(sys.argv[3]))
         page=page.replace("<!-- kit-download -->",'<p><a class="button" href="UniSpace.zip" download>Download product + offline tutorial ↓</a></p><p><a href="library.html">Explore the scientific review library →</a></p>')
         (site/"index.html").write_bytes(page.encode())
         write_json(site/"hosting.json",{"intended_origin":"https://romer.industries","proposed_base_path":"/unispace/",
-            "published":False,"entry":"index.html","starter_kit":"UniSpace.zip","carrier":"CGX.cgx",
+            "published":False,"scope":"private Raphael review" if raphael_source else "hosting candidate",
+            "entry":"index.html","starter_kit":"UniSpace.zip","carrier":"CGX.cgx",
             "carrier_sha256":receipt["sha256"],"kit_sha256":digest(site/"UniSpace.zip"),
             "tutorial":"FileSpace.html","library":"library.html","catalogue":"assets/catalogue.json",
             "companion":{"url":"ReviewLibrary.cgx","sha256":digest(companion),"bytes":companion.stat().st_size,"state_id":manifest["state_id"],"object_id":manifest["object_id"],"release":"local review candidate"},
@@ -159,4 +163,6 @@ kernel.write_carrier(root,Path(sys.argv[3]))
 if __name__=="__main__":
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("destination",type=Path)
-    build(parser.parse_args().destination)
+    parser.add_argument("--private-raphael-source",type=Path,help="Embed the hash-pinned local research set for private review.")
+    args=parser.parse_args()
+    build(args.destination,args.private_raphael_source)
