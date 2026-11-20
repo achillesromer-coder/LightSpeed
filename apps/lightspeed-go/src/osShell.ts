@@ -35,7 +35,7 @@ const readState = (): ShellState => {
       ? parsed.activeAgent as Floor
       : defaultState.activeAgent;
     return {
-      activeView: shellViewFromSearch(window.location.search, parsed.activeView),
+      activeView: shellViewFromSearch(window.location.search, window.location.hash.slice(1) || parsed.activeView),
       activeAgent: floor,
       focusMode: Boolean(parsed.focusMode),
     };
@@ -358,7 +358,7 @@ const installShell = (): void => {
       return;
     }
     if (event.key === "Escape") closePalette();
-    if ((event.ctrlKey || event.metaKey) && /^[1-5]$/.test(event.key)) {
+    if ((event.ctrlKey || event.metaKey) && /^[1-6]$/.test(event.key)) {
       event.preventDefault();
       setActiveView(SHELL_VIEWS[Number(event.key) - 1] || "command");
     }
