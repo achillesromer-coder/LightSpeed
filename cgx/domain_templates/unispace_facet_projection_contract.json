@@ -1,0 +1,79 @@
+{
+  "schema": "CGX-UNISPACE-FACET-PROJECTION-CONTRACT/0.1",
+  "status": "SOURCE_REVIEW_ONLY_NOT_NATIVE_ADMITTED",
+  "parent": "Cognigrex.cgx",
+  "product_projection": "UniSpace.cgx",
+  "authority_rule": "Canonical semantics, source rights, recovery lineage, leases, and DBR acceptance remain with existing verified source-of-truth owners.",
+  "reuse_not_rewrite": true,
+  "separation_of_concerns": {
+    "FileSpace": "Object identity, scoped filespace family, provenance and relationships",
+    "DataSpace": "Qualified type-aware structured datasets and projections after FileSpace admission",
+    "UniSpace": "Context-generated interface and task-driven projection over the same object identities",
+    "CCC": "Capability and owner-agent descriptor catalogue, not content storage",
+    "LOAD": "Alexandria content/knowledge lookup and hydration planning; not an executor or independent parent",
+    "LightSpeed": "Existing Z-floor interaction, rendering and controlled workflow runtime",
+    "Smith": "Existing singleton execution consumer and signed lease gate, no replacement queue",
+    "DBR": "Independent validation and change/readback receipts"
+  },
+  "bounded_source_module": "apps/lightspeed-go/src/cgxFacetProjection.mjs",
+  "bounded_source_tests": "apps/lightspeed-go/src/cgxFacetProjection.test.mjs",
+  "source_references": [
+    "cgx/domain_templates/view_selection_policy.json",
+    "apps/lightspeed-go/src/cgxObjectHydrationView.mjs",
+    "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/rendering/triangle_renderer.py",
+    "desktop/Desktop_Hooks/LightSpeed/Z Axis/Z-4_Merovingian/core/rendering/hybrid_renderer.py",
+    "desktop/LightSpeed_Runtime/lightspeed_runtime/ui_polish.py"
+  ],
+  "projection": {
+    "primary_view_count": 1,
+    "secondary_views": "on_demand",
+    "selection_priority": [
+      "security/admission",
+      "task",
+      "family/object type",
+      "mode",
+      "device",
+      "role",
+      "saved preference"
+    ],
+    "nav_presets": {
+      "1": "focus",
+      "2": "relationships",
+      "3": "spatial-preview"
+    },
+    "geometry_preview": "triangle and 3 vertex circles radius=0.5*edge, schematic only",
+    "family_palettes": [
+      "neutral",
+      "engineering",
+      "ecological",
+      "scientific",
+      "operational"
+    ],
+    "geography": "withheld until independent coordinate/readback verifier",
+    "immersive_3d": "withheld until independent geometry/source verifier",
+    "input_evidence": "caller-provided plans never authenticate source or rights",
+    "default_hydration": "H0",
+    "dispatch": "NOT_QUEUED",
+    "public_publish_authorized": false,
+    "native_admitted": false,
+    "canonical_mutation": false
+  },
+  "staged_acceptance": [
+    "review bounded source-only facet generator and tests",
+    "bind to host-authenticated view object and LOAD outputs",
+    "validate renderer registration under original LightSpeed shell",
+    "verify Smith singleton signed lease and LS GO readback",
+    "conduct host-local reversible H1/H2 then H3 acceptance with source, rights, DBR proofs",
+    "mint only through established native CGX governance and signed promotion",
+    "expand GeoSpatial/first-person and distributed API adapters only after independent qualified evidence"
+  ],
+  "not_claimed": [
+    "working CGX native mint",
+    "host-local integration",
+    "public deployment",
+    "live agent dispatch",
+    "independent provenance validation",
+    "device hardware handshake"
+  ]
+}
