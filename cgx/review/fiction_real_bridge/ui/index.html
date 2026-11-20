@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="color-scheme" content="dark">
+ <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+ <title>CGX Mirror · Fiction / Reality Cross-Resolver</title>
+ <link rel="stylesheet" href="./mirror.css">
+ <script src="./mirror.js" defer></script>
+</head>
+<body>
+<div class="shell">
+ <header class="topnav">
+  <div class="brand"><div class="sigil">C<span>↔</span></div><div><strong>COGNIGREX</strong><small>MIRROR / CROSS-DOMAIN RESOLVE</small></div></div>
+  <div class="toplinks"><a href="../index.html#domains">Achilles overview</a><a href="../index.html#sources">Alexandria</a><a href="../agent-buildout.html">Agent workshop</a></div>
+ </header>
+ <main>
+  <div class="hero">
+   <div><p class="eyebrow">LOAD / CCC / SEMANTIC BRIDGE — REVIEW STAGE</p>
+    <h1>One identity. <span>Multiple worlds.</span></h1>
+    <p>Traverse from a fictional mention to an independently documented work, an alternate referent, or an unresolved frontier. Each identity is reusable across lenses; no narrative reference becomes empirical proof by mere association.</p>
+   </div>
+   <span class="state-pill">NO NATIVE MINT · METADATA ONLY</span>
+  </div>
+  <div class="stats">
+   <div><span>REFERENTS</span><strong id="stat-nodes">—</strong><small>Distinct proposed identities</small></div>
+   <div><span>OCCURRENCES</span><strong id="stat-mentions">—</strong><small>Contextual references</small></div>
+   <div><span>BRIDGES</span><strong id="stat-edges">—</strong><small>Scoped, sourced relations</small></div>
+   <div><span>EVIDENCE</span><strong id="stat-sources">—</strong><small>External locators only</small></div>
+  </div>
+  <div class="layout">
+   <aside class="panel navigator">
+    <div class="paneltitle"><div><small>01 / SCENE & DOMAIN</small><h2>Reference atlas</h2></div><span class="tag">SELECT</span></div>
+    <div class="category">FILM <span>HACKERS · 1995</span></div>
+    <div class="scenario-list" id="film-list"><p class="muted">Reading source-qualified references...</p></div>
+    <div class="category">CROSS-REALM EXAMPLES</div>
+    <div class="scenario-list">
+      <button class="scenario" data-case="hitchhikers"><strong>Hitchhiker's Guide</strong><small>Published novel vs diegetic guide</small></button>
+      <button class="scenario" data-case="klingon"><strong>Klingon language</strong><small>Fictional origin / actual speakers</small></button>
+      <button class="scenario" data-case="unknown"><strong>Unknown title</strong><small>Unverified is not automatically fictional</small></button>
+    </div>
+    <div class="sidefoot">Source owners remain separate. A bridge conveys a claim; it does not transfer ownership or change native authority.</div>
+   </aside>
+   <section class="mainpanel">
+    <div class="commandline">
+     <form id="lookup-form" autocomplete="off">
+      <label for="lookup">RESOLVE ANY REFERENCE</label>
+      <div class="queryrow"><input id="lookup" placeholder="Try Red Book, Klingon language or Hitchhiker's Guide..." aria-label="Resolve a name or title"><button type="submit">Resolve <span>↗</span></button></div>
+     </form>
+     <label for="lens">DOMAIN LENS
+      <select id="lens"><option value="both">All referents</option><option value="empirical">Real-world only</option><option value="fiction">Fiction and narrative</option></select>
+     </label>
+    </div>
+    <article class="panel results">
+     <div class="paneltitle"><div><small>02 / ACTIVE RESOLUTION</small><h2 id="active-title">Select a reference</h2></div><span id="resolve-status" class="tag">REVIEW</span></div>
+     <p id="resolve-explainer" class="intro">Each mention, identity and qualified bridge can be followed back to its source.</p>
+     <div class="travel" id="travel">
+      <div class="travel-node"><small>ORIGIN</small><strong id="origin-text">—</strong><span id="origin-sub">context</span></div>
+      <div class="travel-arrow">→</div>
+      <div class="travel-node relation"><small>QUALIFIED RELATION</small><strong id="relation-text">—</strong><span>not identity by default</span></div>
+      <div class="travel-arrow">→</div>
+      <div class="travel-node"><small>REFERENT(S)</small><strong id="target-text">—</strong><span>reused identity IDs</span></div>
+     </div>
+     <div class="result-head"><h3>Qualified referents</h3><span id="candidate-count">0 candidates</span></div>
+     <div id="candidates" class="candidates"></div>
+     <section id="edge-inspector" class="edges-section"><h3>Bridge traversal</h3><div id="edges" class="edges"></div></section>
+    </article>
+    <article class="panel evidence-panel">
+     <div class="paneltitle"><div><small>03 / PROVENANCE & RIGHTS</small><h2>Evidence lineage</h2></div><span class="tag">SOURCE-BOUND</span></div>
+     <div id="evidence" class="evidence"><p class="muted">Select an example or run a lookup to inspect evidence locators.</p></div>
+     <p class="rights">External titles, citations and institutional URLs are references, not permission to reproduce copyrighted books, screenplay text, training corpora or licensed language materials. Local metadata is a candidate projection, not source-byte custody.</p>
+    </article>
+   </section>
+  </div>
+  <div class="bottomline"><div><strong>CGX / CROSS-WORLD</strong><span id="graph-hash">Loading graph…</span></div><span id="load-state">Read-only local projection</span></div>
+ </main>
+</div>
+</body>
+</html>
