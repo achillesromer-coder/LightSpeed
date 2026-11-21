@@ -7,6 +7,8 @@ import {
   routeOperationalFloor,
   SHELL_SCHEMA,
   SHELL_VIEWS,
+  UNISPACE_FACETS,
+  resolveUniSpaceFacet,
   shellViewFromSearch,
   workflowStage,
   WORKFLOW_STAGES,
@@ -162,7 +164,7 @@ const makePalette = (): HTMLElement => {
   palette.innerHTML = `
     <div class="ls-os-palette-card" role="dialog" aria-modal="true" aria-label="UniSpace command palette">
       <div class="ls-os-palette-head"><strong>UniSpace</strong><span>LightSpeed toolkit</span><button type="button" data-ls-close aria-label="Close">×</button></div>
-      <input id="ls-os-palette-input" type="search" autocomplete="off" placeholder="Open workspace, select agent, or route an outcome…" />
+      <input id="ls-os-palette-input" type="search" autocomplete="off" placeholder="Find a space, workspace, agent, or route an outcome…" />
       <div id="ls-os-palette-results" class="ls-os-palette-results"></div>
     </div>
   `;
@@ -192,6 +194,9 @@ const renderPaletteResults = (): void => {
   const mount = document.getElementById("ls-os-palette-results");
   if (!input || !mount) return;
   const query = input.value.trim().toLowerCase();
+  const facetItems = UNISPACE_FACETS
+    .filter((facet) => !query || `${facet.label} ${facet.description}`.toLowerCase().includes(query))
+    .map((facet) => `<button type="button" data-palette-facet="${facet.id}"><span>Space</span><strong>${escapeText(facet.label)}</strong><small>${escapeText(facet.description)}</small></button>`);
   const viewItems = SHELL_VIEWS
     .filter((view) => !query || view.includes(query))
     .map((view) => `<button type="button" data-palette-view="${view}"><span>Workspace</span><strong>${view}</strong><small>Open ${view} workspace</small></button>`);
@@ -201,11 +206,19 @@ const renderPaletteResults = (): void => {
   const routeItem = query
     ? [`<button type="button" data-palette-route="true"><span>Neo route</span><strong>${escapeText(routeOperationalFloor(input.value))}</strong><small>Use this text as the command outcome and route it through Cognigrex.</small></button>`]
     : [];
-  mount.innerHTML = [...routeItem, ...viewItems, ...agentItems].slice(0, 14).join("");
+  mount.innerHTML = [...facetItems, ...routeItem, ...viewItems, ...agentItems].slice(0, 18).join("");
   mount.querySelectorAll<HTMLButtonElement>("[data-palette-view]").forEach((button) => button.addEventListener("click", () => {
     setActiveView(normalizeShellView(button.dataset.paletteView));
     closePalette();
   }));
+  mount.querySelectorAll<HTMLButtonElement>("[data-palette-facet]").forEach((button) => {
+    const facet = resolveUniSpaceFacet(button.dataset.paletteFacet);
+    if (!facet) return;
+    button.addEventListener("click", () => {
+      setActiveView(facet.view);
+      closePalette();
+    });
+  });
   mount.querySelectorAll<HTMLButtonElement>("[data-palette-agent]").forEach((button) => button.addEventListener("click", () => {
     setActiveAgent(button.dataset.paletteAgent as Floor, true);
     closePalette();
