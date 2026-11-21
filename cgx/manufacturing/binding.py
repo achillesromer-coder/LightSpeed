@@ -144,9 +144,9 @@ def resolve_binding_gate(instance: dict[str, Any], population: dict[str, Any] | 
     iid = instance.get("instance_id", "UNKNOWN")
     progress = _instance_binding_progress(instance)
 
-    if instance.get("binding_state") == "BUILD_READY":
-        gate = "CLOSED"
-    elif iid in CURRENT_INSTANCE_GATE_OVERRIDES:
+    # BUILD_READY is an owner classification, not evidence by itself. Resolve the
+    # first still-open evidence gate and require physical TEST_EXECUTION before CLOSED.
+    if iid in CURRENT_INSTANCE_GATE_OVERRIDES:
         gate = CURRENT_INSTANCE_GATE_OVERRIDES[iid]
     elif _upstream_dependencies(instance):
         gate = "UPSTREAM_EVIDENCE"
