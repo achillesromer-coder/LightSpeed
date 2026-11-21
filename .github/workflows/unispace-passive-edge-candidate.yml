@@ -1,0 +1,24 @@
+name: UniSpace passive edge candidate
+on:
+  pull_request:
+    paths:
+      - "cgx/domain_templates/passive_edge_profile_registry.json"
+      - "cgx/portable_node/passive_node_plan.py"
+      - "tests/test_cgx_passive_node_plan.py"
+      - ".github/workflows/unispace-passive-edge-candidate.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate-no-enrollment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Verify static registry and no-authority planning
+        run: |
+          python -m json.tool cgx/domain_templates/passive_edge_profile_registry.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_passive_node_plan.py' -v

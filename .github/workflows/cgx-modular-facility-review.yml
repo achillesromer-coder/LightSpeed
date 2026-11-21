@@ -1,0 +1,30 @@
+name: CGX modular facility packing candidate
+on:
+  pull_request:
+    paths:
+      - "cgx/manufacturing/modular_facility_packing.py"
+      - "cgx/manufacturing/fixtures/five_unit_relief_synthetic_v0_1.json"
+      - "tests/test_cgx_modular_facility_packing.py"
+      - "cgx/manufacturing/modular_deployment_logistics.py"
+      - "tests/test_cgx_modular_deployment_logistics.py"
+      - "cgx/manufacturing/modular_facility_projection.py"
+      - "tests/test_cgx_modular_facility_projection.py"
+      - ".github/workflows/cgx-modular-facility-review.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Parse five-unit fixture and exercise deterministic review gates
+        run: |
+          python -m json.tool cgx/manufacturing/fixtures/five_unit_relief_synthetic_v0_1.json > /dev/null
+          python -m unittest discover -s tests -p 'test_cgx_modular_facility_packing.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_deployment_logistics.py' -v
+          python -m unittest discover -s tests -p 'test_cgx_modular_facility_projection.py' -v
