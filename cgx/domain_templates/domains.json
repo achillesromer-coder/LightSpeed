@@ -218,7 +218,8 @@
     "provider_notification_evidence": "provider_notification_evidence_contract.json",
     "s92_child_persistence_verification": "s92_domain_children_persistence_verification_2026-10-04.json",
     "s92_child_acceptance_audit": "s92_domain_children_acceptance_audit_2026-10-04.json",
-    "mobile_node_binding": "mobile_node_binding_contract.json"
+    "mobile_node_binding": "mobile_node_binding_contract.json",
+    "intersol_site_community_profile": "intersol_site_community_profile_contract.json"
   },
   "generation_policy": {
     "source_authority": "latest-durably-observed-Recovery-authority-only",
