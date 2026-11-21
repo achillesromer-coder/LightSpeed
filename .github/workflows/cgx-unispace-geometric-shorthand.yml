@@ -1,0 +1,102 @@
+name: CGX UniSpace Geometric Shorthand Proof
+on:
+  push:
+    branches: ["feature/cgx-unispace-r0-shorthand-20261012"]
+    paths:
+      - "benchmarks/cgx_unispace_geometric_shorthand/**"
+      - "cgx/domain_templates/unispace_geometric_shorthand_candidate.json"
+      - ".github/workflows/cgx-unispace-geometric-shorthand.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "benchmarks/cgx_unispace_geometric_shorthand/**"
+      - "cgx/domain_templates/unispace_geometric_shorthand_candidate.json"
+      - ".github/workflows/cgx-unispace-geometric-shorthand.yml"
+permissions:
+  contents: read
+jobs:
+  reversible-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile exact source / lenses / benchmarks
+        run: python -m py_compile benchmarks/cgx_unispace_geometric_shorthand/{cgx_geo.py,read_lenses.py,test_cgx_geo.py,benchmark.py}
+      - name: Run reversible, adversarial, cache and null tests
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: python -m unittest -v test_cgx_geo.py
+      - name: Test FileSpace byte-cost adapter with actual current Node Exchange planner
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          PYTHONPATH=.:../../desktop/LightSpeed_Runtime python -m unittest -v test_node_exchange_r0_adapter.py
+          echo NATIVE_NODE_EXCHANGE_R0_PLAN_GATE_PASS
+      - name: Classify minimum Drive handoff key without activating the local runtime
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python -m unittest -v test_drive_readback_candidate.py
+          python -m py_compile drive_readback_candidate.py
+      - name: Validate source-owned Neutral Beings FileSpace index and safe public boundary
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python -m py_compile neutral_beings_filespace.py test_neutral_beings_filespace.py
+          python -m unittest -v test_neutral_beings_filespace.py
+          python neutral_beings_filespace.py neutral_beings_source_index.json --html neutral_beings_owner_review.html
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('neutral_beings_owner_review.html')
+          assert p.is_file() and p.stat().st_size<200000
+          assert 'Source-owner review' in p.read_text()
+          print('NEUTRAL_BEINGS_SOURCE_BOUND_HOLD_PASS',p.stat().st_size)
+          PY
+      - name: Reconstruct a full byte stream, then a baseline-root sparse update
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          src=Path('original.bin');src.write_bytes(b'R0-CGX-DOOM\x00'*10000)
+          edit=bytearray(src.read_bytes());edit[23000]=88
+          Path('edited.bin').write_bytes(edit)
+          PY
+          python cgx_geo.py encode original.bin trial.cgxs --layers 15
+          python cgx_geo.py decode trial.cgxs reconstructed.bin
+          cmp original.bin reconstructed.bin
+          python cgx_geo.py delta original.bin edited.bin update.cgxs --layers 15
+          python cgx_geo.py apply original.bin update.cgxs patch-reconstructed.bin
+          cmp edited.bin patch-reconstructed.bin
+          python - <<'PY'
+          from pathlib import Path
+          from cgx_geo import decode_delta_bytes, CodecError, inspect
+          blob=Path('update.cgxs').read_bytes()
+          assert inspect(blob)['mode']=='baseline-root-sparse-patch'
+          try:decode_delta_bytes(blob,None)
+          except CodecError as e:assert 'NOT_CACHED' in str(e)
+          else:raise AssertionError('Missing source should be rejected')
+          print('R0_SOURCE_AND_ROOT_DELTA_PASS')
+          PY
+      - name: Re-run portable fuel-for-fuel fixtures and validate cost evidence
+        working-directory: benchmarks/cgx_unispace_geometric_shorthand
+        run: |
+          python benchmark.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          r=json.loads(Path('benchmark_results.json').read_text())
+          assert len(r['cases'])>=3
+          assert all('cold_start_minimum_in_three' in c for c in r['cases'])
+          assert 'energy_joules' in r['not_measured']
+          assert json.loads(Path('../../cgx/domain_templates/unispace_geometric_shorthand_candidate.json').read_text())['security']['codec_authenticated'] is False
+          print('FUEL_FUEL_EVIDENCE_AND_OWNER_GATE_PASS')
+          PY
+      - name: Upload synthetic proof
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-unispace-r0-shorthand-validation
+          path: |
+            benchmarks/cgx_unispace_geometric_shorthand/benchmark_results.json
+            benchmarks/cgx_unispace_geometric_shorthand/neutral_beings_owner_review.html
+          if-no-files-found: warn
+          retention-days: 14

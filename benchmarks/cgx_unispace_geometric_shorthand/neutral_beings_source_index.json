@@ -1,0 +1,2052 @@
+{
+  "schema": "cgx.unispace.filespace.neutral_beings.source_index.candidate.v1",
+  "status": "OWNER_REVIEW_METADATA_ONLY",
+  "display_brand": "Neutral Beings",
+  "governing_product": "UniSpace — Powered by CGX",
+  "source_owner": "NCNBOUWER/Raphael / CGX PrintSpace (original source authority retained)",
+  "source_refs": {
+    "product_atlas": {
+      "repository": "NCNBOUWER/Raphael",
+      "path": "CGX/PrintSpace/CROSS_GREX_PRODUCT_ATLAS_v0_5.json",
+      "ref": "docs/cgx-printspace-capability-first-2026-10-08",
+      "blob_sha": "80f2d2879955fbaeaad65d9431baeaa13d976892",
+      "source_id": "CGX-F4D-PRODUCT-ATLAS-20261008",
+      "status": "PROPOSED_OWNER_REVIEW"
+    },
+    "primitive_atlas": {
+      "repository": "NCNBOUWER/Raphael",
+      "path": "CGX/PrintSpace/CROSS_GREX_SHARED_PRIMITIVES_v0_5.json",
+      "ref": "docs/cgx-printspace-capability-first-2026-10-08",
+      "blob_sha": "8e4289daec4bf81cc50a098a0ff715c2e1a4127b",
+      "source_id": "CGX-F4D-REUSE-20261008",
+      "status": "PROPOSED"
+    },
+    "printceptor_family": {
+      "repository": "NCNBOUWER/Raphael",
+      "path": "CGX/PrintSpace/PRINTCEPTOR_FAMILY_PARAMETRIC_REGISTRY_v0_1.json",
+      "ref": "docs/cgx-printspace-capability-first-2026-10-08",
+      "blob_sha": "f517db799d41d075afe90a42da70159d2bab54cf",
+      "status": "REVIEWABLE_PRELIMINARY_DESIGN_NOT_AS_BUILT"
+    }
+  },
+  "authority": {
+    "fileSpace": "source-bound metadata projection only",
+    "dataSpace": "simulation / no autonomous connection",
+    "printSpace": "upstream Raphael owner / physical not run",
+    "canonical_mutation": false,
+    "public_release": false
+  },
+  "safety_policy": {
+    "intended_uses": [
+      "creative",
+      "education",
+      "accessibility",
+      "repair",
+      "resource-efficiency",
+      "ecological-monitoring",
+      "community-aid"
+    ],
+    "excluded_intent": [
+      "weapons",
+      "weapon components",
+      "weaponisation instructions",
+      "unsafe physical actuation"
+    ],
+    "ambiguous_dual_use": "WITHHOLD_PUBLIC_BUILD_DETAILS_AND_ROUTE_TO_OWNER_SAFETY_REVIEW",
+    "child_and_general_public": "No machine codes, manufacturing recipes or hazardous process parameters without licensing, technical, environmental and independent safety approval",
+    "release_gate": [
+      "rights+licence_verified",
+      "source+revision_verified",
+      "safety_use_review",
+      "privacy_checked",
+      "qualified_machine_for_physical_claim",
+      "owner_release_receipt"
+    ],
+    "device_key_is_not_permission": true
+  },
+  "evidence": {
+    "source_atlas_product_count": 80,
+    "primitive_reference_count": 70,
+    "printceptor_family_count": 17,
+    "physically_qualified_product_count": 0,
+    "all_product_concepts_unqualified": true,
+    "source_licence_cleared_for_republication": false
+  },
+  "statuses": [
+    "KNOWN_SOURCE_METADATA",
+    "DERIVED_CANDIDATE",
+    "UNKNOWN",
+    "WITHHELD",
+    "CONFLICT",
+    "UNQUALIFIED",
+    "PHYSICALLY_VERIFIED"
+  ],
+  "groups": [
+    {
+      "id": "wearable",
+      "title": "Wearable",
+      "source_owner": "LightSpeed / CGX"
+    },
+    {
+      "id": "usable",
+      "title": "Usable",
+      "source_owner": "LightSpeed / CGX"
+    },
+    {
+      "id": "operable",
+      "title": "Operable",
+      "source_owner": "Römer-Grex"
+    },
+    {
+      "id": "backend",
+      "title": "Backend / SAI",
+      "source_owner": "CGX / SAI"
+    },
+    {
+      "id": "eco",
+      "title": "Eco-Grex",
+      "source_owner": "Eco-Grex"
+    },
+    {
+      "id": "romer",
+      "title": "Römer / EMASSC",
+      "source_owner": "Römer-Grex"
+    },
+    {
+      "id": "civil",
+      "title": "Socie-Civil / Infrastructure",
+      "source_owner": "Socie-Civil"
+    },
+    {
+      "id": "research",
+      "title": "PrintSpace / R&D",
+      "source_owner": "Raphael / CGX"
+    },
+    {
+      "id": "operations",
+      "title": "Community / Operations",
+      "source_owner": "Operations / LS"
+    }
+  ],
+  "products": [
+    {
+      "source_product_id": "FW-01",
+      "label": "Wrist watch and band",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-02",
+      "label": "Sensor ring",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-03",
+      "label": "Smart glasses",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-04",
+      "label": "Neckline audio and environmental pendant",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-05",
+      "label": "Hearing protection comms",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-06",
+      "label": "Textile sensor patch",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FW-07",
+      "label": "Emergency identity badge",
+      "group": "wearable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FW-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-01",
+      "label": "Complete CGX phone-like device",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-02",
+      "label": "Tablet / field dataspace slate",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-03",
+      "label": "Portable specialised laptop",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-04",
+      "label": "Desktop / edge workstation",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-05",
+      "label": "Spatial speaker and audio body",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-06",
+      "label": "Camera / optical recorder",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-07",
+      "label": "Accessible gaming controller",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-08",
+      "label": "Personal environmental node",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-09",
+      "label": "Home tunable light",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-10",
+      "label": "Offline household CGX terminal",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-10"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FU-11",
+      "label": "Portable optical measurement instrument",
+      "group": "usable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FU-11"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-01",
+      "label": "Butter Bot BB01",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-02",
+      "label": "Smart coffee machine",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-03",
+      "label": "Robotic manipulation arm",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-04",
+      "label": "Autonomous service rover",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-05",
+      "label": "Ecological survey drone",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FO-06",
+      "label": "Fabrication cobot and tool changer",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-07",
+      "label": "Intelligent fluid dosing unit",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-08",
+      "label": "Inspection crawler",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-09",
+      "label": "Assistive adaptive gripper",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FO-10",
+      "label": "Smart ventilation and acoustic unit",
+      "group": "operable",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FO-10"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-01",
+      "label": "CGX home set-top node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-02",
+      "label": "Router and local mesh gateway",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-03",
+      "label": "High capacity host node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-04",
+      "label": "SAI public edge terminal",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-05",
+      "label": "SAI private personal node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-06",
+      "label": "SAI government audit node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FB-07",
+      "label": "SAI defence infrastructure node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FB-08",
+      "label": "Resilient relay gateway",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-09",
+      "label": "Microgrid dispatch and safety node",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FB-10",
+      "label": "LightSpeed GO mobile gateway",
+      "group": "backend",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FB-10"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-01",
+      "label": "Acoustic ecology faux habitat surrogate",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-02",
+      "label": "Artificial nesting / roost module",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-03",
+      "label": "Bioacoustic recorder node",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-04",
+      "label": "Water-quality sensing cell",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-05",
+      "label": "Cleanup sorting and feed node",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-06",
+      "label": "EcoX tree provenance and seed cradle",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-07",
+      "label": "Wetland acoustic baffle and sensors",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-08",
+      "label": "Soil and moisture field monitoring",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FE-09",
+      "label": "Fauna-safe remediation rover",
+      "group": "eco",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FE-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-01",
+      "label": "M1 elevated modular deck unit",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-02",
+      "label": "M1 acoustic roadway barrier",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-03",
+      "label": "Coomera and Logan river nodes",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-04",
+      "label": "Solar shoulder misting and runoff",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-05",
+      "label": "Rail and guideway sensing coating",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-06",
+      "label": "Emergency resilience microfactory",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FC-07",
+      "label": "Functional building skin",
+      "group": "civil",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FC-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-01",
+      "label": "Mark 1P proof-of-concept hardware",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-02",
+      "label": "Mark III resource acquisition unit",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FR-03",
+      "label": "Mark V survey and Solar Hull support",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-04",
+      "label": "Solar Hull graded functional panel",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-05",
+      "label": "Free Flow energy field coupon",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-06",
+      "label": "RFS / EMFF field interaction rig",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-07",
+      "label": "Luke II orbital brake / relay body",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FR-08",
+      "label": "Luke IV terrestrial magnetic capture structure",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "RESTRICTED_REVIEW"
+    },
+    {
+      "source_product_id": "FR-09",
+      "label": "InterSol service and relay node",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-10",
+      "label": "Asteroid assay and separation node",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-10"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-11",
+      "label": "Orbital inspection and servicing robot",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-11"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-12",
+      "label": "Habitat thermal and radiation panel",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-12"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FR-13",
+      "label": "Mission 1 capsule / asset interface",
+      "group": "romer",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FR-13"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-01",
+      "label": "Printer-1 multiprocess bench",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-02",
+      "label": "Printer-micro precision node",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-03",
+      "label": "Mobile controlled-environment printer",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-04",
+      "label": "Hermetic chamber functional coupon",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-05",
+      "label": "Printed semiconductor and photonic test",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-05"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-06",
+      "label": "Microfluidic lab-on-chip",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-06"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-07",
+      "label": "Electrochemical printed cell research",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-07"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-08",
+      "label": "Post-mix graded material nozzle",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-08"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FD-09",
+      "label": "ISRU regolith feed and refining cell",
+      "group": "research",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FD-09"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FS-01",
+      "label": "Riverlee Rose kit accessories and tools",
+      "group": "operations",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FS-01"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FS-02",
+      "label": "School and community making kit",
+      "group": "operations",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FS-02"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FS-03",
+      "label": "Römer repair and consulting production kit",
+      "group": "operations",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FS-03"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    },
+    {
+      "source_product_id": "FS-04",
+      "label": "Citizen ecological field station",
+      "group": "operations",
+      "source_state": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "physical_tested": false,
+      "production_approved": false,
+      "source_locators": [
+        "product_atlas.products.FS-04"
+      ],
+      "native_source_retained_by_upstream": true,
+      "current_publication": "HOLD_LICENSE_AND_SAFETY_REVIEW",
+      "geometry": "SOURCE_ATLAS_POINTER_ONLY",
+      "manufacturing": "NOT_QUALIFIED",
+      "display_scope": "OWNER_REVIEW"
+    }
+  ],
+  "primitives": [
+    {
+      "technology_id": "PT-001",
+      "label": "Beam / lattice / shell",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-043",
+      "label": "Hybrid compute island",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-018",
+      "label": "Temperature sensor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-011",
+      "label": "Conductor / bus / trace",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-023",
+      "label": "Optical / photodetector interface",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-031",
+      "label": "Battery cell",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-045",
+      "label": "RF transceiver body/interface",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-015",
+      "label": "Antenna / transmission line / resonator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-044",
+      "label": "RFID / NFC identity node",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-008",
+      "label": "Heat spreader / radiator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-054",
+      "label": "Calibration artefact / probe fixture",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-039",
+      "label": "Waveguide / diffuser / reflector",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-007",
+      "label": "Fluid/gas manifold",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-019",
+      "label": "Strain / force sensor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-026",
+      "label": "Motor / stator-rotor assembly",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-005",
+      "label": "Seal / gasket",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-021",
+      "label": "Humidity / gas sensor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-059",
+      "label": "Structural-health sensor skin",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-013",
+      "label": "Capacitor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-014",
+      "label": "Inductor / transformer / coil",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-003",
+      "label": "Gear / cam / pulley",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-052",
+      "label": "Pump / valve / manifold module",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-024",
+      "label": "Magnetic / field sensor interface",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-025",
+      "label": "Solenoid",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-053",
+      "label": "Gripper / end effector",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-051",
+      "label": "Post-mix nozzle / mixer head",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-010",
+      "label": "EMI / optical / dust shield",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-002",
+      "label": "Compliant flexure / spring",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-050",
+      "label": "Water-quality / treatment node",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-009",
+      "label": "Thermal insulation / break",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-022",
+      "label": "Electrochemical water-quality sensor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-055",
+      "label": "Child printer skeleton and tool bus",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-068",
+      "label": "Mark integrated functional body",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-046",
+      "label": "Optical / IR link",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-006",
+      "label": "Pressure/vacuum cavity",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-038",
+      "label": "Hybrid semiconductor LED",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-016",
+      "label": "Contact / connector / pad",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-012",
+      "label": "Resistor / heater",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-049",
+      "label": "Microfluidic lab / assay cartridge",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-056",
+      "label": "Road/guideway functional coating",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-033",
+      "label": "Photovoltaic layer/device",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-069",
+      "label": "Luke / InterSol support module",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-020",
+      "label": "Pressure / capacitive sensor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-034",
+      "label": "Inductive power transfer",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-047",
+      "label": "Filter / membrane module",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-070",
+      "label": "Roaming/mobile UTP",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-058",
+      "label": "Solar Hull / structural photovoltaic skin",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-017",
+      "label": "Printed fuse / current limiter",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-032",
+      "label": "Supercapacitor",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-062",
+      "label": "Mineral/regolith composite feed",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-067",
+      "label": "Beneficiation/refinery machine parts",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-064",
+      "label": "Regolith structural element",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-040",
+      "label": "Printed thin-film transistor / active switch",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-027",
+      "label": "Voice-coil / linear EM actuator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-035",
+      "label": "Thermoelectric generator/cooler",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-028",
+      "label": "Pneumatic / hydraulic actuator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-029",
+      "label": "Compliant / electrothermal actuator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-030",
+      "label": "Piezo / dielectric-elastomer actuator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-048",
+      "label": "Catalytic/reactive surface",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-060",
+      "label": "Recovered polymer feed",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-061",
+      "label": "Recovered graphene conductive feed",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-063",
+      "label": "Bio-derived binder/carrier",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-057",
+      "label": "Building functional coating",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-004",
+      "label": "Bearing/bushing interface",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-066",
+      "label": "Shield / berm / landing-pad construction",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-036",
+      "label": "RGB gas-discharge pixel",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-041",
+      "label": "Printed simple logic / oscillator",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-042",
+      "label": "Printed memory candidate",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-037",
+      "label": "Electroluminescent thin-film element",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    },
+    {
+      "technology_id": "PT-065",
+      "label": "Locally refined metal wire/truss",
+      "source_state": "PROPOSED",
+      "physical_qualified": false
+    }
+  ],
+  "printer_families": [
+    {
+      "family_id": "CGX-PC-FAM-PC0",
+      "label": "PrintCeptor 0 — Bootstrap",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-PCA",
+      "label": "PrintCeptor A — Successor",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-EVD",
+      "label": "Everyday Desktop",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-PRO",
+      "label": "Pro Desktop",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-MIC",
+      "label": "Micro Printer Child",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-SND",
+      "label": "Standalone Precision Desktop",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-WKS",
+      "label": "Workshop Modular",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-IND",
+      "label": "Industrial Multi-cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-HEV",
+      "label": "Heavy-material Production",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-LRG",
+      "label": "Large Structural Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-ROV",
+      "label": "Roving/In-situ Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-FLD",
+      "label": "Container/Field Station",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-REC",
+      "label": "Reclamation/Repair Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-BIF",
+      "label": "Bio/Fluidic Controlled Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-ENE",
+      "label": "Energy/Electronics Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-ORB",
+      "label": "Orbital/Microgravity Cell",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    },
+    {
+      "family_id": "CGX-PC-FAM-CIV",
+      "label": "Civil Distributed Printer Array",
+      "physically_qualified": false,
+      "source_state": "ARCHITECTURE_RESEARCH_ONLY"
+    }
+  ],
+  "proposed_public_seeds": [
+    {
+      "label": "Diode / functional electronics",
+      "source_technology_refs": [
+        "PT-038",
+        "PT-040",
+        "PT-041"
+      ],
+      "source_product_refs": [
+        "FD-05"
+      ],
+      "status": "DESIGN_DECOMPOSITION_ONLY",
+      "clarification": "LED/switch/logic are separate technologies; no complete semiconductor diode is asserted printable"
+    },
+    {
+      "label": "Phone-equivalent",
+      "source_product_refs": [
+        "FU-01",
+        "FB-10"
+      ],
+      "status": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "clarification": "Full communications, battery, computing, RF and software qualification outstanding"
+    },
+    {
+      "label": "Watch-equivalent",
+      "source_product_refs": [
+        "FW-01",
+        "FW-02"
+      ],
+      "status": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "clarification": "Miniaturisation, battery, seals and device safety outstanding"
+    },
+    {
+      "label": "Codex Pet companion",
+      "source_product_refs": [
+        "FO-01",
+        "FU-10"
+      ],
+      "status": "NEW_SEMANTIC_CONCEPT_UNREGISTERED",
+      "clarification": "Pedagogical/user-interaction concept only; no new canonical Product_ID or autonomous manufactured pet"
+    },
+    {
+      "label": "PrintCeptor and micro-printer",
+      "source_product_refs": [
+        "FD-01",
+        "FD-02",
+        "FD-03"
+      ],
+      "status": "NOT_PHYSICALLY_BUILT_OR_QUALIFIED",
+      "clarification": "Render R&D digital intent; preserve measured first-article and containment gates"
+    },
+    {
+      "label": "Ecological/community device",
+      "source_product_refs": [
+        "FE-08",
+        "FS-02",
+        "FS-04"
+      ],
+      "status": "UNQUALIFIED_PRODUCT_CONCEPT",
+      "clarification": "Local source, environmental suitability and safe-use review required"
+    }
+  ],
+  "facets": {
+    "source_and_id": [
+      "Object_ID reference",
+      "provider native bytes",
+      "source SHA",
+      "source revision",
+      "licence",
+      "rights"
+    ],
+    "geometry_and_topology": [
+      "units",
+      "frame",
+      "layers",
+      "interfaces",
+      "dependency_refs",
+      "unknown_regions"
+    ],
+    "functions": [
+      "purpose",
+      "registered kernel",
+      "input",
+      "output",
+      "safety conditions",
+      "evidence ceiling"
+    ],
+    "material_and_process": [
+      "lot passports",
+      "X→Y interface",
+      "process sequence",
+      "environment",
+      "cure",
+      "verification"
+    ],
+    "device_and_dataspace": [
+      "hardware passport",
+      "capability advertisement",
+      "cache proof",
+      "security identity",
+      "state/delta",
+      "DBR"
+    ],
+    "community_and_distribution": [
+      "safe use",
+      "cost accessibility",
+      "local materials",
+      "repair",
+      "recyclability",
+      "release rights"
+    ]
+  },
+  "immutability": "This is a metadata index, not a fork, replacement, or rewrite of the underlying 80-product atlas, primitive library, or PrintCeptor configurations."
+}
