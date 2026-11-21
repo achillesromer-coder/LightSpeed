@@ -1,0 +1,519 @@
+{
+  "schema": "CGX-TYPE1-RADIATIVE-TRANSPORT-SEED-MATRIX/0.1",
+  "artifact_id": "UTP-146",
+  "build_id": "BUILD-079",
+  "title": "Universal Type-I Radiative / Transport / Seed Coupling Matrix",
+  "status": "DIGITAL_ENGINEERING / SOURCE_AND_MODEL_BOUNDED / PHYSICAL_NOT_RUN",
+  "purpose": "Close the gap between 2D schematic intent, 3D embedded inter-layer geometry and 4D time/history-aware operation by compiling field/radiation/transport sources, propagation media, interfaces, receivers, losses, storage and mutual coupling for zero-, single- and multi-seed systems. Distinct physics remain distinct; a common graph contract does not collapse them into one equation.",
+  "owner": {
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_sheet": "40_CGX_Type1_Radiative_Transport_Seed_Matrix_v0_1",
+    "parent_contracts": [
+      "UTP-124",
+      "UTP-136",
+      "UTP-137",
+      "UTP-141",
+      "UTP-142",
+      "UTP-143",
+      "UTP-144",
+      "UTP-145"
+    ]
+  },
+  "universal_factorization": "Archetype × PrimitiveKernel × VolumetricKernel × InterfaceOperator × ProcessSequence × FunctionalVoxelState × SeedGraph × FieldTransportRegime × MutualCoupling × WitnessEvidence",
+  "mapping_chain": [
+    "2D_NETLIST_OR_FUNCTION_INTENT",
+    "3D_REGION_AND_INTERFACE_GRAPH",
+    "DECLARE_REFERENCE_AND_BOUNDARY_NODES",
+    "SELECT_SG0_SG1_SGN",
+    "DECLARE_IMPRESSED_AND_EXTERNAL_SOURCES",
+    "SELECT_FIELD_TRANSPORT_REGIME_PER_EDGE",
+    "ASSEMBLE_SELF_AND_MUTUAL_TERMS",
+    "CHECK_LINEARITY_RECIPROCITY_PASSIVITY_CAUSALITY_ASSUMPTIONS",
+    "SOLVE_OR_RETAIN_SYMBOLIC_OR_HOLD",
+    "MAP_LOSS_STORAGE_CONVERSION_AND_SAFE_STATE",
+    "ORDER_PHYSICAL_PROCESS_SEQUENCE",
+    "DEFINE_WITNESSES_AND_FALSIFIERS",
+    "4D_READBACK_AND_REVISION_INVALIDATION"
+  ],
+  "seed_source_contract": {
+    "SG-0": {
+      "seed_count": 0,
+      "source_rule": "No inserted discrete seed. Excitation may be external, environmental, stored-state release, passive thermal emission, mechanical/fluid forcing, or a separately qualified printed active-material process. Passive geometry/material cannot create net active gain or energy.",
+      "typical_roles": [
+        "passive resonator",
+        "antenna/scatterer",
+        "capacitive/inductive coupler",
+        "thermal radiator/absorber",
+        "waveguide",
+        "shield",
+        "sensor geometry",
+        "fluid/thermal/mechanical network"
+      ]
+    },
+    "SG-1": {
+      "seed_count": 1,
+      "source_rule": "Exactly one discrete seed may act as impressed source, receiver, transducer, controller or certified/precision function. Seed package/pads/body are explicit electrical, EM, thermal, mechanical and service boundary regions.",
+      "typical_roles": [
+        "single active die with printed passives",
+        "one emitter with printed optics/thermal stack",
+        "one sensor seed embedded in passive field-shaping body"
+      ]
+    },
+    "SG-N": {
+      "seed_count": "2+",
+      "source_rule": "Multiple discrete seeds are compiled as a coupled multiport/multiphysics network. Off-diagonal mutual terms, common return paths, timing, fault domains and common-cause environmental couplings are retained when consequential.",
+      "typical_roles": [
+        "distributed sensor/driver network",
+        "multi-antenna/RF module",
+        "power-control-sensor module",
+        "multi-emitter/receiver optical or acoustic array"
+      ]
+    }
+  },
+  "region_roles": [
+    {
+      "id": "RR-SOURCE",
+      "role": "impressed/external source",
+      "rule": "Source amplitude/spectrum/state must be attributable; no placeholder source promoted to numeric capability."
+    },
+    {
+      "id": "RR-GUIDE",
+      "role": "guide/route",
+      "rule": "Wave/flux/flow path geometry and interfaces are explicit."
+    },
+    {
+      "id": "RR-RESONATOR",
+      "role": "store/shape field energy",
+      "rule": "Q/resonance requires loss and boundary model or measurement."
+    },
+    {
+      "id": "RR-COUPLER",
+      "role": "transfer between regions/domains",
+      "rule": "Coupling coefficient/matrix term remains symbolic until geometry/material/regime is bound."
+    },
+    {
+      "id": "RR-SCATTER",
+      "role": "reflect/scatter/diffract",
+      "rule": "Use regime-valid field model; geometric optics is not used for wavelength-scale structures."
+    },
+    {
+      "id": "RR-ABSORB",
+      "role": "dissipate/convert incident energy",
+      "rule": "Absorption/emissivity/loss tangent/conductivity/etc. must be source-bound or measured."
+    },
+    {
+      "id": "RR-SHIELD",
+      "role": "attenuate/isolate/return",
+      "rule": "Shielding is frequency/material/geometry/interface specific; no generic dB claim."
+    },
+    {
+      "id": "RR-RECEIVER",
+      "role": "sense/receive/load",
+      "rule": "Receiver transfer function and loading are explicit."
+    },
+    {
+      "id": "RR-STORAGE",
+      "role": "field/thermal/chemical/mechanical storage",
+      "rule": "Stored energy is domain-specific; electrostatic U=1/2 CV^2 does not generalize to chemistry."
+    },
+    {
+      "id": "RR-REFERENCE",
+      "role": "ground/reference/frame/environment datum",
+      "rule": "Reference definition is mandatory for matrices/ports and cannot be inferred from visual proximity."
+    }
+  ],
+  "field_transport_regimes": [
+    {
+      "id": "FTR-EQS",
+      "family": "electrostatic/quasi-static electric",
+      "state": "V,E,D,Q",
+      "governing": "Poisson/Laplace; Q=C·V; U=1/2 V^T C V for linear reference-bound electrostatics",
+      "topology": "multi-conductor dielectric volume",
+      "mutual": "Maxwell capacitance matrix; retain off-diagonal terms when consequential",
+      "regime_gate": "electrical length and displacement/current dynamics must permit quasi-static treatment",
+      "witness": "C/leakage/field or calibrated charge-voltage response"
+    },
+    {
+      "id": "FTR-MQS",
+      "family": "magnetostatic/quasi-static magnetic",
+      "state": "I,B,H,Phi",
+      "governing": "magnetostatic/quasi-static field; Phi=L·I",
+      "topology": "loops/cores/returns/shields",
+      "mutual": "self/mutual inductance or partial-inductance matrix",
+      "regime_gate": "frequency/material state must justify MQS; eddy/current-distribution effects added when consequential",
+      "witness": "L/Q/coupling/field probe"
+    },
+    {
+      "id": "FTR-EM-NF",
+      "family": "electromagnetic near-field coupling",
+      "state": "E,H,phase,power",
+      "governing": "full Maxwell or validated reduced near-field model",
+      "topology": "source/receiver/ground/body within coupled near-field volume",
+      "mutual": "multiport Z/Y/S or field-derived coupling; electric and magnetic coupling both allowed",
+      "regime_gate": "near-field/far-field regime declared from source size, wavelength, separation and intended observable; no universal distance threshold forced across all radiators",
+      "witness": "VNA/field scan/coupling measurement"
+    },
+    {
+      "id": "FTR-EM-FF",
+      "family": "electromagnetic radiative/far-field",
+      "state": "E,H,phase,power density,polarization",
+      "governing": "full-wave Maxwell; radiated power/pattern/gain only from validated solve or measurement",
+      "topology": "radiator + finite body + environment + observation region",
+      "mutual": "array/seed interactions through full-wave multiport/field solution",
+      "regime_gate": "far-field approximation must be valid for source aperture/geometry/wavelength and observation distance",
+      "witness": "pattern/gain/EIRP/S-parameters or calibrated field measurement"
+    },
+    {
+      "id": "FTR-OPT",
+      "family": "optical/photonic",
+      "state": "wavelength,phase,polarization,intensity",
+      "governing": "ray/eikonal when scale permits; wave/FDTD/FEM/transfer matrix when wavelength-scale behavior matters",
+      "topology": "waveguides/interfaces/cavities/gratings/lenses",
+      "mutual": "mode coupling/transfer/scattering matrices",
+      "regime_gate": "material optical constants and wavelength/geometry scale bound",
+      "witness": "spectral power/phase/transmission/reflection/imaging"
+    },
+    {
+      "id": "FTR-THERM-RAD",
+      "family": "thermal radiation",
+      "state": "T,heat flux,radiosity",
+      "governing": "Stefan-Boltzmann/view-factor/radiosity network under declared gray/diffuse assumptions; otherwise spectral radiative transfer",
+      "topology": "radiating surfaces + view geometry + participating medium if any",
+      "mutual": "surface-to-surface view-factor/radiosity network",
+      "regime_gate": "emissivity/spectral state/view factors/environment must be attributable",
+      "witness": "temperature/heat-flow/radiometric readback"
+    },
+    {
+      "id": "FTR-ACOUSTIC",
+      "family": "acoustic/elastic wave radiation",
+      "state": "pressure,particle velocity,displacement,strain,phase",
+      "governing": "wave/Helmholtz/elastodynamic model as medium/geometry requires",
+      "topology": "source + solid/fluid propagation + cavities/interfaces",
+      "mutual": "mechanical/acoustic impedance and modal coupling matrix",
+      "regime_gate": "medium properties, boundary conditions and frequency range attributable",
+      "witness": "pressure/displacement/modal/transfer-function measurement"
+    },
+    {
+      "id": "FTR-FLUID",
+      "family": "fluid/gas advection-pressure transport",
+      "state": "p,u,Q,rho,T,species",
+      "governing": "continuity/Navier-Stokes or validated reduced hydraulic network",
+      "topology": "channels/cavities/porous regions/valves",
+      "mutual": "shared pressure/flow network and compliant-volume coupling",
+      "regime_gate": "laminar/turbulent/compressible/rarefied regime selected from attributable state",
+      "witness": "pressure/flow/leak/transient"
+    },
+    {
+      "id": "FTR-SPECIES",
+      "family": "species/diffusive/permeation transport",
+      "state": "concentration,flux,activity",
+      "governing": "Fick/reaction-diffusion/permeation model only in validated regime",
+      "topology": "barriers/interfaces/porous/diffusion paths",
+      "mutual": "coupled species/reaction/source terms",
+      "regime_gate": "diffusivity/solubility/reaction data and temperature/material state attributable",
+      "witness": "mass uptake/loss/concentration/permeation measurement"
+    },
+    {
+      "id": "FTR-IONIC",
+      "family": "ionic/electrochemical charge-species transport",
+      "state": "potential,current density,concentration,SOC,reaction state",
+      "governing": "Nernst/Butler-Volmer/transport only where chemistry and regime are qualified",
+      "topology": "electrode/electrolyte/separator/current collector",
+      "mutual": "electrical-chemical-thermal coupled state",
+      "regime_gate": "exact chemistry/material/process/state required; no generic battery inference",
+      "witness": "chemistry-specific impedance/current/voltage/capacity test"
+    },
+    {
+      "id": "FTR-IONIZING",
+      "family": "ionizing-radiation transport",
+      "state": "spectrum,fluence,dose,LET where applicable",
+      "governing": "attenuation only in valid simple regime; consequential cases require transport/Monte-Carlo or measured qualification",
+      "topology": "source spectrum + shield layers + gaps + sensitive volumes",
+      "mutual": "secondary production/scatter/deposition paths",
+      "regime_gate": "particle/photon spectrum, materials, geometry and environment attributable",
+      "witness": "dosimetry/transport benchmark"
+    },
+    {
+      "id": "FTR-INERTIAL",
+      "family": "gravity/inertial/kinematic forcing",
+      "state": "g,a,jerk,omega,mass distribution",
+      "governing": "rigid/flexible-body dynamics and contact as applicable",
+      "topology": "mass/support/anchor/fluid free surface/moving bodies",
+      "mutual": "shared structural/contact/fluid load paths",
+      "regime_gate": "mass properties and motion/load environment attributable",
+      "witness": "load/motion/strain/mass-property measurement"
+    }
+  ],
+  "coupling_operators": [
+    "EMIT_OR_IMPRESS",
+    "INDUCE",
+    "GUIDE",
+    "COUPLE",
+    "RESONATE",
+    "REFLECT",
+    "SCATTER",
+    "ABSORB",
+    "ATTENUATE",
+    "SHIELD",
+    "CONVERT",
+    "DETECT",
+    "STORE",
+    "DISSIPATE",
+    "MODULATE",
+    "RETURN_REFERENCE"
+  ],
+  "linearity_and_energy_rules": {
+    "linear_superposition": "Allowed only inside a validated linear time-invariant or locally linear regime. Then response may be assembled from external plus seed-source contributions and mutual matrix terms.",
+    "nonlinear_rule": "If constitutive properties, geometry, switching, saturation, chemistry, temperature, deformation, control or history makes the response materially nonlinear/time-varying, superposition is invalid and the coupled state must be solved.",
+    "passivity": "For passive SG-0 regions, delivered output energy cannot exceed external input plus released stored energy within declared uncertainty. Apparent gain triggers HOLD for source/measurement/model review.",
+    "reciprocity": "Reciprocity may be used only when material/system conditions support it; active, magnetically biased, time-varying, nonlinear or nonreciprocal media are not forced reciprocal.",
+    "causality": "State/output at time t depends only on admissible current/past inputs/state; fitted models that violate causal/energy constraints remain candidate-only.",
+    "balance": "Every solve/witness declares input, stored, dissipated/converted and exported energy/power channels for consequential domains."
+  },
+  "capacitance_closure": {
+    "scalar_parallel_plate": "C=epsilon0*epsilon_r*A/d only when the uniform-field parallel-plate approximation and actual thickness/material state are valid.",
+    "layered_1d": "For uniform series dielectric layers over common area: C/A = epsilon0 / sum_i(d_i/epsilon_ri). Interfaces/voids/adhesives become explicit layers when consequential.",
+    "multi_conductor": "For arbitrary 3D conductors use a reference-bound Maxwell capacitance matrix Q=C·V rather than a single scalar. Connectivity then maps the matrix to the desired port capacitance.",
+    "sensitivity": "For ideal C proportional to epsilon*A/d, small perturbations satisfy dC/C approximately d(epsilon)/epsilon + dA/A - dd/d; uncertainty uses covariance when inputs are correlated.",
+    "source_bound_comparator": {
+      "epsilon_r": 3.4,
+      "basis": "current DuPont Kapton HN source-bound candidate record at 1 kHz; engineering comparator only"
+    },
+    "nominal_thickness_unit_check": [
+      {
+        "d_um": 25,
+        "C_A_pF_mm2": 1.2041695425408
+      },
+      {
+        "d_um": 50,
+        "C_A_pF_mm2": 0.6020847712704
+      },
+      {
+        "d_um": 75,
+        "C_A_pF_mm2": 0.4013898475136
+      },
+      {
+        "d_um": 125,
+        "C_A_pF_mm2": 0.24083390850816
+      }
+    ],
+    "discrepancy_gate": "Any stored capacitance density attached to a nominal thickness label must reproduce from its stated epsilon_r and actual/source thickness. If not, retain HOLD until the actual gauge/thickness basis is reconciled; do not silently relabel arithmetic.",
+    "exclusions": [
+      "no dielectric strength",
+      "no leakage/loss",
+      "no ESR/ESL",
+      "no lifetime",
+      "no certification",
+      "no fringe/fixture/process correction unless modeled or measured"
+    ]
+  },
+  "interlayer_edge_contract": {
+    "required": [
+      "edge_id",
+      "region_from",
+      "region_to",
+      "seed_relation",
+      "interface_operator",
+      "field_transport_regime",
+      "state_or_flux_transferred",
+      "transfer_or_jump_law",
+      "reflection_blocking_or_return",
+      "parasitic_mutual_terms",
+      "process_direction",
+      "predecessor_damage_gate",
+      "preservation_action",
+      "state_history",
+      "witness",
+      "evidence_state",
+      "authority"
+    ],
+    "rule": "No physical adjacency is ideal or invisible. A consequential transfer, reflection, return path, leakage, contact, coupling or damage mechanism that is not attributable remains HOLD rather than being set to zero.",
+    "typed_edge_rules": [
+      "Each edge instance binds one exact field_transport_regime ID; compound aliases are not accepted as solved edge provenance.",
+      "process_direction is explicit region_from->region_to; the reverse direction is a separate edge with its own damage, preservation, witness and evidence state.",
+      "predecessor_damage_gate and preservation_action are mandatory even when the value is an attributable NONE/NOT_REQUIRED result.",
+      "evidence_state and authority are explicit; geometry adjacency alone cannot promote SOURCE_BOUND/ARCHITECTURE state to SOLVED, MEASURED, QUALIFIED or executable.",
+      "SOLVED/MEASURED edge use requires source-bound model/measurement/result provenance at the normal-form coupling layer."
+    ],
+    "evidence_states": [
+      "ARCHITECTURE",
+      "SOURCE_BOUND",
+      "BENCH_REQUIRED",
+      "SOLVED",
+      "MEASURED",
+      "QUALIFIED",
+      "HOLD"
+    ]
+  },
+  "interlayer_transfer_basis": [
+    {
+      "id": "ILT-001",
+      "name": "electrical conduction/contact",
+      "field": "FTR-EQS",
+      "transfer": "normal/tangential current and potential relation from attributable conductor/contact state",
+      "return_block": "contact resistance, isolation, leakage or open boundary explicit",
+      "mutual": "R/contact-R plus C/L parasitics as geometry requires",
+      "witness": "4-wire/continuity/impedance with geometry and environment"
+    },
+    {
+      "id": "ILT-002",
+      "name": "dielectric displacement/capacitive",
+      "field": "FTR-EQS",
+      "transfer": "D-normal/E-tangential boundary relation; Q=C·V for arbitrary multi-conductor geometry",
+      "return_block": "dielectric/interface polarization, leakage and shields explicit",
+      "mutual": "Maxwell capacitance matrix including seed/package electrodes",
+      "witness": "calibrated C/complex impedance plus exact geometry/material state"
+    },
+    {
+      "id": "ILT-003",
+      "name": "magnetic flux/inductive",
+      "field": "FTR-MQS",
+      "transfer": "B/H boundary relation and flux linkage Phi=L·I",
+      "return_block": "air gap/core/shield/eddy-current return paths explicit",
+      "mutual": "self/mutual L, partial inductance, DCR and parasitic C",
+      "witness": "L/Q/coupling/field measurement in declared frequency regime"
+    },
+    {
+      "id": "ILT-004",
+      "name": "RF electromagnetic wave",
+      "field": "FTR-EM-NF/FTR-EM-FF",
+      "transfer": "full-wave Maxwell/S-Z-Y or RLGC only when distributed-line assumptions hold",
+      "return_block": "reflection, transmission, radiation, absorption, aperture/seam leakage and shield return explicit",
+      "mutual": "S-matrix/coupled ports/near-field seed susceptibility and package interconnect",
+      "witness": "VNA/field/antenna readback with near/far regime declared"
+    },
+    {
+      "id": "ILT-005",
+      "name": "optical/photonic wave",
+      "field": "FTR-OPT",
+      "transfer": "Fresnel/Snell or wave/FDTD/FEM only in the applicable interface/scale regime",
+      "return_block": "reflection, refraction, scattering, absorption and polarization conversion explicit",
+      "mutual": "optical coupling/crosstalk/scatter matrix where useful",
+      "witness": "spectrum/power/phase/imaging/alignment"
+    },
+    {
+      "id": "ILT-006",
+      "name": "thermal conduction/contact",
+      "field": "thermal companion to FTR-THERM-RAD",
+      "transfer": "heat-flux/temperature relation with attributable conductivity/contact resistance",
+      "return_block": "thermal break/interface resistance and anisotropy explicit",
+      "mutual": "thermal conductance/capacitance network or field model",
+      "witness": "calibrated transient temperature/heat-flow"
+    },
+    {
+      "id": "ILT-007",
+      "name": "thermal surface radiation",
+      "field": "FTR-THERM-RAD",
+      "transfer": "radiosity/view-factor model; epsilon*sigma*A*F*(T1^4-T2^4) only under valid gray/diffuse assumptions",
+      "return_block": "emissivity, reflection, occlusion and view factors explicit",
+      "mutual": "surface-to-surface view-factor/radiosity exchange matrix",
+      "witness": "temperature/heat-balance or source-bound optical/IR properties"
+    },
+    {
+      "id": "ILT-008",
+      "name": "mechanical traction/compliance",
+      "field": "FTR-ACOUSTIC / structural companion",
+      "transfer": "traction/displacement/velocity compatibility or contact law appropriate to bond/contact",
+      "return_block": "slip, gap, preload, damping and compliance explicit",
+      "mutual": "mass/stiffness/damping/contact matrices including seed masses",
+      "witness": "force/displacement/strain/modal readback"
+    },
+    {
+      "id": "ILT-009",
+      "name": "acoustic/elastic wave",
+      "field": "FTR-ACOUSTIC",
+      "transfer": "pressure/velocity or stress/particle-velocity continuity by medium/interface",
+      "return_block": "impedance mismatch, reflection, transmission and damping explicit",
+      "mutual": "modal/acoustic coupling between cavities/regions/seeds",
+      "witness": "frequency/impulse/modal/acoustic response"
+    },
+    {
+      "id": "ILT-010",
+      "name": "fluid/gas/species transport",
+      "field": "FTR-FLUID/FTR-SPECIES",
+      "transfer": "mass/momentum/species flux with interface/seal/porous law appropriate to regime",
+      "return_block": "seal resistance, valve state, permeation/leak and capillary effects explicit",
+      "mutual": "hydraulic/transport network and pressure-compliance coupling",
+      "witness": "pressure/flow/leak/species readback"
+    },
+    {
+      "id": "ILT-011",
+      "name": "chemical/electrochemical/ionic",
+      "field": "FTR-IONIC",
+      "transfer": "species/electrochemical flux only from validated chemistry and constitutive model",
+      "return_block": "barrier/selectivity/passivation/diffusion resistance explicit",
+      "mutual": "reaction-diffusion/impedance/thermal-gas-swelling couplings",
+      "witness": "chemistry-specific composition/current/impedance/thermal evidence"
+    },
+    {
+      "id": "ILT-012",
+      "name": "ionizing radiation transport",
+      "field": "FTR-IONIZING",
+      "transfer": "attenuation/transport/deposition bound to spectrum, material and geometry; transport/Monte-Carlo or measurement for consequential cases",
+      "return_block": "scattering, secondary production, shielding shadowing and gaps explicit",
+      "mutual": "common-mode dose/upset/aging across seed and polymer volumes",
+      "witness": "source/spectrum-bound dosimetry or qualified transport model"
+    }
+  ],
+  "sequence_and_interlayer_rules": [
+    "A 2D schematic/netlist fixes logical intended connectivity only.",
+    "The 3D region graph fixes actual adjacency, overlap, separation, orientation, return/reference paths, cavities and seed package boundaries.",
+    "Every X→Y process edge checks predecessor temperature, atmosphere, solvent/chemistry, pressure, radiation/light, mechanical and contamination damage envelopes.",
+    "SO-ENCAPSULATE may preserve a completed oxygen/moisture/chemical-sensitive region before incompatible later processing when a qualified barrier/process exists.",
+    "Field voids and cavities are first-class regions; void geometry may shape fields/thermal/fluid/mechanical behavior but is never an energy source.",
+    "Multiple seed sources may share a body only after mutual coupling, thermal path, power/reference integrity, fault containment and service constraints are compiled.",
+    "Any consequential geometry/material/process/boundary revision invalidates stale numeric matrices and requires solve/readback refresh.",
+    "Insert a seed only when all remaining process steps fit its exact package/process envelope or a qualified preservation/encapsulation barrier isolates it.",
+    "Do not close cavities/channels/voids before required dimensional, cleanliness, leak or internal-interface witness is complete.",
+    "Preserve service, metrology, discharge/isolation, thermal relief, pressure relief and safe-state paths as explicit functional regions.",
+    "Process history is part of 4D state: cure, anneal, magnetize/polarize, fill/evacuate/seal, preload and configuration events are not silent metadata."
+  ],
+  "witness_minimum": {
+    "SG0": [
+      "geometry/config hash",
+      "source/material passport",
+      "process history",
+      "external excitation/environment",
+      "self/mutual R/C/L or relevant field/transport witness",
+      "loss/storage balance",
+      "uncertainty",
+      "DBR"
+    ],
+    "SG1": [
+      "all SG0 fields",
+      "exact seed identity/revision",
+      "seed package/pad/body geometry",
+      "seed operating envelope",
+      "seed-to-body parasitic/thermal/mechanical extraction",
+      "safe-state/service path"
+    ],
+    "SGN": [
+      "all SG1 fields per seed",
+      "multiport topology",
+      "mutual matrices/couplings",
+      "shared reference/power/clock state",
+      "fault-domain/common-cause map",
+      "synchronization/timing if consequential"
+    ]
+  },
+  "build_ready_gate": [
+    "exact material/seed source and lot/passport where physical material is used",
+    "frozen 3D geometry/configuration and reference nodes",
+    "actual machine/tool/process/calibration envelope",
+    "field/transport regime selected with model-validity evidence",
+    "required self/mutual matrix terms solved or measured",
+    "directional process sequence passes predecessor-damage checks",
+    "witness/falsifier and uncertainty defined",
+    "separate C0/safety/physical authority satisfied"
+  ],
+  "engineering_boundaries": [
+    "This matrix is a compiler/evidence contract, not proof that every combination is manufacturable.",
+    "No universal radiation equation exists across RF, optics, thermal radiation, acoustics and ionizing transport.",
+    "Near-field electromagnetic coupling and far-field radiation are distinct regimes.",
+    "A seed supplies only its warranted function; surrounding geometry does not inherit seed certification/rating.",
+    "SG-0 does not imply active logic or self-powering; external interrogation/environmental excitation may be required.",
+    "Radiative/transport coupling can be deliberately functional or parasitic; both enter the same graph.",
+    "Physical execution remains NOT_RUN until separately authorized and evidenced."
+  ],
+  "physical_execution": false
+}

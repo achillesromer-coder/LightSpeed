@@ -31,6 +31,11 @@ from .printstack import (
     load_compound_parent_decompositions,
     resolve_compound_parent_decomposition,
 )
+from .normalform import (
+    compile_stack_normal_form,
+    load_radiative_transport_matrix,
+    load_stack_normal_form_contract,
+)
 from .binding import (
     create_witness_coupon_packet,
     resolve_binding_gate,
@@ -52,6 +57,9 @@ __all__ = [
     "compile_printable_stack",
     "load_compound_parent_decompositions",
     "resolve_compound_parent_decomposition",
+    "compile_stack_normal_form",
+    "load_stack_normal_form_contract",
+    "load_radiative_transport_matrix",
     "AdapterError",
     "emit_reference_gcode",
     "InvariantInputError",

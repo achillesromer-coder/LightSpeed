@@ -13,7 +13,11 @@
     "operational_routes": "33_PC01_CGX_Operational_Matrix_v0_1",
     "manufacturing_ir": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
     "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
-    "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json"
+    "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+    "functional_voxel_basis": "cgx/component_atlas/type1_functional_voxel_field_basis_v0_1.json",
+    "seed_field_stack_matrix": "cgx/component_atlas/type1_seed_field_stack_matrix_v0_1.json",
+    "p2_sg0_rcl_witness_packet": "cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json",
+    "radiative_transport_seed_matrix": "cgx/component_atlas/type1_radiative_transport_seed_matrix_v0_1.json"
   },
   "matrix_contract": {
     "archetype_count": 411,
@@ -22,7 +26,14 @@
     "quantitative_factorization_fields": 8,
     "primitive_basis_classes": 20,
     "equation_kernel_records": 20,
-    "volumetric_topology_kernels": 36
+    "volumetric_topology_kernels": 36,
+    "functional_region_classes": 17,
+    "seed_graph_classes": 3,
+    "field_coupling_classes": 10,
+    "spatial_operator_classes": 10,
+    "field_transport_regimes": 12,
+    "radiative_region_roles": 10,
+    "radiative_coupling_operators": 16
   },
   "compile_chain": [
     "INTENT",
@@ -31,6 +42,12 @@
     "RESOLVE_PRIMITIVE_EQUATION_KERNEL",
     "RESOLVE_VOLUMETRIC_TOPOLOGY",
     "RESOLVE_BOUNDARY_INTERFACE_GRAPH",
+    "SELECT_FIELD_COUPLING_MODELS",
+    "RESOLVE_RADIATIVE_TRANSPORT_REGIME",
+    "EXTRACT_PARASITIC_AND_MUTUAL_COUPLINGS",
+    "CHECK_ENERGY_RECIPROCITY_PASSIVITY_CAUSALITY",
+    "PACK_FUNCTIONAL_VOXELS_AND_SPATIAL_OPERATORS",
+    "SELECT_SEED_GRAPH_CLASS",
     "ORDER_DIRECTIONAL_X_TO_Y_STACK",
     "CHECK_INTERFACES_AND_INTERLAYERS",
     "CHECK_VOXEL_PACKING_AND_PROCESS_RESOLUTION",
@@ -203,6 +220,40 @@
         "loss/leakage",
         "defects/voids/pinholes"
       ]
+    },
+    {
+      "id": "INF-CAP-KAPTON-HN-25UM-001",
+      "class": "ENGINEERING_INFERENCE / SOURCE_MATERIAL_REQUIRED / PHYSICAL_NOT_RUN",
+      "archetype": "CGA-C-001",
+      "source_ref": "CGXI-P2-C-001 / DuPont Kapton HN 25 um candidate",
+      "model": "C=epsilon0*epsilon_r*A/d",
+      "source_inputs": {
+        "epsilon_r_nominal": 3.4,
+        "epsilon_r_basis": "DuPont Kapton HN typical dielectric constant at 1 kHz from current source-bound record",
+        "dielectric_thickness_um_nominal": 25,
+        "electrode_overlap_mm": [
+          10,
+          10
+        ]
+      },
+      "derived": {
+        "capacitance_density_pF_per_mm2": 1.2041695425408,
+        "overlap_area_mm2": 100,
+        "ideal_capacitance_pF": 120.41695425408
+      },
+      "exclusions": [
+        "no voltage/breakdown/leakage/loss/lifetime/certification claim",
+        "no fringe/contact/process correction included",
+        "not measured"
+      ],
+      "corrections_required": [
+        "actual lot thickness",
+        "epsilon_r at actual frequency/T/RH",
+        "electrode overlap/edge/fringe",
+        "printed electrode/contact state",
+        "voids/adhesive/interlayers",
+        "fixture/parasitics"
+      ]
     }
   ],
   "non_claims": [
@@ -219,5 +270,92 @@
     "general_3d": "Use Maxwell capacitance matrices, inductance matrices, distributed R'L'G'C', sparse thermal/mechanical/fluid networks or other domain field models rather than forcing a simpler geometry law.",
     "revision_rule": "Any consequential geometry/material/process/boundary revision invalidates stale topology-specific numeric inference or field matrices.",
     "coupling_rule": "Only declared interfaces/couplings enter the sparse 4D assembly. Unsupported terms remain HOLD."
+  },
+  "seed_field_policy": {
+    "intent_vs_geometry": "Schematic/netlist connectivity is design intent. The 3D as-built region/seed geometry defines parasitic and mutual electrical, EM, thermal and mechanical coupling.",
+    "seed_classes": [
+      "SG-0",
+      "SG-1",
+      "SG-N"
+    ],
+    "field_classes": [
+      "FC-EQS",
+      "FC-MQS",
+      "FC-RF",
+      "FC-OPT",
+      "FC-THERM",
+      "FC-MECH",
+      "FC-FLUID",
+      "FC-CHEM",
+      "FC-ION",
+      "FC-INERTIAL"
+    ],
+    "mutual_rule": "SG-N retains off-diagonal mutual C/L/thermal/mechanical/RF terms when consequential; omission requires sensitivity/evidence.",
+    "radiative_rule": "RF electromagnetic radiation, optical propagation, thermal radiation and ionizing-radiation transport are separate model families and are never collapsed into one generic radiation equation.",
+    "smart_rule": "Smart embedded capability requires attributable sensed state, deterministic control/safe-state and output/actuator relation. Geometry alone does not imply intelligence."
+  },
+  "candidate_witness_stacks": [
+    {
+      "id": "P2-SG0-RCL-CELL-001",
+      "seed_graph": "SG-0",
+      "state": "DIGITAL_CANDIDATE_STACK / PHYSICAL_NOT_RUN",
+      "regions": [
+        "REG-STRUCT",
+        "REG-REF",
+        "REG-R",
+        "REG-C",
+        "REG-LRF",
+        "REG-ID"
+      ],
+      "source_candidates": [
+        "LOCTITE ECI 1010 conductor",
+        "LOCTITE ECI 7004LR resistance ink",
+        "DuPont Kapton HN 25 um dielectric/support"
+      ],
+      "observed_lots": "UNRESOLVED",
+      "sequence": [
+        "passport actual lots",
+        "freeze coupon geometry",
+        "print/form conductor and resistor witness features on compatible support",
+        "form 10x10 mm parallel-plate capacitor overlap across 25 um HN candidate only if process route preserves dielectric",
+        "form parametric coil/loop witness",
+        "cure/activate within predecessor envelopes",
+        "dimensional readback",
+        "WIT R/C/L",
+        "DBR"
+      ],
+      "capacitance_inference_ref": "INF-CAP-KAPTON-HN-25UM-001",
+      "resistor_rule": "For target R, required squares N=R_target/R_sheet. Numeric geometry remains HOLD until exact cured sheet-resistance blend/lot/process is bound.",
+      "inductor_rule": "L/R/Q remain SYMBOLIC until exact conductor geometry, thickness/state, return environment and measurement/field model are bound.",
+      "physical_execution": false,
+      "witness_packet_ref": "UTP-145 / cgx/manufacturing/p2_sg0_rcl_witness_packet_v0_1.json"
+    },
+    {
+      "id": "P2-SG1-EMBEDDED-CELL-001",
+      "seed_graph": "SG-1",
+      "state": "ARCHITECTURE / EXACT_SEED_UNSELECTED / PHYSICAL_NOT_RUN",
+      "regions": [
+        "REG-STRUCT",
+        "REG-REF",
+        "REG-R",
+        "REG-C",
+        "REG-LRF",
+        "REG-SEED",
+        "REG-THERM",
+        "REG-SERVICE",
+        "REG-ID"
+      ],
+      "rule": "Reuse the SG-0 printed/passive field-management stack around one exact active/certified/precision seed. Package pads and body become explicit conductor, capacitance, inductance, thermal and mechanical boundary nodes.",
+      "gate": "Select exact seed only after function, voltage/current, I/O, thermal, package, service and safety envelope are declared. No placeholder seed may be treated as capability.",
+      "physical_execution": false
+    }
+  ],
+  "radiative_transport_policy": {
+    "companion": "UTP-146 / BUILD-079",
+    "graph": "source -> propagation/transport region -> interfaces -> coupling/scatter/absorption -> receiver/load -> loss/storage -> witness",
+    "seed_rule": "SG-0/SG-1/SG-N changes discrete source/receiver population, not the underlying physics or evidence rules.",
+    "regime_rule": "Electrostatic, magnetoquasistatic, EM near-field, EM far-field, optical, thermal radiation, acoustic, fluid, species, ionic/electrochemical, ionizing and inertial regimes remain distinct.",
+    "energy_rule": "Passive regions must close an input/stored/dissipated/exported energy balance within declared uncertainty; active gain requires an attributable source.",
+    "revision_rule": "Consequential geometry/material/process/boundary or seed revision invalidates stale field/mutual matrices and requires solve/readback refresh."
   }
 }

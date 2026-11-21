@@ -1,0 +1,216 @@
+{
+  "schema": "CGX-TYPE1-INGEST-MATURATION-CONTRACT/0.1",
+  "artifact_id": "UTP-150",
+  "title": "Type-I CGX Ingest-to-Maturity Operational Contract",
+  "date": "2026-10-11",
+  "status": "DIGITAL_OPERATIONAL_CONTRACT / PHYSICAL_NOT_RUN",
+  "purpose": "Operationalize UTP-148/149 so new source bytes, CAD/geometry revisions, material lots, process records, calibration, measurements, seed revisions and contradictions are converted into attributable evidence envelopes, dependency invalidation, maturity deltas, next-witness work and DBR receipts without silent overwrite or authority uplift.",
+  "owners": {
+    "maturity_graph": "UTP-148",
+    "composition_matrix": "UTP-149",
+    "normal_form": "UTP-147",
+    "radiative_transport": "UTP-146",
+    "source_owner_rule": "Owner engineering records remain authoritative; UTP-150 is the mutation/orchestration contract, not a replacement master."
+  },
+  "accepted_ingest_classes": [
+    "SOURCE_DOCUMENT_OR_DATASHEET",
+    "CAD_BREP_MESH_OR_GEOMETRY_REVISION",
+    "MATERIAL_LOT_PASSPORT_OR_ASSAY",
+    "PROCESS_RECIPE_TOOL_ENVIRONMENT_RECORD",
+    "CALIBRATION_CERTIFICATE_OR_TRACE",
+    "RAW_MEASUREMENT",
+    "SEED_PART_FIRMWARE_OR_MODEL_REVISION",
+    "FIELD_SOLVER_OR_NUMERIC_RESULT",
+    "FAILURE_ANOMALY_OR_CONTRADICTION",
+    "HISTORICAL_REFERENCE",
+    "OWNER_DECISION_OR_AUTHORITY_EVENT"
+  ],
+  "evidence_envelope_required": [
+    "event_id",
+    "object_id",
+    "object_revision",
+    "source_owner",
+    "ingest_class",
+    "source_locator_or_content_hash",
+    "observed_at",
+    "evidence_class",
+    "authority_ceiling",
+    "affected_claims",
+    "parent_refs",
+    "raw_or_derived",
+    "environment_or_validity_domain",
+    "uncertainty_or_unknowns",
+    "contradiction_state"
+  ],
+  "evidence_classes": [
+    "RAW_SOURCE",
+    "SOURCE_FACT",
+    "MEASURED",
+    "DERIVED_ENGINEERING_INFERENCE",
+    "SIMULATION",
+    "HISTORICAL_COMPARATOR",
+    "OWNER_DECISION",
+    "CONTRADICTION",
+    "UNKNOWN"
+  ],
+  "mutation_pipeline": [
+    "CAPTURE_BYTES_OR_OBSERVATION",
+    "HASH_TIMESTAMP_AND_BIND_SOURCE_OWNER",
+    "RESOLVE_STABLE_OBJECT_AND_REVISION",
+    "CLASSIFY_EVIDENCE_AND_AUTHORITY",
+    "APPEND_IMMUTABLY",
+    "BUILD_AFFECTED_DEPENDENCY_CLOSURE",
+    "INVALIDATE_ONLY_DEPENDENT_DERIVED_RESULTS",
+    "RECOMPILE_UTP149_2D_3D_4D_COMPOSITION",
+    "RECOMPILE_UTP147_NORMAL_FORM_WHERE_AFFECTED",
+    "RUN_SCOPED_TESTS_AND_FALSIFIERS",
+    "COMPUTE_MATURITY_VECTOR_DELTA_USING_UTP148",
+    "SELECT_NEXT_WITNESS_OR_HOLD",
+    "WRITE_DBR_READBACK_RECEIPT",
+    "QUEUE_REVIEWED_PROMOTION_OR_HOLD"
+  ],
+  "contradiction_policy": {
+    "rule": "Contradictory evidence is retained as a first-class branch and may lower/hold dependent claims; it is never deleted merely because newer evidence exists.",
+    "states": [
+      "NONE",
+      "OPEN",
+      "RESOLVED_BY_SCOPE",
+      "SUPERSEDED_WITH_LINEAGE",
+      "OWNER_REVIEW_REQUIRED"
+    ],
+    "promotion_gate": "No contradicted claim may advance until the contradiction is explicitly resolved by scope, measurement, source authority or owner review."
+  },
+  "invalidation_triggers": [
+    "source_revision_or_hash_changed",
+    "geometry_revision_changed",
+    "material_lot_or_passport_changed",
+    "process_recipe_tool_or_environment_changed",
+    "instrument_calibration_changed_or_expired",
+    "seed_part_firmware_or_model_changed",
+    "field_solver_model_or_boundary_changed",
+    "measurement_rejected_or_recalibrated",
+    "authority_ceiling_changed",
+    "contradictory_evidence_added"
+  ],
+  "maturity_delta_record": {
+    "required_axes": [
+      "identity_provenance",
+      "source_authority",
+      "geometry",
+      "material",
+      "process",
+      "model",
+      "test_metrology",
+      "physical_evidence",
+      "integration_coupling",
+      "authority_release"
+    ],
+    "rule": "Record prior and current state per axis plus reason/evidence ref. Never average axes into a readiness percentage.",
+    "physical_ceiling": "Digital ingest, CI, simulation, render or AI analysis cannot advance physical_evidence beyond BUILD_READY/M6."
+  },
+  "next_witness_policy": {
+    "priority": [
+      "close identity/source ambiguity",
+      "close geometry/material/process validity",
+      "close metrology/calibration",
+      "measure lowest-consequence unresolved mechanism",
+      "measure consequential pair/interface coupling",
+      "only then scale to integrated system"
+    ],
+    "default_physical_ladder": [
+      "P0_IDENTITY",
+      "P1_CONDUCTOR",
+      "P2_RESISTOR",
+      "P2_CAPACITOR",
+      "P2_INDUCTOR",
+      "P3_PASSIVE_FIELD_OR_RESONATOR"
+    ],
+    "no_autonomous_actuation": true
+  },
+  "seed_graph_policy": {
+    "SG-0": "Every active/passive mechanism must be supported by local material/process/test evidence; seed absence is not capability evidence.",
+    "SG-1": "One exact seed/revision plus every printed interface/coupling edge are tracked independently.",
+    "SG-N": "Every seed and consequential coupling/failure edge is explicit; system claim ceiling is bounded by the weakest required node/edge."
+  },
+  "numeric_inference_policy": {
+    "state_routes": [
+      "NUMERIC",
+      "SYMBOLIC",
+      "HOLD"
+    ],
+    "numeric_requires": [
+      "attributable consequential inputs",
+      "valid equation/field regime",
+      "revision-bound geometry/material/environment",
+      "declared uncertainty/validity"
+    ],
+    "capacitance": "Use UTP-149 CAP-1..7. Arbitrary 3D/multiconductor cases require attributable Maxwell capacitance matrix/field solve; do not force parallel-plate assumptions.",
+    "radiative_energy": "Available source power, losses, aperture/coupling and environment bound radiative/harvesting claims; geometry does not create energy."
+  },
+  "readback_receipt_required": [
+    "event_id",
+    "input_hashes",
+    "resolved_object_revision",
+    "dependency_closure_ids",
+    "invalidated_result_ids",
+    "recompiled_artifact_hashes",
+    "tests_and_falsifiers",
+    "maturity_delta",
+    "next_witness_or_hold",
+    "authority_ceiling",
+    "contradictions_retained",
+    "review_state"
+  ],
+  "operational_surfaces": {
+    "filespace": "source bytes, hashes, object/revision, CAD/process/material/calibration/evidence lineage",
+    "dataspace": "state transitions, invalidations, numeric/symbolic/HOLD outputs, measurements, uncertainty, receipts",
+    "printspace": "region/interface/process sequence, seed topology, as-built/configuration and physical witness state",
+    "lsgo": "project maturity vector, contradiction count/state, invalidated dependents, next witness and evidence ceiling; no readiness percentage"
+  },
+  "hard_boundaries": [
+    "no silent overwrite",
+    "no new master or duplicate datastore",
+    "no durable .cgx carrier/root mutation without reviewed promotion",
+    "no physical execution from this contract",
+    "no certification/publication/procurement/legal/financial/high-consequence authority uplift",
+    "no seed certification inheritance",
+    "no universal solver/material compatibility claim",
+    "unknown/unsupported coupling remains HOLD"
+  ],
+  "initial_proof_fixtures": [
+    {
+      "id": "INGEST-FIXTURE-001",
+      "change": "Kapton HN dielectric source revision or lot changes",
+      "expected_invalidation": [
+        "dielectric-property-dependent capacitance inference",
+        "field/loss assumptions using prior lot/revision",
+        "downstream frozen packet hashes"
+      ],
+      "expected_preservation": [
+        "unrelated structural geometry",
+        "raw prior measurement with historical lineage"
+      ]
+    },
+    {
+      "id": "INGEST-FIXTURE-002",
+      "change": "seed firmware/revision changes in SG-1/SG-N",
+      "expected_invalidation": [
+        "timing/power/thermal/EMC interface assumptions",
+        "system-level equivalence using prior seed"
+      ],
+      "expected_preservation": [
+        "printed mechanical structure evidence not dependent on seed revision"
+      ]
+    },
+    {
+      "id": "INGEST-FIXTURE-003",
+      "change": "calibration expires",
+      "expected_invalidation": [
+        "acceptance/uncertainty claims depending on that calibration"
+      ],
+      "expected_preservation": [
+        "raw observations marked superseded-calibration"
+      ]
+    }
+  ]
+}

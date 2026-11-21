@@ -1,0 +1,347 @@
+{
+  "schema": "CGX-TYPE1-MATURITY-GRAPH/0.1",
+  "artifact_id": "UTP-148",
+  "title": "Type-I CGX Evidence Maturity and Invalidation Graph",
+  "date": "2026-10-10",
+  "status": "DIGITAL_CONTRACT / SOURCE_MAIN_E75884A / PHYSICAL_NOT_RUN",
+  "purpose": "Join the existing archetype matrix, component-instance binding states, equation/volumetric kernels, directional stack resolver, seed topology and P0-P10 proof ladder into one non-authority maturity state machine. New sources or measurements may advance only the dimensions they prove; changed evidence invalidates dependent inferences without erasing history.",
+  "owners": {
+    "component_archetype_matrix": "Type 1 Romer Cognigrex / 32_CGX_Universal_Type1_Tech_Matrix_v0_1 / 411x60",
+    "component_instance_contract": "cgx/component_atlas/component_instance_build_packet_contract_v0_1.json",
+    "proof_ladder": "cgx/component_atlas/component_physical_proof_ladder_v0_1.json",
+    "equation_kernel": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+    "volumetric_kernel": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+    "directional_resolver": "cgx/component_atlas/universal_type1_directional_resolver_v0_1.json",
+    "stack_compiler": "cgx/component_atlas/universal_type1_stack_compiler_v0_1.json",
+    "rule": "This contract does not replace owner engineering records. It provides a deterministic projection of evidence state and dependency invalidation."
+  },
+  "object_factorization": "Archetype × Instance × PrimitiveKernel × VolumetricKernel × InterfaceOperator × ProcessSequence × FunctionalVoxelState × SeedGraph × FieldCoupling × WitnessEvidence × AuthorityCeiling",
+  "maturity_states": [
+    {
+      "level": "M0",
+      "binding_state": "UNBOUND",
+      "name": "DISCOVERED",
+      "minimum": "Stable object/archetype identity may exist; consequential source/geometry/material/process claims remain unresolved."
+    },
+    {
+      "level": "M1",
+      "binding_state": "SOURCE_BOUND",
+      "name": "SOURCE_ATTRIBUTED",
+      "minimum": "Attributable source or measured reference bound with revision/hash/locator."
+    },
+    {
+      "level": "M2",
+      "binding_state": "GEOMETRY_BOUND",
+      "name": "GEOMETRY_RESOLVED",
+      "minimum": "Exact package/CAD/BREP/measured geometry revision, dimensions/interfaces and tolerances are bound within source scope."
+    },
+    {
+      "level": "M3",
+      "binding_state": "MATERIAL_BOUND",
+      "name": "MATERIAL_RESOLVED",
+      "minimum": "Actual material identity, lot/passport and consequential interfaces/interlayers are bound."
+    },
+    {
+      "level": "M4",
+      "binding_state": "PROCESS_BOUND",
+      "name": "PROCESS_RESOLVED",
+      "minimum": "Directional build/assembly sequence, environment, activation/post-process and prior-layer damage/preservation checks are bound."
+    },
+    {
+      "level": "M5",
+      "binding_state": "TEST_DEFINED",
+      "name": "TESTABLE",
+      "minimum": "Acceptance tests, instruments/calibration, falsifiers, failure modes and uncertainty method are defined before build."
+    },
+    {
+      "level": "M6",
+      "binding_state": "BUILD_READY",
+      "name": "DIGITALLY_BUILD_READY",
+      "minimum": "Manufacturability/tool/safety/authority gates pass for the declared low-consequence scope. This is not proof of fabrication."
+    },
+    {
+      "level": "M7",
+      "binding_state": "BUILT",
+      "name": "AS_BUILT_CAPTURED",
+      "minimum": "Exact configuration/source hashes, execution/process history and as-built identity are recorded."
+    },
+    {
+      "level": "M8",
+      "binding_state": "MEASURED",
+      "name": "MEASURED",
+      "minimum": "Physical readback exists with calibration provenance, raw values, uncertainty and declared environment."
+    },
+    {
+      "level": "M9",
+      "binding_state": "REVIEWED_PROMOTION",
+      "name": "REVIEWED_WITHIN_SCOPE",
+      "minimum": "Measured evidence has been compared to the frozen baseline/objective and reviewed. Certification/release remain separate authorities."
+    }
+  ],
+  "maturity_vector_axes": [
+    {
+      "axis": "identity_provenance",
+      "question": "Is the object/revision/hash lineage unambiguous and read back?"
+    },
+    {
+      "axis": "source_authority",
+      "question": "Are source facts attributable to exact revision/lot where required?"
+    },
+    {
+      "axis": "geometry",
+      "question": "Is the consequential 3D topology, dimension/tolerance and interface geometry resolved?"
+    },
+    {
+      "axis": "material",
+      "question": "Are actual material/lot/passport/interface states resolved?"
+    },
+    {
+      "axis": "process",
+      "question": "Is X→Y build order, environment, activation and preservation resolved?"
+    },
+    {
+      "axis": "model",
+      "question": "Is the governing equation/field/constitutive model valid for this regime and configuration?"
+    },
+    {
+      "axis": "test_metrology",
+      "question": "Are tests, instruments, calibration, uncertainty and falsifiers bound?"
+    },
+    {
+      "axis": "physical_evidence",
+      "question": "Has the exact article been built and measured?"
+    },
+    {
+      "axis": "integration_coupling",
+      "question": "Are consequential pair/hyperedge couplings and fault interactions evidenced?"
+    },
+    {
+      "axis": "authority_release",
+      "question": "Is the requested use within owner/safety/certification/publication authority?"
+    }
+  ],
+  "projection_policy": {
+    "no_single_score": "Do not average maturity axes into a universal percentage. A claim is limited by the lowest required axis and any hard stop gate.",
+    "claim_floor": "For a requested claim, evaluate only the axes/edges required by that claim, then use the minimum supported evidence ceiling across them.",
+    "child_ceiling": "Integration can never raise the evidence ceiling of a child component, interface or seed.",
+    "certification": "A certified seed keeps its own certification scope; printed surroundings do not inherit it.",
+    "digital_physical": "Schema, CI, simulation, render, equation or AI consensus cannot advance physical_evidence beyond M6.",
+    "measured_review": "M8 requires measurements; M9 additionally requires bounded review against the frozen baseline/objective."
+  },
+  "seed_graphs": [
+    {
+      "id": "SG-0",
+      "name": "SEEDLESS",
+      "definition": "No embedded imported specialist component is required for the declared function.",
+      "maturity_rule": "All required active/passive mechanisms must be supported by locally qualified material/process/test evidence; absence of a seed cannot be used to infer capability."
+    },
+    {
+      "id": "SG-1",
+      "name": "SINGLE_SEED",
+      "definition": "One imported/specialist seed island supplies a function while surrounding structure/interconnect/thermal/sensing/service geometry may be locally produced.",
+      "maturity_rule": "Track seed exact part/revision and every printed interface separately; seed evidence does not uplift surrounding geometry."
+    },
+    {
+      "id": "SG-N",
+      "name": "MULTI_SEED",
+      "definition": "Multiple spatially distributed seeds are connected by printed/hybrid electrical, thermal, optical, fluidic, RF or structural geometry.",
+      "maturity_rule": "Track each seed and every consequential coupling edge. System maturity is bounded by the weakest required node/edge for the declared function."
+    }
+  ],
+  "functional_voxel_4d": {
+    "state_form": "X_v(t) = {geometry, material_state, environment, electrical, thermal, mechanical, magnetic, optical, fluidic, chemical/electrochemical, logic, calibration, health, uncertainty, history}",
+    "dynamics": "E(x,p,t)·x_dot = F(x,u,p,t) within the validity domains of the participating physics kernels.",
+    "derived_views": [
+      "frequency response",
+      "phase",
+      "modal state",
+      "field slices",
+      "uncertainty propagation"
+    ],
+    "rule": "Time/frequency/modal representations are views of an evolving 3D physical object; they are not additional spatial dimensions.",
+    "sparse_coupling": "Only evidence-supported couplings are instantiated. Missing or unsupported coupling terms remain HOLD rather than being numerically invented."
+  },
+  "radiative_and_field_policy": {
+    "regimes": [
+      "electrostatic/quasi-static E-field",
+      "magnetostatic/quasi-static H/B-field",
+      "lumped/sub-wavelength RLC",
+      "distributed transmission-line",
+      "near-field reactive coupling",
+      "radiative/far-field EM",
+      "conduction heat transfer",
+      "convection where medium exists",
+      "thermal radiation",
+      "acoustic/elastic wave",
+      "optical ray/Jones/transfer-matrix",
+      "full-wave optical/RF field solve when required"
+    ],
+    "energy_rule": "Geometry redistributes/couples/stores/dissipates energy according to the governing physics; it does not create an absent source or active mechanism.",
+    "capacitance_rule": "Use closed forms only for attributable valid topologies; arbitrary 3D conductors require a Maxwell capacitance matrix or field solve with geometry/material/boundary revision binding.",
+    "radiation_rule": "Radiated or coupled power remains bounded by available source power, losses, aperture/coupling and environment; no unmeasured ambient-energy claim."
+  },
+  "ingest_pipeline": [
+    "INTAKE_BYTES_OR_MEASUREMENT",
+    "HASH_AND_TIMESTAMP_WITH_SOURCE_OWNER",
+    "RESOLVE_OBJECT_INSTANCE_REVISION",
+    "CLASSIFY_EVIDENCE_AND_AUTHORITY",
+    "BIND_OR_APPEND_WITHOUT_OVERWRITE",
+    "CALCULATE_AFFECTED_DEPENDENCY_SUBGRAPH",
+    "INVALIDATE_STALE_DERIVED_RESULTS",
+    "RECOMPILE_DIRECTIONAL_STACK_AND_4D_MODEL",
+    "RUN_SCOPED_DIGITAL_TESTS_AND_FALSIFIERS",
+    "UPDATE_MATURITY_VECTOR_ONLY_FOR_PROVEN_AXES",
+    "SCHEDULE_OR_BIND_NEXT_PHYSICAL_WITNESS",
+    "WRITE_DBR_READBACK_RECEIPT",
+    "REVIEW_OR_HOLD"
+  ],
+  "evidence_mutation_rules": [
+    {
+      "trigger": "source_revision_or_hash_changed",
+      "invalidate": [
+        "source-dependent geometry/material/rating assumptions",
+        "derived numeric fixtures using changed inputs",
+        "downstream frozen packet hashes"
+      ],
+      "preserve": [
+        "prior source and results as historical lineage"
+      ]
+    },
+    {
+      "trigger": "geometry_revision_changed",
+      "invalidate": [
+        "topology-specific capacitance/inductance/thermal/structural field matrices",
+        "packing/interface checks",
+        "as-built equivalence"
+      ],
+      "preserve": [
+        "material source identity unless independently changed"
+      ]
+    },
+    {
+      "trigger": "material_lot_or_passport_changed",
+      "invalidate": [
+        "material-property-dependent inference",
+        "process qualification tied to old lot",
+        "physical witness equivalence"
+      ],
+      "preserve": [
+        "nominal archetype and geometry"
+      ]
+    },
+    {
+      "trigger": "process_recipe_tool_or_environment_changed",
+      "invalidate": [
+        "process-bound interface assumptions",
+        "prior-layer damage/preservation acceptance",
+        "build-ready and physical equivalence where consequential"
+      ],
+      "preserve": [
+        "source material/geometry identity unless changed"
+      ]
+    },
+    {
+      "trigger": "instrument_calibration_expired_or_changed",
+      "invalidate": [
+        "affected measured uncertainty/acceptance claims"
+      ],
+      "preserve": [
+        "raw observations with explicit superseded calibration state"
+      ]
+    },
+    {
+      "trigger": "seed_part_or_firmware_revision_changed",
+      "invalidate": [
+        "seed interfaces",
+        "timing/power/thermal/EMC assumptions",
+        "system-level measured equivalence"
+      ],
+      "preserve": [
+        "printed structure evidence not dependent on the seed change"
+      ]
+    },
+    {
+      "trigger": "environment_or_horizon_changed",
+      "invalidate": [
+        "environment-specific properties, boundary conditions and tests"
+      ],
+      "preserve": [
+        "intrinsic source facts valid across the new regime only when their source scope explicitly permits it"
+      ]
+    },
+    {
+      "trigger": "contradictory_new_evidence",
+      "invalidate": [
+        "only affected claims/axes pending review"
+      ],
+      "preserve": [
+        "both evidence branches, hashes, provenance and rejection rationale"
+      ]
+    }
+  ],
+  "contradiction_policy": {
+    "never_silent_overwrite": true,
+    "states": [
+      "CONSISTENT",
+      "SUPERSEDED",
+      "CONFLICT",
+      "HOLD_FOR_REVIEW",
+      "REJECTED_WITH_REASON"
+    ],
+    "resolution": "Prefer higher-authority exact measured/source evidence only within its declared scope. Preserve conflicting evidence and dependency impact until review.",
+    "ai_rule": "AI may propose reconciliation and affected-subgraph analysis but cannot erase evidence, invent missing measurements or promote authority."
+  },
+  "proof_ladder_binding": {
+    "stages": [
+      "P0",
+      "P1",
+      "P2",
+      "P3",
+      "P4",
+      "P5",
+      "P6",
+      "P7",
+      "P8",
+      "P9",
+      "P10"
+    ],
+    "rule": "P0-P10 are representative physical proof stages, not maturity levels. An object can be digitally mature on some axes while physical proof remains NOT_RUN.",
+    "initial_priority": [
+      "P0 identity/provenance",
+      "P1 conductor/interconnect",
+      "P2 separate R/C/L witnesses",
+      "P3 resonator/loop only from measured P2 values"
+    ],
+    "dense_integration": "P10 may integrate only functions whose child evidence and consequential interfaces remain within their own proven envelopes."
+  },
+  "type1_composition": {
+    "hierarchy": [
+      "functional voxel",
+      "component instance",
+      "subassembly",
+      "machine/process cell",
+      "facility/microfactory",
+      "infrastructure node",
+      "regional/distributed capability"
+    ],
+    "aggregation_rule": "No mean or majority vote. Every critical node, edge, safe-state path and required resource dependency must meet the maturity floor of the declared service.",
+    "degraded_operation": "A Type-I capability may remain useful under degraded state only when reduced-function safe states and resource/repair dependencies are explicit and tested.",
+    "recursive_manufacturing": "Parent-made mass/part/function fractions and critical imported dependencies remain explicit; recursion does not imply unlimited self-replication."
+  },
+  "next_maturation_queries": [
+    "Which exact observed material lots/passports can bind first P0-P2 witnesses?",
+    "Which actual machine/tool/calibration envelope is available for the first physical witness set?",
+    "Which C0 deterministic controller closes Printer-mu safety/motion independently of supervisory C1/C2 compute?",
+    "Which PR155 functional-voxel/seed-field deltas should be transplanted onto current main after conflict analysis?",
+    "Which circular PET control/candidate lot can be measured under one frozen geometry/process?",
+    "Which maturity axes should the existing LS GO Objects lens expose without implying a single readiness score?"
+  ],
+  "hard_boundaries": [
+    "No physical execution is created by this contract.",
+    "No carrier/root promotion is created by this contract.",
+    "No public/certification/legal/financial/high-consequence authority is created by this contract.",
+    "No universal solver or universal-material compatibility claim.",
+    "No geometry-only inference of active semiconductor, battery chemistry, certified protection or biological effect.",
+    "Unknowns remain explicit and can only move by source, calculation in a valid regime, measured evidence or owner decision within scope."
+  ]
+}
