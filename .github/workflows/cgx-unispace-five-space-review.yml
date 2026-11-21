@@ -14,6 +14,7 @@ on:
       - "apps/lightspeed-go/src/osShell.ts"
       - "apps/lightspeed-go/src/osShellModel.ts"
       - "apps/lightspeed-go/src/osShellModel.test.ts"
+      - "apps/lightspeed-go/dist/**"
       - ".github/workflows/cgx-unispace-five-space-review.yml"
   pull_request:
     branches:
@@ -27,6 +28,7 @@ on:
       - "apps/lightspeed-go/src/osShell.ts"
       - "apps/lightspeed-go/src/osShellModel.ts"
       - "apps/lightspeed-go/src/osShellModel.test.ts"
+      - "apps/lightspeed-go/dist/**"
       - ".github/workflows/cgx-unispace-five-space-review.yml"
   workflow_dispatch:
 
@@ -107,4 +109,10 @@ jobs:
         run: npm run check
       - name: Build the existing UniSpace GUI (no deployment)
         working-directory: apps/lightspeed-go
-        run: npm run build
+        run: npm run build -- --outDir "$RUNNER_TEMP/unispace-dist"
+      - name: Verify tracked desktop entry and generated assets
+        working-directory: apps/lightspeed-go
+        run: |
+          cmp dist/index.html "$RUNNER_TEMP/unispace-dist/index.html"
+          diff -qr dist/assets "$RUNNER_TEMP/unispace-dist/assets"
+          cmp dist/achilles-mobile.cgx.html "$RUNNER_TEMP/unispace-dist/achilles-mobile.cgx.html"
