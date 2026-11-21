@@ -5,6 +5,38 @@ export const SHELL_SCHEMA = "lightspeed-cognigrex-os-shell-v0.1" as const;
 export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources"] as const;
 export type ShellView = (typeof SHELL_VIEWS)[number];
 
+/**
+ * One-shell navigation projections. A facet selects an existing workspace;
+ * it does not mount a second runtime, confer permissions, hydrate private data,
+ * activate manufacturing, or claim a persistent DataSpace replica.
+ */
+export interface UniSpaceFacet {
+  readonly id: string;
+  readonly label: string;
+  readonly view: ShellView;
+  readonly description: string;
+  readonly status: "projection-only";
+}
+
+export const UNISPACE_FACETS: readonly UniSpaceFacet[] = [
+  { id: "profilespace", label: "ProfileSpace", view: "activity",
+    description: "Existing owner session and activity review; not a portable identity service.", status: "projection-only" },
+  { id: "filespace", label: "FileSpace", view: "objects",
+    description: "Existing object and file references; private hydration requires verified scope.", status: "projection-only" },
+  { id: "dataspace", label: "DataSpace", view: "sources",
+    description: "Existing source/evidence review; distributed persistence is not asserted.", status: "projection-only" },
+  { id: "printspace", label: "PrintSpace", view: "objects",
+    description: "Existing object references for CAD/fabrication review; no machine actuation.", status: "projection-only" },
+  { id: "intelligencespace", label: "IntelligenceSpace", view: "command",
+    description: "Existing Neo-routed instruction intake; specialist execution remains gated.", status: "projection-only" },
+  { id: "systemspace", label: "SystemSpace", view: "system",
+    description: "Existing runtime status view; no new node or authority from selection.", status: "projection-only" },
+] as const;
+
+export const resolveUniSpaceFacet = (id: string | null | undefined): UniSpaceFacet | undefined =>
+  UNISPACE_FACETS.find((facet) => facet.id === id);
+
+
 export type WorkflowStageId =
   | "intake"
   | "analyse"
