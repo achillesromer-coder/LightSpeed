@@ -1,12 +1,23 @@
 name: LS GO Sites Side Edit Validation
 
 on:
+  push:
+    branches:
+      - "review/mobile-achilles-secondary-endpoint-*"
+    paths:
+      - "apps/lightspeed-go/**"
+      - "tests/test_cgx_mobile_secondary_bootstrap.py"
+      - "tools/merovingian/requirements-ci-linux-py312.lock"
+      - ".github/workflows/ls-go-sites-side-edit-validation.yml"
   pull_request:
     branches:
       - main
+      - "ops/canonical-queue-index-20261115"
     paths:
       - "apps/lightspeed-go/**"
       - "docs/ls-go-launch/**"
+      - "tests/test_cgx_mobile_secondary_bootstrap.py"
+      - "tools/merovingian/requirements-ci-linux-py312.lock"
       - ".github/workflows/ls-go-sites-side-edit-validation.yml"
   workflow_dispatch:
 
@@ -36,5 +47,21 @@ jobs:
         run: npm test
       - name: Type check
         run: npm run check
+      - name: Set up Python for the mobile review
+        if: ${{ hashFiles('tests/test_cgx_mobile_secondary_bootstrap.py') != '' }}
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Verify tracked mobile package and offline behavior
+        if: ${{ hashFiles('tests/test_cgx_mobile_secondary_bootstrap.py') != '' }}
+        working-directory: .
+        run: |
+          python -m pip install --disable-pip-version-check --no-input \
+            --require-hashes --only-binary=:all: \
+            -r tools/merovingian/requirements-ci-linux-py312.lock
+          python -m pytest -q tests/test_cgx_mobile_secondary_bootstrap.py
       - name: Build current Site source
         run: npm run build
+      - name: Confirm build reproduces the tracked mobile page
+        if: ${{ hashFiles('tests/test_cgx_mobile_secondary_bootstrap.py') != '' }}
+        run: git diff --exit-code -- dist/achilles-mobile.cgx.html

@@ -51,6 +51,8 @@ describe("Cognigrex OS shell model", () => {
   it("opens a bounded workspace requested by a compatibility URL", () => {
     expect(shellViewFromSearch("?view=system", "activity")).toBe("system");
     expect(shellViewFromSearch("view=not-a-view", "activity")).toBe("command");
+    expect(shellViewFromSearch("", "filespace")).toBe("filespace");
+    expect(shellViewFromSearch("?view=filespace", "activity")).toBe("filespace");
     expect(shellViewFromSearch("", "activity")).toBe("activity");
   });
 });

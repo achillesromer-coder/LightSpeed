@@ -432,6 +432,7 @@ def build_exchange_status(
     verified_carriers: Iterable[str] = (),
     peer_nodes: Iterable[str] = (),
     host_root_registry_ready: bool = False,
+    writable_root_registered: bool = False,
 ) -> dict[str, Any]:
     peers = [str(item) for item in peer_nodes if str(item).strip()]
     carriers = [str(item) for item in verified_carriers if str(item).strip()]
@@ -452,7 +453,7 @@ def build_exchange_status(
         },
         "activation": {
             "host_root_registry_ready": bool(host_root_registry_ready),
-            "typed_transfer_queue_ready": bool(host_root_registry_ready),
+            "typed_transfer_queue_ready": bool(host_root_registry_ready and writable_root_registered),
             "peer_compute_queue_ready": bool(host_root_registry_ready and peers),
         },
         "claim_boundary": (

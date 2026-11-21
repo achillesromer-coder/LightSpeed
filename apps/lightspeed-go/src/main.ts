@@ -104,10 +104,12 @@ app.innerHTML = `
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
       <button class="tab" data-view="objects">Objects</button>
+      <button class="tab" data-view="filespace">FileSpace</button>
       <button class="tab" data-view="system">System</button>
       <button class="tab" data-view="sources">Sources</button>
     </nav>
 
+    <section class="view" id="view-filespace"><p role="status" id="filespace-load"></p><iframe id="filespace-reader" title="CGX FileSpace reader" sandbox="allow-scripts allow-downloads" style="width:100%;height:76vh;border:0"></iframe></section>
     <section class="view active" id="view-command">
       <div class="command-layout">
         <article class="panel command-panel">
@@ -1053,9 +1055,19 @@ void loadNeoExchange(async () => {
 }).then((exchange) => { exchangeMount.innerHTML = renderExchangePanel(exchange); });
 
 const activateView = (view: string): void => {
-  const target = document.querySelector<HTMLButtonElement>(`.tab[data-view="${view}"]`)
-    ? view
-    : "command";
+  const target = Array.from(document.querySelectorAll<HTMLButtonElement>(".tab")).find(
+    button => button.dataset.view === view
+  )?.dataset.view || "command";
+  if (target === "filespace") {
+    const frame = document.querySelector<HTMLIFrameElement>("#filespace-reader")!;
+    if (!frame.srcdoc) {
+      void import("./filespaceReader").then(({ readerDocument }) => {
+        if (!frame.srcdoc) frame.srcdoc = readerDocument();
+      }).catch(() => {
+        document.querySelector("#filespace-load")!.textContent = "The FileSpace reader could not load. Reopen this view to retry.";
+      });
+    }
+  }
   document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
   document.querySelectorAll(".view").forEach((item) => item.classList.remove("active"));
   document.querySelector<HTMLButtonElement>(`.tab[data-view="${target}"]`)?.classList.add("active");

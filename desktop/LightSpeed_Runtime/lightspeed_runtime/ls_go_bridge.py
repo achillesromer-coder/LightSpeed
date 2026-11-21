@@ -1591,11 +1591,13 @@ def create_app(root: Path | str) -> FastAPI:
             or "local-node"
         )
         root_registry_ready = False
+        writable_root_registered = False
         root_registry_ref = os.environ.get("LIGHTSPEED_NODE_ROOT_REGISTRY", "").strip()
         if root_registry_ref:
             try:
                 root_registry = load_node_root_registry(root_registry_ref)
                 root_registry_ready = root_registry.get("node_id") == local_node_id
+                writable_root_registered = any(row["access"] == "read_write" for row in root_registry["roots"])
             except NodeExchangeError:
                 root_registry_ready = False
         return JSONResponse(
@@ -1678,15 +1680,15 @@ def create_app(root: Path | str) -> FastAPI:
                             ).split(",")
                             if item.strip()
                         ],
-                        peer_nodes=[
-                            item.strip()
-                            for item in os.environ.get(
-                                "LIGHTSPEED_PEER_NODES", ""
-                            ).split(",")
-                            if item.strip()
-                        ],
                         host_root_registry_ready=root_registry_ready,
+                        writable_root_registered=writable_root_registered,
                     ),
+                    # Configured names are pairing candidates. Verified peers
+                    # require a receiver receipt from an independent device.
+                    "configured_peer_nodes": list(dict.fromkeys(
+                        name for item in os.environ.get("LIGHTSPEED_PEER_NODES", "").split(",")
+                        if (name := item.strip()) and name.casefold() != local_node_id.casefold()
+                    )),
                     "transfer_planning_endpoint": "/api/v1/node-exchange/transfer/plan",
                     "compute_planning_endpoint": "/api/v1/node-exchange/compute/plan",
                     "execution_route": (
