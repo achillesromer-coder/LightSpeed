@@ -6,6 +6,8 @@ import {
   routeOperationalFloor,
   shellViewFromSearch,
   WORKFLOW_STAGES,
+  UNISPACE_FACETS,
+  resolveUniSpaceFacet,
 } from "./osShellModel";
 
 describe("Cognigrex OS shell model", () => {
@@ -52,5 +54,19 @@ describe("Cognigrex OS shell model", () => {
     expect(shellViewFromSearch("?view=system", "activity")).toBe("system");
     expect(shellViewFromSearch("view=not-a-view", "activity")).toBe("command");
     expect(shellViewFromSearch("", "activity")).toBe("activity");
+  });
+
+  it("resolves all UniSpace spaces to one existing workspace without granting execution", () => {
+    expect(UNISPACE_FACETS.map((facet) => facet.id)).toEqual([
+      "profilespace", "filespace", "dataspace", "printspace", "intelligencespace", "systemspace",
+    ]);
+    for (const facet of UNISPACE_FACETS) {
+      expect(["command", "activity", "objects", "system", "sources"]).toContain(facet.view);
+      expect(facet.status).toBe("projection-only");
+      expect(resolveUniSpaceFacet(facet.id)).toBe(facet);
+    }
+    expect(resolveUniSpaceFacet("unknown")).toBeUndefined();
+    expect(resolveUniSpaceFacet(null)).toBeUndefined();
+    expect(resolveUniSpaceFacet(undefined)).toBeUndefined();
   });
 });
