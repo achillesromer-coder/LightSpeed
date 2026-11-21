@@ -45,3 +45,34 @@ The synthetic Git-index tests cover five facets, exact dependency deduplication,
 - The separate [manifest repair PR #231](https://github.com/achillesromer-coder/LightSpeed/pull/231) is **closed without merge as superseded**. Native [PR #228](https://github.com/achillesromer-coder/LightSpeed/pull/228) now contains the same complete 748-entry `desktop/source-manifest.json` source set and its newer `local_floor_runner.py` hash, as confirmed by independent record-path comparison.
 - Current native source head for this reconciliation: `60baabc94d43291187ef1382f18a6a02fc506fa6`. GitHub Actions reported four green native PR workflows at that head. A native CI pass does not constitute live Core installation, licence review or security/lease acceptance.
 - Dependency order for this source-only five-space capability mesh remains: owner review of existing consolidation [PR #230](https://github.com/achillesromer-coder/LightSpeed/pull/230), this draft PR #232, and reconciliation with the continuously evolving native #228 (not the now-retired #231). No merge/deployment was performed by this note.
+
+
+## GUI context folding (21 November 2026)
+
+The single existing `apps/lightspeed-go/src/osShell.ts` application shell now
+exposes **seven presentation selectors** in its existing command palette:
+ProfileSpace, FileSpace, DataSpace, SocialSpace, PrintSpace, IntelligenceSpace,
+and SystemSpace. These seven UI names do **not** change the five canonical
+source-contract facet IDs in `tools/cgx_unispace_facet_mesh.py`. ProfileSpace
+and SystemSpace are convenient views of existing owner-session/activity and
+runtime-status interfaces; they are not additional databases, agents or
+signed authorities. FileSpace resolves to the dedicated existing `filespace`
+view, not a synthetic copy of the object workspace.
+
+Navigation is projection-only and explicitly labelled as such. It cannot
+hydrate private data, establish signed identity, connect peer persistence,
+operate a printer, issue delegated compute, mint, grant native execution,
+publish socially or transfer canonical authority. The palette retains keyboard
+Escape/Tab focus boundaries and exposes its expanded state to assistive tech.
+
+**Branch reconciliation:** earlier small [PR #235](https://github.com/achillesromer-coder/LightSpeed/pull/235)
+introduced a six-space browser navigation proof on `main`; the safe
+navigation functionality has been folded into this broader five-facet mesh
+review, augmented by SocialSpace, direct FileSpace-reader routing and keyboard
+focus handling. PR #235 should remain unmerged / be marked superseded rather
+than deployed as a second GUI. No native rollout follows from this source merge.
+
+**Acceptance:** re-run LightSpeed GO tests, TypeScript noEmit, Vite build,
+native Merovingian contract suite, and the product-carrier verifier on the
+exact PR head. Require real authenticated host ACL/lease/DBR and an independent
+browser readback before any private hydration or deployed authority claim.
