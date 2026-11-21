@@ -6,6 +6,8 @@ import {
   routeOperationalFloor,
   shellViewFromSearch,
   WORKFLOW_STAGES,
+  UNISPACE_FACETS,
+  resolveUniSpaceFacet,
 } from "./osShellModel";
 
 describe("Cognigrex OS shell model", () => {
@@ -54,5 +56,20 @@ describe("Cognigrex OS shell model", () => {
     expect(shellViewFromSearch("", "filespace")).toBe("filespace");
     expect(shellViewFromSearch("?view=filespace", "activity")).toBe("filespace");
     expect(shellViewFromSearch("", "activity")).toBe("activity");
+  });
+
+  it("resolves seven UI contexts to existing views, never to privileged authority", () => {
+    expect(UNISPACE_FACETS.map(({ id }) => id)).toEqual([
+      "profilespace", "filespace", "dataspace", "socialspace",
+      "printspace", "intelligencespace", "systemspace",
+    ]);
+    expect(resolveUniSpaceFacet("filespace")?.view).toBe("filespace");
+    for (const facet of UNISPACE_FACETS) {
+      expect(["command", "activity", "objects", "system", "sources", "filespace"]).toContain(facet.view);
+      expect(facet.status).toBe("projection-only");
+      expect(resolveUniSpaceFacet(facet.id)).toBe(facet);
+    }
+    expect(resolveUniSpaceFacet("mintspace")).toBeUndefined();
+    expect(resolveUniSpaceFacet(null)).toBeUndefined();
   });
 });
