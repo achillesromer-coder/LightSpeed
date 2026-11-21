@@ -1,0 +1,286 @@
+{
+  "schema": "CGX-TYPE1-ENGINEERING-INVARIANT-LIBRARY/0.1",
+  "artifact_id": "UTP-139",
+  "state": "DIGITAL_ENGINEERING_INFERENCE / PHYSICAL_NOT_RUN",
+  "owner": {
+    "drive_spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "owner_row": "26_CGX_Portfolio_Delivery_v0_1!A90:P90",
+    "build_queue": "95_NEXT_BUILD_QUEUE_v1_0!A71:N71",
+    "parents": [
+      "UTP-124",
+      "UTP-136",
+      "UTP-137",
+      "UTP-138"
+    ]
+  },
+  "policy": {
+    "numeric_if": "All consequential equation inputs are attributable to source or measurement and the model/regime is valid.",
+    "symbolic": "Keep the equation symbolic when one or more consequential inputs are unresolved.",
+    "hold": "HOLD when model validity, directional process compatibility, prior-layer damage, safety/authority or evidence is unresolved.",
+    "physical_execution": false,
+    "no_rating_uplift": true
+  },
+  "invariants": [
+    {
+      "id": "T1I-001",
+      "name": "parallel-plate capacitance density",
+      "law": "C/A=epsilon0*epsilon_r/d",
+      "inputs": [
+        "epsilon_r",
+        "d"
+      ],
+      "outputs": [
+        "C_per_area"
+      ],
+      "boundary": "parallel-plate field assumptions only; fringe/interface/loss/leakage/defects separate"
+    },
+    {
+      "id": "T1I-002",
+      "name": "sheet path resistance",
+      "law": "R=R_sheet*(L/W)",
+      "inputs": [
+        "R_sheet",
+        "L",
+        "W"
+      ],
+      "outputs": [
+        "R"
+      ],
+      "boundary": "cured/process-specific sheet resistance and contacts required"
+    },
+    {
+      "id": "T1I-003",
+      "name": "resistor geometry factor",
+      "law": "N_squares=R_target/R_sheet",
+      "inputs": [
+        "R_target",
+        "R_sheet"
+      ],
+      "outputs": [
+        "L_over_W"
+      ],
+      "boundary": "target is geometry factor only; witness Rs/TCR/adhesion required"
+    },
+    {
+      "id": "T1I-004",
+      "name": "RL electrical time constant",
+      "law": "tau=L/R",
+      "inputs": [
+        "L",
+        "R"
+      ],
+      "outputs": [
+        "tau"
+      ],
+      "boundary": "winding electrical baseline only; not torque-speed response"
+    },
+    {
+      "id": "T1I-005",
+      "name": "Joule winding baseline",
+      "law": "P_phase=I^2*R",
+      "inputs": [
+        "I",
+        "R"
+      ],
+      "outputs": [
+        "P_phase"
+      ],
+      "boundary": "electrical copper-loss baseline; driver regulation/duty/thermal model separate"
+    },
+    {
+      "id": "T1I-006",
+      "name": "resistive load check",
+      "law": "R=V^2/P",
+      "inputs": [
+        "V",
+        "P"
+      ],
+      "outputs": [
+        "R"
+      ],
+      "boundary": "nominal consistency check only"
+    },
+    {
+      "id": "T1I-007",
+      "name": "axis required force",
+      "law": "F_req=m*a+F_process+F_losses+m*g_axis",
+      "inputs": [
+        "m",
+        "a",
+        "F_process",
+        "F_losses",
+        "g_axis"
+      ],
+      "outputs": [
+        "F_req"
+      ],
+      "boundary": "target envelope must be declared; no machine capability inferred"
+    },
+    {
+      "id": "T1I-008",
+      "name": "belt force mapping",
+      "law": "F=eta*tau/r_eff",
+      "inputs": [
+        "tau",
+        "eta",
+        "r_eff"
+      ],
+      "outputs": [
+        "F"
+      ],
+      "boundary": "requires torque-speed point, transmission geometry and efficiency"
+    },
+    {
+      "id": "T1I-009",
+      "name": "screw force mapping",
+      "law": "F=2*pi*eta*tau/lead",
+      "inputs": [
+        "tau",
+        "eta",
+        "lead"
+      ],
+      "outputs": [
+        "F"
+      ],
+      "boundary": "requires torque-speed point, screw efficiency/critical-speed/load checks"
+    },
+    {
+      "id": "T1I-010",
+      "name": "command increment",
+      "law": "delta_x=travel_per_rev/(N_full_steps*microsteps)",
+      "inputs": [
+        "travel_per_rev",
+        "N_full_steps",
+        "microsteps"
+      ],
+      "outputs": [
+        "command_increment"
+      ],
+      "boundary": "not accuracy/repeatability; backlash/compliance/encoder/thermal/Abbe errors separate"
+    },
+    {
+      "id": "T1I-011",
+      "name": "independent uncertainty RSS",
+      "law": "u=sqrt(sum(u_i^2))",
+      "inputs": [
+        "independent_linear_uncertainties"
+      ],
+      "outputs": [
+        "u"
+      ],
+      "boundary": "use covariance/nonlinear propagation when independence/linearity is invalid"
+    },
+    {
+      "id": "T1I-012",
+      "name": "circular-feed retention ratio",
+      "law": "eta_property=X_recovered/X_control",
+      "inputs": [
+        "recovered_measurement",
+        "control_measurement"
+      ],
+      "outputs": [
+        "retention_ratio"
+      ],
+      "boundary": "application-specific comparator; no universal acceptance threshold"
+    }
+  ],
+  "source_bound_fixtures": [
+    {
+      "id": "FIX-KAPTON-HN-25",
+      "basis": "DuPont Kapton HN; epsilon_r≈3.4 @1 kHz; d=25 um candidate",
+      "derived": {
+        "ideal_capacitance_density_pF_mm2": 1.2041695425408
+      },
+      "evidence": "SOURCE_DERIVED / NOT_MEASURED"
+    },
+    {
+      "id": "FIX-KAPTON-HN-50",
+      "basis": "DuPont Kapton HN; epsilon_r≈3.4 @1 kHz; d=50 um candidate",
+      "derived": {
+        "ideal_capacitance_density_pF_mm2": 0.6020847712704
+      },
+      "evidence": "SOURCE_DERIVED / NOT_MEASURED"
+    },
+    {
+      "id": "FIX-ECI1010-10SQ",
+      "basis": "LOCTITE ECI 1010 source typical Rs≈0.007 ohm/sq at 25 um",
+      "derived": {
+        "squares": 10,
+        "ideal_path_resistance_ohm": 0.07
+      },
+      "evidence": "SOURCE_DERIVED / PROCESS_COUPON_NOT_MEASURED"
+    },
+    {
+      "id": "FIX-ECI7004LR-1K",
+      "basis": "1 kOhm target; source family adjustment range ~50–5000 ohm/sq/25 um",
+      "derived": {
+        "required_square_range": [
+          0.2,
+          20
+        ]
+      },
+      "evidence": "GEOMETRY_FACTOR_ONLY / EXACT_BLEND_AND_RS_MEASUREMENT_OPEN"
+    },
+    {
+      "id": "FIX-PKP243D08B2",
+      "basis": "Oriental Motor PKP243D08B2; R=5.4 ohm/phase, L=10 mH/phase, I=0.85 A/phase",
+      "derived": {
+        "electrical_time_constant_ms": 1.8518518518518516,
+        "copper_loss_w_per_phase_at_0_85A": 3.9015,
+        "two_phase_full_current_baseline_w": 7.803,
+        "full_steps_per_rev": 200
+      },
+      "evidence": "SOURCE_DERIVED / NOT_AXIS_CAPABILITY"
+    },
+    {
+      "id": "FIX-REVO-24V40W",
+      "basis": "E3D Revo nominal 24 V / 40 W",
+      "derived": {
+        "nominal_resistance_ohm": 14.4
+      },
+      "evidence": "SOURCE_DERIVED CONSISTENCY CHECK"
+    }
+  ],
+  "smart_stack_reference": {
+    "id": "T1-STACK-REF-001",
+    "role": "dense embedded Type-I smart-system grammar",
+    "state": "DIGITAL_REFERENCE / ALL EXACT BUILD PACKETS EVIDENCE_GATED",
+    "regions": [
+      "STRUCTURE_DATUM / load path / datum lattice",
+      "BARRIER_HERMETIC_COMPLIANCE / chemical-moisture-galvanic interfaces",
+      "THERMAL_CONTROL / spreaders-breaks-sinks",
+      "CONDUCTOR_INTERCONNECT / reference-ground-power-signal-vias",
+      "RESISTIVE_HEATER / sensing-bias-heating regions",
+      "DIELECTRIC_ISOLATION + CAPACITIVE_ELECTROSTATIC / embedded field-storage-sense regions",
+      "INDUCTIVE_MAGNETIC + RF_WAVE / coils-transformers-antennas-couplers",
+      "SENSOR_METROLOGY / distributed readback",
+      "ACTIVE_LOGIC_SEED + POWER_CONVERSION / inserted or qualified active islands",
+      "OPTICAL_PHOTONIC / seed emitters-waveguides-visual state",
+      "FLUIDIC_ENVIRONMENT / channels-reservoirs only when function requires them",
+      "SAFE_STATE_PROTECTION / deterministic interlock cells",
+      "SERVICE_ACCESS / replaceable-accessible boundaries",
+      "IDENTITY_STATE_DBR / object identity-config-source-readback"
+    ],
+    "four_d_state": "z(t)={electrical,EM,thermal,mechanical,fluid/chemical,optical,sensor,configuration states}; couple only declared domains through UTP-137/VGK-036",
+    "sequence_rule": "Order by directional X→Y compatibility, required environment, interface/interlayer and preservation envelope; insert/test inaccessible buried features before closure.",
+    "non_claims": [
+      "not one universal material",
+      "not one universal solver",
+      "not all regions required in every object",
+      "not physical readiness",
+      "not certification"
+    ]
+  },
+  "circular_reference": {
+    "id": "UTP-ECO-RPET-REF-001",
+    "comparator_metrics": [
+      "thermal-transition deltas recovered vs control",
+      "melt-flow ratio recovered/control",
+      "tensile property ratios recovered/control",
+      "dimensional/warpage deltas under frozen geometry/process",
+      "yield ratio under the same frozen process",
+      "resistivity/insulation ratio only when dielectric use is proposed"
+    ],
+    "acceptance": "declared application envelope + uncertainty; no universal pass percentage"
+  }
+}
