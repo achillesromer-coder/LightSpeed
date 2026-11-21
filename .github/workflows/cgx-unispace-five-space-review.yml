@@ -11,6 +11,9 @@ on:
       - "tests/test_cgx_living_consolidation_review.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_topology.py"
       - "cgx/domain_templates/**"
+      - "apps/lightspeed-go/src/osShell.ts"
+      - "apps/lightspeed-go/src/osShellModel.ts"
+      - "apps/lightspeed-go/src/osShellModel.test.ts"
       - ".github/workflows/cgx-unispace-five-space-review.yml"
   pull_request:
     branches:
@@ -21,6 +24,9 @@ on:
       - "tests/test_cgx_unispace_facet_mesh.py"
       - "tests/test_cgx_living_consolidation_review.py"
       - "cgx/domain_templates/**"
+      - "apps/lightspeed-go/src/osShell.ts"
+      - "apps/lightspeed-go/src/osShellModel.ts"
+      - "apps/lightspeed-go/src/osShellModel.test.ts"
       - ".github/workflows/cgx-unispace-five-space-review.yml"
   workflow_dispatch:
 
@@ -30,7 +36,7 @@ permissions:
 jobs:
   five-space-source-review:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -84,3 +90,21 @@ jobs:
           assert p["model_inference_executed"] is False
           print("Five source-qualified workspace facets; zero native promotion")
           PY
+      - name: Set up Node for UniSpace shell verification
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Install immutable LightSpeed GO dependencies
+        working-directory: apps/lightspeed-go
+        run: npm ci
+      - name: Run UniSpace GUI model regressions
+        working-directory: apps/lightspeed-go
+        run: npm test
+      - name: Type-check UniSpace shell and facet navigation
+        working-directory: apps/lightspeed-go
+        run: npm run check
+      - name: Build the existing UniSpace GUI (no deployment)
+        working-directory: apps/lightspeed-go
+        run: npm run build
