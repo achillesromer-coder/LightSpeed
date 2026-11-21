@@ -67,6 +67,9 @@ const setActiveView = (view: ShellView): void => {
   if (button && !button.classList.contains("active")) button.click();
   writeState({ activeView: view });
   document.body.dataset.lsWorkspace = view;
+  document.body.dataset.lsSpace = "unispace";
+  const context = document.getElementById("ls-os-space-context");
+  if (context) context.textContent = "UniSpace · one canonical workspace";
 };
 
 const setActiveAgent = (floor: Floor, focusInstruction = false): void => {
@@ -131,7 +134,7 @@ const makeStatusStrip = (): HTMLElement => {
     <div><span class="ls-os-status-dot stable"></span><strong>Neo operational head</strong><small>specialist-agent orchestration</small></div>
     <div><span class="ls-os-status-dot guarded"></span><strong>Achilles oversight</strong><small>evidence · canon · release gate</small></div>
     <div><span class="ls-os-status-dot private"></span><strong>De Sporte</strong><small>private persistence sidecar · metadata only</small></div>
-    <button type="button" id="ls-os-palette-open" title="Open command palette (Ctrl/Cmd+K)">⌘K</button>
+    <button type="button" id="ls-os-palette-open" aria-controls="ls-os-palette" aria-expanded="false" title="Open command palette (Ctrl/Cmd+K)">⌘K</button>
   `;
   return strip;
 };
@@ -173,20 +176,51 @@ const makePalette = (): HTMLElement => {
   });
   palette.querySelector<HTMLButtonElement>("[data-ls-close]")?.addEventListener("click", () => closePalette());
   palette.querySelector<HTMLInputElement>("#ls-os-palette-input")?.addEventListener("input", () => renderPaletteResults());
+  palette.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      closePalette();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(palette.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled])"))
+      .filter((element) => element.getClientRects().length > 0);
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (!first || !last) { event.preventDefault(); return; }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
   return palette;
 };
+
+let palettePreviousFocus: HTMLElement | null = null;
 
 const openPalette = (): void => {
   const palette = document.getElementById("ls-os-palette");
   if (!palette) return;
+  if (palette.hidden) {
+    palettePreviousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  }
   palette.hidden = false;
+  document.getElementById("ls-os-palette-open")?.setAttribute("aria-expanded", "true");
   renderPaletteResults();
-  window.setTimeout(() => (document.getElementById("ls-os-palette-input") as HTMLInputElement | null)?.focus(), 0);
+  window.setTimeout(() => {
+    if (!palette.hidden) (document.getElementById("ls-os-palette-input") as HTMLInputElement | null)?.focus();
+  }, 0);
 };
 
-const closePalette = (): void => {
+const closePalette = (restoreFocus = true): void => {
   const palette = document.getElementById("ls-os-palette");
   if (palette) palette.hidden = true;
+  document.getElementById("ls-os-palette-open")?.setAttribute("aria-expanded", "false");
+  if (restoreFocus) palettePreviousFocus?.focus();
+  palettePreviousFocus = null;
 };
 
 const renderPaletteResults = (): void => {
@@ -224,7 +258,7 @@ const renderPaletteResults = (): void => {
   });
   mount.querySelectorAll<HTMLButtonElement>("[data-palette-agent]").forEach((button) => button.addEventListener("click", () => {
     setActiveAgent(button.dataset.paletteAgent as Floor, true);
-    closePalette();
+    closePalette(false);
   }));
   mount.querySelector<HTMLButtonElement>("[data-palette-route]")?.addEventListener("click", () => {
     const text = input.value.trim();
@@ -237,7 +271,7 @@ const renderPaletteResults = (): void => {
       instruction.focus();
     }
     setActiveView("command");
-    closePalette();
+    closePalette(false);
   });
 };
 
