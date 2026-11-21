@@ -1,0 +1,84 @@
+{
+  "schema": "CGX-UNISPACE-ONE-SHELL-CONSOLIDATION/0.1",
+  "date": "2026-11-21",
+  "status": "SOURCE_REVIEW_ONLY_NOT_DEPLOYED",
+  "purpose": "Consolidate GUI navigation into the existing UniSpace shell; do not create a second OS, data root, resolver, runtime or authority registry.",
+  "product_entry": "UniSpace/README.md",
+  "application": "apps/lightspeed-go",
+  "existing_mount": "apps/lightspeed-go/src/osShell.ts",
+  "parent": "Cognigrex.cgx",
+  "product_snapshot": "UniSpace/CGX.cgx (S91; public reference, not operational carrier)",
+  "operational_carrier": "Cognigrex.cgx S92 (host-local; not bundled)",
+  "spaces": [
+    {
+      "name": "ProfileSpace",
+      "projection": "activity",
+      "capability": "owner session review",
+      "backend_accepted": false
+    },
+    {
+      "name": "FileSpace",
+      "projection": "objects",
+      "capability": "object/file references",
+      "backend_accepted": false
+    },
+    {
+      "name": "DataSpace",
+      "projection": "sources",
+      "capability": "source/evidence review",
+      "backend_accepted": false
+    },
+    {
+      "name": "PrintSpace",
+      "projection": "objects",
+      "capability": "CAD/fabrication references",
+      "backend_accepted": false
+    },
+    {
+      "name": "IntelligenceSpace",
+      "projection": "command",
+      "capability": "Neo-routed intake",
+      "backend_accepted": false
+    },
+    {
+      "name": "SystemSpace",
+      "projection": "system",
+      "capability": "runtime status",
+      "backend_accepted": false
+    }
+  ],
+  "currently_reported_hosted_endpoint": {
+    "origin": "https://lightspeed-go.nathaniel-b.chatgpt.site/",
+    "filespace": "/api/uos/files",
+    "dataspace": "/api/uos/records",
+    "note": "Handshakes are live hosted metadata only; 2026-11-21 inventories returned no entries, no native ACL admission."
+  },
+  "invariants": [
+    "one-primary-workspace-at-a-time",
+    "no-new-runtime-or-backend",
+    "view-and-facet-selection-never-confers-execution-authority",
+    "no-canonical-or-mint-promotion-from-GUI",
+    "private-hydration-requires-fresh-issuer-scope-lease-and-revocation-check",
+    "CAD-and-fabrication-references-are-not-actuation",
+    "printspace-and-dataspace-are-not-claimed-operational-from-navigation",
+    "T173+0-is-not-a-verified-coordinate-or-geometry-encoding"
+  ],
+  "gates_before_merge": [
+    "TypeScript noEmit",
+    "Vitest model regressions",
+    "Vite build",
+    "accessibility keyboard and narrow viewport review",
+    "owner review"
+  ],
+  "gates_before_native_or_release": [
+    "signed host ACL and scoped lease",
+    "canonical DBR",
+    "native LOAD ABI",
+    "independent peer readback",
+    "live authenticated browser readback",
+    "rights and release approval"
+  ],
+  "authority_transfer": false,
+  "publication_authorised": false,
+  "canonical_write_authorised": false
+}
