@@ -817,6 +817,38 @@
       "artifact_id": 14739797368,
       "archive_sha256": "f265fc2ab1a7acfb90e1bb4cb08f69b4daa1fb49ce7c837fc25fcb62ab4821c6",
       "reason": "Independent 27-stage review regression PASS including source-aligned H0/R0 nested roots, negative T173/native ternary and private rc.2 build; all 27 logs match recorded SHA256 and byte lengths; provider expires 2026-12-22"
+    },
+    {
+      "id": "PC01-PROT-081",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+      "git_blob_sha1": "060ec29e90913dc593f2498c3319d3725ca07792",
+      "reason": "16 open release-native-physical gates with exact private-rc2 evidence, five-lane read-only handoff and no native or owner approval"
+    },
+    {
+      "id": "PC01-PROT-082",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/validate_printspace_product_handoff.py",
+      "git_blob_sha1": "a2348c1cd33919847458be69c89e6a8c31d24f8b",
+      "reason": "Fail-closed exact release zip SHA256/source/owner sequence/automation/archives review validator and non-authorising CI receipt"
+    },
+    {
+      "id": "PC01-PROT-083",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_product_handoff.py",
+      "git_blob_sha1": "51eaeeecc73f78e438beafc4449dea09ea4670ca",
+      "reason": "Source-only adversarial tests against fake release acceptance, stage switch, wrong count and weakened archive gates"
+    },
+    {
+      "id": "PC01-PROT-084",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_PRODUCTISATION_OPEN_THREADS_AND_AUTOMATED_HANDOFF_2026-11-22.md",
+      "git_blob_sha1": "554aa7ffec306a7b111b75184c1512eb39ca751c",
+      "reason": "Counted productisation inventory and existing coordinator handoff contract; no public publication or FileSpace activation"
     }
   ],
   "archive_review_gates": [
