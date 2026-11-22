@@ -32,6 +32,7 @@ SUITES = (
     ("quantitative-invariants", "tests/test_cgx_quantitative_invariants.py"),
     ("type1-stack", "tests/test_universal_type1_stack_compiler.py"),
     ("equation-kernel", "tests/test_type1_equation_kernel.py"),
+    ("owner-matrix-index", "tests/test_printspace_owner_matrix_projection.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
