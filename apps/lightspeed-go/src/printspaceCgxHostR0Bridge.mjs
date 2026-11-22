@@ -82,7 +82,7 @@ export function reviewPrintspaceHostR0(input, trustPins){
        item.r_layer!=='R0'||item.hydration!=='H0'||
        item.destination_filespace!=='Romer.cgx'||
        item.parent_filespace!=='Cognigrex.cgx'||
-       JSON.stringify(item.child_domain)!==JSON.stringify({semantic_object_id:'cgx:domain:romer',filespace:'Romer.cgx',domain:'romer'}))
+       (!obj(item.child_domain)||item.child_domain.semantic_object_id!=='cgx:domain:romer'||item.child_domain.filespace!=='Romer.cgx'||item.child_domain.domain!=='romer'))
       return hold('PRODUCT_FACET_OR_CHILD_MISMATCH');
     if(!Array.isArray(lineage_candidates)||lineage_candidates.length!==1||
        lineage_candidates[0]?.semantic_object_id!==item.candidate_object_id||
