@@ -1,5 +1,7 @@
 import "./osShell.css";
 import "./cgxGeneratedGui.css";
+import "./cgxAchillesLocalShell.css";
+import { mountAchillesLocalShell } from "./cgxAchillesLocalShell";
 import cgxStudioSource from "../../../docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json?raw";
 import { mountCgxGeneratedGui } from "./cgxGeneratedGui";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
@@ -417,6 +419,18 @@ const installShell = (): void => {
   contextLine.textContent = "UniSpace · one canonical workspace";
   contextLine.style.cssText = "font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4";
   shell.querySelector(".topbar .lede")?.after(contextLine);
+
+  // Ancillary SystemSpace projection of the existing Achilles localhost shell.
+  // It never replaces desktopBridge (8765), controls the service or adds a root.
+  const systemView = document.querySelector<HTMLElement>("#view-system");
+  if (systemView && !document.getElementById("ls-achilles-local-oversight")) {
+    const oversight = document.createElement("article");
+    oversight.id = "ls-achilles-local-oversight";
+    oversight.className = "ls-achilles-local-panel";
+    oversight.setAttribute("aria-label", "Achilles local agent oversight endpoint");
+    systemView.prepend(oversight);
+    mountAchillesLocalShell(oversight);
+  }
 
   alignLegacySurfaceCopy(shell);
   bindExistingSurface();
