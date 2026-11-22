@@ -13,6 +13,8 @@ on:
       - tools/cgx_unispace_overlap_review.py
       - tests/test_cgx_unispace_overlap_review.py
       - cgx/review/unispace_source_path_overlap_20261122.json
+      - tools/cgx_unispace_hybrid_source_review.py
+      - tests/test_cgx_unispace_hybrid_source_review.py
       - .github/workflows/cgx-automation-archive-review.yml
   pull_request:
     paths:
@@ -24,6 +26,8 @@ on:
       - tools/cgx_unispace_overlap_review.py
       - tests/test_cgx_unispace_overlap_review.py
       - cgx/review/unispace_source_path_overlap_20261122.json
+      - tools/cgx_unispace_hybrid_source_review.py
+      - tests/test_cgx_unispace_hybrid_source_review.py
       - .github/workflows/cgx-automation-archive-review.yml
   workflow_dispatch:
 
@@ -45,6 +49,8 @@ jobs:
         run: python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
       - name: PR source path overlap and false equivalence checks (15 cases)
         run: python -m unittest discover -s tests -p test_cgx_unispace_overlap_review.py -v
+      - name: One-root hybrid source review (11 cases)
+        run: python -m unittest discover -s tests -p test_cgx_unispace_hybrid_source_review.py -v
       - name: Generate deterministic non-authoritative review plan
         run: python tools/cgx_unispace_branch_convergence.py --snapshot cgx/review/unispace_git_pr_source_snapshot_20261122.json > /tmp/cgx-source-review-plan.json
 
