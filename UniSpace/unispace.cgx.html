@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-lkI7MRbIlGkShP8CfYsg1W4RFYZK003fkq78efxFAp0='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>UniSpace · Offline CGX GUI</title>
+<style>
+:root{color-scheme:dark;--surface:#172321;--line:#354944;--ink:#f4f7f6;--muted:#b0c1bd;--accent:#b9f3dc}
+*{box-sizing:border-box}body{margin:0;background:#0d1715;color:var(--ink);font:1rem/1.5 system-ui,sans-serif}
+header,main{max-width:76rem;margin:auto;padding:1.5rem clamp(1rem,4vw,3rem)}
+header{border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:1rem}
+header strong{font-size:1.2rem;color:var(--accent)}small,p{color:var(--muted)}h1,h2,h3,p{margin:0 0 .65rem}h1{font-size:clamp(1.8rem,4vw,2.8rem);line-height:1.15}h2{font-size:1.15rem}h3{font-size:1rem}
+main{display:grid;grid-template-columns:minmax(15rem,1fr) minmax(0,2.5fr);gap:1.25rem;align-items:start}
+aside,.panel{padding:1.1rem;border:1px solid var(--line);background:var(--surface);border-radius:.8rem;overflow-wrap:anywhere}
+section.group{background:transparent}#scene>.group{padding:0;border:0}
+aside form,aside section{display:grid;grid-template-columns:minmax(0,1fr);gap:.55rem;margin-bottom:1rem}aside section:last-child{margin-bottom:0}
+button,input,textarea{font:inherit;color:inherit;max-width:100%}button,input,textarea{background:#101e1b;border:1px solid var(--line);border-radius:.4rem;padding:.4rem .65rem}button{cursor:pointer}button:hover,button[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
+textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-weight:600}a{color:var(--accent)}nav,.actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+.children,.file-cards{display:grid;gap:.65rem}.children.grid,.file-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))}.file-cards{list-style:none;padding:0}.file-cards li{border:1px solid var(--line);border-radius:.45rem;padding:.65rem}table{border-collapse:collapse;width:100%}td,th{text-align:left;border-bottom:1px solid var(--line);padding:.45rem}
+.metric strong{font-size:2rem;color:var(--accent)}#filter{margin:.3rem 0 1rem}#status{margin:.3rem 0 1rem;min-height:1.5rem}
+@media(max-width:48rem){main{grid-template-columns:1fr}}@media print{aside,header a,#status,#filter,label[for=filter],nav{display:none}main{display:block}}
+</style>
+</head>
+<body>
+<header><strong>◌ UniSpace</strong><a href="https://lightspeed-go.nathaniel-b.chatgpt.site/#view=studio" target="_blank" rel="noopener noreferrer">LightSpeed GO Studio</a></header>
+<main>
+<aside aria-label="Layout and local files">
+<form id="composer">
+<label for="prompt">Describe a layout</label>
+<textarea id="prompt" required maxlength="650" rows="4" placeholder="Review desk with a FileSpace table and file count"></textarea>
+<button>Generate layout</button>
+</form>
+<section>
+<label for="layout">Open a .cgx layout</label>
+<input id="layout" type="file" accept=".cgx,.json,.cgxui,application/json">
+<button id="export" type="button">Download .cgx layout</button>
+</section>
+<section>
+<label for="files">Select local FileSpace entries</label>
+<input id="files" type="file" multiple>
+<button id="clear" type="button">Clear selection</button>
+<small>This shell reads names, sizes and dates from files you select. Layout exports contain the layout and filters.</small>
+</section>
+</aside>
+<section aria-label="Generated workspace">
+<h1 id="layout-title">UniSpace</h1>
+<p id="status" role="status">Offline workspace. Files stay on this device.</p>
+<label for="filter">Filter this interface</label><input id="filter" type="search" maxlength="100">
+<div id="scene"></div>
+</section>
+</main>
+<script type="application/json" id="initial-layout">{"schema":"cgx.unispace.interface/1","parent":"cgx:root:cognigrex","title":"UniSpace: one-root five-facet operator review","body":{"id":"root","type":"group","title":"UniSpace: one-root five-facet operator review","layout":"tabs","children":[{"id":"view-0","type":"collection","title":"FileSpace","dataset":"files","facet":"file_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-1","type":"collection","title":"DataSpace","dataset":"records","facet":"data_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-2","type":"collection","title":"SocialSpace","dataset":"handoffs","facet":"social_space","kind":"Handoff","status":"","query":"","layout":"cards","limit":18},{"id":"view-3","type":"collection","title":"PrintSpace","dataset":"workspace","facet":"print_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-4","type":"collection","title":"IntelligenceSpace","dataset":"workspace","facet":"intelligence_space","kind":"","status":"","query":"","layout":"cards","limit":18}]}}</script>
+<script>(function() {
+	//#region \0offline-unispace-catalogue
+	var _offline_unispace_catalogue_default = {
+		"parent": "cgx:root:cognigrex",
+		"facets": [
+			{
+				"id": "file_space",
+				"services": [],
+				"contracts": []
+			},
+			{
+				"id": "data_space",
+				"services": [],
+				"contracts": []
+			},
+			{
+				"id": "social_space",
+				"services": [],
+				"contracts": []
+			},
+			{
+				"id": "print_space",
+				"services": [],
+				"contracts": []
+			},
+			{
+				"id": "intelligence_space",
+				"services": [],
+				"contracts": []
+			}
+		],
+		"sourceUrls": {},
+		"review": { "envelopes": [] },
+		"domains": [],
+		"grexes": []
+	};
+	//#endregion
+	//#region app/lib/unispace.mjs
+	const ROOT = _offline_unispace_catalogue_default.parent;
+	const SPACES = [
+		{
+			id: "file_space",
+			title: "FileSpace",
+			short: "File",
+			description: "Content-addressed objects and portable carriers",
+			symbol: "▧",
+			color: "#9ab8ff",
+			route: "files"
+		},
+		{
+			id: "data_space",
+			title: "DataSpace",
+			short: "Data",
+			description: "Evidence, typed records and SAI observations",
+			symbol: "▦",
+			color: "#8fe3ce",
+			route: "records"
+		},
+		{
+			id: "social_space",
+			title: "SocialSpace",
+			short: "Social",
+			description: "Private handoff cards and working relationships",
+			symbol: "◉",
+			color: "#e8adff"
+		},
+		{
+			id: "print_space",
+			title: "PrintSpace",
+			short: "Print",
+			description: "Printable views of selected workspace objects",
+			symbol: "▤",
+			color: "#f5cbae"
+		},
+		{
+			id: "intelligence_space",
+			title: "IntelligenceSpace",
+			short: "Intelligence",
+			description: "Evidence-linked search and interface composition",
+			symbol: "◈",
+			color: "#b7adff"
+		}
+	];
+	const FORMATS = [
+		"cards",
+		"board",
+		"table",
+		"timeline",
+		"graph"
+	];
+	const KINDS = [
+		"Note",
+		"Task",
+		"Project",
+		"Research",
+		"Asset",
+		"Workflow",
+		"Grex",
+		"Handoff"
+	];
+	const STATUSES = [
+		"Inbox",
+		"Active",
+		"Review",
+		"Done"
+	];
+	_offline_unispace_catalogue_default.review;
+	const sourceUrls = _offline_unispace_catalogue_default.sourceUrls;
+	const slug = (value) => value.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-");
+	const featureNodes = [
+		{
+			id: "engine:resolve",
+			title: "Semantic resolver",
+			facet: "intelligence_space",
+			description: "Rank metadata matches and follow explicit, typed crosswalks.",
+			status: "Workspace",
+			route: "intelligence"
+		},
+		{
+			id: "engine:compose",
+			title: "View composer",
+			facet: "intelligence_space",
+			description: "Compile a request into cards, a board, table, timeline or graph.",
+			status: "Workspace",
+			route: "compose"
+		},
+		{
+			id: "engine:interface",
+			title: "Generative Interface Studio",
+			facet: "intelligence_space",
+			description: "Compile nested interfaces, attach live collections, and import or export Desktop-compatible layout manifests.",
+			status: "Workspace",
+			route: "studio"
+		},
+		{
+			id: "engine:agent",
+			title: "Achilles workspace agent",
+			facet: "intelligence_space",
+			description: "Preview coordinated card, stack and relation changes. Approve one atomic workspace update with a receipt.",
+			status: "Workspace",
+			route: "agent"
+		},
+		{
+			id: "engine:sai",
+			title: "SAI observer",
+			facet: "data_space",
+			description: "Capture a source, scope, uncertainty and optional FileSpace root.",
+			status: "Hosted",
+			route: "records"
+		},
+		{
+			id: "engine:print",
+			title: "Print renderer",
+			facet: "print_space",
+			description: "Project cards into a printable brief from the browser.",
+			status: "Workspace",
+			route: "print"
+		},
+		{
+			id: "engine:handoff",
+			title: "Handoff stack",
+			facet: "social_space",
+			description: "Collect private handoff cards and connect them to evidence.",
+			status: "Workspace",
+			route: "social"
+		},
+		{
+			id: "engine:cas",
+			title: "Fractal FileSpace",
+			facet: "file_space",
+			description: "Verify SHA-256 blocks, selectively hydrate bytes and exchange carriers.",
+			status: "Hosted",
+			route: "files"
+		},
+		{
+			id: "engine:dataspace",
+			title: "DataSpace index",
+			facet: "data_space",
+			description: "Index signed-in records, typed relations and linked evidence.",
+			status: "Hosted",
+			route: "records"
+		},
+		{
+			id: "engine:load-lite",
+			title: "LOAD.Lite",
+			facet: "file_space",
+			description: "Minimum ChatGPT identity and hosted workspace handshake.",
+			status: "Hosted",
+			route: "connections"
+		},
+		{
+			id: "engine:load",
+			title: "LOAD · Alexandria",
+			facet: "intelligence_space",
+			description: "Inspect limits and source contracts through the expanded handshake.",
+			status: "Hosted",
+			route: "connections"
+		},
+		{
+			id: "engine:plugin",
+			title: "ChatGPT · MCP",
+			facet: "intelligence_space",
+			description: "Read the signed-in catalogue, manifests and semantic crosswalk.",
+			status: "Hosted",
+			route: "connections"
+		},
+		{
+			id: "engine:desktop",
+			title: "BouwerBase",
+			facet: "data_space",
+			description: "Read the latest outbound host report and its timestamp.",
+			status: "Reported",
+			route: "connections"
+		},
+		{
+			id: "engine:peer",
+			title: "Native peer exchange",
+			facet: "data_space",
+			description: "Requires host ACL, signed lease, canonical DBR, loader ABI and independent peer readback.",
+			status: "Held",
+			route: "connections"
+		},
+		{
+			id: "engine:geometry",
+			title: "T173 research positions",
+			facet: "intelligence_space",
+			description: "R6 indexes 173 research positions. T174 is reserved and nonaddressable.",
+			status: "Review",
+			source: sourceUrls.crosswalk
+		}
+	];
+	featureNodes.map(({ id }) => id);
+	const initialNodes = [
+		{
+			id: ROOT,
+			title: "Cognigrex.cgx",
+			kind: "Root",
+			facets: SPACES.map(({ id }) => id),
+			status: "Source",
+			description: "One canonical parent for the R6 source projection.",
+			source: sourceUrls.crosswalk
+		},
+		...SPACES.map((space) => {
+			const { services, contracts } = _offline_unispace_catalogue_default.facets.find((facet) => facet.id === space.id);
+			return {
+				id: "space:" + space.id,
+				title: space.title,
+				kind: "Space",
+				facets: [space.id],
+				status: "Projection",
+				description: space.description,
+				route: space.route,
+				services,
+				contracts,
+				source: sourceUrls.crosswalk
+			};
+		}),
+		..._offline_unispace_catalogue_default.domains.map((d) => ({
+			...d,
+			kind: "Domain",
+			facets: ["intelligence_space"],
+			status: "Source",
+			description: "R6 domain · " + d.agent,
+			source: sourceUrls.crosswalk
+		})),
+		..._offline_unispace_catalogue_default.grexes.map(({ name }) => ({
+			id: "grex:" + slug(name),
+			title: name,
+			kind: "Grex lens",
+			status: "Review",
+			facets: ["intelligence_space"],
+			description: "R6 Grex projection with candidate domain references.",
+			source: sourceUrls.crosswalk
+		})),
+		..._offline_unispace_catalogue_default.review.envelopes.map((e) => ({
+			id: e.id,
+			title: e.title,
+			kind: "Source envelope",
+			status: "Review",
+			facets: ["file_space"],
+			source: sourceUrls.projection,
+			description: e.count + (e.count === 1 ? " source occurrence" : " distinct source occurrences") + " in the R6 premint projection."
+		})),
+		...featureNodes.map(({ facet, ...rest }) => ({
+			...rest,
+			kind: "Engine",
+			facets: [facet],
+			source: rest.source ?? sourceUrls.desktop
+		}))
+	];
+	const SOURCE_IDS = new Set(initialNodes.map(({ id }) => id));
+	[
+		...SPACES.map((space) => ({
+			from: ROOT,
+			to: "space:" + space.id,
+			type: "projects"
+		})),
+		..._offline_unispace_catalogue_default.domains.map((d) => ({
+			from: d.parent,
+			to: d.id,
+			type: "parent of"
+		})),
+		..._offline_unispace_catalogue_default.grexes.flatMap(({ name, value }) => value.map((to) => ({
+			from: "grex:" + slug(name),
+			to,
+			type: "candidate domain"
+		}))),
+		...featureNodes.map(({ id, facet }) => ({
+			from: "space:" + facet,
+			to: id,
+			type: "provides"
+		})),
+		..._offline_unispace_catalogue_default.review.envelopes.map((e) => {
+			const grex = "grex:" + slug(e.umbrella);
+			return {
+				from: SOURCE_IDS.has(grex) ? grex : "space:file_space",
+				to: e.id,
+				type: "indexes"
+			};
+		})
+	];
+	function words(value) {
+		return value.normalize("NFKC").toLowerCase().match(/[\p{L}\p{N}]+(?:[._:-][\p{L}\p{N}]+)*/gu) ?? [];
+	}
+	const stop = new Set("a an can could for from find the what which where why is are of in my all show get list please me how about using and as to do can browse search related connect explain this".split(" "));
+	const tokens = (query) => [...new Set(words(query).filter((term) => !stop.has(term)))];
+	const synonyms = {
+		files: [
+			"file",
+			"filespace",
+			"carrier"
+		],
+		data: [
+			"dataspace",
+			"evidence",
+			"sai"
+		],
+		tasks: ["task"],
+		projects: ["project"],
+		notes: ["note"],
+		handoffs: ["handoff", "socialspace"],
+		print: ["printspace", "renderer"],
+		ai: [
+			"intelligencespace",
+			"semantic",
+			"mcp"
+		],
+		loadlite: ["load.lite"],
+		research: ["raphael", "t173"],
+		desktop: ["bouwerbase", "lightspeed"]
+	};
+	function resolve(graph, query, limit = 12, includeBody = true) {
+		if (!query.trim()) return [];
+		const clean = query.trim().toLowerCase();
+		const terms = tokens(query);
+		if (!terms.length) return [];
+		return graph.nodes.filter((node) => !node.archived).map((node) => {
+			const label = (node.title + " " + node.id).toLowerCase();
+			const typed = [
+				node.kind,
+				node.status,
+				...node.facets,
+				...node.tags ?? []
+			].join(" ").toLowerCase();
+			const source = [
+				node.source,
+				...node.services ?? [],
+				...node.contracts ?? [],
+				includeBody ? node.description : ""
+			].join(" ").toLowerCase();
+			let score = node.id.toLowerCase() === clean || node.title.toLowerCase() === clean ? 50 : 0;
+			const matched = [];
+			for (const term of terms) {
+				const alternatives = [term, ...synonyms[term] ?? []];
+				const level = alternatives.some((value) => label.includes(value)) ? 7 : alternatives.some((value) => typed.includes(value)) ? 3 : alternatives.some((value) => source.includes(value)) ? 1 : 0;
+				if (level) {
+					score += level;
+					matched.push(term);
+				}
+			}
+			return {
+				node,
+				score,
+				matched
+			};
+		}).filter((match) => match.score).sort((a, b) => b.score - a.score || a.node.title.localeCompare(b.node.title) || a.node.id.localeCompare(b.node.id)).slice(0, limit);
+	}
+	function compileView(prompt) {
+		const normalized = prompt.toLowerCase();
+		const layout = FORMATS.find((format) => words(normalized).includes(format.replace(/s$/, "")) || words(normalized).includes(format)) ?? "cards";
+		const facet = SPACES.find((space) => normalized.includes(space.title.toLowerCase()) || normalized.includes(space.id.replace("_", " ")))?.id ?? "";
+		const kind = KINDS.find((type) => words(normalized).some((word) => word === type.toLowerCase() || word === type.toLowerCase() + "s")) ?? "";
+		const status = STATUSES.find((state) => words(normalized).includes(state.toLowerCase())) ?? "";
+		const indexed = new Set([
+			...FORMATS,
+			...SPACES.flatMap((s) => [s.title.toLowerCase(), s.id]),
+			...KINDS.flatMap((t) => [t.toLowerCase(), t.toLowerCase() + "s"]),
+			...STATUSES.map((s) => s.toLowerCase()),
+			"card",
+			"create",
+			"generate",
+			"build",
+			"make",
+			"interface",
+			"view",
+			"workspace",
+			"objects",
+			"for"
+		]);
+		const query = tokens(prompt).filter((token) => !indexed.has(token) && !(facet && [
+			"file",
+			"data",
+			"social",
+			"print",
+			"intelligence",
+			"space"
+		].includes(token))).join(" ").slice(0, 160);
+		return {
+			title: prompt.trim().slice(0, 100) || "Workspace view",
+			layout,
+			facet,
+			kind,
+			status,
+			query
+		};
+	}
+	function visibleNodes(graph, spec) {
+		const matched = spec.query ? new Set(resolve(graph, spec.query, graph.nodes.length).map(({ node }) => node.id)) : null;
+		return graph.nodes.filter((node) => !node.archived && (!spec.facet || node.facets.includes(spec.facet)) && (!spec.kind || node.kind === spec.kind) && (!spec.status || node.status === spec.status) && (!matched || matched.has(node.id)));
+	}
+	//#endregion
+	//#region app/lib/uni-interface.mjs
+	const INTERFACE_SCHEMA = "cgx.unispace.interface/1";
+	const ARRANGEMENTS = [
+		"grid",
+		"stack",
+		"tabs"
+	];
+	const TILE_TYPES = [
+		"group",
+		"collection",
+		"metric",
+		"tools"
+	];
+	const DATASETS = {
+		workspace: "Workspace cards",
+		files: "FileSpace",
+		records: "DataSpace",
+		observations: "SAI observations",
+		handoffs: "SocialSpace",
+		sources: "Source envelopes",
+		engines: "Capacity engines",
+		stacks: "Stacks",
+		all: "All indexed entries"
+	};
+	const SURFACES = {
+		overview: "Overview",
+		intelligence: "Achilles",
+		crosswalk: "Semantic crosswalk",
+		stacks: "Stacks",
+		compose: "View composer",
+		studio: "Interface Studio",
+		agent: "Workspace agent",
+		files: "FileSpace",
+		records: "DataSpace",
+		social: "SocialSpace",
+		print: "PrintSpace",
+		engines: "Capacity engines",
+		connections: "Connections",
+		desktop: "Desktop review"
+	};
+	const facetKeys = SPACES.map((space) => space.id);
+	const uuid = /^[a-z][a-z0-9_-]{0,39}$/;
+	function boundedText(value, max, label, optional = false) {
+		if (typeof value !== "string" || value.length > max || !optional && !value.trim()) throw new Error("Invalid " + label + ".");
+		return value.trim();
+	}
+	function choice(value, choices, label) {
+		if (!choices.includes(value)) throw new Error("Unknown " + label + ".");
+		return value;
+	}
+	function keys(value, allowed, label) {
+		if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some((key) => !allowed.includes(key))) throw new Error("Unsupported fields in " + label + ".");
+	}
+	function validateInterface(value) {
+		keys(value, [
+			"schema",
+			"parent",
+			"title",
+			"body"
+		], "interface");
+		if (value.schema !== "cgx.unispace.interface/1" || value.parent !== ROOT) throw new Error("Unrecognised UniSpace interface schema or parent.");
+		const checkedIds = /* @__PURE__ */ new Set();
+		function tile(block, depth) {
+			if (depth > 4 || checkedIds.size >= 24) throw new Error("Interfaces support 24 blocks across four levels.");
+			const type = choice(block?.type, TILE_TYPES, "block type");
+			if (typeof block.id !== "string" || !uuid.test(block.id) || checkedIds.has(block.id)) throw new Error("Every block needs a unique valid ID.");
+			checkedIds.add(block.id);
+			const core = {
+				id: block.id,
+				type,
+				title: boundedText(block.title, 100, "block title")
+			};
+			const basic = [
+				"id",
+				"type",
+				"title"
+			];
+			if (type === "group") {
+				keys(block, [
+					...basic,
+					"layout",
+					"children"
+				], "group");
+				if (!Array.isArray(block.children) || block.children.length < 1 || block.children.length > 12) throw new Error("Use 1 to 12 blocks in a group.");
+				return {
+					...core,
+					layout: choice(block.layout, ARRANGEMENTS, "group layout"),
+					children: block.children.map((child) => tile(child, depth + 1))
+				};
+			}
+			if (type === "tools") {
+				keys(block, [...basic, "surfaces"], "tools block");
+				if (!Array.isArray(block.surfaces) || !block.surfaces.length || block.surfaces.length > 10) throw new Error("Choose up to ten registered surfaces.");
+				return {
+					...core,
+					surfaces: [...new Set(block.surfaces.map((entry) => choice(entry, Object.keys(SURFACES), "workspace surface")))]
+				};
+			}
+			const fields = [
+				"dataset",
+				"facet",
+				"kind",
+				"status",
+				"query"
+			];
+			keys(block, [
+				...basic,
+				...fields,
+				...type === "collection" ? ["layout", "limit"] : []
+			], type);
+			const spec = {
+				...core,
+				dataset: choice(block.dataset, Object.keys(DATASETS), "data source"),
+				facet: choice(block.facet ?? "", ["", ...facetKeys], "space"),
+				kind: choice(block.kind ?? "", ["", ...KINDS], "card type"),
+				status: choice(block.status ?? "", ["", ...STATUSES], "status"),
+				query: boundedText(block.query ?? "", 160, "search filter", true)
+			};
+			if (type === "metric") return spec;
+			const limit = block.limit ?? 18;
+			if (!Number.isSafeInteger(limit) || limit < 1 || limit > 36) throw new Error("Collection limit must be from 1 to 36.");
+			return {
+				...spec,
+				layout: choice(block.layout, FORMATS, "collection view"),
+				limit
+			};
+		}
+		const body = tile(value.body, 1);
+		if (body.type !== "group") throw new Error("The interface must start with a group.");
+		return {
+			schema: INTERFACE_SCHEMA,
+			parent: ROOT,
+			title: boundedText(value.title, 100, "interface title"),
+			body
+		};
+	}
+	function scopeFor(text) {
+		if (/\b(sai|observations?)\b/i.test(text)) return "observations";
+		if (/\bfiles?\b|\bfilespace\b|\bfile_space\b|\bcarriers?\b/i.test(text)) return "files";
+		if (/\b(dataspace|data_space|records?|evidence)\b/i.test(text)) return "records";
+		if (/\b(socialspace|social_space|handoffs?)\b/i.test(text)) return "handoffs";
+		if (/\b(sources|envelopes?|premint)\b/i.test(text)) return "sources";
+		if (/\b(engines?|capacit(?:y|ies)|gates?)\b/i.test(text)) return "engines";
+		if (/\bstacks?\b/i.test(text)) return "stacks";
+		if (/\b(all nodes|whole graph|relations|crosswalk)\b/i.test(text)) return "all";
+		return "workspace";
+	}
+	const aliases = {
+		file_space: "file_space",
+		data_space: "data_space",
+		social_space: "social_space",
+		print_space: "print_space",
+		intelligence_space: "intelligence_space"
+	};
+	const desktopStatus = {
+		active: "Active",
+		review: "Review",
+		done: "Done",
+		complete: "Done",
+		completed: "Done",
+		inbox: "Inbox",
+		planned: "Inbox"
+	};
+	function viewBlock(spec, index, title = spec.title) {
+		return {
+			id: "view-" + index,
+			type: "collection",
+			title: title || "Collection",
+			dataset: "workspace",
+			facet: spec.facet,
+			query: spec.query,
+			kind: spec.kind,
+			status: spec.status,
+			layout: spec.layout,
+			limit: 18
+		};
+	}
+	function readViewRow(row, index) {
+		const spec = row?.spec ?? row;
+		const title = row?.title ?? spec?.title ?? "Desktop view";
+		const key = typeof spec?.status === "string" ? spec.status.trim().toLowerCase() : "";
+		if (key && !Object.hasOwn(desktopStatus, key)) throw new Error("The Desktop status “" + key.slice(0, 25) + "” does not have a hosted equivalent. Clear it or use a supported status.");
+		const kind = spec?.kind ? KINDS.find((item) => item.toLowerCase() === String(spec.kind).toLowerCase()) : "";
+		if (spec?.kind && !kind) throw new Error("Unknown Desktop card type.");
+		const facetName = String(spec?.facet ?? "").toLowerCase().replaceAll(" ", "_");
+		const facet = aliases[facetName] ?? SPACES.find((item) => item.title.toLowerCase() === facetName)?.id ?? "";
+		if (facetName && !facet) throw new Error("Unknown Desktop space.");
+		return viewBlock({
+			layout: spec?.layout,
+			facet,
+			kind,
+			status: key ? desktopStatus[key] : "",
+			query: spec?.search ?? spec?.query ?? ""
+		}, index, title);
+	}
+	const INTERFACE_FILE_SUFFIX = ".ui.cgx";
+	function interfaceFilename(design) {
+		return (validateInterface(design).title.toLowerCase().replaceAll(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "unispace") + INTERFACE_FILE_SUFFIX;
+	}
+	function serializeInterface(design) {
+		return JSON.stringify(validateInterface(design), null, 2) + "\n";
+	}
+	async function readInterfaceFile(file, { portableOnly = false } = {}) {
+		if (file.size > 131072) throw new Error("Interface files are limited to 128 KiB.");
+		const bytes = await file.arrayBuffer();
+		if (bytes.byteLength > 131072) throw new Error("Interface files are limited to 128 KiB.");
+		const parsed = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+		return portableOnly ? validateInterface(parsed) : importInterface(parsed);
+	}
+	function importInterface(input) {
+		if (input?.schema) return validateInterface(input);
+		const entries = Array.isArray(input) ? input : Array.isArray(input?.views) ? input.views : [input];
+		if (!entries.length || entries.length > 12) throw new Error("Use 1 to 12 saved Desktop views per import.");
+		const children = entries.map(readViewRow);
+		const title = children.length === 1 ? children[0].title : "Desktop workspace views";
+		return validateInterface({
+			schema: INTERFACE_SCHEMA,
+			parent: ROOT,
+			title,
+			body: {
+				id: "root",
+				type: "group",
+				layout: children.length > 1 ? "tabs" : "stack",
+				title,
+				children
+			}
+		});
+	}
+	function breakPrompt(text) {
+		const parts = [];
+		let start = 0;
+		let mark = "";
+		for (let index = 0; index < text.length; index++) {
+			const ch = text[index];
+			if (mark) {
+				if (ch === mark && text[index - 1] !== "\\") mark = "";
+				continue;
+			}
+			if (ch === "\"") {
+				mark = ch;
+				continue;
+			}
+			const and = text.slice(index, index + 6).toLowerCase().startsWith(" and ");
+			if (and || ch === "," || ch === ";" || ch === "\n") {
+				parts.push(text.slice(start, index));
+				index += and ? 4 : 0;
+				start = index + 1;
+			}
+		}
+		parts.push(text.slice(start));
+		return parts.map((part) => part.trim()).filter(Boolean);
+	}
+	const toolsFor = (fragment) => Object.entries(SURFACES).filter(([id, title]) => new RegExp("\\b" + title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b", "i").test(fragment) || id === "desktop" && /\bdesktop\b/i.test(fragment) || id === "crosswalk" && /\bcrosswalk\b/i.test(fragment) || id === "engines" && /\bcapacity\b/i.test(fragment)).map(([id]) => id);
+	const knownWorkspaceTools = [
+		"files",
+		"records",
+		"social",
+		"print",
+		"intelligence",
+		"crosswalk",
+		"stacks",
+		"engines",
+		"connections",
+		"desktop"
+	];
+	function compileInterface(prompt) {
+		const request = boundedText(prompt, 650, "interface request");
+		const text = request.replace(/^(?:build|create|make|generate|compose|design|show)\s+(?:me\s+)?(?:a\s+|an\s+|the\s+)?/i, "");
+		const named = text.match(/^(.{1,90}?)\s+with\s+([\s\S]+)$/i);
+		const title = (named?.[1] ?? text).replace(/^(?:dashboard|workspace)\s*:\s*/i, "").trim().slice(0, 100) || "Generated interface";
+		const groups = breakPrompt(named?.[2] ?? text).slice(0, 10).map((fragment, index) => {
+			const dataset = scopeFor(fragment);
+			const tool = /\b(open|navigate|launch|tools|shortcuts|links|controls|access)\b/i.test(fragment);
+			const surfaces = toolsFor(fragment);
+			if (tool && (surfaces.length || /\b(shortcuts|tools)\b/i.test(fragment))) return {
+				id: "tools-" + index,
+				type: "tools",
+				title: surfaces.length === 1 ? SURFACES[surfaces[0]] + " access" : "Workspace shortcuts",
+				surfaces: surfaces.length ? surfaces : knownWorkspaceTools
+			};
+			const spec = compileView(fragment.replaceAll(/\bkanban\b/gi, "board").replaceAll(/\brows?\b/gi, "table"));
+			const quoted = fragment.match(/"([^"\n]+)"/)?.[1] ?? "";
+			const topic = spec.kind ? spec.kind === "Research" ? "Research" : spec.kind + "s" : DATASETS[dataset];
+			const metric = /\b(counts?|metrics?|totals?|number of)\b/i.test(fragment);
+			const groupTitle = metric ? topic + " count" : topic;
+			const filters = {
+				id: "view-" + index,
+				title: groupTitle,
+				dataset,
+				facet: spec.facet,
+				kind: spec.kind,
+				status: spec.status,
+				query: quoted.trim().slice(0, 160)
+			};
+			if (metric) return {
+				...filters,
+				type: "metric"
+			};
+			return {
+				...filters,
+				type: "collection",
+				layout: spec.layout,
+				limit: 18
+			};
+		});
+		const seen = /* @__PURE__ */ new Set();
+		const children = groups.filter((panel) => {
+			if (panel.type === "tools") return true;
+			const impliedFacet = panel.dataset === "files" ? "file_space" : panel.dataset === "records" || panel.dataset === "observations" ? "data_space" : "";
+			const facet = panel.facet === impliedFacet ? "" : panel.facet;
+			const key = JSON.stringify([
+				panel.type,
+				panel.dataset,
+				facet,
+				panel.kind,
+				panel.status,
+				panel.query.toLowerCase(),
+				panel.layout,
+				panel.limit
+			]);
+			if (seen.has(key)) return false;
+			seen.add(key);
+			return true;
+		});
+		return validateInterface({
+			schema: INTERFACE_SCHEMA,
+			parent: ROOT,
+			title,
+			body: {
+				id: "root",
+				type: "group",
+				layout: /\btabs?\b|\btabbed\b/i.test(request) ? "tabs" : /\bgrid\b|side by side/i.test(request) ? "grid" : "stack",
+				title,
+				children: children.length ? children : [viewBlock(compileView("cards"), 0, "Workspace cards")]
+			}
+		});
+	}
+	function collectInterfaceNodes(graph, block, search = "") {
+		const classified = {
+			workspace: (node) => node.local && node.kind !== "Stack",
+			files: (node) => node.kind === "File",
+			records: (node) => ["SAI observation", "Evidence note"].includes(node.kind),
+			observations: (node) => node.kind === "SAI observation",
+			handoffs: (node) => node.local && (node.kind === "Handoff" || node.facets.includes("social_space")),
+			sources: (node) => node.kind === "Source envelope",
+			engines: (node) => node.kind === "Engine",
+			stacks: (node) => node.kind === "Stack",
+			all: () => true
+		};
+		let matches = visibleNodes(graph, block);
+		const typed = classified[block.dataset];
+		if (typed) matches = matches.filter(typed);
+		if (search.trim()) {
+			const query = search.trim().toLowerCase();
+			matches = matches.filter((node) => [
+				node.title,
+				node.kind,
+				node.status,
+				...node.tags ?? []
+			].some((field) => field.toLowerCase().includes(query)));
+		}
+		return matches;
+	}
+	//#endregion
+	//#region portable/shell.mjs
+	const byId = (id) => document.getElementById(id);
+	const make = (tag, value) => {
+		const node = document.createElement(tag);
+		if (value !== void 0) node.textContent = value;
+		return node;
+	};
+	const tabs = /* @__PURE__ */ new Map();
+	const files = /* @__PURE__ */ new Map();
+	let design = validateInterface(JSON.parse(byId("initial-layout").textContent));
+	const status = byId("status");
+	const search = byId("filter");
+	function renderBlock(block, graph, root = false) {
+		const panel = make("section");
+		panel.className = "panel " + block.type;
+		if (!root) panel.append(make("h2", block.title));
+		if (block.type === "group") {
+			const children = make("div");
+			children.className = "children " + block.layout;
+			if (block.layout === "tabs") {
+				const nav = make("nav");
+				nav.setAttribute("aria-label", block.title);
+				const current = block.children.find((child) => child.id === tabs.get(block.id)) ?? block.children[0];
+				for (const child of block.children) {
+					const button = make("button", child.title);
+					button.setAttribute("aria-pressed", String(child === current));
+					button.addEventListener("click", () => {
+						tabs.set(block.id, child.id);
+						render();
+						byId("tab-" + child.id).focus();
+					});
+					button.id = "tab-" + child.id;
+					nav.append(button);
+				}
+				panel.append(nav);
+				children.append(renderBlock(current, graph));
+			} else children.append(...block.children.map((child) => renderBlock(child, graph)));
+			panel.append(children);
+			return panel;
+		}
+		if (block.type === "tools") {
+			for (const surface of block.surfaces) {
+				const link = make("a", SURFACES[surface]);
+				link.href = "https://lightspeed-go.nathaniel-b.chatgpt.site/#view=" + surface;
+				link.target = "_blank";
+				link.rel = "noopener noreferrer";
+				panel.append(link, " ");
+			}
+			return panel;
+		}
+		const matches = collectInterfaceNodes(graph, block, search.value);
+		if (block.type === "metric") {
+			panel.append(make("strong", String(matches.length)), make("p", DATASETS[block.dataset]));
+			return panel;
+		}
+		if (!matches.length) {
+			panel.append(make("p", block.dataset === "files" ? "No selected files match this view." : "This view has no local data. Open the layout in LightSpeed GO to bind workspace data."));
+			return panel;
+		}
+		const rows = matches.slice(0, block.limit);
+		panel.append(make("p", rows.length === matches.length ? matches.length + " entries" : rows.length + " of " + matches.length + " entries"));
+		if (block.layout === "table") {
+			const table = make("table");
+			const header = table.createTHead().insertRow();
+			for (const label of [
+				"File",
+				"Bytes",
+				"Modified"
+			]) header.append(make("th", label));
+			const body = table.createTBody();
+			for (const node of rows) {
+				const row = body.insertRow();
+				for (const value of [
+					node.title,
+					node.size,
+					node.date
+				]) row.insertCell().textContent = value;
+			}
+			panel.append(table);
+		} else {
+			if (block.layout === "graph") panel.append(make("p", "Local files have no typed relationships."));
+			if (block.layout === "board") panel.append(make("h3", "Local files"));
+			if (block.layout === "timeline") rows.sort((first, second) => second.date.localeCompare(first.date));
+			const list = make("ul");
+			list.className = block.layout === "cards" ? "file-cards" : "";
+			for (const row of rows) {
+				const item = make("li");
+				if (block.layout === "timeline") item.append(make("small", row.date + " "));
+				item.append(make("strong", row.title), make("small", " " + row.size + " bytes"));
+				list.append(item);
+			}
+			panel.append(list);
+		}
+		return panel;
+	}
+	function render() {
+		byId("layout-title").textContent = design.title;
+		byId("scene").replaceChildren(renderBlock(design.body, { nodes: [...files.values()] }, true));
+	}
+	function useDesign(next, message) {
+		design = next;
+		tabs.clear();
+		render();
+		status.textContent = message;
+	}
+	let importSequence = 0;
+	byId("composer").addEventListener("submit", (event) => {
+		event.preventDefault();
+		importSequence++;
+		try {
+			useDesign(compileInterface(byId("prompt").value), "Layout generated.");
+		} catch (error) {
+			status.textContent = error.message;
+		}
+	});
+	const layoutInput = byId("layout");
+	layoutInput.addEventListener("change", async () => {
+		const file = layoutInput.files[0];
+		layoutInput.value = "";
+		if (!file) return;
+		const sequence = ++importSequence;
+		try {
+			const next = await readInterfaceFile(file, { portableOnly: file.name.toLowerCase().endsWith(".cgx") });
+			if (sequence === importSequence) useDesign(next, "Layout opened locally.");
+		} catch (error) {
+			if (sequence === importSequence) status.textContent = error.message;
+		}
+	});
+	byId("files").addEventListener("change", (event) => {
+		const input = event.currentTarget;
+		if (input.files.length > 500) {
+			status.textContent = "Select up to 500 files.";
+			input.value = "";
+			return;
+		}
+		files.clear();
+		for (const file of input.files) {
+			const id = "local:" + files.size;
+			files.set(id, {
+				id,
+				title: file.name,
+				kind: "File",
+				status: "Local",
+				facets: ["file_space"],
+				size: file.size,
+				date: new Date(file.lastModified).toISOString().slice(0, 10)
+			});
+		}
+		status.textContent = files.size + " local FileSpace entries.";
+		render();
+	});
+	byId("clear").addEventListener("click", () => {
+		files.clear();
+		byId("files").value = "";
+		status.textContent = "Local file selection cleared.";
+		render();
+	});
+	search.addEventListener("input", render);
+	byId("export").addEventListener("click", () => {
+		const link = make("a");
+		link.href = URL.createObjectURL(new Blob([serializeInterface(design)], { type: "application/json" }));
+		link.download = interfaceFilename(design);
+		link.click();
+		setTimeout(() => URL.revokeObjectURL(link.href), 1e3);
+	});
+	render();
+	//#endregion
+})();
+</script>
+</body>
+</html>
