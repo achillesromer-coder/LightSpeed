@@ -9,6 +9,7 @@ from cgx.manufacturing.virtual_factory import load_catalogue,canonical_digest
 from cgx.manufacturing.printspace_cgx import (
     CGXHold, SCHEMA,build_bundle,check_bundle,h0_handshake,hydrate,
     pack_lite,unpack_lite,verify_back_down,_raw,_sha,
+    project_space_context, verify_space_context_back_down, SPACE_FACETS,
 )
 from scripts.build_printspace_cgx_bundle import build as build_assets
 
@@ -181,3 +182,102 @@ def test_dynamic_custom_product_no_new_root_or_material_authority(data):
     assert 'product/new-facet' in b['aliases']
     assert hydrate(b,product_id='new-facet')['state']=='DIGITAL_SYMBOLIC_FACETS_ONLY'
     assert b['commercial_release_authorised'] is False
+
+
+# This edits the existing regression suite rather than adding a competing
+# cross-space schema, database or native resolver.
+def original_parent_sources():
+    domain_path=BASE/'cgx/domain_templates/domains.json'
+    parent_path=BASE/'cgx/domain_templates/cognigrex_parent_topology.json'
+    if domain_path.is_file() and parent_path.is_file():
+        return json.loads(domain_path.read_text()),json.loads(parent_path.read_text())
+    # The isolated package-under-test has only the source-shape contracts. The
+    # full GitHub repository tests against its real tracked parent source bytes.
+    return (
+        {'schema':'CGX-DOMAIN-TEMPLATES/0.4',
+         'parent_filespace':{'file':'Cognigrex.cgx'},
+         'domains':{'romer':{'file':'Romer.cgx',
+                             'namespace':'cgx://romer.industries/romer'}}},
+        {'schema':'CGX-COGNIGREX-PARENT-TOPOLOGY/0.2',
+         'root':{'file':'Cognigrex.cgx',
+                 'children':[{'id':'romer','file':'Romer.cgx'}]}}
+    )
+
+
+@pytest.mark.parametrize('product', ['diode','board','phone'])
+@pytest.mark.parametrize('facet', sorted(SPACE_FACETS))
+def test_one_canonical_root_for_each_existing_space_facet(data,product,facet):
+    c,b=data
+    domains,topology=original_parent_sources()
+    x=project_space_context(b,c,domains,topology,product_id=product,facet=facet)
+    assert x['root_carrier']=='Cognigrex.cgx'
+    assert x['child_carrier']=='Romer.cgx'
+    assert x['canonical_child_namespace']=='cgx://romer.industries/romer'
+    assert x['product_facet_sha256']==b['aliases']['product/'+product]
+    assert x['selected_space']==facet
+    assert x['native_dbr_written'] is False and x['machine_authorised'] is False
+    assert x['source_rights_authenticated'] is False
+    assert x['t173_exact_mesh_admitted'] is False
+    assert x['native_ternary_encoded'] is False
+    assert x['native_file_or_data_space_attached'] is False
+    if facet=='print_space':
+        assert x['facet_view']['payload_objects']>0
+        assert x['facet_view']['geometry']=='SYNTHETIC_AXIS_ALIGNED_BOX_MM'
+        assert x['facet_view']['real_toolpath'] is None
+    else:
+        assert x['facet_view']['payload_objects']==0
+    assert verify_space_context_back_down(x,b,c,domains,topology,
+             product_id=product,facet=facet)['state']=='PASS_DIGITAL_ONLY'
+
+
+def test_h0_subordinate_root_namespace_and_zero_hydration(data):
+    c,b=data
+    h=h0_handshake(b,expected_catalogue_sha256=canonical_digest(c))
+    assert h['root_namespace']=='cgx://romer.industries/romer/printspace/'
+    assert h['source_bytes_hydrated']==0 and h['native_admitted'] is False
+    assert h['parent_dbr_receipt'] is None
+
+
+def test_ternary_and_t173_cannot_be_promoted_from_illustrative_geometry(data):
+    c,b=data
+    dom,top=original_parent_sources()
+    for mode,hold in [('t173','T173_EXACT_MESH_AND_RIGHTS_ADMISSION_MISSING'),
+                      ('ternary','NATIVE_TERNARY_TRANSPORT_NOT_ADMITTED'),
+                      ('imaginary','UNKNOWN_REPRESENTATION')]:
+        with pytest.raises(CGXHold,match=hold):
+            project_space_context(b,c,dom,top,representation=mode)
+    with pytest.raises(CGXHold,match='UNKNOWN_SPACE_OR_PRODUCT'):
+        project_space_context(b,c,dom,top,facet='new_rival_filespace')
+
+
+def test_unauthorised_parent_child_or_source_change_fails_closed(data):
+    c,b=data
+    dom,top=original_parent_sources()
+    changes=[('parent', 'ROOT'),('child','RIVAL'),('namespace','cgx://new-root'),
+             ('duplicate','Romer.cgx')]
+    for action,value in changes:
+        d,t=copy.deepcopy(dom),copy.deepcopy(top)
+        if action=='parent': t['root']['file']=value
+        elif action=='child':d['domains']['romer']['file']=value
+        elif action=='namespace':d['domains']['romer']['namespace']=value
+        else:t['root']['children'].append({'id':'romer','file':value})
+        with pytest.raises(CGXHold,match='CANONICAL_PARENT_SOURCE_MISMATCH|ROMER_CHILD_SOURCE_MISMATCH'):
+            project_space_context(b,c,d,t)
+    d,t=copy.deepcopy(dom),copy.deepcopy(top)
+    c2=copy.deepcopy(c);c2['catalogue_id']+='-forged'
+    with pytest.raises(CGXHold,match='ORIGINAL_CATALOGUE_REPLAY_REQUIRED'):
+        project_space_context(b,c2,d,t)
+
+
+def test_back_down_rejects_false_dbr_or_modified_view_without_mutating_sources(data):
+    c,b=data
+    dom,top=original_parent_sources()
+    before=copy.deepcopy((b,c,dom,top))
+    result=project_space_context(b,c,dom,top,product_id='phone',facet='data_space')
+    fake=copy.deepcopy(result);fake['native_dbr_written']=True
+    assert verify_space_context_back_down(fake,b,c,dom,top,
+           product_id='phone',facet='data_space')['state']=='HOLD'
+    fake=copy.deepcopy(result);fake['facet_view']['measured_readings']=[{'fake':1}]
+    assert verify_space_context_back_down(fake,b,c,dom,top,
+           product_id='phone',facet='data_space')['state']=='HOLD'
+    assert before==(b,c,dom,top)
