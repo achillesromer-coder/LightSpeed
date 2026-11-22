@@ -3,7 +3,7 @@
   "catalogue_sha256": "6f7724e0069fd65e56ba77a43b73dd5ff40616d69cf9a01d2f2fe78960ad1bd1",
   "client_rights_are_not_host_authentication": true,
   "commercial_release_authorised": false,
-  "h0_sha256": "6147a7419093c5530424070adc377a9e8cf2b3bce369853176501e2b2467c9d9",
+  "h0_sha256": "022b24361ccf44299c675439bb3572a72d9bcdc8636758708129ec1f26a6e4cd",
   "hold_codes": [
     "EXACT_HOST_OBJECT_ID_AND_COLLISION_READBACK_PENDING",
     "SOURCE_LINEAGE_AND_REGISTRY_NOT_INDEPENDENTLY_AUTHENTICATED",
@@ -17,7 +17,7 @@
   "native_admitted": false,
   "native_dbr_written": false,
   "parent_namespace": "Cognigrex.cgx",
-  "plan_sha256": "e0f39944dcfc92ae702b4d3e170d9db03e3e209c95626a0c7ce0f8e6eafa67b9",
+  "plan_sha256": "7a89e9cd798c5ce804127f789e27404681b26a69fd10ef066c50ad6850172614",
   "product_count": 3,
   "r0_cases": [
     {
