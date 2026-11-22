@@ -1,0 +1,239 @@
+{
+  "schema": "CGX-PRINTSPACE-PRE-DBR-ARCHIVE-REGISTER/0.1",
+  "created_date": "2026-11-22",
+  "register_id": "PC01-PRE-DBR-20261122-001",
+  "status": "PROPOSED / READ_ONLY / NO_LIVE_DBR_MUTATION",
+  "domain": "Romer.cgx / PrintSpace / PC01-NODE-001",
+  "authorities": {
+    "programme": "Type 1 Romer Cognigrex (Drive)",
+    "engineering": "Type 1 Systems Cognigrex (specialist evidence)",
+    "implementation": "achillesromer-coder/LightSpeed / review/pc01-raphael-printspace-crosswalk-20261122",
+    "pre_dbr_handoff": "Achilles P.A / ACR3 / Type 1 Operations Cognigrex",
+    "archive_destination_semantics": "Cognigrex.cgx:/archive-dbr",
+    "provenance_reference": "docs/connector-handoff/FINAL_HOME_CANONICAL_CONSOLIDATION_2026-08-28.md",
+    "execution_owner": "Achilles under separately authorised owner/specialist gate"
+  },
+  "invariant_policy": {
+    "archive_execution_authorised": false,
+    "delete_execution_authorised": false,
+    "overwrite_execution_authorised": false,
+    "dbr_finalised": false,
+    "owner_approved": false,
+    "receipts_synthetic": false,
+    "no_file_moves_performed": true,
+    "git_history_and_legacy_bytes_retained": true,
+    "unknown_references_are_holds": true,
+    "no_cross_domain_authority_inheritance": true,
+    "material_evidence_unaltered": true,
+    "protected_remote_desktop_reserve_pct": 25,
+    "emergency_remote_desktop_floor_pct": 24,
+    "rule": "Registration is a proposal; Achilles must independently verify source and successor hashes, unique-content/dependency scan, rights and recovery before any archive mutation, and separately authorise any deletion."
+  },
+  "classification_classes": [
+    "SUPERSEDED",
+    "SOURCE_REFERENCE",
+    "EVIDENCE_ACTIVE",
+    "EVIDENCE_ARCHIVE_CANDIDATE",
+    "HOLD_REVIEW"
+  ],
+  "dispositions": [
+    "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+    "RETAIN_CANONICAL",
+    "RETAIN_SOURCE_REFERENCE",
+    "RETAIN_EVIDENCE",
+    "HOLD_UNTIL_EVIDENCE_CAPTURE"
+  ],
+  "candidates": [
+    {
+      "id": "PC01-ARCH-001",
+      "classification": "SUPERSEDED",
+      "disposition": "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+      "source": {
+        "type": "git_blob",
+        "repository": "achillesromer-coder/LightSpeed",
+        "path": "tools/compile_printspace_review.py",
+        "git_ref": "0d8f2c128a829ea6f639f4af4db228c3b7d064cb",
+        "git_blob_sha1": "306cad8b8b67ccb73ed67766affdc607db8dfdcf",
+        "readback_verified": true,
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/0d8f2c128a829ea6f639f4af4db228c3b7d064cb/tools/compile_printspace_review.py"
+      },
+      "successor": {
+        "type": "active_review_branch_file",
+        "repository": "achillesromer-coder/LightSpeed",
+        "git_ref": "review/pc01-raphael-printspace-crosswalk-20261122",
+        "path": "cgx/manufacturing/review_gate.py",
+        "git_blob_sha1": "a6b964cfbacde5598053d3fc37391181b17cfc5c",
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/review/pc01-raphael-printspace-crosswalk-20261122/cgx/manufacturing/review_gate.py"
+      },
+      "observed_state": "Historical standalone prototype; later deleted from this working branch, bytes retained in immutable Git lineage",
+      "relationship": "REFACTOR_REPLACES_ROUTING_NOT_BYTE_IDENTICAL",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "tests/test_printspace_review_gate.py",
+        ".github/workflows/cgx-component-atlas-validation.yml"
+      ],
+      "restore": "Checkout exact source commit and path without rewriting the canonical active branch",
+      "outstanding_gates": [
+        "Morpheus/owner compare obsolete implementation behavior with current review gate",
+        "scan active references and runtime imports",
+        "record explicit semantic disposition and hash readback in real DBR"
+      ],
+      "action_for_achilles": "Mark archived/superseded lineage in canonical DBR after evidence; do not delete Git commit history or active canonical gate",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    },
+    {
+      "id": "PC01-ARCH-002",
+      "classification": "SUPERSEDED",
+      "disposition": "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+      "source": {
+        "type": "git_blob",
+        "repository": "achillesromer-coder/LightSpeed",
+        "path": "tests/test_printspace_review.py",
+        "git_ref": "e301f0723070bedb82ac5c98be93c533eb19e59f",
+        "git_blob_sha1": "e686b4ce74a506e554a6eccfd77e1fd97dbc4766",
+        "readback_verified": true,
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/e301f0723070bedb82ac5c98be93c533eb19e59f/tests/test_printspace_review.py"
+      },
+      "successor": {
+        "type": "active_review_branch_file",
+        "repository": "achillesromer-coder/LightSpeed",
+        "git_ref": "review/pc01-raphael-printspace-crosswalk-20261122",
+        "path": "tests/test_printspace_review_gate.py",
+        "git_blob_sha1": "1fdfd3ac207d4a8f9b6bf6a5cdfc180a0ae1033c",
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/review/pc01-raphael-printspace-crosswalk-20261122/tests/test_printspace_review_gate.py"
+      },
+      "observed_state": "Standalone prototype tests deleted on review branch after canonical package review tests were added",
+      "relationship": "TEST_COVERAGE_REFACTORED_NOT_BYTE_IDENTICAL",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "tests/test_printspace_review_gate.py",
+        "tests/test_run_cgx_printspace_batch.py"
+      ],
+      "restore": "Checkout exact historical test file at retained Git commit",
+      "outstanding_gates": [
+        "compare negative and positive assertions with successor suite",
+        "verify no coverage regression and full suite green",
+        "register supersession and restore procedure under real DBR"
+      ],
+      "action_for_achilles": "Classify historical test revision as superseded lineage; preserve Git history and evidence links",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    },
+    {
+      "id": "PC01-ARCH-003",
+      "classification": "EVIDENCE_ARCHIVE_CANDIDATE",
+      "disposition": "HOLD_UNTIL_EVIDENCE_CAPTURE",
+      "source": {
+        "type": "github_actions_artifact",
+        "repository": "achillesromer-coder/LightSpeed",
+        "run_id": 44966504303,
+        "artifact_id": 14732115075,
+        "name": "pc01-printspace-sequential-regression",
+        "archive_sha256": "3027f5ed0fb04d294491ba9c0c439d876d8afbd4c301fc0a5e1f25fdeed8d5ad",
+        "expires_utc": "2026-12-22T00:25:27Z",
+        "workflow_url": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966504303"
+      },
+      "successor": {
+        "type": "github_actions_artifact",
+        "repository": "achillesromer-coder/LightSpeed",
+        "run_id": 44966882823,
+        "artifact_id": 14731609373,
+        "archive_sha256": "7de4f06606eb6e780300a1f02d0c907e2adce0aa71f036eb8c7801b2435e56b3"
+      },
+      "observed_state": "Earlier successful 12-stage CI result. Later 13-stage batch is a distinct run, NOT byte-identical or a replacement for its execution history",
+      "relationship": "EARLIER_RUN_DISTINCT_EVIDENCE",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966504303",
+        "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966882823"
+      ],
+      "restore": "Retain original workflow artifact or independent immutable object with verified SHA256 and readback",
+      "outstanding_gates": [
+        "capture original artifact before expiry",
+        "hash and index its original run receipts in parent-owned DBR",
+        "preserve chronological run provenance before any provider-artifact expiry",
+        "separate owner approval required for archive migration"
+      ],
+      "action_for_achilles": "Preserve immutable chronological execution evidence, optionally migrate to controlled archive after exact SHA256 readback; no deletion instruction",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    }
+  ],
+  "protected_active": [
+    {
+      "id": "PC01-PROT-001",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/CGX_PRINTABLE_SOLID_STATE_PORTFOLIO_2026-10-07.md",
+      "git_blob_sha1": "662847f2a987fb4ae964cdb981019c1a33fa9d80",
+      "reason": "Original portfolio intent, material class assumptions and historical implementation context not proven semantically absorbed by new compiler."
+    },
+    {
+      "id": "PC01-PROT-002",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/CGX_PRINTABLE_TECH_CATALOGUE_INDEX_2026-10-07.md",
+      "git_blob_sha1": "595c7b509e6bbe17d7739a25d4ad78e398b810cb",
+      "reason": "81 technology entries are source-reference lineage and not a one-to-one duplicate of 411 component archetypes."
+    },
+    {
+      "id": "PC01-PROT-003",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md",
+      "git_blob_sha1": "05c7926722490e29043014911d7f26ce09ebfad2",
+      "reason": "Legacy chronology and original PC01 functional intent remains citable, not proven redundant."
+    },
+    {
+      "id": "PC01-PROT-004",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
+      "git_blob_sha1": "b87893936f3dcf953423189de07931bf4ae4b664",
+      "reason": "Active PC01 source-derived contract and machine-not-built/evidence holds."
+    },
+    {
+      "id": "PC01-PROT-005",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json",
+      "git_blob_sha1": "bfa360ebf74659c8d0c831713ccc2f5ee7421d8d",
+      "reason": "Current provenance-only 411-row matrix projection; source remains authoritative in Drive."
+    },
+    {
+      "id": "PC01-PROT-006",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/review_gate.py",
+      "git_blob_sha1": "a6b964cfbacde5598053d3fc37391181b17cfc5c",
+      "reason": "Current canonical manufacturing review gate; retain and update in place."
+    },
+    {
+      "id": "PC01-PROT-007",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14731609373,
+      "archive_sha256": "7de4f06606eb6e780300a1f02d0c907e2adce0aa71f036eb8c7801b2435e56b3",
+      "reason": "Latest independently checked 13-stage batch log/receipt artifact; preserve for audit and reproducibility."
+    }
+  ],
+  "archive_review_gates": [
+    "EXACT_NATIVE_SOURCE_IDENTITY_AND_HASH_READBACK",
+    "CANONICAL_OWNER_AND_LATEST_REVISION_CONFIRMED",
+    "UNIQUE_CONTENT_AND_REFERENCE_SCAN",
+    "SEMANTIC_CROSSWALK_AND_NONLOSS_PROOF",
+    "RIGHTS_AND_PRIVACY_CLASSIFICATION",
+    "PARENT_DESTINATION_AND_VERSIONED_RECOVERY_PROOF",
+    "INDEPENDENT_REGRESSION_AND_NEGATIVE_TESTS",
+    "ACHILLES_REVIEW_RECEIPT",
+    "SEPARATE_OWNER_AUTHORITY_FOR_MUTATION",
+    "POST_ARCHIVE_READBACK_AND_ROLLBACK",
+    "DBR_LINK_AND_HANDOFF_CLOSEOUT"
+  ],
+  "next_safe_action": "Achilles reviews each candidate against existing ACR3/Operations/Parent archive_dbr. Do not mint, move, delete, expire or overwrite from this register."
+}
