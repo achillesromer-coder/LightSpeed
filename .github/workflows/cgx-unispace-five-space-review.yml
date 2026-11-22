@@ -9,6 +9,13 @@ on:
       - "tools/cgx_living_consolidation_review.py"
       - "tests/test_cgx_unispace_facet_mesh.py"
       - "tools/cgx_unispace_crossspace_review.py"
+      - "tools/cgx_unispace_capability_crosswalk.py"
+      - "tests/test_cgx_unispace_capability_crosswalk.py"
+      - "cgx/load_minimum/activation_contract.json"
+      - "cgx/load_minimum/filespace_feature_registry.json"
+      - "cgx/load_minimum/semantic_viewport_contract.json"
+      - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
+      - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
       - "tests/test_cgx_unispace_crossspace_review.py"
       - "tools/cgx_automation_archive_review.py"
       - "tools/cgx_unispace_branch_convergence.py"
@@ -38,6 +45,13 @@ on:
       - "tools/cgx_living_consolidation_review.py"
       - "tests/test_cgx_unispace_facet_mesh.py"
       - "tools/cgx_unispace_crossspace_review.py"
+      - "tools/cgx_unispace_capability_crosswalk.py"
+      - "tests/test_cgx_unispace_capability_crosswalk.py"
+      - "cgx/load_minimum/activation_contract.json"
+      - "cgx/load_minimum/filespace_feature_registry.json"
+      - "cgx/load_minimum/semantic_viewport_contract.json"
+      - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
+      - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
       - "tests/test_cgx_unispace_crossspace_review.py"
       - "tools/cgx_automation_archive_review.py"
       - "tools/cgx_unispace_branch_convergence.py"
@@ -174,6 +188,26 @@ jobs:
           assert item["source_head_mismatches"], "Stale source head observations cannot silently qualify"
           print("Integrated five facets / exact 51-gate register / 70 source regressions, native authority HELD")
           PY
+      - name: Validate pinned LOAD/Alexandria and PrintSpace source-only capability fold (22 cases)
+        run: |
+          python -m pytest -q tests/test_cgx_unispace_capability_crosswalk.py
+          python tools/cgx_unispace_capability_crosswalk.py --repo . \
+            --output unispace-capability-crosswalk.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path("unispace-capability-crosswalk.json").read_text(encoding="utf-8"))
+          assert report["canonical_root"] == "cgx:root:cognigrex"
+          assert len(report["source_contracts"]) == 5
+          assert len(report["library"]["actions"]) == 10
+          assert len(report["manufacturing"]["workstreams"]) == 16
+          assert report["original_gate_count"] == 51
+          assert report["manufacturing"]["physical_proof"] == "UNMEASURED"
+          assert all(not report[key] for key in (
+              "native_dbr_performed","machine_actuated","trained","published",
+              "archive_deleted","source_bytes_hydrated"))
+          print("LOAD/PrintSpace source contracts crosswalked; no native or release authority")
+          PY
       - name: Preserve source-only five-facet and 51-task review receipts
         uses: actions/upload-artifact@v4
         with:
@@ -182,6 +216,7 @@ jobs:
             facet-source-review.json
             crossspace-source-review.json
             unispace-hybrid-source-review.json
+            unispace-capability-crosswalk.json
           if-no-files-found: error
           retention-days: 30
       - name: Set up Node for UniSpace shell verification
