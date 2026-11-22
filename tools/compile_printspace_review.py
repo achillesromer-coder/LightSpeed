@@ -84,7 +84,16 @@ def compile_review(packet: dict) -> dict:
     """Return a stable, read-only plan. No external evidence or rights are verified."""
     if not isinstance(packet, dict):
         raise TypeError("Input must be a JSON object")
-    fingerprint = hashlib.sha256(json.dumps(packet, sort_keys=True, ensure_ascii=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    try:
+        canonical_input = json.dumps(packet, sort_keys=True, ensure_ascii=True, separators=(",", ":"), allow_nan=False)
+    except (TypeError, ValueError):
+        return {"schema": "CGX-PRINTSPACE-REVIEW-RESULT/0.1", "input_sha256": None,
+                "article_id": None, "state": "HOLD", "ordered_operations": [],
+                "findings": [{"code": "NONCANONICAL_INPUT", "subject": "input", "detail": "Only finite, serialisable JSON input is accepted"}],
+                "evidence_status": "DECLARED_NOT_INDEPENDENTLY_VERIFIED",
+                "physical_machine_authorised": False, "mint_authorised": False,
+                "commercial_release_authorised": False}
+    fingerprint = hashlib.sha256(canonical_input.encode()).hexdigest()
     findings: list[dict[str, str]] = []
     def hold(code: str, subject: str, detail: str) -> None:
         finding = {"code": code, "subject": subject, "detail": detail}
@@ -154,7 +163,8 @@ def compile_review(packet: dict) -> dict:
             hold("DUPLICATE_INTERFACE", eid, "Duplicate interface ID")
         else:
             edge_by_id[eid] = e
-        if e.get("predecessor_lot") not in lots or e.get("successor_lot") not in lots:
+        if (not isinstance(e.get("predecessor_lot"), str) or e["predecessor_lot"] not in lots
+                or not isinstance(e.get("successor_lot"), str) or e["successor_lot"] not in lots):
             hold("INTERFACE_LOT", eid, "Interface lots must be declared")
         if e.get("status") != "QUALIFIED" or not _text(e.get("evidence_ref")) or not _text(e.get("process_revision")):
             hold("INTERFACE_UNQUALIFIED", eid, "Only an explicitly receipt-bound directed edge may enter the review route")
@@ -163,6 +173,8 @@ def compile_review(packet: dict) -> dict:
     if not isinstance(ops, list) or len(ops) > 512:
         hold("OPERATIONS_INVALID", "operations", "Expected at most 512 operations")
         ops = []
+    if not ops:
+        hold("EMPTY_PROCESS", "operations", "At least one review operation required")
     ordered, ancestors = _graph(ops, hold)
     by_id = {op["id"]: op for op in ordered}
     atmosphere_out: dict[str, str | None] = {}
@@ -176,18 +188,19 @@ def compile_review(packet: dict) -> dict:
         else:
             atmosphere_in = next(iter(incoming_states))
         atmosphere_out[key] = op.get("target_atmosphere") if kind == "PURGE" and op.get("target_atmosphere") in ATMOSPHERES else atmosphere_in
-        if kind not in OPERATIONS:
+        if not isinstance(kind, str) or kind not in OPERATIONS:
             hold("UNKNOWN_OPERATION", key, "Unsupported operation kind")
             continue
         if kind in ("DEPOSIT", "CURE", "PLACE_COMPONENT", "BOND") and op.get("tool_id") not in tools:
             hold("UNAVAILABLE_TOOL", key, "Tool is absent from machine capability declaration")
         if kind == "DEPOSIT":
             lot = op.get("material_lot_id")
-            if lot not in lots:
+            if not isinstance(lot, str) or lot not in lots:
                 hold("UNBOUND_MATERIAL", key, "Deposit lot is unknown")
             predecessor = op.get("on_material_lot_id")
             if predecessor is not None:
-                edge = edge_by_id.get(op.get("interface_id"))
+                interface_ref = op.get("interface_id")
+                edge = edge_by_id.get(interface_ref) if isinstance(interface_ref, str) else None
                 if edge is None or edge.get("predecessor_lot") != predecessor or edge.get("successor_lot") != lot:
                     hold("DIRECTIONAL_INTERFACE", key, "Exact predecessor\u2192successor interface required; reverse is independent")
                 on_id = op.get("on_operation_id")
@@ -213,12 +226,13 @@ def compile_review(packet: dict) -> dict:
                 hold("UNRATED_CHAMBER", key, "Vacuum/pressure requires a documented rated chamber")
         if kind == "DEPOSIT":
             desired = op.get("required_atmosphere", "AMBIENT")
-            if desired not in ATMOSPHERES or desired != atmosphere_in:
+            if not isinstance(desired, str) or desired not in ATMOSPHERES or desired != atmosphere_in:
                 hold("MISSING_ATMOSPHERE", key, "Effective environment at deposition differs from required state")
         if kind == "ENCAPSULATE":
             if not _text(op.get("barrier_ref")):
                 hold("ENCAPSULATION_BARRIER", key, "Barrier source required")
-            post = by_id.get(op.get("post_seal_test_id"))
+            post_id = op.get("post_seal_test_id")
+            post = by_id.get(post_id) if isinstance(post_id, str) else None
             if not post or post.get("kind") != "VERIFY" or post.get("test_type") != "POST_SEAL" or key not in ancestors.get(post["id"], set()) or not _text(post.get("evidence_ref")):
                 hold("POST_SEAL_TEST", key, "An explicit dependent post-seal verification is required")
         if kind == "ACTIVATE" and op.get("stimulus") == "EM":
@@ -230,7 +244,7 @@ def compile_review(packet: dict) -> dict:
     return {
         "schema": "CGX-PRINTSPACE-REVIEW-RESULT/0.1",
         "input_sha256": fingerprint,
-        "article_id": packet.get("article_id"),
+        "article_id": packet.get("article_id") if _id(packet.get("article_id")) else None,
         "state": "HOLD" if findings else "REVIEW_ONLY",
         "ordered_operations": [x["id"] for x in ordered],
         "findings": sorted(findings, key=lambda x: (x["code"], x["subject"], x["detail"])),
