@@ -12,6 +12,7 @@ on:
       - "tools/cgx_unispace_capability_crosswalk.py"
       - "tools/cgx_unispace_integrated_source_review.py"
       - "tests/test_cgx_unispace_integrated_source_review.py"
+      - "docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json"
       - "tests/test_cgx_unispace_capability_crosswalk.py"
       - "cgx/load_minimum/activation_contract.json"
       - "cgx/load_minimum/filespace_feature_registry.json"
@@ -53,6 +54,7 @@ on:
       - "tools/cgx_unispace_capability_crosswalk.py"
       - "tools/cgx_unispace_integrated_source_review.py"
       - "tests/test_cgx_unispace_integrated_source_review.py"
+      - "docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json"
       - "tests/test_cgx_unispace_capability_crosswalk.py"
       - "cgx/load_minimum/activation_contract.json"
       - "cgx/load_minimum/filespace_feature_registry.json"
@@ -239,6 +241,40 @@ jobs:
                       "archive_deletion_authorised","public_published","new_scheduler_created"):
               assert r[key] is False
           print("One CGX root, 5 facets, 51 distinct engineering gates and public routes, native authority HELD")
+          PY
+      - name: Validate single-root five-facet Interface Studio import candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          src=Path("docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json")
+          item=json.loads(src.read_text(encoding="utf-8"))
+          assert set(item)=={"design"}
+          design=item["design"]
+          assert set(design)=={"schema","parent","title","body"}
+          assert design["schema"]=="cgx.unispace.interface/1"
+          assert design["parent"]=="cgx:root:cognigrex"
+          b=design["body"]
+          assert set(b)=={"id","type","title","layout","children"}
+          assert b["id"]=="root" and b["type"]=="group" and b["layout"]=="tabs"
+          expected={
+              "file_space":("FileSpace","files"),
+              "data_space":("DataSpace","records"),
+              "social_space":("SocialSpace","handoffs"),
+              "print_space":("PrintSpace","workspace"),
+              "intelligence_space":("IntelligenceSpace","workspace"),
+          }
+          assert len(b["children"])==len(expected)
+          assert {x["facet"] for x in b["children"]}==set(expected)
+          for n,x in enumerate(b["children"]):
+              assert set(x)=={"id","type","title","dataset","facet","kind","status","query","layout","limit"}
+              assert x["id"]==f"view-{n}" and x["type"]=="collection"
+              assert (x["title"],x["dataset"])==expected[x["facet"]]
+              assert x["layout"]=="cards" and x["limit"]==18
+              assert x["status"]==x["query"]==""
+          assert not any(key in src.read_text(encoding="utf-8").lower() for key in
+              ("password","credential","token","execute","publish","transfer","peer","callback","mint"))
+          print("Review-only GO layout has exactly 5 existing facets, 0 execution/publishing controls")
           PY
       - name: Preserve source-only five-facet and 51-task review receipts
         uses: actions/upload-artifact@v4
