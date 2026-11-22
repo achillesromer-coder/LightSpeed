@@ -397,6 +397,15 @@
       "path": "cgx/manufacturing/pc01_tolerance_static_screen_v0_1.json",
       "git_blob_sha1": "cfa0dbbaddb55b4cec22d93c2b2efcd524ab6898",
       "reason": "Synthetic, unmeasured 50/75/25 micrometre placement-error and fixed keep-out fixture; not real calibration or production clearance."
+    },
+    {
+      "id": "PC01-PROT-030",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14734629721,
+      "archive_sha256": "8cf47ea0945f72977f003ac27f8714c65369d26702a0391f4587ad82b2f90618",
+      "reason": "Independent 20-stage service/tolerance regression artifact, exact 125/100um synthetic face-gap budgets, STATIC AABB keep-out screening, optional 12-service immutable manifest and PASS_DIGITAL_ONLY reverse replay; expires 2026-12-22; capture to authorised owner evidence store before expiry."
     }
   ],
   "archive_review_gates": [
