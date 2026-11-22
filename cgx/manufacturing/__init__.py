@@ -86,3 +86,7 @@ __all__.append("review_existing_manufacturing_ir")
 # Geometric shorthand and a review-only LOAD H0 composition projection.
 from .composition import compile_geometry_composition
 __all__.append("compile_geometry_composition")
+
+# Exact rational convex contact is a digital geometry classifier, never a machine gate.
+from .exact_contact import exact_convex_contact, ContactHold
+__all__.extend(["exact_convex_contact", "ContactHold"])
