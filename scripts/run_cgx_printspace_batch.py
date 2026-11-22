@@ -33,6 +33,7 @@ SUITES = (
     ("type1-stack", "tests/test_universal_type1_stack_compiler.py"),
     ("equation-kernel", "tests/test_type1_equation_kernel.py"),
     ("owner-matrix-index", "tests/test_printspace_owner_matrix_projection.py"),
+    ("pre-dbr-archive", "tests/test_printspace_pre_dbr_archive_register.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
