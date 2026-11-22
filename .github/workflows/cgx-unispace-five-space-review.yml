@@ -120,6 +120,15 @@ jobs:
           assert not o["owner_acceptance_observed"] and not o["side_effects_performed"]
           print("Cross-space handoff: 51 OPEN, five source facets, zero native authority")
           PY
+      - name: Preserve source-only five-facet and 51-task review receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-unispace-crossspace-source-review
+          path: |
+            facet-source-review.json
+            crossspace-source-review.json
+          if-no-files-found: error
+          retention-days: 30
       - name: Set up Node for UniSpace shell verification
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
