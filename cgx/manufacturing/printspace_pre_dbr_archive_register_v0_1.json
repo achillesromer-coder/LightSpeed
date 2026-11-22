@@ -290,8 +290,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/composition.py",
-      "git_blob_sha1": "421d140ebe20f047aca544d8655ba18e3fed655e",
-      "reason": "Current canonical PrintSpace compositional reference graph, now with bounded exact convex face/edge/point/overlap classification and unqualified directional coupons."
+      "git_blob_sha1": "6ba5328700d3ca76c433f578815ef24f09b6767a",
+      "reason": "Frozen canonical digital reference/placement graph; source geometry and translation arrays copied, not aliased; exact convex contacts."
     },
     {
       "id": "PC01-PROT-017",
@@ -356,6 +356,22 @@
       "path": "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json",
       "git_blob_sha1": "a2236e3873e1053b7d409743fcd1bb43db13de17",
       "reason": "Synthetic source-matrix row selection fixture for unmeasured four-direction witness-plan testing; no material lot evidence"
+    },
+    {
+      "id": "PC01-PROT-025",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/solid_metrics.py",
+      "git_blob_sha1": "8568281d5fd22d1b33e0e7b5d0f4ab4de5e98653",
+      "reason": "Exact convex nominal volume and first moments; no Boolean union, material density or physical mass qualification."
+    },
+    {
+      "id": "PC01-PROT-026",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/digital_service_stack.py",
+      "git_blob_sha1": "2b55bac750d298902bc3c21b17ba58d17ab4981b",
+      "reason": "Canonical 12-service digital source/geometry/process/LOAD projection and reverse source-replay audit; strictly non-executing."
     }
   ],
   "archive_review_gates": [
