@@ -71,6 +71,18 @@ jobs:
         run: python -m pytest -q tests/test_cgx_quantitative_invariants.py
       - name: Validate Type-I stack and equation kernels
         run: python -m pytest -q tests/test_universal_type1_stack_compiler.py tests/test_type1_equation_kernel.py
+      - name: Validate PrintSpace sequential batch harness
+        run: python -m pytest -q tests/test_run_cgx_printspace_batch.py
+      - name: Run bounded comprehensive PrintSpace batch
+        run: python scripts/run_cgx_printspace_batch.py --profile comprehensive --step-limit-seconds 240 --total-limit-seconds 1200 --rest-seconds 0.25 --output-dir "$RUNNER_TEMP/cgx-printspace-batch"
+      - name: Archive sequential checkpoints and readbacks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc01-printspace-sequential-regression
+          path: ${{ runner.temp }}/cgx-printspace-batch/
+          if-no-files-found: warn
+          retention-days: 30
       - name: Validate JSON syntax
         run: |
           python - <<'PY'
