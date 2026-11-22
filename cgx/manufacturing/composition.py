@@ -177,6 +177,8 @@ def compile_geometry_composition(request: dict[str, Any]) -> dict[str, Any]:
                                      "kind": edge["kind"], "bounds_relation": relation,
                                      "evidence_state": edge["evidence_state"],
                                      "physical_compatibility": "NOT_VERIFIED"})
+    if len(nodes) > 1 and not canonical_interfaces:
+        return hold("UNCONNECTED_COMPOSITION")
     # Prevent accidental composition through one unrelated (unlinked) region.
     adjacency = {key: set() for key in nodes}
     for edge in canonical_interfaces:
