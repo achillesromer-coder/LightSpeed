@@ -45,6 +45,7 @@ SUITES = (
     ("cgx-filespace-facets", "tests/test_printspace_cgx_bundle.py"),
     ("native-r0-review", "tests/test_printspace_host_preflight.py"),
     ("r0-signed-batch-smoke", "tests/test_printspace_r0_batch_smoke.py"),
+    ("atomic-r0-ledger-reference", "tests/test_printspace_r0_atomic_ledger_smoke.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
