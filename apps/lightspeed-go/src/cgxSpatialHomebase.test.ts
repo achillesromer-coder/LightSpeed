@@ -24,9 +24,19 @@ describe("CGX single-root top-down home-base geometry and microclimate views",()
     expect(v.authority).toBe("LOCAL_PRESENTATION_ONLY");
   });
   it("has home, Eco, Römer, and game-world rooms with valid portal lineage",()=>{
-    const v=seed();expect(v.rooms.map(x=>x.id)).toEqual(["home","eco","romer","games"]);
+    const v=seed();expect(v.rooms.map(x=>x.id)).toEqual(["home","eco","romer","games","desporte","raphael","achilles","neo"]);
     expect(v.nodes.find(x=>x.id==="game-hub")?.targetRoom).toBe("games");
     expect(v.nodes.find(x=>x.id==="grex-romer")?.targetRoom).toBe("romer");
+  });
+  it("makes De Sporte, Raphael, Achilles and Neo navigable rooms without host state invention",()=>{
+    const p=seed();
+    for(const id of ["desporte","raphael","achilles","neo"]){
+      expect(p.rooms.find(r=>r.id===id)?.parent).toBe("home");
+      expect(p.nodes.some(n=>n.room==="home"&&n.targetRoom===id)).toBe(true);
+    }
+    expect(p.nodes.find(n=>n.id==="desporte-state")?.workspace).toBe("sources");
+    expect(p.nodes.find(n=>n.id==="neo-command")?.workspace).toBe("command");
+    expect(p.nodes.find(n=>n.id==="achilles-oversight")?.workspace).toBeNull();
   });
   it("microclimates are visual presets, not measured conditions",()=>{
     const v=seed();expect(v.rooms.every(x=>x.climate==="VISUAL_PRESET_ONLY")).toBe(true);
