@@ -1,5 +1,5 @@
 /** Node-side cross-contract tests; host context/lineage are SYNTHETIC. */
-import {test} from 'node:test';
+import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {reviewPrintspaceHostR0 as review} from './printspaceCgxHostR0Bridge.mjs';
