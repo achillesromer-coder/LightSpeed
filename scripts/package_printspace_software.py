@@ -24,7 +24,7 @@ from cgx.manufacturing.printspace_cgx import build_bundle, h0_handshake, unpack_
 from cgx.manufacturing.printspace_host_preflight import prepare_r0_host_review
 
 SCHEMA = "CGX-PRINTSPACE-SOFTWARE-PRIVATE-RC/0.1"
-VERSION = "0.1.0-rc.1"
+VERSION = "0.1.0-rc.2"
 ZIP_NAME = f"PrintSpace_Software_{VERSION}_PRIVATE.zip"
 ZIP_DATE = (1980, 1, 1, 0, 0, 0)
 MAX_BYTES = 8 * 1024 * 1024
@@ -48,14 +48,15 @@ SAFETY_FLAGS = (
     "native_load_admitted", "native_dbr_written", "mint_authorised",
     "commercial_release_authorised", "printed_phone_functionality_verified",
 )
-README = """# PrintSpace Studio — private software release candidate 0.1.0-rc.1
+README = """# PrintSpace Studio — private software release candidate 0.1.0-rc.2
 
 **Private owner evaluation only. Not approved for public distribution.**
 
 Open `PrintSpace.Studio.offline.html` directly in a modern browser. No account,
 network, server, installer, API key, machine, database or plugin is required.
 Orbit/zoom the conceptual printer, choose a diode/board/phone-scale illustrative
-assembly, adjust *independent* printer/product scales, inspect the staged digital
+assembly, select one of the five pre-existing UniSpace source facets in the SAME
+inspector, adjust *independent* printer/product scales, inspect the staged digital
 process, and export the CGX H0 or symbolic package from the browser UI.
 
 The bundled JSON is a content-addressed **source-only compatibility projection**.
@@ -85,6 +86,9 @@ hashes prove internal consistency, not source origin, signer identity or ownersh
 - 80 deduplicated symbolic CGX facets with an H0 nonhydrating source index
 - Deterministic canonical data graph, source replay and lossless transport
 - Eight source-listed files + strict SHA-256 metadata and offline ZIP verification
+- In-place FileSpace/DataSpace/PrintSpace/IntelligenceSpace/SocialSpace views of
+  one Cognigrex parent and Romer child; not separate engines or native stores
+- T173 and native ternary modes fail closed until real admission evidence exists
 
 ## Mandatory independent acceptance before public software launch
 - Owner-controlled source and licence audit, distribution approval and trademarks
