@@ -90,3 +90,7 @@ __all__.append("compile_geometry_composition")
 # Exact rational convex contact is a digital geometry classifier, never a machine gate.
 from .exact_contact import exact_convex_contact, ContactHold
 __all__.extend(["exact_convex_contact", "ContactHold"])
+
+# Planning-only directional witness packets; real lot/tool evidence remains external.
+from .interface_qualification import plan_interface_witnesses
+__all__.append("plan_interface_witnesses")
