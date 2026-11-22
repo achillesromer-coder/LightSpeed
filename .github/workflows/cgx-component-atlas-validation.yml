@@ -298,7 +298,7 @@ jobs:
           out.mkdir(parents=True,exist_ok=True)
           for name,value in (("pc01-printspace-native-r0-review.json",plan),
                              ("pc01-printspace-native-r0-backtrace.json",audit)):
-              (out/name).write_text(json.dumps(value,indent=2,sort_keys=True)+"\\n",encoding="utf-8")
+              (out/name).write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8")
           PY
       - name: Archive sequential checkpoints and readbacks
         if: always()
