@@ -34,6 +34,7 @@ SUITES = (
     ("equation-kernel", "tests/test_type1_equation_kernel.py"),
     ("owner-matrix-index", "tests/test_printspace_owner_matrix_projection.py"),
     ("pre-dbr-archive", "tests/test_printspace_pre_dbr_archive_register.py"),
+    ("geometry-composition", "tests/test_printspace_composition.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
