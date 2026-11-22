@@ -867,6 +867,30 @@
       "artifact_id": 14740194018,
       "archive_sha256": "260fb34252cc1934763ad85183c523e22c54f6980ed05d051b3ad247ccd83248",
       "reason": "Final exact-head GitHub private software 0.1.0-rc.2 CI wrapper. Inner ZIP 63404 bytes SHA256 2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2, byte-identical to independently inspected original. Not signed or publicly authorised. Expires 2026-12-22."
+    },
+    {
+      "id": "PC01-PROT-087",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/audit_printspace_rc_static.py",
+      "git_blob_sha1": "b38069559b41a1e0e48eb416033d9f06884b6fba",
+      "reason": "Immutable private RC2 offline static security/accessibility audit, no independent owner sign-off"
+    },
+    {
+      "id": "PC01-PROT-088",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_rc_static.py",
+      "git_blob_sha1": "230b640237849f0468e30fd093d00ec39bf1cd12",
+      "reason": "Tamper/authority/immutable RC2 static audit adversarial regressions"
+    },
+    {
+      "id": "PC01-PROT-089",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/ACHILLES_PRINTSPACE_RC2_REVIEW_EXECUTION_2026-11-22.md",
+      "git_blob_sha1": "a6767783d47e338f133c92e961795ef067863d05",
+      "reason": "Source-qualified owner-private RC2 handoff instructions for existing Achilles review and Neo execution"
     }
   ],
   "archive_review_gates": [
