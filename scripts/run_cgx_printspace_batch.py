@@ -35,6 +35,7 @@ SUITES = (
     ("owner-matrix-index", "tests/test_printspace_owner_matrix_projection.py"),
     ("pre-dbr-archive", "tests/test_printspace_pre_dbr_archive_register.py"),
     ("geometry-composition", "tests/test_printspace_composition.py"),
+    ("exact-convex-contact", "tests/test_printspace_exact_contact.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
