@@ -487,6 +487,15 @@
       "path": "docs/engineering/PRINTSPACE_VIRTUAL_FACTORY_RELEASE_GATES_2026-11-22.md",
       "git_blob_sha1": "33efb2875eba76b09ec2222d8c0ec02b67ed6fbe",
       "reason": "Engineering acceptance, device supply boundaries, in-situ limits and commercialisation governance handoff"
+    },
+    {
+      "id": "PC01-PROT-041",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14736430893,
+      "archive_sha256": "21774ba102f995d3d04504d26e198b2487ed3a04813a7bc9ca4554d44ab9639b",
+      "reason": "Verified 22-stage integrated CI receipt including source-bound 216-case electrothermal emulation, bounded 756-case virtual-factory scenarios, source generator build check, original geometry, witness/source review and 12-service reverse audit; 22/22 pass and no log hash mismatches; provider artifact expires 2026-12-22, requires separately approved durable owner evidence capture."
     }
   ],
   "archive_review_gates": [
