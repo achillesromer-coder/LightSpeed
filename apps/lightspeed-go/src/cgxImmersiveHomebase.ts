@@ -82,6 +82,13 @@ export function mountCgxImmersiveHomebase(
   let layout=createSpatialHomebase(sourcePlan);
   let roomId="home",selected:string|null=null,mode:ImmersiveMode="ar";
   let editing=true;
+  // Browser camera is optional, opt-in and never a source of CGX identity.
+  // No recording, screenshot, processing, geolocation or network upload.
+  let cameraStream:MediaStream|null=null;
+  const cameraView=document.createElement("video");
+  cameraView.className="ls-spatial-camera";
+  cameraView.autoplay=true;cameraView.muted=true;cameraView.playsInline=true;
+  cameraView.setAttribute("aria-hidden","true");
   let history:SpatialHomebase[]=[];
   let redo:SpatialHomebase[]=[];
   let baseline=spatialSnapshot(layout);
@@ -181,6 +188,36 @@ export function mountCgxImmersiveHomebase(
     }catch(error){setNote("Import rejected: "+statusError(error));}
     importInput.value="";
   });
+  const stopCamera=():void=>{
+    if(cameraStream){cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;}
+    cameraView.srcObject=null;
+    panel.dataset.camera="off";
+    if(cameraToggle)cameraToggle.textContent="Camera AR (opt-in)";
+  };
+  const cameraToggle=action("Camera AR (opt-in)",async()=>{
+    if(cameraStream){stopCamera();render();setNote("Camera stopped; all video tracks released.");return;}
+    if(mode!=="ar"){setNote("Select AR-style HUD before requesting camera passthrough.");return;}
+    if(!window.isSecureContext||!navigator.mediaDevices?.getUserMedia){
+      setNote("Camera unavailable: secure browser context and device permission required.");return;
+    }
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({
+        video:{facingMode:{ideal:"environment"}},audio:false
+      });
+      if(mode!=="ar"||!host.isConnected){stream.getTracks().forEach(t=>t.stop());return;}
+      cameraStream=stream;cameraView.srcObject=stream;
+      panel.dataset.camera="on";
+      cameraToggle.textContent="Stop camera";
+      cameraView.play().catch(()=>stopCamera());
+      render();setNote("Camera passthrough active locally; no anchors, tracking, recording or upload.");
+    }catch{
+      stopCamera();setNote("Camera request denied or unavailable; screen-only AR preview retained.");
+    }
+  });
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="hidden"&&cameraStream){stopCamera();render();}
+  });
+  window.addEventListener("pagehide",stopCamera);
   const collapse=action("Hide map",()=>{
     const hidden=layoutFrame.hidden;layoutFrame.hidden=!hidden;
     collapse.textContent=hidden?"Hide map":"Show map";
@@ -188,6 +225,7 @@ export function mountCgxImmersiveHomebase(
   const modes=element("div","ls-spatial-modes");
   for(const candidate of MODES){
     const b=action(immersiveModeTitle(candidate),()=>{
+      if(candidate!=="ar")stopCamera();
       mode=candidate;panel.dataset.viewMode=mode;render();setNote(
         candidate==="ar"||candidate==="vr"
           ?"Screen-only "+candidate.toUpperCase()+"-style UI: camera/headset tracking not connected."
@@ -198,7 +236,7 @@ export function mountCgxImmersiveHomebase(
   const editToggle=action("Editing: on",()=>{
     editing=!editing;editToggle.textContent=editing?"Editing: on":"Editing: off";render();
   });
-  toolbar.append(modes,editToggle,action("Undo",undo),action("Redo",redoOp),
+  toolbar.append(modes,cameraToggle,editToggle,action("Undo",undo),action("Redo",redoOp),
     action("Save local",saveDraft),action("Load local",restoreDraft),
     action("Export .cgx layout",exportDraft),action("Import layout",()=>importInput.click()),
     action("Restore original",()=>attempt(()=>compileSpatialHomebase(baseline),"Saved local baseline restored")),
@@ -293,6 +331,7 @@ export function mountCgxImmersiveHomebase(
   };
   const renderStage=():void=>{
     stage.replaceChildren();
+    if(cameraStream&&mode==="ar")stage.append(cameraView);
     const room=currentRoom();
     stage.dataset.spatialTheme=room.theme;stage.dataset.spatialLight=room.light;
     stage.append(drawSpatialRelations(layout,roomId));
@@ -375,6 +414,8 @@ export function mountCgxImmersiveHomebase(
   const render=():void=>{
     panel.dataset.viewMode=mode;
     panel.dataset.editing=String(editing);
+    cameraToggle.disabled=mode!=="ar";
+    panel.dataset.camera=cameraStream&&mode==="ar"?"on":"off";
     for(const node of modes.querySelectorAll<HTMLButtonElement>("button")){
       const active=node.dataset.spatialMode===mode;
       node.setAttribute("aria-pressed",String(active));
