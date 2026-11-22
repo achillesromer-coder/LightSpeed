@@ -1,9 +1,11 @@
 import "./osShell.css";
 import "./cgxGeneratedGui.css";
+import "./cgxImmersiveHomebase.css";
+import { mountCgxImmersiveHomebase } from "./cgxImmersiveHomebase";
 import "./cgxAchillesLocalShell.css";
 import { mountAchillesLocalShell } from "./cgxAchillesLocalShell";
 import cgxStudioSource from "../../../docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json?raw";
-import { mountCgxGeneratedGui } from "./cgxGeneratedGui";
+import { compileCgxGeneratedGui, mountCgxGeneratedGui } from "./cgxGeneratedGui";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
 import {
   AGENT_ROLES,
@@ -396,6 +398,22 @@ const installShell = (): void => {
     generated.className = "ls-cgx-generated-gui";
     generated.setAttribute("aria-label", "Generated Cognigrex FileSpace operator interface");
     tabRail.after(generated);
+    // AR-first spatial workspace is a continuous overlay over the exact same
+    // generated Studio facet plan, not a second runtime or a second root.
+    const spatial = document.createElement("section");
+    spatial.id = "ls-cgx-immersive-homebase";
+    spatial.setAttribute("aria-label", "AR-first spatial Cognigrex home base");
+    tabRail.after(spatial);
+    try {
+      mountCgxImmersiveHomebase(
+        spatial,
+        compileCgxGeneratedGui(cgxStudioSource),
+        (view) => setActiveView(view),
+      );
+    } catch {
+      spatial.textContent = "Spatial layout held: source schema or local view invalid. Existing UniSpace workspaces remain operational.";
+      spatial.dataset.sourceState = "held";
+    }
     try {
       mountCgxGeneratedGui(generated, cgxStudioSource, (view) => setActiveView(view));
     } catch {
