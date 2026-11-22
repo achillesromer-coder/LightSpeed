@@ -31,6 +31,8 @@ on:
       - "tests/test_cgx_unispace_branch_convergence.py"
       - "tests/test_cgx_unispace_overlap_review.py"
       - "tests/test_cgx_unispace_hybrid_source_review.py"
+      - "cgx/load_minimum/gptExportShardReview.py"
+      - "tests/test_cgx_gpt_export_original_shard_review.py"
       - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
       - "cgx/review/unispace_source_path_overlap_20261122.json"
       - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
@@ -73,6 +75,8 @@ on:
       - "tests/test_cgx_unispace_branch_convergence.py"
       - "tests/test_cgx_unispace_overlap_review.py"
       - "tests/test_cgx_unispace_hybrid_source_review.py"
+      - "cgx/load_minimum/gptExportShardReview.py"
+      - "tests/test_cgx_gpt_export_original_shard_review.py"
       - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
       - "cgx/review/unispace_source_path_overlap_20261122.json"
       - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
@@ -172,6 +176,16 @@ jobs:
           python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
           python -m unittest discover -s tests -p test_cgx_unispace_overlap_review.py -v
           python -m unittest discover -s tests -p test_cgx_unispace_hybrid_source_review.py -v
+      - name: LOAD original export shard source integrity regressions (17 synthetic cases)
+        run: |
+          python -m unittest discover -s tests -p test_cgx_gpt_export_original_shard_review.py -v
+          python - <<'PY'
+          from pathlib import Path
+          source=Path("cgx/load_minimum/gptExportShardReview.py").read_text(encoding="utf-8")
+          assert "cgx.load_minimum.gptExportManifestIntake" in source
+          assert "SOURCE_R0_VERIFIED_PRIVATE_NOT_NATIVE_ADMITTED" in source
+          print("Original LOAD manifest adapter reused; private source bodies not used in CI")
+          PY
       - name: Resolve single-root 51-gate UniSpace hybrid review evidence
         run: |
           python tools/cgx_unispace_hybrid_source_review.py \
