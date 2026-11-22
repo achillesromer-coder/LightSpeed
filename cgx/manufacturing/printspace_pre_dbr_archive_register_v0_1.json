@@ -740,6 +740,15 @@
       "path": "docs/engineering/PRINTSPACE_R0_ATOMIC_LEDGER_REFERENCE_2026-11-22.md",
       "git_blob_sha1": "ff757a11558af3bf23f852c3c97099dad818f489",
       "reason": "Exact host integration, independent trust/root/source/rights gating and empirical ledger requirements"
+    },
+    {
+      "id": "PC01-PROT-072",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739043653,
+      "archive_sha256": "b9f2eb8eb21c49634c51e819d1b85e12a00e6cc7285243a4a5474b3ded6bb8ea",
+      "reason": "Independently verified 26-stage PrintSpace sequential CI, including real three-role R0 signature verification before SQLite reference unique atomic insert; 26/26 PASS and zero archived log hash/byte mismatches, with LightSpeed GO 305 test cases passed. Not a production owner ledger/DBR, native trust registry, real source rights or machine C0; provider artifact expires 2026-12-22 and durable owner retention remains separately gated."
     }
   ],
   "archive_review_gates": [
