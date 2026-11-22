@@ -107,3 +107,22 @@ A bounded metadata-only implementation mirror is at `cgx/manufacturing/printspac
 The cross-check tests at `tests/test_printspace_owner_matrix_projection.py` validate exactly 411 rows and matching identities against `cgx/component_atlas/component_geometry_atlas_v0_1.json`, digest consistency, completeness and the no-evidence-promotion policy. This check is included as a stage in the same bounded sequential regression runner. Passing these tests is digital source-index consistency only and cannot replace empirical material/geometry/process/tool verification.
 
 **Reserve:** 25% remaining is the normal RDC stop line, and 24% is a separately controlled emergency floor; no RDC tools were used for this matrix reconciliation, implementation or cloud regression.
+
+
+## Pre-DBR supersession and Achilles archive-review handoff — 22 November 2026
+
+**No archive move, deletion, DBR promotion, merge, mint, hardware execution or source overwrite has been performed.** This is a pre-DBR **candidate review** under existing `Cognigrex.cgx:/archive-dbr` and ACR3/Type 1 Operations/Achilles P.A governance, not a new archive database or agent queue. The owner-declared Remote Desktop Commander 25% normal stop line / 24% emergency floor is preserved; this change uses no RDC calls.
+
+The typed, read-only candidate register is [`cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json`](../../cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json). The fail-closed parser [`scripts/validate_printspace_pre_dbr.py`](../../scripts/validate_printspace_pre_dbr.py) and [`tests/test_printspace_pre_dbr_archive_register.py`](../../tests/test_printspace_pre_dbr_archive_register.py) reject attempts to set archive/deletion/DBR permissions, omit protected sources, remove review gates or invent receipt equivalence. Those are schema checks only; the human archive owner must independently re-read source and restoration evidence.
+
+| Candidate | Precisely observed source | Disposition | Independent Achilles action |
+| --- | --- | --- | --- |
+| `PC01-ARCH-001` | Historical standalone `tools/compile_printspace_review.py` blob `306cad8b...` retained under Git commit `0d8f2c1...` | Ready for **archive review**, not movement | Confirm that active `cgx/manufacturing/review_gate.py` covers unique code; scan active imports, retain Git history, issue parent DBR supersession receipt |
+| `PC01-ARCH-002` | Historical standalone `tests/test_printspace_review.py` blob `e686b4c...` under commit `e301f072...` | Ready for **archive review**, not movement | Compare test semantics and negative coverage, preserve historical result lineage, issue supersession receipt |
+| `PC01-ARCH-003` | Earlier 12-stage GitHub Actions artifact `14732115075`; ZIP digest `3027f5ed...`, expires 22 Dec 2026 | **HOLD until archived evidence captured** | Copy artifact immutably with checksum, bind exact old-run receipts and chronological provenance; newer 13-stage result is *not* byte-identical or an excuse to delete the older evidence |
+
+**Protected:** the October PC01 convergence note, 81-item printable catalogue, original solid-state portfolio, PC01 operational contract, current 411-row owner index and active review compiler are retained as source/reference or active implementation; latest 13-stage CI evidence is retained. Older source content and the 411-row index must not be conflated with completed canonical absorption. `T173` remains a candidate geometry catalogue; no physical PrintCeptor exists yet.
+
+**Achilles acceptance checklist:** verify the original immutable source SHA and exact locations; traverse current Git references and affected Drive/ACR3 owner records; detect unique content and contradictions; independently test the nominated successor; confirm licence/privacy and immutable recovery destination; obtain scoped review and separate mutation authority; perform exact archive readback *if* authorised; record irreversible operations as distinct final DBR events; issue the explicit reversible closure receipt. Before those gates close, use **HOLD** and do not remove source bytes or close historical lineage.
+
+**Canonical one-version rule:** active implementation remains `cgx.manufacturing` in the existing LightSpeed worktree. Superseded standalone compiler and tests exist **only in Git history** and this register refers to them by exact blob/ref, without reintroducing them in a separate working branch or duplicate corpus. Drive keeps owner engineering/evidence authority and Achilles/A﻿CR3 keeps archival governance.
