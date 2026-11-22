@@ -137,3 +137,10 @@ __all__.extend([
     "pack_printspace_cgx_lite","unpack_printspace_cgx_lite",
     "verify_printspace_cgx_back_down",
 ])
+
+# Existing UniSpace host/LOAD R0 review: no private hydration or native Object_ID.
+from .printspace_host_preflight import (
+    prepare_r0_host_review,
+    verify_r0_host_review_back_down,
+)
+__all__.extend(["prepare_r0_host_review", "verify_r0_host_review_back_down"])
