@@ -104,3 +104,7 @@ __all__.extend(["exact_nominal_convex_metrics", "measure_composite_nominal",
 # Conservative synthetic micro-metre placement bounds and static keep-out review.
 from .tolerance_clearance import screen_static_tolerances
 __all__.append("screen_static_tolerances")
+
+# Bounded analytical electrothermal / mechanical factorial screening. Not a solver or host control.
+from .cross_domain_emulation import run_cross_domain_emulation, equation_kernel_fingerprint
+__all__.extend(["run_cross_domain_emulation", "equation_kernel_fingerprint"])
