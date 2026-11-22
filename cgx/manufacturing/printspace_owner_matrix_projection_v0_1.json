@@ -1,0 +1,4146 @@
+{
+  "schema": "CGX-PRINTSPACE-OWNER-MATRIX-PROJECTION/0.1",
+  "observed_date": "2026-11-22",
+  "status": "READ_ONLY_FINGERPRINT_INDEX / NO_ENGINEERING_EVIDENCE_PROMOTION",
+  "source": {
+    "spreadsheet_id": "1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8",
+    "spreadsheet_url": "https://docs.google.com/spreadsheets/d/1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8/edit",
+    "sheet": "32_CGX_Universal_Type1_Tech_Matrix_v0_1",
+    "source_id_range": "A2:B412",
+    "source_detail_range": "AK2:BH412",
+    "header_range": "AK1:BH1",
+    "engineered_source": "Owner Drive workbook; Git projection is not authoritative"
+  },
+  "policy": {
+    "no_raw_material_process_copy": true,
+    "row_hash_input": "SHA256(UTF8(JSON.stringify([sheet_row,matrix_id,archetype_id,24 field strings])))",
+    "scope": "exact fixed-range observed snapshot; no current dynamic sync",
+    "directional_role": "planning class only, never physical compatibility qualification",
+    "geometry_rule": "no inferred T173 admitted meshes",
+    "mutation_rule": "read-only projection; changes require owner reconciliation"
+  },
+  "counts": {
+    "archetypes": 411,
+    "directional_fields": 16,
+    "compiler_fields": 8,
+    "total_new_fields": 24,
+    "all24_nonempty": 411,
+    "rows_with_blanks": 0,
+    "rows_containing_reverse_direction_warning": 411,
+    "rows_containing_evidence_override": 411
+  },
+  "sparse_fields": [],
+  "projection_sha256": "28a30a888c5391cb4e7ec21f4d757b1bb869bb253e127cd360be9e613880cc68",
+  "row_fingerprints": [
+    {
+      "sheet_row": 2,
+      "matrix_id": "T1M-0001",
+      "archetype_id": "CGA-R-001",
+      "source_cell_range": "AK2:BH2",
+      "directional_sha256": "1e231a08e3117adb83f6a7c79b60e2f4c68e123b3f17219999d9e6ef6924394b",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 3,
+      "matrix_id": "T1M-0002",
+      "archetype_id": "CGA-R-002",
+      "source_cell_range": "AK3:BH3",
+      "directional_sha256": "2941c4e805683db1a1bc0660597b8a016640c8be128774f2a106b5e58e8d3c9f",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 4,
+      "matrix_id": "T1M-0003",
+      "archetype_id": "CGA-R-003",
+      "source_cell_range": "AK4:BH4",
+      "directional_sha256": "067a540f1ad5a1266be1521fb82e1ac3035bbb1601cf31cea1bafd0795059dd6",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 5,
+      "matrix_id": "T1M-0004",
+      "archetype_id": "CGA-R-004",
+      "source_cell_range": "AK5:BH5",
+      "directional_sha256": "85a68879d04ef0950fa21685d196fc17093603e07045c2445fe247c2c084365a",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 6,
+      "matrix_id": "T1M-0005",
+      "archetype_id": "CGA-R-005",
+      "source_cell_range": "AK6:BH6",
+      "directional_sha256": "eafbedaa9f7429bd31bf83da35daf480d1c4285add0e6cbc8ccb33b3fc60ff02",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 7,
+      "matrix_id": "T1M-0006",
+      "archetype_id": "CGA-R-006",
+      "source_cell_range": "AK7:BH7",
+      "directional_sha256": "400fc1c69cb14dbeadcfb6dac3eb2328fcdab7188161e64dda34993bf29e0f73",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 8,
+      "matrix_id": "T1M-0007",
+      "archetype_id": "CGA-R-007",
+      "source_cell_range": "AK8:BH8",
+      "directional_sha256": "9ed86b826402d877331e13e3cd6caf05665e3eaada8b0d42b415e364c454bd65",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 9,
+      "matrix_id": "T1M-0008",
+      "archetype_id": "CGA-R-008",
+      "source_cell_range": "AK9:BH9",
+      "directional_sha256": "a93c55e9f11a1c44465d8b24f4d76aa747c8f570bf59388ccc4664843f2a29e4",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 10,
+      "matrix_id": "T1M-0009",
+      "archetype_id": "CGA-R-009",
+      "source_cell_range": "AK10:BH10",
+      "directional_sha256": "cec05d1d43acb46b57b7d933b813c022ebd76cbedfa1787112e9af2317e63a9e",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 11,
+      "matrix_id": "T1M-0010",
+      "archetype_id": "CGA-C-001",
+      "source_cell_range": "AK11:BH11",
+      "directional_sha256": "cd9de63f77634130e5dd5fb188a14156ebf6a56ca97731db9d5d1f8dee3b5741",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 12,
+      "matrix_id": "T1M-0011",
+      "archetype_id": "CGA-C-002",
+      "source_cell_range": "AK12:BH12",
+      "directional_sha256": "3449418e5c0edcb6d619de49b198b08d02929a8a0e4d660880465928dcf3c187",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 13,
+      "matrix_id": "T1M-0012",
+      "archetype_id": "CGA-C-003",
+      "source_cell_range": "AK13:BH13",
+      "directional_sha256": "a971da1235224e63475df98264d6af1d55dc4035b05d0245b438154ab8a86616",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 14,
+      "matrix_id": "T1M-0013",
+      "archetype_id": "CGA-C-004",
+      "source_cell_range": "AK14:BH14",
+      "directional_sha256": "03829636e0ac4e91ae48bc1867d7b76f1861363dbb4abff0b4be6dca9ee622de",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 15,
+      "matrix_id": "T1M-0014",
+      "archetype_id": "CGA-C-005",
+      "source_cell_range": "AK15:BH15",
+      "directional_sha256": "06da71f3f1ec958dd0348727d278b62d1ffb3da90b1e00e0c1ce17a19ac5457d",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 16,
+      "matrix_id": "T1M-0015",
+      "archetype_id": "CGA-C-006",
+      "source_cell_range": "AK16:BH16",
+      "directional_sha256": "16cb297fc932e5af29ccd616b2fbf8275a85d2b317bc3c1ba6dd16d8fd082d3c",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 17,
+      "matrix_id": "T1M-0016",
+      "archetype_id": "CGA-C-007",
+      "source_cell_range": "AK17:BH17",
+      "directional_sha256": "b9641fdec72595875fb38686d54cb6f7f2cba672c0e3580595b34bca099aebce",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 18,
+      "matrix_id": "T1M-0017",
+      "archetype_id": "CGA-C-008",
+      "source_cell_range": "AK18:BH18",
+      "directional_sha256": "7d6cb0c21e854e96a1ddfadd588ca3f3e1857286e3d96c3fbe5d20c8deedd103",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 19,
+      "matrix_id": "T1M-0018",
+      "archetype_id": "CGA-C-009",
+      "source_cell_range": "AK19:BH19",
+      "directional_sha256": "1b0575939fd06b9c4bd3123c234a392155cc2862e5af11ac9f6a305ec26d9759",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 20,
+      "matrix_id": "T1M-0019",
+      "archetype_id": "CGA-C-010",
+      "source_cell_range": "AK20:BH20",
+      "directional_sha256": "a8bc167c30e08321e51704e4a62961dcd8c22e5740058f37161edd8ddd172d91",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 21,
+      "matrix_id": "T1M-0020",
+      "archetype_id": "CGA-C-011",
+      "source_cell_range": "AK21:BH21",
+      "directional_sha256": "8e0093e773b09f735e3c45e0d1a2f8fa96dd7b0778776d0773727af6f21657c1",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 22,
+      "matrix_id": "T1M-0021",
+      "archetype_id": "CGA-L-001",
+      "source_cell_range": "AK22:BH22",
+      "directional_sha256": "cc7d13c50a55d9551bb43a0b90256e72d52354639fd63496ad80f96c8cb83d5b",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 23,
+      "matrix_id": "T1M-0022",
+      "archetype_id": "CGA-L-002",
+      "source_cell_range": "AK23:BH23",
+      "directional_sha256": "96e1c849a41e1fc9fa8b95c114ccacb31baaf63331a5eec7af185536d2b7c329",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 24,
+      "matrix_id": "T1M-0023",
+      "archetype_id": "CGA-L-003",
+      "source_cell_range": "AK24:BH24",
+      "directional_sha256": "9bcb2e1999c7971d6b3fd04fcb333c3bde8636aee6884451e7ab2fd2874b7973",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 25,
+      "matrix_id": "T1M-0024",
+      "archetype_id": "CGA-L-004",
+      "source_cell_range": "AK25:BH25",
+      "directional_sha256": "ba0f5981de75d4023edfac72103683d9cd0b8e5886bb6ace15eb602dcade85db",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 26,
+      "matrix_id": "T1M-0025",
+      "archetype_id": "CGA-L-005",
+      "source_cell_range": "AK26:BH26",
+      "directional_sha256": "95bf0886a1fd85aae39d41c4ba37376540c78f7f902d28cbe87e90fce61d70bc",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 27,
+      "matrix_id": "T1M-0026",
+      "archetype_id": "CGA-L-006",
+      "source_cell_range": "AK27:BH27",
+      "directional_sha256": "e82d52a9f4ecf85f092de73dcdebfebe501fa74128c019e67d499ee6349c1696",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 28,
+      "matrix_id": "T1M-0027",
+      "archetype_id": "CGA-L-007",
+      "source_cell_range": "AK28:BH28",
+      "directional_sha256": "a3df020a49434498ea50b5c77584b3c548f9386e5bf25bf66e533a846170de1d",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 29,
+      "matrix_id": "T1M-0028",
+      "archetype_id": "CGA-L-008",
+      "source_cell_range": "AK29:BH29",
+      "directional_sha256": "d8456228145d9029b3f4edc7fb7912d156fa7323f3f6c7f89980d35832fc7dc2",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 30,
+      "matrix_id": "T1M-0029",
+      "archetype_id": "CGA-L-009",
+      "source_cell_range": "AK30:BH30",
+      "directional_sha256": "35b5788a800abfd686197a9bc68297d4e65db9ba059eddedb09a1f64861ba75d",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 31,
+      "matrix_id": "T1M-0030",
+      "archetype_id": "CGA-L-010",
+      "source_cell_range": "AK31:BH31",
+      "directional_sha256": "3c83ee5018943b6cbbc29e83ce761448c400b8b012a4b3a3dda19a461cb48c05",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 32,
+      "matrix_id": "T1M-0031",
+      "archetype_id": "CGA-L-011",
+      "source_cell_range": "AK32:BH32",
+      "directional_sha256": "a04868af23f64d15e628cbf5cac825b781dc9132ef44724ab326d2f6cdde0958",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 33,
+      "matrix_id": "T1M-0032",
+      "archetype_id": "CGA-L-012",
+      "source_cell_range": "AK33:BH33",
+      "directional_sha256": "8dcf73f1374cd18f856365d6a6bf97bfb6b2d86ba3314c9997864da3aba5160b",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 34,
+      "matrix_id": "T1M-0033",
+      "archetype_id": "CGA-L-013",
+      "source_cell_range": "AK34:BH34",
+      "directional_sha256": "b9d1862e1e6460b0fc988b284c48be81c87b7e5b706989e688dbbcf08c3756b5",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 35,
+      "matrix_id": "T1M-0034",
+      "archetype_id": "CGA-L-014",
+      "source_cell_range": "AK35:BH35",
+      "directional_sha256": "860b73e535d9f96b2cfff1eff3d9b291ee1c77880e45c475144ea9a6f11be689",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 36,
+      "matrix_id": "T1M-0035",
+      "archetype_id": "CGA-L-015",
+      "source_cell_range": "AK36:BH36",
+      "directional_sha256": "38248ebedb04d527e196e54c3fae97259efde0617e66b3596f50f4393f60c771",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 37,
+      "matrix_id": "T1M-0036",
+      "archetype_id": "CGA-L-016",
+      "source_cell_range": "AK37:BH37",
+      "directional_sha256": "1dc8b3c7bce93e4e000cc78489571bf74b247eefcf14201069414f44876db2c1",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 38,
+      "matrix_id": "T1M-0037",
+      "archetype_id": "CGA-L-017",
+      "source_cell_range": "AK38:BH38",
+      "directional_sha256": "fbbd7b311f42c6b3573756df6c201f674e9be4dce32662e659a1bac90dc91c9c",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 39,
+      "matrix_id": "T1M-0038",
+      "archetype_id": "CGA-L-018",
+      "source_cell_range": "AK39:BH39",
+      "directional_sha256": "89113cadff915a9034e1e8a7665af4d2f49bf3db3c01524f81f8df9143215fd2",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 40,
+      "matrix_id": "T1M-0039",
+      "archetype_id": "CGA-I-001",
+      "source_cell_range": "AK40:BH40",
+      "directional_sha256": "55ad6b189c9b1c9f562f7ee9402a9b48f4c83ea072787039b46d163dc420bab7",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 41,
+      "matrix_id": "T1M-0040",
+      "archetype_id": "CGA-I-002",
+      "source_cell_range": "AK41:BH41",
+      "directional_sha256": "9ba3f7c5e13ab40886ce82cebeafd645c7662a1d78469694898a7f71d6ca9687",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 42,
+      "matrix_id": "T1M-0041",
+      "archetype_id": "CGA-I-003",
+      "source_cell_range": "AK42:BH42",
+      "directional_sha256": "58d11df27b93ebed6cd183cd3a4f5176e81ef46dc9a3fc5e9b0602dbbe5d5031",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 43,
+      "matrix_id": "T1M-0042",
+      "archetype_id": "CGA-I-004",
+      "source_cell_range": "AK43:BH43",
+      "directional_sha256": "dd652aab9fef3d60868b3700b6ecf232bb852ef3ff2bebff8b2d2e1eabe84b21",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 44,
+      "matrix_id": "T1M-0043",
+      "archetype_id": "CGA-I-005",
+      "source_cell_range": "AK44:BH44",
+      "directional_sha256": "956c0d28830f84783344ddbc401f01d105c170e22270abcc13b0ca32188c21e8",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 45,
+      "matrix_id": "T1M-0044",
+      "archetype_id": "CGA-I-006",
+      "source_cell_range": "AK45:BH45",
+      "directional_sha256": "ff7093f4c973bed3616db0223b0cc6d4953db77235d3d8f9a2df91461a02add8",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 46,
+      "matrix_id": "T1M-0045",
+      "archetype_id": "CGA-I-007",
+      "source_cell_range": "AK46:BH46",
+      "directional_sha256": "f6bd11a4c0ddbb0193e68d8ccb8f97493f656d991d4204beb2500c30631bce02",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 47,
+      "matrix_id": "T1M-0046",
+      "archetype_id": "CGA-I-008",
+      "source_cell_range": "AK47:BH47",
+      "directional_sha256": "6cdb55118e493618801f53d29a204e44d3b0298babe2071aca36e7e7b09db1e2",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 48,
+      "matrix_id": "T1M-0047",
+      "archetype_id": "CGA-I-009",
+      "source_cell_range": "AK48:BH48",
+      "directional_sha256": "73339b6abc91eb707ae7ba33b8631e959f776e7afd0613bf786a3b3e26065322",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 49,
+      "matrix_id": "T1M-0048",
+      "archetype_id": "CGA-I-010",
+      "source_cell_range": "AK49:BH49",
+      "directional_sha256": "3ab764ee2f4d4bcc6ae11297e0485fcb3a81cf97cf5c203c829030b42377bfef",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 50,
+      "matrix_id": "T1M-0049",
+      "archetype_id": "CGA-I-011",
+      "source_cell_range": "AK50:BH50",
+      "directional_sha256": "ae9f1168e42aae0a3a4466481d649800efb3add2210b445f588e98f8b05bb314",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 51,
+      "matrix_id": "T1M-0050",
+      "archetype_id": "CGA-I-012",
+      "source_cell_range": "AK51:BH51",
+      "directional_sha256": "34935b881b5ba1f5bcaa7cd98c1e8886db7137abea4bcaee105fb8e2a65ae134",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 52,
+      "matrix_id": "T1M-0051",
+      "archetype_id": "CGA-I-013",
+      "source_cell_range": "AK52:BH52",
+      "directional_sha256": "7dd3c66fed26ee364b7ccb1076c084d12476260e7f5afad6ebff5081a4aeaec4",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 53,
+      "matrix_id": "T1M-0052",
+      "archetype_id": "CGA-I-014",
+      "source_cell_range": "AK53:BH53",
+      "directional_sha256": "abca511624fddc4b4c1a2342cd78be709f6d045126e795e58c43968a308fb318",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 54,
+      "matrix_id": "T1M-0053",
+      "archetype_id": "CGA-I-015",
+      "source_cell_range": "AK54:BH54",
+      "directional_sha256": "c0efb6c767e56c4bcbcf190c608efb240e810667ec8921fd77bfff8367bd2dfe",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 55,
+      "matrix_id": "T1M-0054",
+      "archetype_id": "CGA-I-016",
+      "source_cell_range": "AK55:BH55",
+      "directional_sha256": "26046c040866af4ac2439cbbfb65234d2907ffaa395bf4e5aea759f5b4c8a88b",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 56,
+      "matrix_id": "T1M-0055",
+      "archetype_id": "CGA-I-017",
+      "source_cell_range": "AK56:BH56",
+      "directional_sha256": "1ee0706165aafb946991ff9230f4211b681efb765a6220fcf2d84d93bb1abfbe",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 57,
+      "matrix_id": "T1M-0056",
+      "archetype_id": "CGA-I-018",
+      "source_cell_range": "AK57:BH57",
+      "directional_sha256": "39cc37d6ba5383a6bfe0adc25e7e568c100893fa2645f0d947bd2111b6de33cf",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 58,
+      "matrix_id": "T1M-0057",
+      "archetype_id": "CGA-I-019",
+      "source_cell_range": "AK58:BH58",
+      "directional_sha256": "6739fa00441f89f87b55836adb556cd6e06d9375b56de1d7590211e60790306d",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 59,
+      "matrix_id": "T1M-0058",
+      "archetype_id": "CGA-I-020",
+      "source_cell_range": "AK59:BH59",
+      "directional_sha256": "e0b142790114cc0938b5362c1867750e800bceaa63c1a1946e7dc53cef1b833c",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 60,
+      "matrix_id": "T1M-0059",
+      "archetype_id": "CGA-D-001",
+      "source_cell_range": "AK60:BH60",
+      "directional_sha256": "37abfaf29b20f48e33d1bc87920a2cc6c815f686f3dd5a0649b3946875174f4a",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 61,
+      "matrix_id": "T1M-0060",
+      "archetype_id": "CGA-D-002",
+      "source_cell_range": "AK61:BH61",
+      "directional_sha256": "3cb29c2737bc50b80d13a01b939718a8f43d75fb83b85395fbd748bc35048f23",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 62,
+      "matrix_id": "T1M-0061",
+      "archetype_id": "CGA-D-003",
+      "source_cell_range": "AK62:BH62",
+      "directional_sha256": "50a7becf952597f505c565c0263d591c7b9f4d330d769e85e1339c0ab7f6a383",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 63,
+      "matrix_id": "T1M-0062",
+      "archetype_id": "CGA-D-004",
+      "source_cell_range": "AK63:BH63",
+      "directional_sha256": "98b4b82b4b1000043c944f5f5187f4a07df0bc6ecbf042ef07c8962469a21c7b",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 64,
+      "matrix_id": "T1M-0063",
+      "archetype_id": "CGA-D-005",
+      "source_cell_range": "AK64:BH64",
+      "directional_sha256": "fd85dc30201d739b1f89394741a19e521162550ccbbc18e8754e8780af419b26",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 65,
+      "matrix_id": "T1M-0064",
+      "archetype_id": "CGA-D-006",
+      "source_cell_range": "AK65:BH65",
+      "directional_sha256": "67d35e8230b88d664850ba62856245f60795534559ac0f1742722a27737a7099",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 66,
+      "matrix_id": "T1M-0065",
+      "archetype_id": "CGA-D-007",
+      "source_cell_range": "AK66:BH66",
+      "directional_sha256": "a5a8000bcbff959ccb2ec8323d1c08678ccee399c47168ed5273a65dc5414578",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 67,
+      "matrix_id": "T1M-0066",
+      "archetype_id": "CGA-D-008",
+      "source_cell_range": "AK67:BH67",
+      "directional_sha256": "8f78e52472705aee12e4106575420e254e6a608833fb0a18714c9c9f7afc0c63",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 68,
+      "matrix_id": "T1M-0067",
+      "archetype_id": "CGA-D-009",
+      "source_cell_range": "AK68:BH68",
+      "directional_sha256": "68329c9af93694d85b5b7f764872cf29ef37ccd8cd73a3f41e70a70d937c9f6c",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 69,
+      "matrix_id": "T1M-0068",
+      "archetype_id": "CGA-D-010",
+      "source_cell_range": "AK69:BH69",
+      "directional_sha256": "a6f7d612a239bcaf380c08c2079fc0df50c1d86c6644320b27ecc3895d8633c2",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 70,
+      "matrix_id": "T1M-0069",
+      "archetype_id": "CGA-D-011",
+      "source_cell_range": "AK70:BH70",
+      "directional_sha256": "1f9aa149684d870b87c4d0d9279aef812c2885eafef6ac8b519e81b46a3fdf2f",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 71,
+      "matrix_id": "T1M-0070",
+      "archetype_id": "CGA-D-012",
+      "source_cell_range": "AK71:BH71",
+      "directional_sha256": "9a79443cea1f4fc721c499f769bca3c4f1546528d3438b3a9ff4cca12c7949a4",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 72,
+      "matrix_id": "T1M-0071",
+      "archetype_id": "CGA-D-013",
+      "source_cell_range": "AK72:BH72",
+      "directional_sha256": "c41d050bc7615da6265f0e423497ac8e390968a40584fd4f4f00dc8eb16384c0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 73,
+      "matrix_id": "T1M-0072",
+      "archetype_id": "CGA-D-014",
+      "source_cell_range": "AK73:BH73",
+      "directional_sha256": "ee7c2bf3a4e6c9e2c8c694d938315611281d6fa2e11dbfa62ec2830d37479e75",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 74,
+      "matrix_id": "T1M-0073",
+      "archetype_id": "CGA-D-015",
+      "source_cell_range": "AK74:BH74",
+      "directional_sha256": "72393136b05fdd86afa247201ce03eed9eb968ea31b1a3716f451969b6cd9a72",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 75,
+      "matrix_id": "T1M-0074",
+      "archetype_id": "CGA-D-016",
+      "source_cell_range": "AK75:BH75",
+      "directional_sha256": "ab7e049faecd29705bd8fc2300f5978e999f3e28723aa125736f2ff8ad94f6b1",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 76,
+      "matrix_id": "T1M-0075",
+      "archetype_id": "CGA-Q-017",
+      "source_cell_range": "AK76:BH76",
+      "directional_sha256": "71bb99e0f5e67780a16c4370fea0c406f5c1d1cdf67ec3b3cf7cd22e102b079d",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 77,
+      "matrix_id": "T1M-0076",
+      "archetype_id": "CGA-Q-018",
+      "source_cell_range": "AK77:BH77",
+      "directional_sha256": "a2f11f66bebc4bbde24ce1bbb915089a40e759c9c4a4e3e25871d7b1d6c6f175",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 78,
+      "matrix_id": "T1M-0077",
+      "archetype_id": "CGA-Q-019",
+      "source_cell_range": "AK78:BH78",
+      "directional_sha256": "d324afc93d6297f53541148d8a87100645ac6bbc12f8765147b1789ba9fdac76",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 79,
+      "matrix_id": "T1M-0078",
+      "archetype_id": "CGA-Q-020",
+      "source_cell_range": "AK79:BH79",
+      "directional_sha256": "076d8e7afbc249b5ee5e8cbce11b676bf9fdf6e8c14eeaaa3840a767abe9bd18",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 80,
+      "matrix_id": "T1M-0079",
+      "archetype_id": "CGA-Q-021",
+      "source_cell_range": "AK80:BH80",
+      "directional_sha256": "a9be6cb5e74279b948fd730a7c2dbabe619ba0529ba2662257dd2e1ee1f79bd5",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 81,
+      "matrix_id": "T1M-0080",
+      "archetype_id": "CGA-Q-022",
+      "source_cell_range": "AK81:BH81",
+      "directional_sha256": "b3a31b9f90b6557f15432b24f53a7d7d4619f2ae97e3b25dae0d4db0bd7486b1",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 82,
+      "matrix_id": "T1M-0081",
+      "archetype_id": "CGA-Q-023",
+      "source_cell_range": "AK82:BH82",
+      "directional_sha256": "ec558ec234f7441899e3da8da4c708ec3a1a9c3094d0f2061c276d5b805b1807",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 83,
+      "matrix_id": "T1M-0082",
+      "archetype_id": "CGA-Q-024",
+      "source_cell_range": "AK83:BH83",
+      "directional_sha256": "82222a475522d3f0c53d57371d1f012415aeb2a8345992a0936be855bc4f9510",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 84,
+      "matrix_id": "T1M-0083",
+      "archetype_id": "CGA-Q-025",
+      "source_cell_range": "AK84:BH84",
+      "directional_sha256": "8d5ab260070313b2f56a78188ceaf11f089d3e7da4332395565eefacea5f1829",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 85,
+      "matrix_id": "T1M-0084",
+      "archetype_id": "CGA-Q-026",
+      "source_cell_range": "AK85:BH85",
+      "directional_sha256": "df1f48e4f492cfe61af7140f828bda08867546f8d5e2614b78b0ba7f7d461fc5",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 86,
+      "matrix_id": "T1M-0085",
+      "archetype_id": "CGA-Q-027",
+      "source_cell_range": "AK86:BH86",
+      "directional_sha256": "fd53789af1eec80b9fe92f5d59a6a0b338fd38f440c45dbbfe1134f64e987ab8",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 87,
+      "matrix_id": "T1M-0086",
+      "archetype_id": "CGA-Q-028",
+      "source_cell_range": "AK87:BH87",
+      "directional_sha256": "b8d3ecdbe3c8b69cfdaa355fc018a9aa3540a692c7012fd871617ca23bf8c875",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 88,
+      "matrix_id": "T1M-0087",
+      "archetype_id": "CGA-Q-029",
+      "source_cell_range": "AK88:BH88",
+      "directional_sha256": "020c4495679b35218defe6ba57a79e4e42571b404efa24c47aa619c23e5cb747",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 89,
+      "matrix_id": "T1M-0088",
+      "archetype_id": "CGA-IC-030",
+      "source_cell_range": "AK89:BH89",
+      "directional_sha256": "bb36116ea943557cef92ba88d2b1193b01fe6944f233303aae434ee825a91d80",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 90,
+      "matrix_id": "T1M-0089",
+      "archetype_id": "CGA-IC-031",
+      "source_cell_range": "AK90:BH90",
+      "directional_sha256": "a76c02bb4ed5b2dcb0e6273ff9fd3a28c14f1c617fd152bc61760fa951396c2c",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 91,
+      "matrix_id": "T1M-0090",
+      "archetype_id": "CGA-IC-032",
+      "source_cell_range": "AK91:BH91",
+      "directional_sha256": "0c2aae2f67f5a51311ba10d8023530e191edce52145bc1a41beca31e0b397b76",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 92,
+      "matrix_id": "T1M-0091",
+      "archetype_id": "CGA-IC-033",
+      "source_cell_range": "AK92:BH92",
+      "directional_sha256": "e78690c4e724056183c16ab8e3be9c348dbc8482f92439d902e0b45e0e1da9ee",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 93,
+      "matrix_id": "T1M-0092",
+      "archetype_id": "CGA-IC-034",
+      "source_cell_range": "AK93:BH93",
+      "directional_sha256": "c19ba76f1969e00cae3d53bcafdf25221b7a4fb2d3e89c1df83a5bbe7f0f4d1b",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 94,
+      "matrix_id": "T1M-0093",
+      "archetype_id": "CGA-IC-035",
+      "source_cell_range": "AK94:BH94",
+      "directional_sha256": "51ae1972b795a5a607f1ced8fed54592075f4ff089ce03da67650955aaaed8ed",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 95,
+      "matrix_id": "T1M-0094",
+      "archetype_id": "CGA-IC-036",
+      "source_cell_range": "AK95:BH95",
+      "directional_sha256": "9efb76c5c5bb9d6107ad10cbf946ef3dc68ec16de8b120dbda2393a8e8d520c0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 96,
+      "matrix_id": "T1M-0095",
+      "archetype_id": "CGA-IC-037",
+      "source_cell_range": "AK96:BH96",
+      "directional_sha256": "a7cfc6849934a712bea02fa00adf4d11b7e50d1b37f86b49a0aa21c21112708d",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 97,
+      "matrix_id": "T1M-0096",
+      "archetype_id": "CGA-IC-038",
+      "source_cell_range": "AK97:BH97",
+      "directional_sha256": "92bfa558fd750976d6de4c8fee364408578802b6cb0858598682dddd8c60e0b7",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 98,
+      "matrix_id": "T1M-0097",
+      "archetype_id": "CGA-IC-039",
+      "source_cell_range": "AK98:BH98",
+      "directional_sha256": "2a50293ddaa442f70a58c3a40abf8bc96027f57feba1b3146ed873288acc003e",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 99,
+      "matrix_id": "T1M-0098",
+      "archetype_id": "CGA-IC-040",
+      "source_cell_range": "AK99:BH99",
+      "directional_sha256": "b2b0362e5c7f7e86ca66441b53c436161b682586e26918543e92cdd6a1610d28",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 100,
+      "matrix_id": "T1M-0099",
+      "archetype_id": "CGA-IC-041",
+      "source_cell_range": "AK100:BH100",
+      "directional_sha256": "655cb8a08de6b505efb106ed40aa7c8f50913a045a4c911ec7fa4286995b9771",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 101,
+      "matrix_id": "T1M-0100",
+      "archetype_id": "CGA-IC-042",
+      "source_cell_range": "AK101:BH101",
+      "directional_sha256": "5638fb9ac8c4a95d411d1f3bfcbc1e727b9b25f62bab6d7e749e71f333f1c2a1",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 102,
+      "matrix_id": "T1M-0101",
+      "archetype_id": "CGA-IC-043",
+      "source_cell_range": "AK102:BH102",
+      "directional_sha256": "f350ed41ef2362e4ae0e96c66893c943170d7be38e10e1e88f13aef1b823f8a0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 103,
+      "matrix_id": "T1M-0102",
+      "archetype_id": "CGA-IC-044",
+      "source_cell_range": "AK103:BH103",
+      "directional_sha256": "3798ec93aa7e56f5646ca6ef377ba4dcb9269c631045ae64163efadd43fd3d98",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 104,
+      "matrix_id": "T1M-0103",
+      "archetype_id": "CGA-IC-045",
+      "source_cell_range": "AK104:BH104",
+      "directional_sha256": "23d6c826947279a079d4fa57b015b8ec4e8b9f883b902ac50ca058b07fdc656c",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 105,
+      "matrix_id": "T1M-0104",
+      "archetype_id": "CGA-IC-046",
+      "source_cell_range": "AK105:BH105",
+      "directional_sha256": "86806a9d639694bcdadb657815505a71345ea711938c344ef189ba188745f77e",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 106,
+      "matrix_id": "T1M-0105",
+      "archetype_id": "CGA-IC-047",
+      "source_cell_range": "AK106:BH106",
+      "directional_sha256": "fdeb4441b3c3722a8a243cc266b91fb2cc1212236a2d1347e70f31160019d29b",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 107,
+      "matrix_id": "T1M-0106",
+      "archetype_id": "CGA-IC-048",
+      "source_cell_range": "AK107:BH107",
+      "directional_sha256": "acb320d04990d3f29dcf9b2b41208d2ccc2951ffb98bb08baf06dbab7f60a9d0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 108,
+      "matrix_id": "T1M-0107",
+      "archetype_id": "CGA-IC-049",
+      "source_cell_range": "AK108:BH108",
+      "directional_sha256": "76c5c3bb0b75a3e99235a3c0cf8d5056ceff2039ff88e66abc31369c59a23a2c",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 109,
+      "matrix_id": "T1M-0108",
+      "archetype_id": "CGA-IC-050",
+      "source_cell_range": "AK109:BH109",
+      "directional_sha256": "2b0cba428352cd5fafd9cd2328478cd31872a0d8c448b8ffa903a52e63dcc5cc",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 110,
+      "matrix_id": "T1M-0109",
+      "archetype_id": "CGA-IC-051",
+      "source_cell_range": "AK110:BH110",
+      "directional_sha256": "f6d0bdf9cc2f0668af8d7bddf4caa2daf137efed6a89e0063294155526771a2c",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 111,
+      "matrix_id": "T1M-0110",
+      "archetype_id": "CGA-IC-052",
+      "source_cell_range": "AK111:BH111",
+      "directional_sha256": "4d131191483d401bed9811a3777a279b7aeb056655c3596604bfe8d5cce7e03f",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 112,
+      "matrix_id": "T1M-0111",
+      "archetype_id": "CGA-IC-053",
+      "source_cell_range": "AK112:BH112",
+      "directional_sha256": "0ad25944c6966f7905ca8fa6a4920d0771c74de3614c64dc38db817799f9946c",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 113,
+      "matrix_id": "T1M-0112",
+      "archetype_id": "CGA-IC-054",
+      "source_cell_range": "AK113:BH113",
+      "directional_sha256": "04d2f98cdfa8aacecf2d5e551cd0c33d9baa274867c33c3ebb159c126e446565",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 114,
+      "matrix_id": "T1M-0113",
+      "archetype_id": "CGA-RF-001",
+      "source_cell_range": "AK114:BH114",
+      "directional_sha256": "28cf1f86dd0940611c21c6f1b2646c5628148b6f7ca8d6bca5f3d9865362abe5",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 115,
+      "matrix_id": "T1M-0114",
+      "archetype_id": "CGA-RF-002",
+      "source_cell_range": "AK115:BH115",
+      "directional_sha256": "8ba97102008cdd89f5c5ec16d619028f47b29033ca4992a8e8420f7df6e4471a",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 116,
+      "matrix_id": "T1M-0115",
+      "archetype_id": "CGA-RF-003",
+      "source_cell_range": "AK116:BH116",
+      "directional_sha256": "76ba34a67581df62c8380cc962c15d34316ab913dc878e0c5bc007d25bffe25a",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 117,
+      "matrix_id": "T1M-0116",
+      "archetype_id": "CGA-RF-004",
+      "source_cell_range": "AK117:BH117",
+      "directional_sha256": "c89782e0439c74edf232edcc68dd89ad5e806738ace2bde70b3eed32c74e2d6c",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 118,
+      "matrix_id": "T1M-0117",
+      "archetype_id": "CGA-RF-005",
+      "source_cell_range": "AK118:BH118",
+      "directional_sha256": "68716eaf47c3ef0608b786cccd0479e4f782d220ff00aa5aa897214718de9921",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 119,
+      "matrix_id": "T1M-0118",
+      "archetype_id": "CGA-RF-006",
+      "source_cell_range": "AK119:BH119",
+      "directional_sha256": "19c77670eccc6d70763de0555b59977116a471b6b1ab783ecd9c69f1e8fd6a3d",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 120,
+      "matrix_id": "T1M-0119",
+      "archetype_id": "CGA-RF-007",
+      "source_cell_range": "AK120:BH120",
+      "directional_sha256": "b44a1a7bbb755a72d4d8e2d1cec90ab34e02728190129b178928205d02fcfe6b",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 121,
+      "matrix_id": "T1M-0120",
+      "archetype_id": "CGA-RF-008",
+      "source_cell_range": "AK121:BH121",
+      "directional_sha256": "b23db3c264580c6fab4d1bd14f076c1b63b27f1dfc4d30cbebfc3113c5c0ade8",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 122,
+      "matrix_id": "T1M-0121",
+      "archetype_id": "CGA-RF-009",
+      "source_cell_range": "AK122:BH122",
+      "directional_sha256": "2a73387353ee2061323ca357e765d3fe211c3cf85150843a1eceda1797eebf31",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 123,
+      "matrix_id": "T1M-0122",
+      "archetype_id": "CGA-RF-010",
+      "source_cell_range": "AK123:BH123",
+      "directional_sha256": "1dc74aea37eb28dab26adf025a6352d38b2e9f2e8a9761256f612ddc4906fb62",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 124,
+      "matrix_id": "T1M-0123",
+      "archetype_id": "CGA-RF-011",
+      "source_cell_range": "AK124:BH124",
+      "directional_sha256": "b4289cf37426c807de1cbfb4a0feda3dd17c18f2a4439e33ee0cd66c750df8b3",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 125,
+      "matrix_id": "T1M-0124",
+      "archetype_id": "CGA-RF-012",
+      "source_cell_range": "AK125:BH125",
+      "directional_sha256": "8f20e49c7b7da53dd15dc9976ee46ba56a62d92a0c28aa181acb71d1bd28e6ac",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 126,
+      "matrix_id": "T1M-0125",
+      "archetype_id": "CGA-RF-013",
+      "source_cell_range": "AK126:BH126",
+      "directional_sha256": "dffc0dbaba02dd8974f2b2b5bf7dde674a42b7f9ae31575cbaf29603920639e2",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 127,
+      "matrix_id": "T1M-0126",
+      "archetype_id": "CGA-RF-014",
+      "source_cell_range": "AK127:BH127",
+      "directional_sha256": "83cb2e8546f9ce1b281361f34ab064ef4725ae97563e96c9af614a81630f2c99",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 128,
+      "matrix_id": "T1M-0127",
+      "archetype_id": "CGA-RF-015",
+      "source_cell_range": "AK128:BH128",
+      "directional_sha256": "8d98557a7f6147d4b44d68529068fe9c4dc3e9f69f6cf31124803724f8eb65af",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 129,
+      "matrix_id": "T1M-0128",
+      "archetype_id": "CGA-RF-016",
+      "source_cell_range": "AK129:BH129",
+      "directional_sha256": "ae02ebe98ad57a7feee7abc6b8f95f5465c4dc2a4f790ff9db8bedcb542fc401",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 130,
+      "matrix_id": "T1M-0129",
+      "archetype_id": "CGA-RF-017",
+      "source_cell_range": "AK130:BH130",
+      "directional_sha256": "b9fd266853bdad69d4686a4f7f72cdf471aea41ead3b9d80336670ea672a032e",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 131,
+      "matrix_id": "T1M-0130",
+      "archetype_id": "CGA-RF-018",
+      "source_cell_range": "AK131:BH131",
+      "directional_sha256": "ceb577faceb33b4a36af70bebf7026b2c92f12b9f3b611eb277d1baaf4cab075",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 132,
+      "matrix_id": "T1M-0131",
+      "archetype_id": "CGA-RF-019",
+      "source_cell_range": "AK132:BH132",
+      "directional_sha256": "2a4083f342be6b987e62594da949d4afc24c71c29d48acaf3050003445535ee0",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 133,
+      "matrix_id": "T1M-0132",
+      "archetype_id": "CGA-RF-020",
+      "source_cell_range": "AK133:BH133",
+      "directional_sha256": "635eb9657dff4cadfc645ffd32792a35de95c0252bcd4717460bceb37a58df08",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 134,
+      "matrix_id": "T1M-0133",
+      "archetype_id": "CGA-RF-021",
+      "source_cell_range": "AK134:BH134",
+      "directional_sha256": "ed662f3e3b68af2c63fd7834ec9db89ff5eec515c5cd0bb57dea572cc70f76ac",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 135,
+      "matrix_id": "T1M-0134",
+      "archetype_id": "CGA-RF-022",
+      "source_cell_range": "AK135:BH135",
+      "directional_sha256": "ba102ff67ff2e2fd85579c0b10d8b1aaf37760757f213ec451bd27682f1e3a8d",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 136,
+      "matrix_id": "T1M-0135",
+      "archetype_id": "CGA-RF-023",
+      "source_cell_range": "AK136:BH136",
+      "directional_sha256": "ed90e1f7a4e44a410cc6974cdd83226289d35875560cf65c818addb06174d1dc",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 137,
+      "matrix_id": "T1M-0136",
+      "archetype_id": "CGA-RF-024",
+      "source_cell_range": "AK137:BH137",
+      "directional_sha256": "b0ae9e1b135057684b39e9c5f9cdf0efeba03609f8fa1ec382027702b0dbd413",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 138,
+      "matrix_id": "T1M-0137",
+      "archetype_id": "CGA-RF-025",
+      "source_cell_range": "AK138:BH138",
+      "directional_sha256": "fa0533f9f46f664d5a43657f62879a067d2567f89fb57d05317e5c07ea03ed5b",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 139,
+      "matrix_id": "T1M-0138",
+      "archetype_id": "CGA-RF-026",
+      "source_cell_range": "AK139:BH139",
+      "directional_sha256": "7867c3f430362dc7412cb1b8c8d8ab0663424c84cdad94d54fa47bea164ea459",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 140,
+      "matrix_id": "T1M-0139",
+      "archetype_id": "CGA-RF-027",
+      "source_cell_range": "AK140:BH140",
+      "directional_sha256": "6bfaef2b9499bc51f3bf9ad051d851923731c5953e28ffe2569a0c4aac5a47a2",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 141,
+      "matrix_id": "T1M-0140",
+      "archetype_id": "CGA-RF-028",
+      "source_cell_range": "AK141:BH141",
+      "directional_sha256": "28adb1684064d157abb0dbc42a2ccab826c736b978788aa93ddb1fd65013c435",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 142,
+      "matrix_id": "T1M-0141",
+      "archetype_id": "CGA-RF-029",
+      "source_cell_range": "AK142:BH142",
+      "directional_sha256": "d4c4bef6851df7742c2eba6332a43be4dc43cfc64b19ad47db7ff5aeb9a1a313",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 143,
+      "matrix_id": "T1M-0142",
+      "archetype_id": "CGA-RF-030",
+      "source_cell_range": "AK143:BH143",
+      "directional_sha256": "c84ce41140ab464f6d5b48f7831f958c9661a1f2bac7a75bdb9158807c04a008",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 144,
+      "matrix_id": "T1M-0143",
+      "archetype_id": "CGA-S-001",
+      "source_cell_range": "AK144:BH144",
+      "directional_sha256": "a23088c707d47168ed539305de92bfda8441d02ce59233add2219bd9f611405a",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 145,
+      "matrix_id": "T1M-0144",
+      "archetype_id": "CGA-S-002",
+      "source_cell_range": "AK145:BH145",
+      "directional_sha256": "f76890c0bf854589b63955e15d7379200610f160fc613993cc8389b840e85e07",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 146,
+      "matrix_id": "T1M-0145",
+      "archetype_id": "CGA-S-003",
+      "source_cell_range": "AK146:BH146",
+      "directional_sha256": "2d626174097937e52ac1e3ae59aeebb190c8982ade9d3a812ed69d738c55b870",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 147,
+      "matrix_id": "T1M-0146",
+      "archetype_id": "CGA-S-004",
+      "source_cell_range": "AK147:BH147",
+      "directional_sha256": "cd691ef6e31da6ff25a83ab84b25cd2a168eab3a3b05e56aa7cbf36be840cae2",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 148,
+      "matrix_id": "T1M-0147",
+      "archetype_id": "CGA-S-005",
+      "source_cell_range": "AK148:BH148",
+      "directional_sha256": "7d02e47e60ce2817b667fdcb5c5369dec0ee80c154f8e40efd00bbcf49a7365f",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 149,
+      "matrix_id": "T1M-0148",
+      "archetype_id": "CGA-S-006",
+      "source_cell_range": "AK149:BH149",
+      "directional_sha256": "eaf5dece96b960e50b8660ca76cec74a6032875cb3c76e636da4df4c2d1f0869",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 150,
+      "matrix_id": "T1M-0149",
+      "archetype_id": "CGA-S-007",
+      "source_cell_range": "AK150:BH150",
+      "directional_sha256": "a74f20b1c27eae3af35d8eba0443571c98940e524d6be2f44bd2b2cd1a26de84",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 151,
+      "matrix_id": "T1M-0150",
+      "archetype_id": "CGA-S-008",
+      "source_cell_range": "AK151:BH151",
+      "directional_sha256": "473a0e96206aca18200e0a2bcf2bff24dc581a857aa2e5a98984a68596a21b87",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 152,
+      "matrix_id": "T1M-0151",
+      "archetype_id": "CGA-S-009",
+      "source_cell_range": "AK152:BH152",
+      "directional_sha256": "3c31943d3741115440b804aa956a024417cdf2eb8fbd0190864b9cb2ef8c666b",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 153,
+      "matrix_id": "T1M-0152",
+      "archetype_id": "CGA-S-010",
+      "source_cell_range": "AK153:BH153",
+      "directional_sha256": "de6cf1d9409766ba6fd1384da2faef6a7469d8c487e3ea90418dbf7cf052c25f",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 154,
+      "matrix_id": "T1M-0153",
+      "archetype_id": "CGA-S-011",
+      "source_cell_range": "AK154:BH154",
+      "directional_sha256": "51e2a86a808d09948cfaafbc32aca1229961a9ead09989accd78b9e8232abfaa",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 155,
+      "matrix_id": "T1M-0154",
+      "archetype_id": "CGA-S-012",
+      "source_cell_range": "AK155:BH155",
+      "directional_sha256": "994859ebf522eec7b4c10aa939c54c29c5538d5a820ece674289e057986a2f47",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 156,
+      "matrix_id": "T1M-0155",
+      "archetype_id": "CGA-S-013",
+      "source_cell_range": "AK156:BH156",
+      "directional_sha256": "184d37d5e182c0c5223f7a48a23c936435827fae60c45ded3c9f14f43b954f8a",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 157,
+      "matrix_id": "T1M-0156",
+      "archetype_id": "CGA-S-014",
+      "source_cell_range": "AK157:BH157",
+      "directional_sha256": "72478aea888ac7476ac2b94d03c7647e3508e7c38082c24145c51fe8274cd70e",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 158,
+      "matrix_id": "T1M-0157",
+      "archetype_id": "CGA-S-015",
+      "source_cell_range": "AK158:BH158",
+      "directional_sha256": "58ccd4453b05560ce276676d341298de3af97938d761f000864b59667f2d8db0",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 159,
+      "matrix_id": "T1M-0158",
+      "archetype_id": "CGA-S-016",
+      "source_cell_range": "AK159:BH159",
+      "directional_sha256": "3fab18c1e53cf97159bd91fb1a6146832ca58315ef56b0b5854a607f1dfd62f8",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 160,
+      "matrix_id": "T1M-0159",
+      "archetype_id": "CGA-S-017",
+      "source_cell_range": "AK160:BH160",
+      "directional_sha256": "b9bb8134cb7d2b89676491bdbd591dbe1cc9adde30d428d2b7f18ef0dea0f4bd",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 161,
+      "matrix_id": "T1M-0160",
+      "archetype_id": "CGA-S-018",
+      "source_cell_range": "AK161:BH161",
+      "directional_sha256": "29ce590d635cb366d5e5b0c33d824f3f9bb19cd39b01e216394af5c9c09c341e",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 162,
+      "matrix_id": "T1M-0161",
+      "archetype_id": "CGA-S-019",
+      "source_cell_range": "AK162:BH162",
+      "directional_sha256": "95f5a4e5687a62850ebb06b896bff77a56d95fda00c809a903e758cb0d5a5286",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 163,
+      "matrix_id": "T1M-0162",
+      "archetype_id": "CGA-S-020",
+      "source_cell_range": "AK163:BH163",
+      "directional_sha256": "a1aad8e86e0fa16d6471d623d7dda2531c149b2ffe05ec937f1017221f1ac994",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 164,
+      "matrix_id": "T1M-0163",
+      "archetype_id": "CGA-S-021",
+      "source_cell_range": "AK164:BH164",
+      "directional_sha256": "0e897e2062e56e3ef5e24739332c2bc05c03169594e55c67cc35fe1c6a252678",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 165,
+      "matrix_id": "T1M-0164",
+      "archetype_id": "CGA-S-022",
+      "source_cell_range": "AK165:BH165",
+      "directional_sha256": "63ce5f864e1db238b028224ed9143ce667efb8a246280a689428eb73e44f20da",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 166,
+      "matrix_id": "T1M-0165",
+      "archetype_id": "CGA-S-023",
+      "source_cell_range": "AK166:BH166",
+      "directional_sha256": "3fe5562bb3df2e818f0cf4ab5bc2dc02158a9eef9f60cdc51abd962f5ee3090b",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 167,
+      "matrix_id": "T1M-0166",
+      "archetype_id": "CGA-S-024",
+      "source_cell_range": "AK167:BH167",
+      "directional_sha256": "6bedab72a0b917793d7664196cf5f50ea3d4cd3687ffe231646c73ae03f8604c",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 168,
+      "matrix_id": "T1M-0167",
+      "archetype_id": "CGA-S-025",
+      "source_cell_range": "AK168:BH168",
+      "directional_sha256": "a5931b651a4b7d774119fa2cccd6cc855eb36cee78c4982061fecbfcbbf40a75",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 169,
+      "matrix_id": "T1M-0168",
+      "archetype_id": "CGA-S-026",
+      "source_cell_range": "AK169:BH169",
+      "directional_sha256": "33bce289f473672343ade53c22b9df8c67d9aa1b26c32a0981059a4ec6b28d5b",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 170,
+      "matrix_id": "T1M-0169",
+      "archetype_id": "CGA-S-027",
+      "source_cell_range": "AK170:BH170",
+      "directional_sha256": "2a6b6008e23e07f9148455d8ce3b37ff733389593b7d570cd6b4dafc7192f941",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 171,
+      "matrix_id": "T1M-0170",
+      "archetype_id": "CGA-S-028",
+      "source_cell_range": "AK171:BH171",
+      "directional_sha256": "cbb914fa2a4c37bb26e34ad9eee81419fb9b656179045a3d6910ebdcc9296a35",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 172,
+      "matrix_id": "T1M-0171",
+      "archetype_id": "CGA-S-029",
+      "source_cell_range": "AK172:BH172",
+      "directional_sha256": "6821f23080357a2ba251bde9508f17f5f5ebd0366768cab524928a0ec2f422af",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 173,
+      "matrix_id": "T1M-0172",
+      "archetype_id": "CGA-S-030",
+      "source_cell_range": "AK173:BH173",
+      "directional_sha256": "604d850f3eb5e0416897639a5a4b0c0d785d4abf926820f3d0607262e5aff49b",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 174,
+      "matrix_id": "T1M-0173",
+      "archetype_id": "CGA-S-031",
+      "source_cell_range": "AK174:BH174",
+      "directional_sha256": "e7c8f1e863b0a142fcfdf9933d0acab0fa83667de11738ad11e8bb5fb8c376cc",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 175,
+      "matrix_id": "T1M-0174",
+      "archetype_id": "CGA-S-032",
+      "source_cell_range": "AK175:BH175",
+      "directional_sha256": "486afb19a99cad39d46a12b2c4d7652983342e77f06d85993aebc83210a3accf",
+      "blank_fields": [],
+      "primitive_basis": "CAPACITIVE_ELECTROSTATIC",
+      "compiler_token": "CAPACITIVE_ELECTROSTATIC"
+    },
+    {
+      "sheet_row": 176,
+      "matrix_id": "T1M-0175",
+      "archetype_id": "CGA-S-033",
+      "source_cell_range": "AK176:BH176",
+      "directional_sha256": "7bd056f9b1a1270806bb6035c0e93bf41478b3acbc5cf8f81806e53f1f9e0f6e",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 177,
+      "matrix_id": "T1M-0176",
+      "archetype_id": "CGA-E-001",
+      "source_cell_range": "AK177:BH177",
+      "directional_sha256": "1f293f7a9babfd1595c13833a8dbddcb3a744afb4f61cef9aa51ffd104b7123f",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 178,
+      "matrix_id": "T1M-0177",
+      "archetype_id": "CGA-E-002",
+      "source_cell_range": "AK178:BH178",
+      "directional_sha256": "6a4ca640fc5119c8ded830abe285a1642ee022fd3b6203b8763ab11d25cf3e62",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 179,
+      "matrix_id": "T1M-0178",
+      "archetype_id": "CGA-E-003",
+      "source_cell_range": "AK179:BH179",
+      "directional_sha256": "f1ae404d7f4c6a5980e50892f08a24e51fd4a2c1ce13042e039e2084bf5bf214",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 180,
+      "matrix_id": "T1M-0179",
+      "archetype_id": "CGA-E-004",
+      "source_cell_range": "AK180:BH180",
+      "directional_sha256": "971a69b015714cc1ba4fae97775014aec69ce4cd35cb635d78eb3a1b1b4f2e6b",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 181,
+      "matrix_id": "T1M-0180",
+      "archetype_id": "CGA-E-005",
+      "source_cell_range": "AK181:BH181",
+      "directional_sha256": "0b625bee914e2aa7f87de38a9f8a2399e0a87021bce44da520001305ab1eb362",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 182,
+      "matrix_id": "T1M-0181",
+      "archetype_id": "CGA-E-006",
+      "source_cell_range": "AK182:BH182",
+      "directional_sha256": "db0dce82faf136bb06763cc5bba41fe5a4c00f81fc39c95564afd1d43f4cd55f",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 183,
+      "matrix_id": "T1M-0182",
+      "archetype_id": "CGA-E-007",
+      "source_cell_range": "AK183:BH183",
+      "directional_sha256": "4957377f6d3a2d8d5ce689eac101b8b4aeb933e95965180c03ca0ff74f8d9e39",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 184,
+      "matrix_id": "T1M-0183",
+      "archetype_id": "CGA-E-008",
+      "source_cell_range": "AK184:BH184",
+      "directional_sha256": "e78de3787ccc3d5363c24b91b6aeb1feb7686d10aedb1216e3191a0350a54d5a",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 185,
+      "matrix_id": "T1M-0184",
+      "archetype_id": "CGA-E-009",
+      "source_cell_range": "AK185:BH185",
+      "directional_sha256": "b3df4354cb60aa9ca94488f27f050fc2b04acd148970b2c528a6eb65f19a2db5",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 186,
+      "matrix_id": "T1M-0185",
+      "archetype_id": "CGA-E-010",
+      "source_cell_range": "AK186:BH186",
+      "directional_sha256": "117011874e38089e903697f049b8e775f6531832d9c461216847901e97a7fba5",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 187,
+      "matrix_id": "T1M-0186",
+      "archetype_id": "CGA-E-011",
+      "source_cell_range": "AK187:BH187",
+      "directional_sha256": "607663ab632a4e31d51bb9c5828d50ded633b3a4a71ccc4c1e457e350973b4a5",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 188,
+      "matrix_id": "T1M-0187",
+      "archetype_id": "CGA-E-012",
+      "source_cell_range": "AK188:BH188",
+      "directional_sha256": "bf761e0b8be41fbabb77b171c6813a8e5ce1181779da7f5c45a71a713abc7e32",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 189,
+      "matrix_id": "T1M-0188",
+      "archetype_id": "CGA-E-013",
+      "source_cell_range": "AK189:BH189",
+      "directional_sha256": "188faddf333f3bc9997c776a3fae2f354238de5e8b322e4365a6b29078387b8a",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 190,
+      "matrix_id": "T1M-0189",
+      "archetype_id": "CGA-E-014",
+      "source_cell_range": "AK190:BH190",
+      "directional_sha256": "75798e7934dcd5cf6e19a09b90344196b39dfd363963bcf79779ccec0dd7f982",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 191,
+      "matrix_id": "T1M-0190",
+      "archetype_id": "CGA-E-015",
+      "source_cell_range": "AK191:BH191",
+      "directional_sha256": "ce8271092ab7d9f1235d24add27ee07204eb49f1b23b6f7d8c2a4e709f0f6557",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 192,
+      "matrix_id": "T1M-0191",
+      "archetype_id": "CGA-E-016",
+      "source_cell_range": "AK192:BH192",
+      "directional_sha256": "929ed83bfeb1296f232c7c616402c2f875959492d61cf1c69f7af79d3df4af73",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 193,
+      "matrix_id": "T1M-0192",
+      "archetype_id": "CGA-E-017",
+      "source_cell_range": "AK193:BH193",
+      "directional_sha256": "33224feba969c8e43780f1871682c11c692f5de154f1d1c01e694c60673bad36",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 194,
+      "matrix_id": "T1M-0193",
+      "archetype_id": "CGA-E-018",
+      "source_cell_range": "AK194:BH194",
+      "directional_sha256": "5b6a4a7a3143ccfa1b9bbabf4df7bde76d148fb8c3e67266b34828af1c8ba4b4",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 195,
+      "matrix_id": "T1M-0194",
+      "archetype_id": "CGA-A-001",
+      "source_cell_range": "AK195:BH195",
+      "directional_sha256": "e68f8c8bc10b400d64e0bcfe20b2bb723db82ecacd1cdc26f3cb568295930614",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 196,
+      "matrix_id": "T1M-0195",
+      "archetype_id": "CGA-A-002",
+      "source_cell_range": "AK196:BH196",
+      "directional_sha256": "3f373c4c64f1b08cf8fb7bccebe07081722d8f19b42c96c0cc2afef0323d8646",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 197,
+      "matrix_id": "T1M-0196",
+      "archetype_id": "CGA-A-003",
+      "source_cell_range": "AK197:BH197",
+      "directional_sha256": "cfeee4133427ec8dafaaec4c32d4927f9f07df1a4f73dbc60f7c9c1a21b5bb11",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 198,
+      "matrix_id": "T1M-0197",
+      "archetype_id": "CGA-A-004",
+      "source_cell_range": "AK198:BH198",
+      "directional_sha256": "99596575076ab21be7ee2a3128aed50d35e3e59bee451575d4df1b963b457f78",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 199,
+      "matrix_id": "T1M-0198",
+      "archetype_id": "CGA-A-005",
+      "source_cell_range": "AK199:BH199",
+      "directional_sha256": "14b0fa6796f7adfe876960cecb761c781deb765cc416ae1e2f1b9194440b8f26",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 200,
+      "matrix_id": "T1M-0199",
+      "archetype_id": "CGA-A-006",
+      "source_cell_range": "AK200:BH200",
+      "directional_sha256": "1a46d1287d465bea0749f50a338e2f072802c2ed77ee592c074c383062cf8cc1",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 201,
+      "matrix_id": "T1M-0200",
+      "archetype_id": "CGA-A-007",
+      "source_cell_range": "AK201:BH201",
+      "directional_sha256": "94bab10a97c1b4e0ff1e701cf427e74d17931c77d2751ac7bd78038b6311f995",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 202,
+      "matrix_id": "T1M-0201",
+      "archetype_id": "CGA-A-008",
+      "source_cell_range": "AK202:BH202",
+      "directional_sha256": "68385cd973059e0c32c5a95f541228559719b4a262ec3fb0c841ba163360faf3",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 203,
+      "matrix_id": "T1M-0202",
+      "archetype_id": "CGA-A-009",
+      "source_cell_range": "AK203:BH203",
+      "directional_sha256": "c4b1c20a4e9442d6ebc1a7e3ef7ad29734799e7956569526e60d8b88b3a65957",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 204,
+      "matrix_id": "T1M-0203",
+      "archetype_id": "CGA-A-010",
+      "source_cell_range": "AK204:BH204",
+      "directional_sha256": "36657f689158ca3a765d366ef22e2de341e37fcec48585e3d47afdc9a9abf4ba",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 205,
+      "matrix_id": "T1M-0204",
+      "archetype_id": "CGA-A-011",
+      "source_cell_range": "AK205:BH205",
+      "directional_sha256": "deebc60bb6db0c5cb2d6f16830d148a9cbc7ffcea35f2176a7d1b2956fadb4b7",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 206,
+      "matrix_id": "T1M-0205",
+      "archetype_id": "CGA-A-012",
+      "source_cell_range": "AK206:BH206",
+      "directional_sha256": "2659f0ff85460eb20ec4363f75256d06d88063f400424d9d866b8fc8ec9b1298",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 207,
+      "matrix_id": "T1M-0206",
+      "archetype_id": "CGA-A-013",
+      "source_cell_range": "AK207:BH207",
+      "directional_sha256": "fba95effda9de47a94ce8184fc49bff1fde50ccc00951d53feccc8115cc5e404",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 208,
+      "matrix_id": "T1M-0207",
+      "archetype_id": "CGA-A-014",
+      "source_cell_range": "AK208:BH208",
+      "directional_sha256": "3fa471af930bd413b7633f7d64c4b2f0018a895b42d53b657c8bd1801a09f21b",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 209,
+      "matrix_id": "T1M-0208",
+      "archetype_id": "CGA-A-015",
+      "source_cell_range": "AK209:BH209",
+      "directional_sha256": "1bd3355b711919e9871f6cd8f3cb71839bcf60034207af5a67846fa8368e777f",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 210,
+      "matrix_id": "T1M-0209",
+      "archetype_id": "CGA-A-016",
+      "source_cell_range": "AK210:BH210",
+      "directional_sha256": "dfa3dcf2af3ef032abedb83c2c5d85eb2c03d7985cc7473aabb01a0ea4e69a6f",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 211,
+      "matrix_id": "T1M-0210",
+      "archetype_id": "CGA-A-017",
+      "source_cell_range": "AK211:BH211",
+      "directional_sha256": "7601e581ee7b924c955c381a968d33051dd33f7bc724131482ba2e9b3134f451",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 212,
+      "matrix_id": "T1M-0211",
+      "archetype_id": "CGA-A-018",
+      "source_cell_range": "AK212:BH212",
+      "directional_sha256": "2453b4b05e5681d5462498ae3213fbf94038a272906d2303df61c03acedac6ea",
+      "blank_fields": [],
+      "primitive_basis": "INDUCTIVE_MAGNETIC",
+      "compiler_token": "INDUCTIVE_MAGNETIC"
+    },
+    {
+      "sheet_row": 213,
+      "matrix_id": "T1M-0212",
+      "archetype_id": "CGA-F-001",
+      "source_cell_range": "AK213:BH213",
+      "directional_sha256": "c8d9fb0c0f4c6e760f8ef263cd61801f41504e0a926f94abfcfc269a661522e7",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 214,
+      "matrix_id": "T1M-0213",
+      "archetype_id": "CGA-F-002",
+      "source_cell_range": "AK214:BH214",
+      "directional_sha256": "f94019ae38d02a93bad06bac38caac13af816e36b15aa83258614f8ef0e4b91c",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 215,
+      "matrix_id": "T1M-0214",
+      "archetype_id": "CGA-F-003",
+      "source_cell_range": "AK215:BH215",
+      "directional_sha256": "f8616fabd7bcfa472ce010f16add03b75f000ab4399febaac4b2012516dc8d0b",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 216,
+      "matrix_id": "T1M-0215",
+      "archetype_id": "CGA-F-004",
+      "source_cell_range": "AK216:BH216",
+      "directional_sha256": "6abc44a3e0670f31a4fdb548dfdad09a3c47187eabe4c653eac81c1c2e9215ed",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 217,
+      "matrix_id": "T1M-0216",
+      "archetype_id": "CGA-F-005",
+      "source_cell_range": "AK217:BH217",
+      "directional_sha256": "9e789967eba307eb5eac72d11c59b0a7b9c45508f1daba7b62ec98cb7399167b",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 218,
+      "matrix_id": "T1M-0217",
+      "archetype_id": "CGA-F-006",
+      "source_cell_range": "AK218:BH218",
+      "directional_sha256": "dcf2f38a33e33b2e31f684798668324f0c77455c6f3a2b6a5a0e8a95fab15aff",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 219,
+      "matrix_id": "T1M-0218",
+      "archetype_id": "CGA-F-007",
+      "source_cell_range": "AK219:BH219",
+      "directional_sha256": "059c68a2465ffa149b308c2a96b5bd52127ddb6f9b5800b2b6baac93b8bcd25e",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 220,
+      "matrix_id": "T1M-0219",
+      "archetype_id": "CGA-F-008",
+      "source_cell_range": "AK220:BH220",
+      "directional_sha256": "0388763bf86329466492fd9a4d63447faa400c6ba00d761bf878061aa2b1aade",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 221,
+      "matrix_id": "T1M-0220",
+      "archetype_id": "CGA-F-009",
+      "source_cell_range": "AK221:BH221",
+      "directional_sha256": "6b7be4b1829a47d431d2435970a7feef82b684229a81f0a5ab293073a692e8cc",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 222,
+      "matrix_id": "T1M-0221",
+      "archetype_id": "CGA-F-010",
+      "source_cell_range": "AK222:BH222",
+      "directional_sha256": "8f1b9d9418f50644214f1d099f8b99e2314913314b391d4e645219ad80cc2602",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 223,
+      "matrix_id": "T1M-0222",
+      "archetype_id": "CGA-F-011",
+      "source_cell_range": "AK223:BH223",
+      "directional_sha256": "1d4998fbd1275fb877e6998237b204c3df9377148cd2b11dafa19fedbcddea55",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 224,
+      "matrix_id": "T1M-0223",
+      "archetype_id": "CGA-F-012",
+      "source_cell_range": "AK224:BH224",
+      "directional_sha256": "83eae6708954ef64b96938d494dcf2373ff5fd0f78a747c89a9f48cef3e4fb20",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 225,
+      "matrix_id": "T1M-0224",
+      "archetype_id": "CGA-F-013",
+      "source_cell_range": "AK225:BH225",
+      "directional_sha256": "9a5f14917b203376a0c834d3b9afd60df2250606ae8750afa3e88f5ea5caca78",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 226,
+      "matrix_id": "T1M-0225",
+      "archetype_id": "CGA-F-014",
+      "source_cell_range": "AK226:BH226",
+      "directional_sha256": "4310f476bae33a93e40fcb6453dcf9c4c78ccc9b952c6dca4c489f4a6dc3885f",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 227,
+      "matrix_id": "T1M-0226",
+      "archetype_id": "CGA-F-015",
+      "source_cell_range": "AK227:BH227",
+      "directional_sha256": "9257ba5fe6e8dfa37c4097528ed4f26f6a294e0798a9a23d485586f79f0766a5",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 228,
+      "matrix_id": "T1M-0227",
+      "archetype_id": "CGA-F-016",
+      "source_cell_range": "AK228:BH228",
+      "directional_sha256": "c25679eea403449993228918451d1e062dc34ecbbea84109f517b0022950a64a",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 229,
+      "matrix_id": "T1M-0228",
+      "archetype_id": "CGA-F-017",
+      "source_cell_range": "AK229:BH229",
+      "directional_sha256": "6102ef4878d38ef980fe06b9acacfe65b18ebd71c6d101ae98f9ad6185e81160",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 230,
+      "matrix_id": "T1M-0229",
+      "archetype_id": "CGA-F-018",
+      "source_cell_range": "AK230:BH230",
+      "directional_sha256": "ed3d054fec70a2654274a1f90146b7ed265cc97234c11efcce8b6e5389742006",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 231,
+      "matrix_id": "T1M-0230",
+      "archetype_id": "CGA-F-019",
+      "source_cell_range": "AK231:BH231",
+      "directional_sha256": "0d6bfdf9e8f51c15fddfcb345eff11fc2ef03909419effce3b48622994cc6479",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 232,
+      "matrix_id": "T1M-0231",
+      "archetype_id": "CGA-F-020",
+      "source_cell_range": "AK232:BH232",
+      "directional_sha256": "c07228145f272b5c0b9ad4731b55cebb45077fd6f6e67c250032a48601d42a1f",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 233,
+      "matrix_id": "T1M-0232",
+      "archetype_id": "CGA-F-021",
+      "source_cell_range": "AK233:BH233",
+      "directional_sha256": "d6cf438c91b94b613f357c62565e53701d676f4b66db6cc97ed1c59c2316fc58",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 234,
+      "matrix_id": "T1M-0233",
+      "archetype_id": "CGA-O-001",
+      "source_cell_range": "AK234:BH234",
+      "directional_sha256": "962f04712f9896609529cb79705e96820f9892249047e618b09721cabb3d8e15",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 235,
+      "matrix_id": "T1M-0234",
+      "archetype_id": "CGA-O-002",
+      "source_cell_range": "AK235:BH235",
+      "directional_sha256": "d7b048b373c32205798845379d1408e416837b59b4c5413614752f16eafab085",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 236,
+      "matrix_id": "T1M-0235",
+      "archetype_id": "CGA-O-003",
+      "source_cell_range": "AK236:BH236",
+      "directional_sha256": "685caceff1d6ca600c946cd0968796d7ce54c2a81833bd1a8a4ffca5be844ce5",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 237,
+      "matrix_id": "T1M-0236",
+      "archetype_id": "CGA-O-004",
+      "source_cell_range": "AK237:BH237",
+      "directional_sha256": "611f71c3bfef69cd6b30a72943e4f7ad77e3aa36307b82fa84c3b1755c09f6b0",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 238,
+      "matrix_id": "T1M-0237",
+      "archetype_id": "CGA-O-005",
+      "source_cell_range": "AK238:BH238",
+      "directional_sha256": "aadb1654c505c720e99dbfa4f6153fbaa63877473e235f7f4cb3921832889991",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 239,
+      "matrix_id": "T1M-0238",
+      "archetype_id": "CGA-O-006",
+      "source_cell_range": "AK239:BH239",
+      "directional_sha256": "c5cafdfd5e49e3be26263d96d61a2e65b42a4dcaaa9fe6714c2ff278a7aec0cc",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 240,
+      "matrix_id": "T1M-0239",
+      "archetype_id": "CGA-O-007",
+      "source_cell_range": "AK240:BH240",
+      "directional_sha256": "41fde6757ce36241d58aefcb62763f4b0f9c904725c08287184d2a9ec0f34f07",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 241,
+      "matrix_id": "T1M-0240",
+      "archetype_id": "CGA-O-008",
+      "source_cell_range": "AK241:BH241",
+      "directional_sha256": "304e1f644d0da04a6a6395eac0d71e11dd7500969063f94ee0fad423a9d7b837",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 242,
+      "matrix_id": "T1M-0241",
+      "archetype_id": "CGA-O-009",
+      "source_cell_range": "AK242:BH242",
+      "directional_sha256": "8aa004329701b7f3da8112ae17cc4e57de8e6edbc020c6ffe844f467dff48700",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 243,
+      "matrix_id": "T1M-0242",
+      "archetype_id": "CGA-O-010",
+      "source_cell_range": "AK243:BH243",
+      "directional_sha256": "d15e1dc3097697d533b95675cdf2e5f90b552ffdc8e22f849eeda6bd20c61827",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 244,
+      "matrix_id": "T1M-0243",
+      "archetype_id": "CGA-O-011",
+      "source_cell_range": "AK244:BH244",
+      "directional_sha256": "713ed15946d4381684929e3ccbc8bb28919f5b6a1bfdc1ae441c3270259fd501",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 245,
+      "matrix_id": "T1M-0244",
+      "archetype_id": "CGA-O-012",
+      "source_cell_range": "AK245:BH245",
+      "directional_sha256": "4b5b6dca92c09d384b8a77d460c1503db9993597dbc181275942f630cda5af0e",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 246,
+      "matrix_id": "T1M-0245",
+      "archetype_id": "CGA-P-001",
+      "source_cell_range": "AK246:BH246",
+      "directional_sha256": "e954f4c228647f09f84c7bfcba6b0adc9e5459b03ff9400f86b08fdbb4252e9b",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 247,
+      "matrix_id": "T1M-0246",
+      "archetype_id": "CGA-P-002",
+      "source_cell_range": "AK247:BH247",
+      "directional_sha256": "78e974001b9a9051c1a83e0cbba45af00322e1dd5d8fb5e77a9e6ea8c977794d",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 248,
+      "matrix_id": "T1M-0247",
+      "archetype_id": "CGA-P-003",
+      "source_cell_range": "AK248:BH248",
+      "directional_sha256": "e6226d84fac19c1661ba91dd394287c654da68083912b97661f22f3107906f1f",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 249,
+      "matrix_id": "T1M-0248",
+      "archetype_id": "CGA-P-004",
+      "source_cell_range": "AK249:BH249",
+      "directional_sha256": "cea40160909b7d0a3239525dff117134a46b03c6740617f3582faf45a39b6195",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 250,
+      "matrix_id": "T1M-0249",
+      "archetype_id": "CGA-P-005",
+      "source_cell_range": "AK250:BH250",
+      "directional_sha256": "0f43eb86aa998e4b750bfd286a44a8455413e09e9b95d7029a4956f3af7662cb",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 251,
+      "matrix_id": "T1M-0250",
+      "archetype_id": "CGA-P-006",
+      "source_cell_range": "AK251:BH251",
+      "directional_sha256": "24f07c0768e7037b197a2235dbbb952787be321236d6aab823d75d46d130bb99",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 252,
+      "matrix_id": "T1M-0251",
+      "archetype_id": "CGA-P-007",
+      "source_cell_range": "AK252:BH252",
+      "directional_sha256": "d063ef65dc3376399f6d1e9949634a3dcd709d484dfaa517825e5cb0a4d35c86",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 253,
+      "matrix_id": "T1M-0252",
+      "archetype_id": "CGA-P-008",
+      "source_cell_range": "AK253:BH253",
+      "directional_sha256": "a5566dcdfabc91e7f74774f5ea1cf3e9657ab45d3d444175f774473ea3f40972",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 254,
+      "matrix_id": "T1M-0253",
+      "archetype_id": "CGA-P-009",
+      "source_cell_range": "AK254:BH254",
+      "directional_sha256": "cba0a85b8ba70ead400056c174268d7bba19f8a0017fef23d3485c3935ffa3e3",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 255,
+      "matrix_id": "T1M-0254",
+      "archetype_id": "CGA-P-010",
+      "source_cell_range": "AK255:BH255",
+      "directional_sha256": "3a8f46af7e8c4c2f4a5e3461209462d0afbd59cea35e99183335ca7c08b8d322",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 256,
+      "matrix_id": "T1M-0255",
+      "archetype_id": "CGA-P-011",
+      "source_cell_range": "AK256:BH256",
+      "directional_sha256": "d0818c503027fcd14354ae1871b595d79aac1bbc9ce88246193dbbb4a3efec68",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 257,
+      "matrix_id": "T1M-0256",
+      "archetype_id": "CGA-P-012",
+      "source_cell_range": "AK257:BH257",
+      "directional_sha256": "acb7f750baf0f71c8508857d4fac345549e7fe89ef02283e3f43acf1b80dec04",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 258,
+      "matrix_id": "T1M-0257",
+      "archetype_id": "CGA-M-001",
+      "source_cell_range": "AK258:BH258",
+      "directional_sha256": "79e1f684061160701bfbef7da797aedba6f05e7317025c35acb6cfb5e45efdc0",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 259,
+      "matrix_id": "T1M-0258",
+      "archetype_id": "CGA-M-002",
+      "source_cell_range": "AK259:BH259",
+      "directional_sha256": "9bf5d3f7174d1cb13fc3cde3b81e18d1347130619019c29abcac1201923ce860",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 260,
+      "matrix_id": "T1M-0259",
+      "archetype_id": "CGA-M-003",
+      "source_cell_range": "AK260:BH260",
+      "directional_sha256": "f4a22fb877bad4a8fe4464e73995c48e1b814fbf0a63be53edabf9aab5e6f5af",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 261,
+      "matrix_id": "T1M-0260",
+      "archetype_id": "CGA-M-004",
+      "source_cell_range": "AK261:BH261",
+      "directional_sha256": "130e016511629f887cc9bef2f83aeb00c43e237a6a4a5c0688de1024f75e4300",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 262,
+      "matrix_id": "T1M-0261",
+      "archetype_id": "CGA-M-005",
+      "source_cell_range": "AK262:BH262",
+      "directional_sha256": "8a6ed102906ed39533c1688ec7d8f1ae83da5c7ef3b6e67c6a6d259b6a930d15",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 263,
+      "matrix_id": "T1M-0262",
+      "archetype_id": "CGA-M-006",
+      "source_cell_range": "AK263:BH263",
+      "directional_sha256": "b55dec23eb7ffac3f950a24239761c2785b700f8769558184bfc7ca86bd1a5fb",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 264,
+      "matrix_id": "T1M-0263",
+      "archetype_id": "CGA-M-007",
+      "source_cell_range": "AK264:BH264",
+      "directional_sha256": "37c65b5da36ea872204f641a6645dce22ea5dd4d05f49c6bc02d144d56e633cf",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 265,
+      "matrix_id": "T1M-0264",
+      "archetype_id": "CGA-M-008",
+      "source_cell_range": "AK265:BH265",
+      "directional_sha256": "5c2aefdae1c5b68808ea6801e12682e94b793e2345e1f1a08eafec03e6b53cb7",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 266,
+      "matrix_id": "T1M-0265",
+      "archetype_id": "CGA-M-009",
+      "source_cell_range": "AK266:BH266",
+      "directional_sha256": "386e1f3b89ed0445e6683df6b746a18417d75402f27026bf2a36b1b9f1b4be97",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 267,
+      "matrix_id": "T1M-0266",
+      "archetype_id": "CGA-M-010",
+      "source_cell_range": "AK267:BH267",
+      "directional_sha256": "c550d5be31315eb635757c69bdf35952c0a81bb30f08bc9000db8424b939a9a7",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 268,
+      "matrix_id": "T1M-0267",
+      "archetype_id": "CGA-RF-031",
+      "source_cell_range": "AK268:BH268",
+      "directional_sha256": "fdecd742949d3535bcfe3707dc71f88d71fbda2221ac680866f3bc216a061999",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 269,
+      "matrix_id": "T1M-0268",
+      "archetype_id": "CGA-RF-032",
+      "source_cell_range": "AK269:BH269",
+      "directional_sha256": "82ac5a7d89f88d9cf0dd8d40fcdbaf452ed98da3e9fb3a86fb06450d2da090ad",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 270,
+      "matrix_id": "T1M-0269",
+      "archetype_id": "CGA-RF-033",
+      "source_cell_range": "AK270:BH270",
+      "directional_sha256": "31b4d311d796405cdf6be717f5938ba14424ae4333f917fc14d6f672f78de7c4",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 271,
+      "matrix_id": "T1M-0270",
+      "archetype_id": "CGA-RF-034",
+      "source_cell_range": "AK271:BH271",
+      "directional_sha256": "c9b93c519042a91f3b9e7d6bf5b989acc13218b5224ff1377f8b19575b09a2e6",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 272,
+      "matrix_id": "T1M-0271",
+      "archetype_id": "CGA-RF-035",
+      "source_cell_range": "AK272:BH272",
+      "directional_sha256": "f8000d74e9f5a8fd429d225c6a5c9d2c92b5a62cb32f91c083fe42ec6df2d612",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 273,
+      "matrix_id": "T1M-0272",
+      "archetype_id": "CGA-RF-036",
+      "source_cell_range": "AK273:BH273",
+      "directional_sha256": "998f9a6452c28326c46c485456a126992efe15837287c69c987d3a244932b560",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 274,
+      "matrix_id": "T1M-0273",
+      "archetype_id": "CGA-RF-037",
+      "source_cell_range": "AK274:BH274",
+      "directional_sha256": "f0e901b5a1f7197590b506e276c590130554009ea4daf8d17e8306be24c8c04a",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 275,
+      "matrix_id": "T1M-0274",
+      "archetype_id": "CGA-RF-038",
+      "source_cell_range": "AK275:BH275",
+      "directional_sha256": "cad15eea7241d47a3dfb228144048a775cb8042ca3f771f53659124316773c72",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 276,
+      "matrix_id": "T1M-0275",
+      "archetype_id": "CGA-RF-039",
+      "source_cell_range": "AK276:BH276",
+      "directional_sha256": "706b7d04d4ed6aa3e334be1638f29a65d9a150b4d9f711490556029e992aaa70",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 277,
+      "matrix_id": "T1M-0276",
+      "archetype_id": "CGA-RF-040",
+      "source_cell_range": "AK277:BH277",
+      "directional_sha256": "e8d53fbe6e5a5dd116f7aeb6f1bf58fe0caceca2e69d6f0a55607549e1190f74",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 278,
+      "matrix_id": "T1M-0277",
+      "archetype_id": "CGA-RF-041",
+      "source_cell_range": "AK278:BH278",
+      "directional_sha256": "f0ccc331cd468ccb4c2017cf1ab557aea33fd9807d257b5b06d20ad058ce472d",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 279,
+      "matrix_id": "T1M-0278",
+      "archetype_id": "CGA-RF-042",
+      "source_cell_range": "AK279:BH279",
+      "directional_sha256": "9478cd89a0fa1b4687263d80382c5ad7b44acb6ee66d292f06473b3d2dafa09a",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 280,
+      "matrix_id": "T1M-0279",
+      "archetype_id": "CGA-RF-043",
+      "source_cell_range": "AK280:BH280",
+      "directional_sha256": "030c9f565fd2e4bacb8e420d5f6b2ce0921daf5796b4e10b35051e8e6120a856",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 281,
+      "matrix_id": "T1M-0280",
+      "archetype_id": "CGA-RF-044",
+      "source_cell_range": "AK281:BH281",
+      "directional_sha256": "e51c2774103e40bf2ab498189fa7c1aa789b55594986cddaed20140d50b35313",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 282,
+      "matrix_id": "T1M-0281",
+      "archetype_id": "CGA-RF-045",
+      "source_cell_range": "AK282:BH282",
+      "directional_sha256": "e54b3ecaf6020bcba19113aecc2a2c447db3b0eb3b43618f9d706d48ab215785",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 283,
+      "matrix_id": "T1M-0282",
+      "archetype_id": "CGA-PWR-001",
+      "source_cell_range": "AK283:BH283",
+      "directional_sha256": "f4f0e3d3b6d8458039099b9d5c2dd2e94a366d84bdb108cefb93d2703ec80d2f",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 284,
+      "matrix_id": "T1M-0283",
+      "archetype_id": "CGA-PWR-002",
+      "source_cell_range": "AK284:BH284",
+      "directional_sha256": "0f1633b4941b5ca393a017479b75426d7b3a9a688a966459a4d3959371bbeab9",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 285,
+      "matrix_id": "T1M-0284",
+      "archetype_id": "CGA-PWR-003",
+      "source_cell_range": "AK285:BH285",
+      "directional_sha256": "955eaae96dae7df780042c6b11a1e304a83c76ef672548d6d51718fef6856e66",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 286,
+      "matrix_id": "T1M-0285",
+      "archetype_id": "CGA-PWR-004",
+      "source_cell_range": "AK286:BH286",
+      "directional_sha256": "940e4eb36d5ecdce85d9e79e1508fcb04cf542d6c1fdfccbfe8c0662753dbe00",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 287,
+      "matrix_id": "T1M-0286",
+      "archetype_id": "CGA-PWR-005",
+      "source_cell_range": "AK287:BH287",
+      "directional_sha256": "145a781342b1854ac5ef279783892667f78d991c3720601f66abefb3ee2509d3",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 288,
+      "matrix_id": "T1M-0287",
+      "archetype_id": "CGA-PWR-006",
+      "source_cell_range": "AK288:BH288",
+      "directional_sha256": "e23d7545889195dba5b7e32cebc34aac64a8716594052cda4df422fd1d3c5148",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 289,
+      "matrix_id": "T1M-0288",
+      "archetype_id": "CGA-PWR-007",
+      "source_cell_range": "AK289:BH289",
+      "directional_sha256": "b9c3666c2b71147fb7b8056b6959921a4599447fe6268a0fdb6e6999d200234d",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 290,
+      "matrix_id": "T1M-0289",
+      "archetype_id": "CGA-PWR-008",
+      "source_cell_range": "AK290:BH290",
+      "directional_sha256": "0027b5f43636694ff4ab4de97733c94e9cdea5cc1cfcd87079fb93c81c851bf4",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 291,
+      "matrix_id": "T1M-0290",
+      "archetype_id": "CGA-PWR-009",
+      "source_cell_range": "AK291:BH291",
+      "directional_sha256": "4181e4bc996481b666f0077d76133dd627130ab58705d71b89f97fc5ca239dfd",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 292,
+      "matrix_id": "T1M-0291",
+      "archetype_id": "CGA-PWR-010",
+      "source_cell_range": "AK292:BH292",
+      "directional_sha256": "b50114530b335a458936f7f8b0e31fa91dc094116543caaa28137cb135376ce4",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 293,
+      "matrix_id": "T1M-0292",
+      "archetype_id": "CGA-PWR-011",
+      "source_cell_range": "AK293:BH293",
+      "directional_sha256": "d37aa8d0ac34af274c91998b15cee277395c3205c65a9515d300a6c5f3be4edb",
+      "blank_fields": [],
+      "primitive_basis": "POWER_CONVERSION",
+      "compiler_token": "POWER_CONVERSION"
+    },
+    {
+      "sheet_row": 294,
+      "matrix_id": "T1M-0293",
+      "archetype_id": "CGA-PWR-012",
+      "source_cell_range": "AK294:BH294",
+      "directional_sha256": "f7b26e816de33dc27ee8895bf11a13689ad3776b79fb9e748b8c2d20c0f24f07",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 295,
+      "matrix_id": "T1M-0294",
+      "archetype_id": "CGA-PWR-013",
+      "source_cell_range": "AK295:BH295",
+      "directional_sha256": "7376e02b225be8c47d97202404b420653092a9adb26adb996dfce11cc4b57ca1",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 296,
+      "matrix_id": "T1M-0295",
+      "archetype_id": "CGA-PWR-014",
+      "source_cell_range": "AK296:BH296",
+      "directional_sha256": "994ebd34baad4b04652616aa6163c74ba39a3c8fe55606ed9f9c5d670df6b2d5",
+      "blank_fields": [],
+      "primitive_basis": "POWER_CONVERSION",
+      "compiler_token": "POWER_CONVERSION"
+    },
+    {
+      "sheet_row": 297,
+      "matrix_id": "T1M-0296",
+      "archetype_id": "CGA-PWR-015",
+      "source_cell_range": "AK297:BH297",
+      "directional_sha256": "4646987b71868212afe3d1b12cace8d88a6678224ad60844e5583972a5b88acf",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 298,
+      "matrix_id": "T1M-0297",
+      "archetype_id": "CGA-I-021",
+      "source_cell_range": "AK298:BH298",
+      "directional_sha256": "3aa394bc7b2eaa314827f00db7f3e71d9f325614fdd377fe8df6e5330cccf386",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 299,
+      "matrix_id": "T1M-0298",
+      "archetype_id": "CGA-I-022",
+      "source_cell_range": "AK299:BH299",
+      "directional_sha256": "a01bc87752ca67948fddc76f17dd5aaa3b996af0297ef7529f421dd0ae45bfd0",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 300,
+      "matrix_id": "T1M-0299",
+      "archetype_id": "CGA-I-023",
+      "source_cell_range": "AK300:BH300",
+      "directional_sha256": "8132cd4075993232d5a7697924459d2b0b8fed69c6dc2fa462d6820131c09140",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 301,
+      "matrix_id": "T1M-0300",
+      "archetype_id": "CGA-I-024",
+      "source_cell_range": "AK301:BH301",
+      "directional_sha256": "a9b21f953e02cf02630ce1ddab9af062f65a84e5e77536a65d1ffe905b52a1fb",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 302,
+      "matrix_id": "T1M-0301",
+      "archetype_id": "CGA-I-025",
+      "source_cell_range": "AK302:BH302",
+      "directional_sha256": "e7bed355c39bb12e66325f3f517fd4b973852bf66b3564cf71098c239f19f463",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 303,
+      "matrix_id": "T1M-0302",
+      "archetype_id": "CGA-I-026",
+      "source_cell_range": "AK303:BH303",
+      "directional_sha256": "885ae402af890e1c5123dbc5611dfd87b5022e0939639d944e7e766395b60aed",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 304,
+      "matrix_id": "T1M-0303",
+      "archetype_id": "CGA-I-027",
+      "source_cell_range": "AK304:BH304",
+      "directional_sha256": "69f5ea87d260e8d54d58573293f40c86d17a3fd3aab41f8c7c0892904a7d0a8d",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 305,
+      "matrix_id": "T1M-0304",
+      "archetype_id": "CGA-I-028",
+      "source_cell_range": "AK305:BH305",
+      "directional_sha256": "86552a1c587fc92dc0b0737a6989b8f171252c40a5dcc70cd02dc5f0d62b21af",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 306,
+      "matrix_id": "T1M-0305",
+      "archetype_id": "CGA-I-029",
+      "source_cell_range": "AK306:BH306",
+      "directional_sha256": "7a23c18462b197ac2b255724a9673d860b6b4ab3e09a419b1a4f1fa19a4bbd3d",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 307,
+      "matrix_id": "T1M-0306",
+      "archetype_id": "CGA-I-030",
+      "source_cell_range": "AK307:BH307",
+      "directional_sha256": "f32a1650e1509f4f3aff3b714f7dc55f06e6e341a6db400af790fbe2856b2f22",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 308,
+      "matrix_id": "T1M-0307",
+      "archetype_id": "CGA-I-031",
+      "source_cell_range": "AK308:BH308",
+      "directional_sha256": "b704ee3cb64d844691486140d5f16cde5db4648d28740ece14548a3e4ff95e87",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 309,
+      "matrix_id": "T1M-0308",
+      "archetype_id": "CGA-I-032",
+      "source_cell_range": "AK309:BH309",
+      "directional_sha256": "9e51b7b0b4df8ee379afc8b022d77fd9f565621eccf317805f223809ac88ac74",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 310,
+      "matrix_id": "T1M-0309",
+      "archetype_id": "CGA-I-033",
+      "source_cell_range": "AK310:BH310",
+      "directional_sha256": "4ca00f4b1df4e52da471cebb50777fe846b43d03a070b19250ddda9fb51408e4",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 311,
+      "matrix_id": "T1M-0310",
+      "archetype_id": "CGA-I-034",
+      "source_cell_range": "AK311:BH311",
+      "directional_sha256": "efb0b117712d5d790cc4db483c8ecf7f0e4230743f3b8c680a7f82035972333c",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 312,
+      "matrix_id": "T1M-0311",
+      "archetype_id": "CGA-I-035",
+      "source_cell_range": "AK312:BH312",
+      "directional_sha256": "f93f2ed28575157449bb875dea442ccfd7e79228f0ffa898fdda50dda851feb8",
+      "blank_fields": [],
+      "primitive_basis": "CONDUCTOR_INTERCONNECT",
+      "compiler_token": "CONDUCTOR_INTERCONNECT"
+    },
+    {
+      "sheet_row": 313,
+      "matrix_id": "T1M-0312",
+      "archetype_id": "CGA-S-034",
+      "source_cell_range": "AK313:BH313",
+      "directional_sha256": "6eb5406fce42904edb3582b816b30176bbe362542a0b8516b85509e776364cd5",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 314,
+      "matrix_id": "T1M-0313",
+      "archetype_id": "CGA-S-035",
+      "source_cell_range": "AK314:BH314",
+      "directional_sha256": "ccbb3a2f8437a3749a0c0fbdd3094e93822c3ee603df9a8dd08bacddab948f75",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 315,
+      "matrix_id": "T1M-0314",
+      "archetype_id": "CGA-S-036",
+      "source_cell_range": "AK315:BH315",
+      "directional_sha256": "f0343c0ab7d906bdb8104de82a7d4941b49a5f6ad11edf3914fb503f99b9d82f",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 316,
+      "matrix_id": "T1M-0315",
+      "archetype_id": "CGA-S-037",
+      "source_cell_range": "AK316:BH316",
+      "directional_sha256": "20003b918e1b0ee3375528618da4b591e0f21fdd342d37e58ea05f6dc0b6de01",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 317,
+      "matrix_id": "T1M-0316",
+      "archetype_id": "CGA-S-038",
+      "source_cell_range": "AK317:BH317",
+      "directional_sha256": "85d463fcb7ee7147354376cfd526d249810f6511ff7b182355bc4065c2867ae4",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 318,
+      "matrix_id": "T1M-0317",
+      "archetype_id": "CGA-S-039",
+      "source_cell_range": "AK318:BH318",
+      "directional_sha256": "020306919b565a93ce268d750cfe4f2a62459772a03cd77d8a717d7a72e6c0c2",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 319,
+      "matrix_id": "T1M-0318",
+      "archetype_id": "CGA-S-040",
+      "source_cell_range": "AK319:BH319",
+      "directional_sha256": "11943335ebe47cc98453943a7b790d623ffbf76de9b1ea93bf61e5f3327abfec",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 320,
+      "matrix_id": "T1M-0319",
+      "archetype_id": "CGA-S-041",
+      "source_cell_range": "AK320:BH320",
+      "directional_sha256": "f792719783d5073f66cd53494123843e5d17d67b3cf72ad02ae1c23ca1f13038",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 321,
+      "matrix_id": "T1M-0320",
+      "archetype_id": "CGA-S-042",
+      "source_cell_range": "AK321:BH321",
+      "directional_sha256": "eeeef54dacca4e334894839bb9e107b1832ddf5ae048a923929006a97c3af758",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 322,
+      "matrix_id": "T1M-0321",
+      "archetype_id": "CGA-S-043",
+      "source_cell_range": "AK322:BH322",
+      "directional_sha256": "f54b6e87e4cb7a2ec61d5fb01404d358f15dd87e9a8024782d11b8f932891cf5",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 323,
+      "matrix_id": "T1M-0322",
+      "archetype_id": "CGA-S-044",
+      "source_cell_range": "AK323:BH323",
+      "directional_sha256": "80e9adaf4f683c8c4f76e5ee62563f85317002370581639bf02e1046d0edd3ae",
+      "blank_fields": [],
+      "primitive_basis": "RESISTIVE_HEATER",
+      "compiler_token": "RESISTIVE_HEATER"
+    },
+    {
+      "sheet_row": 324,
+      "matrix_id": "T1M-0323",
+      "archetype_id": "CGA-S-045",
+      "source_cell_range": "AK324:BH324",
+      "directional_sha256": "813788518c5840a0e5d914af14f0ed8dac248218af1e139f928401b24174399e",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 325,
+      "matrix_id": "T1M-0324",
+      "archetype_id": "CGA-S-046",
+      "source_cell_range": "AK325:BH325",
+      "directional_sha256": "8eabeeb7f0499bc508338a1bf28dcda5143ed1149f127ba7dd1047d6402d804b",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 326,
+      "matrix_id": "T1M-0325",
+      "archetype_id": "CGA-S-047",
+      "source_cell_range": "AK326:BH326",
+      "directional_sha256": "1a71e2dd8a59dbfd619a2edcd547c2c543b2ecd581d68444d7bf8deb8107e49c",
+      "blank_fields": [],
+      "primitive_basis": "SENSOR_METROLOGY",
+      "compiler_token": "SENSOR_METROLOGY"
+    },
+    {
+      "sheet_row": 327,
+      "matrix_id": "T1M-0326",
+      "archetype_id": "CGA-S-048",
+      "source_cell_range": "AK327:BH327",
+      "directional_sha256": "2a2d39e9a8dc31dd376e56c3b5f36f5bb4ac18bebbce9ea9794f29820a99030f",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 328,
+      "matrix_id": "T1M-0327",
+      "archetype_id": "CGA-A-019",
+      "source_cell_range": "AK328:BH328",
+      "directional_sha256": "6204920e3c247bb71e4073df8df74912624af104a414bc56f8073c8794105e5a",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 329,
+      "matrix_id": "T1M-0328",
+      "archetype_id": "CGA-A-020",
+      "source_cell_range": "AK329:BH329",
+      "directional_sha256": "076ff71b174d0e83e6e418ee604eed87029d33edeaccf8bc34cac4938f9d6714",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 330,
+      "matrix_id": "T1M-0329",
+      "archetype_id": "CGA-A-021",
+      "source_cell_range": "AK330:BH330",
+      "directional_sha256": "e3671173a47ff286041b76abe74e78f63566e809d393aea3fd1851b039d5a65e",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 331,
+      "matrix_id": "T1M-0330",
+      "archetype_id": "CGA-A-022",
+      "source_cell_range": "AK331:BH331",
+      "directional_sha256": "52baf0079245508c275ad90bd4dd344905a393f3188bf39725e2a53b48c0e931",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 332,
+      "matrix_id": "T1M-0331",
+      "archetype_id": "CGA-A-023",
+      "source_cell_range": "AK332:BH332",
+      "directional_sha256": "3fe9b4fc54c1733030165348a8d0689dba244a8112bad78301270bdc881e3287",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 333,
+      "matrix_id": "T1M-0332",
+      "archetype_id": "CGA-A-024",
+      "source_cell_range": "AK333:BH333",
+      "directional_sha256": "4d329437a54dbdc3eaabc9c72ce224cb3da974aeb528002903f6dcab3005e6dc",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 334,
+      "matrix_id": "T1M-0333",
+      "archetype_id": "CGA-A-025",
+      "source_cell_range": "AK334:BH334",
+      "directional_sha256": "99cfef28616a8f4445211427fbfc5da2c8a4f590d02a3fe9f469ad11eb928a1a",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 335,
+      "matrix_id": "T1M-0334",
+      "archetype_id": "CGA-A-026",
+      "source_cell_range": "AK335:BH335",
+      "directional_sha256": "d202f07bd709ed75ddd664b0626891250130560c6bb148fd9ae8d88efd86a3bb",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 336,
+      "matrix_id": "T1M-0335",
+      "archetype_id": "CGA-A-027",
+      "source_cell_range": "AK336:BH336",
+      "directional_sha256": "15aa8c20a59c45af35841539fc8fa8b552fea3a55ef4acc947a0ab1ee3ddc98c",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 337,
+      "matrix_id": "T1M-0336",
+      "archetype_id": "CGA-A-028",
+      "source_cell_range": "AK337:BH337",
+      "directional_sha256": "082e6f57ad6aeba6938bd5c2173cb3e292015e27dcfcea3576815e656cdd7323",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 338,
+      "matrix_id": "T1M-0337",
+      "archetype_id": "CGA-F-022",
+      "source_cell_range": "AK338:BH338",
+      "directional_sha256": "e7086161c302252d6a7394a2280672e0f1c82a3193ca4e955d115f824c912a00",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 339,
+      "matrix_id": "T1M-0338",
+      "archetype_id": "CGA-F-023",
+      "source_cell_range": "AK339:BH339",
+      "directional_sha256": "1a236ad257002211b78bf71f4c8fdcb576fda55202d31220c71e8555926b4053",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 340,
+      "matrix_id": "T1M-0339",
+      "archetype_id": "CGA-F-024",
+      "source_cell_range": "AK340:BH340",
+      "directional_sha256": "9dda0021eb61f4660638236d1eaa5970043d1f04851d21e195385ea02ed87030",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 341,
+      "matrix_id": "T1M-0340",
+      "archetype_id": "CGA-F-025",
+      "source_cell_range": "AK341:BH341",
+      "directional_sha256": "f8156d87ffaf5f3d42eb2c4593d0d7cc5b614adc43a90d7df5655e3656701d0c",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 342,
+      "matrix_id": "T1M-0341",
+      "archetype_id": "CGA-F-026",
+      "source_cell_range": "AK342:BH342",
+      "directional_sha256": "d7c13739c0dcb8846c049075d11a1820369c33fff251bb032a20dbb7cf2c5f63",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 343,
+      "matrix_id": "T1M-0342",
+      "archetype_id": "CGA-F-027",
+      "source_cell_range": "AK343:BH343",
+      "directional_sha256": "54bdd08eb31159ca0685fd916ab1956cbea32fe88eee0123a4f5c89aac9ea273",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 344,
+      "matrix_id": "T1M-0343",
+      "archetype_id": "CGA-F-028",
+      "source_cell_range": "AK344:BH344",
+      "directional_sha256": "ff4534d5b6802bfc9207c438ff70b406064d76eb5b6efc5d6de7be106712c9c3",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 345,
+      "matrix_id": "T1M-0344",
+      "archetype_id": "CGA-F-029",
+      "source_cell_range": "AK345:BH345",
+      "directional_sha256": "e447799d93a997e43937bff1976b3afa8883bb6c17efe9187da99b6495e48723",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 346,
+      "matrix_id": "T1M-0345",
+      "archetype_id": "CGA-F-030",
+      "source_cell_range": "AK346:BH346",
+      "directional_sha256": "f224387d6212d1b45451958735cfec9def0a9bad8c0222054ea201824d2b72ed",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 347,
+      "matrix_id": "T1M-0346",
+      "archetype_id": "CGA-F-031",
+      "source_cell_range": "AK347:BH347",
+      "directional_sha256": "6cd45f642d801fd652d5cdd3598260288503224b5d90033e6f1f3fdcd4870407",
+      "blank_fields": [],
+      "primitive_basis": "FLUIDIC_ENVIRONMENT",
+      "compiler_token": "FLUIDIC_ENVIRONMENT"
+    },
+    {
+      "sheet_row": 348,
+      "matrix_id": "T1M-0347",
+      "archetype_id": "CGA-O-013",
+      "source_cell_range": "AK348:BH348",
+      "directional_sha256": "2c443b3201e6460e9560c2bb9d3d4b87b5b3ef0368481ffc38406144f7a02855",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 349,
+      "matrix_id": "T1M-0348",
+      "archetype_id": "CGA-O-014",
+      "source_cell_range": "AK349:BH349",
+      "directional_sha256": "771c21461487c5c5a9beef52e1644801c29b956b5b11aef2c9e3ccfcc4ac55d9",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 350,
+      "matrix_id": "T1M-0349",
+      "archetype_id": "CGA-O-015",
+      "source_cell_range": "AK350:BH350",
+      "directional_sha256": "5fc84bddb7eaa9ca5e8ba7dfb50a66648457a6961beb13f98ba4a730addad6e7",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 351,
+      "matrix_id": "T1M-0350",
+      "archetype_id": "CGA-O-016",
+      "source_cell_range": "AK351:BH351",
+      "directional_sha256": "bfbdd55abb41232681dc07b66c0bb0b28495bbf07a0d1ec391f67ce3c508028d",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 352,
+      "matrix_id": "T1M-0351",
+      "archetype_id": "CGA-O-017",
+      "source_cell_range": "AK352:BH352",
+      "directional_sha256": "aadc7a6597f2d699475f3a0f93d97493d7517145a69e92f13f07616488d20d14",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 353,
+      "matrix_id": "T1M-0352",
+      "archetype_id": "CGA-O-018",
+      "source_cell_range": "AK353:BH353",
+      "directional_sha256": "110b35c7d9f9c30688d68301c67985d2b08056ffd7b476f25f00e27405577b48",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 354,
+      "matrix_id": "T1M-0353",
+      "archetype_id": "CGA-O-019",
+      "source_cell_range": "AK354:BH354",
+      "directional_sha256": "a91dc053795e53a408148c89c53e564427e688dee1f98e22e586cbbf71458258",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 355,
+      "matrix_id": "T1M-0354",
+      "archetype_id": "CGA-O-020",
+      "source_cell_range": "AK355:BH355",
+      "directional_sha256": "fb3a35d1ef587f50f118d0e4104ef363652dea155b950ca4c4077e8702be80af",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 356,
+      "matrix_id": "T1M-0355",
+      "archetype_id": "CGA-O-021",
+      "source_cell_range": "AK356:BH356",
+      "directional_sha256": "9733eaf59fe4c4fc2869a7c47dcadf684e8418ea151ec23a92e3bba1958d31a3",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 357,
+      "matrix_id": "T1M-0356",
+      "archetype_id": "CGA-O-022",
+      "source_cell_range": "AK357:BH357",
+      "directional_sha256": "78044f54de12040271968a5da75fb8be1e5ebc4a49772c04856d68344c91570b",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 358,
+      "matrix_id": "T1M-0357",
+      "archetype_id": "CGA-M-011",
+      "source_cell_range": "AK358:BH358",
+      "directional_sha256": "a562c6b0b5d01d680bd6c702c0fec3b36fd856b40a397297597cb4d53f92ff83",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 359,
+      "matrix_id": "T1M-0358",
+      "archetype_id": "CGA-M-012",
+      "source_cell_range": "AK359:BH359",
+      "directional_sha256": "841ab906734740da1d7eae43adb90d1d1d328b7d801657ad3f68b97d2f6abf91",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 360,
+      "matrix_id": "T1M-0359",
+      "archetype_id": "CGA-M-013",
+      "source_cell_range": "AK360:BH360",
+      "directional_sha256": "e944fefe0b97af72597c5caadd72f1f0d419679c45406a84c624d446ca6c8932",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 361,
+      "matrix_id": "T1M-0360",
+      "archetype_id": "CGA-M-014",
+      "source_cell_range": "AK361:BH361",
+      "directional_sha256": "e84adf2ffb521934b2e2c343da2c9b0343d730ccd01cf36f7acc8c3a059ae10c",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 362,
+      "matrix_id": "T1M-0361",
+      "archetype_id": "CGA-M-015",
+      "source_cell_range": "AK362:BH362",
+      "directional_sha256": "5171ac313a0544455887763ee6de2c4d0bab9d0084c01fd978b5d167d14a86d9",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 363,
+      "matrix_id": "T1M-0362",
+      "archetype_id": "CGA-M-016",
+      "source_cell_range": "AK363:BH363",
+      "directional_sha256": "481b16557be8a5e2bfdd9f483550aa0481b0fd639a87806b03b46bc860f571af",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 364,
+      "matrix_id": "T1M-0363",
+      "archetype_id": "CGA-M-017",
+      "source_cell_range": "AK364:BH364",
+      "directional_sha256": "5605cd7ac4f7931d97a74816d2d7706b72f739b2e32a7fad08c1d51bcd522dfe",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 365,
+      "matrix_id": "T1M-0364",
+      "archetype_id": "CGA-M-018",
+      "source_cell_range": "AK365:BH365",
+      "directional_sha256": "14b262cfd4a2ecfdce8bdc19f2b75979debc5b680214f39f3383895f99b4356a",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 366,
+      "matrix_id": "T1M-0365",
+      "archetype_id": "CGA-M-019",
+      "source_cell_range": "AK366:BH366",
+      "directional_sha256": "85ce89357651a61c2ea8924752f350605f8249c416d7d04cf99dd72cad14ca9b",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 367,
+      "matrix_id": "T1M-0366",
+      "archetype_id": "CGA-M-020",
+      "source_cell_range": "AK367:BH367",
+      "directional_sha256": "5f29b6d9edcd94fce69215bfe730161fca04637f558f11e023118ca4cd14725e",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 368,
+      "matrix_id": "T1M-0367",
+      "archetype_id": "CGA-M-021",
+      "source_cell_range": "AK368:BH368",
+      "directional_sha256": "e9afdf45817f575f5caacb4097e80c9d552260310d836bd000f8c1b14ee01bf6",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 369,
+      "matrix_id": "T1M-0368",
+      "archetype_id": "CGA-M-022",
+      "source_cell_range": "AK369:BH369",
+      "directional_sha256": "1462e3804c4a2a1ae71b1560e776ff2e98aa4a821b702d7738fc609a47511113",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 370,
+      "matrix_id": "T1M-0369",
+      "archetype_id": "CGA-M-023",
+      "source_cell_range": "AK370:BH370",
+      "directional_sha256": "fea64bf5c14d4160e863977927a517e853ab78186c4043e24a3bd6c7a4ef3c68",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 371,
+      "matrix_id": "T1M-0370",
+      "archetype_id": "CGA-M-024",
+      "source_cell_range": "AK371:BH371",
+      "directional_sha256": "b0d3cb523198961fcadba944532f6ba038aaf934335594963b1c4270497a9d76",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 372,
+      "matrix_id": "T1M-0371",
+      "archetype_id": "CGA-M-025",
+      "source_cell_range": "AK372:BH372",
+      "directional_sha256": "41374ddf706a2f1154e993d9c5e7f50176ede3664c2cd4138be13b572225d6d9",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 373,
+      "matrix_id": "T1M-0372",
+      "archetype_id": "CGA-M-026",
+      "source_cell_range": "AK373:BH373",
+      "directional_sha256": "3f01b4a49f83627af9b8b057c700272290f9e17b97b3ec56d649bea012137dd5",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 374,
+      "matrix_id": "T1M-0373",
+      "archetype_id": "CGA-M-027",
+      "source_cell_range": "AK374:BH374",
+      "directional_sha256": "e983c5ec1e29f42a48b619990e8714f647748a8e5961e00c30195f26607fad26",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 375,
+      "matrix_id": "T1M-0374",
+      "archetype_id": "CGA-M-028",
+      "source_cell_range": "AK375:BH375",
+      "directional_sha256": "0c38039abed021d99fa0c8743179e89a35b749c2fdb34bb5e2806e7c04234282",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 376,
+      "matrix_id": "T1M-0375",
+      "archetype_id": "CGA-AC-001",
+      "source_cell_range": "AK376:BH376",
+      "directional_sha256": "037246d9023a4b09408d23259f56378d9960ad57db2a2841d1e5f5909a0a00cd",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 377,
+      "matrix_id": "T1M-0376",
+      "archetype_id": "CGA-AC-002",
+      "source_cell_range": "AK377:BH377",
+      "directional_sha256": "80af9310c566bfca2c54a7cf409e9da5c851b06260d2173a5a6d6ec57e8b5d01",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 378,
+      "matrix_id": "T1M-0377",
+      "archetype_id": "CGA-AC-003",
+      "source_cell_range": "AK378:BH378",
+      "directional_sha256": "8598067feca6d7ffaa806255bc953f7103e361aab88932d16145e2db9f6786ba",
+      "blank_fields": [],
+      "primitive_basis": "RF_WAVE",
+      "compiler_token": "RF_WAVE"
+    },
+    {
+      "sheet_row": 379,
+      "matrix_id": "T1M-0378",
+      "archetype_id": "CGA-AC-004",
+      "source_cell_range": "AK379:BH379",
+      "directional_sha256": "a8201eaa864ec0ffb0c0b9b09a5dd3e4b9b7ba0438060490933b4e24c650ba0d",
+      "blank_fields": [],
+      "primitive_basis": "MULTIPHYSICS_OTHER",
+      "compiler_token": "MULTIPHYSICS_OTHER"
+    },
+    {
+      "sheet_row": 380,
+      "matrix_id": "T1M-0379",
+      "archetype_id": "CGA-AC-005",
+      "source_cell_range": "AK380:BH380",
+      "directional_sha256": "0b9d3cb5051ff51519a13b734ef811e6e4736dfc8b972d646d264224297887a2",
+      "blank_fields": [],
+      "primitive_basis": "MULTIPHYSICS_OTHER",
+      "compiler_token": "MULTIPHYSICS_OTHER"
+    },
+    {
+      "sheet_row": 381,
+      "matrix_id": "T1M-0380",
+      "archetype_id": "CGA-CHEM-001",
+      "source_cell_range": "AK381:BH381",
+      "directional_sha256": "e62cb5f5c900a57bad0b6febc3924c1bb3dced222948a5536aed35c3887efcb0",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 382,
+      "matrix_id": "T1M-0381",
+      "archetype_id": "CGA-CHEM-002",
+      "source_cell_range": "AK382:BH382",
+      "directional_sha256": "503d60e8485430608dc38d9c3815291a71e93b90a9e1cb4fbcf9139bbee707bc",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 383,
+      "matrix_id": "T1M-0382",
+      "archetype_id": "CGA-CHEM-003",
+      "source_cell_range": "AK383:BH383",
+      "directional_sha256": "89665c44804b33f5a83f794fc2f4cda7070a0078a496d52f3373b1ec4daaecec",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 384,
+      "matrix_id": "T1M-0383",
+      "archetype_id": "CGA-CHEM-004",
+      "source_cell_range": "AK384:BH384",
+      "directional_sha256": "f844a22c62ab2e020e3c05e76f4a8abd4c6385866824cbbf730148cd73d8b0a7",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 385,
+      "matrix_id": "T1M-0384",
+      "archetype_id": "CGA-CHEM-005",
+      "source_cell_range": "AK385:BH385",
+      "directional_sha256": "b2e470bf164c260286aefbf060dc7d78bbbcd435048378e003d3c4bdf517a304",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 386,
+      "matrix_id": "T1M-0385",
+      "archetype_id": "CGA-CHEM-006",
+      "source_cell_range": "AK386:BH386",
+      "directional_sha256": "6c345c7e914466c166b5d962e7168a455b96af01ebb61466d83cdd7c0e2bcb1c",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 387,
+      "matrix_id": "T1M-0386",
+      "archetype_id": "CGA-CHEM-007",
+      "source_cell_range": "AK387:BH387",
+      "directional_sha256": "1069e0f145811715bbbe11888c10a7097eb0ce7dc011e9f455bef48196234041",
+      "blank_fields": [],
+      "primitive_basis": "ENERGY_STORAGE",
+      "compiler_token": "ENERGY_STORAGE"
+    },
+    {
+      "sheet_row": 388,
+      "matrix_id": "T1M-0387",
+      "archetype_id": "CGA-IC-055",
+      "source_cell_range": "AK388:BH388",
+      "directional_sha256": "42c4f802c59e25d4f6037e014b46247df3960b8d29d54cd3ca98e0dbfdd4c7da",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 389,
+      "matrix_id": "T1M-0388",
+      "archetype_id": "CGA-IC-056",
+      "source_cell_range": "AK389:BH389",
+      "directional_sha256": "a2bca169e9236b0c704b3d9edf67ad44e277e96e4da7c8662ab52c31757ce154",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 390,
+      "matrix_id": "T1M-0389",
+      "archetype_id": "CGA-IC-057",
+      "source_cell_range": "AK390:BH390",
+      "directional_sha256": "f125dbf3d7b5445bcac20c2dbc2b56c6ab460746421e8f68a253e49ca41b21b6",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 391,
+      "matrix_id": "T1M-0390",
+      "archetype_id": "CGA-IC-058",
+      "source_cell_range": "AK391:BH391",
+      "directional_sha256": "0c90dce4fc060c2162c8e31bbde1edbc1b13c5bd52b8a47408a7cc46c0b329d0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 392,
+      "matrix_id": "T1M-0391",
+      "archetype_id": "CGA-IC-059",
+      "source_cell_range": "AK392:BH392",
+      "directional_sha256": "c376cd8c9fbebb21cef8c884e13483d5452badfc7ebb9e59e3494b2911d57a3e",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 393,
+      "matrix_id": "T1M-0392",
+      "archetype_id": "CGA-IC-060",
+      "source_cell_range": "AK393:BH393",
+      "directional_sha256": "e25c16b2db4207db2517f77da533e9cf428af74efd3ad9486215dd9b0db25a43",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 394,
+      "matrix_id": "T1M-0393",
+      "archetype_id": "CGA-IC-061",
+      "source_cell_range": "AK394:BH394",
+      "directional_sha256": "40d50b2d2842c6d061799027cd8ef2b908402ef318ef683cf399ba649e979760",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 395,
+      "matrix_id": "T1M-0394",
+      "archetype_id": "CGA-IC-062",
+      "source_cell_range": "AK395:BH395",
+      "directional_sha256": "1c94e0f3f2811a565cfb2246f85c2b22a8703821a34d042de592960f6ca5e8d5",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 396,
+      "matrix_id": "T1M-0395",
+      "archetype_id": "CGA-IC-063",
+      "source_cell_range": "AK396:BH396",
+      "directional_sha256": "b26c0520c7d216c9c2a51975d0f21be7798942421acdac936b99da3aaff540a3",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 397,
+      "matrix_id": "T1M-0396",
+      "archetype_id": "CGA-IC-064",
+      "source_cell_range": "AK397:BH397",
+      "directional_sha256": "e85345b6e0aa24132bfe6bd4ddb53cad9509cbd8577c9c10f5c0ce2e323133a0",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 398,
+      "matrix_id": "T1M-0397",
+      "archetype_id": "CGA-IC-065",
+      "source_cell_range": "AK398:BH398",
+      "directional_sha256": "aaa6fd3879a214986f7f41537ec45c5c4194f4898f38221045f10a06ef1accbc",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 399,
+      "matrix_id": "T1M-0398",
+      "archetype_id": "CGA-IC-066",
+      "source_cell_range": "AK399:BH399",
+      "directional_sha256": "799f9ea4402d82943805393287dac165ba2f1fab799246f01a92f00b90d5af8a",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 400,
+      "matrix_id": "T1M-0399",
+      "archetype_id": "CGA-IC-067",
+      "source_cell_range": "AK400:BH400",
+      "directional_sha256": "ea9479281a181dd82e49ab6b1c19e860f1f848d62ff470ab3bec1d2b1a3ac33c",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 401,
+      "matrix_id": "T1M-0400",
+      "archetype_id": "CGA-IC-068",
+      "source_cell_range": "AK401:BH401",
+      "directional_sha256": "18087d38cff32cea369ab62fb6db601323bea772338bddd02ce8e3b4830c44fd",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    },
+    {
+      "sheet_row": 402,
+      "matrix_id": "T1M-0401",
+      "archetype_id": "CGA-IC-069",
+      "source_cell_range": "AK402:BH402",
+      "directional_sha256": "035232da796a15c3041e5343bc38dfce6f4016b85a122534f1def3660b9c0316",
+      "blank_fields": [],
+      "primitive_basis": "ACTIVE_LOGIC_SEED",
+      "compiler_token": "ACTIVE_LOGIC_SEED"
+    },
+    {
+      "sheet_row": 403,
+      "matrix_id": "T1M-0402",
+      "archetype_id": "CGA-A-029",
+      "source_cell_range": "AK403:BH403",
+      "directional_sha256": "3c61588eec8656144de723d0f41ea5b945f40c6d3e1bcdeefaa7534cadeecb3e",
+      "blank_fields": [],
+      "primitive_basis": "ACTUATOR_MOTION",
+      "compiler_token": "ACTUATOR_MOTION"
+    },
+    {
+      "sheet_row": 404,
+      "matrix_id": "T1M-0403",
+      "archetype_id": "CGA-P-013",
+      "source_cell_range": "AK404:BH404",
+      "directional_sha256": "d75f0d215d66e414bc94559c094eb32035f7c8554314e2fd67d9162b895582b2",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 405,
+      "matrix_id": "T1M-0404",
+      "archetype_id": "CGA-P-014",
+      "source_cell_range": "AK405:BH405",
+      "directional_sha256": "39b3e7a5686e433c768e149c1018b95ae85eb20ab61bc04e1a191cb3c977c7e2",
+      "blank_fields": [],
+      "primitive_basis": "SAFE_STATE_PROTECTION",
+      "compiler_token": "SAFE_STATE_PROTECTION"
+    },
+    {
+      "sheet_row": 406,
+      "matrix_id": "T1M-0405",
+      "archetype_id": "CGA-PWR-016",
+      "source_cell_range": "AK406:BH406",
+      "directional_sha256": "23f55487e90f14ab376f3255a283f6517947c65a88f4de3fce8e05412164cf84",
+      "blank_fields": [],
+      "primitive_basis": "POWER_CONVERSION",
+      "compiler_token": "POWER_CONVERSION"
+    },
+    {
+      "sheet_row": 407,
+      "matrix_id": "T1M-0406",
+      "archetype_id": "CGA-PWR-017",
+      "source_cell_range": "AK407:BH407",
+      "directional_sha256": "69100effe1b949792104e5d681c6123e4661bb67bbd7f4564e932b9add554b7f",
+      "blank_fields": [],
+      "primitive_basis": "POWER_CONVERSION",
+      "compiler_token": "POWER_CONVERSION"
+    },
+    {
+      "sheet_row": 408,
+      "matrix_id": "T1M-0407",
+      "archetype_id": "CGA-PWR-018",
+      "source_cell_range": "AK408:BH408",
+      "directional_sha256": "819fae5805bb7d1bf952ce78735dfbef02fa1c6e2c2a5e8d0c1ca325da34cb5d",
+      "blank_fields": [],
+      "primitive_basis": "POWER_CONVERSION",
+      "compiler_token": "POWER_CONVERSION"
+    },
+    {
+      "sheet_row": 409,
+      "matrix_id": "T1M-0408",
+      "archetype_id": "CGA-M-029",
+      "source_cell_range": "AK409:BH409",
+      "directional_sha256": "3f811302717a71edce3d04f2bf4fbe1226018e145114e2bf8a6c7b97cd65739e",
+      "blank_fields": [],
+      "primitive_basis": "STRUCTURE_DATUM",
+      "compiler_token": "STRUCTURE_DATUM"
+    },
+    {
+      "sheet_row": 410,
+      "matrix_id": "T1M-0409",
+      "archetype_id": "CGA-DIEL-001",
+      "source_cell_range": "AK410:BH410",
+      "directional_sha256": "186095ddb9bb75a50104abbe62eaa5f2015e6aecca7c7ef28eb2e958cdab0663",
+      "blank_fields": [],
+      "primitive_basis": "DIELECTRIC_ISOLATION",
+      "compiler_token": "DIELECTRIC_ISOLATION"
+    },
+    {
+      "sheet_row": 411,
+      "matrix_id": "T1M-0410",
+      "archetype_id": "CGA-O-023",
+      "source_cell_range": "AK411:BH411",
+      "directional_sha256": "dcc8c8c857957cf78ea398841c6bebf5335c22956987781189ca54e75d0a6f11",
+      "blank_fields": [],
+      "primitive_basis": "OPTICAL_PHOTONIC",
+      "compiler_token": "OPTICAL_PHOTONIC"
+    },
+    {
+      "sheet_row": 412,
+      "matrix_id": "T1M-0411",
+      "archetype_id": "CGA-M-030",
+      "source_cell_range": "AK412:BH412",
+      "directional_sha256": "0dfcff8110975455f4353aef1698e90a2e9210cfa6b0bde8bad6182fa554f058",
+      "blank_fields": [],
+      "primitive_basis": "SERVICE_ACCESS",
+      "compiler_token": "SERVICE_ACCESS"
+    }
+  ]
+}
