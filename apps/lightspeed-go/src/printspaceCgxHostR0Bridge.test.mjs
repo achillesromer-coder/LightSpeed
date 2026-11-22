@@ -14,7 +14,7 @@ rows=[{'product_id':name,'candidate_object_id':'PS-'+name.upper()+'-CANDIDATE-00
        'registry_git_blob_sha':'2'*40} for name in ('diode','board','phone')]
 print(json.dumps(prepare_r0_host_review(b,c,rows),ensure_ascii=True,sort_keys=True))
 `;
-const REPO_ROOT = new URL('../../../../', import.meta.url).pathname;
+const REPO_ROOT = new URL('../../../', import.meta.url).pathname;
 const plan=JSON.parse(execFileSync('python',['-c',SOURCE],{cwd:REPO_ROOT,encoding:'utf8'}));
 const safeClone=x=>structuredClone(x);
 const fixture=(product='diode')=>{
