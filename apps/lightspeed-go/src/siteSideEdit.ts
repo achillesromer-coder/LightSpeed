@@ -1,12 +1,24 @@
-import { escapeSiteLabel, projectSiteIntegration } from "./siteIntegrationProjection";
+type SiteIntegrationManifest = {
+  schema_version: string;
+  site_name: string;
+  edit_mode: string;
+  create_new_site: boolean;
+  publish_state: string;
+  launch_state_label?: string;
+  source_state_label?: string;
+  authority_chain: string[];
+  current_views: string[];
+  promoted_components: string[];
+  deferred_components: string[];
+};
 
 const manifestUrl = new URL("./data/site_integration.json", document.baseURI).toString();
 
-const loadManifest = async (): Promise<unknown> => {
+const loadManifest = async (): Promise<SiteIntegrationManifest | null> => {
   try {
     const response = await fetch(manifestUrl, { cache: "no-store" });
     if (!response.ok) return null;
-    return await response.json();
+    return (await response.json()) as SiteIntegrationManifest;
   } catch {
     return null;
   }
@@ -36,15 +48,21 @@ const mount = async (): Promise<boolean> => {
 
   injectStyles();
   const manifest = await loadManifest();
-  const projected = projectSiteIntegration(manifest);
-  const authority = projected.authority;
-  const sourceState = escapeSiteLabel(projected.sourceStatus);
-  const launchState = escapeSiteLabel(projected.launchStatus);
+  const authority = manifest?.authority_chain ?? [
+    "Nathaniel Bouwer",
+    "Achilles / GO gate",
+    "agent floor",
+    "LightSpeed Desktop",
+    "Git and Drive receipts",
+  ];
+  const sourceState = manifest?.source_state_label
+    ?? "Git review source current · Drive successor pending · public update held";
+  const launchState = manifest?.launch_state_label
+    ?? "Private local operation; remote verification and public deployment held";
 
   if (!document.getElementById("site-context-strip")) {
     const strip = document.createElement("div");
     strip.id = "site-context-strip";
-    strip.dataset.cgxEvidence = projected.manifestEvidence;
     strip.className = "site-context-strip";
     strip.innerHTML = `
       <span><strong>Owner:</strong> Nathaniel Bouwer</span>
@@ -57,14 +75,13 @@ const mount = async (): Promise<boolean> => {
   if (!document.getElementById("site-parity-card")) {
     const card = document.createElement("article");
     card.id = "site-parity-card";
-    card.dataset.cgxPublicRelease = "held";
     card.className = "panel site-parity-card";
     card.innerHTML = `
       <p class="eyebrow">Canonical source chain</p>
       <h2>One operator surface, durable receipts</h2>
       <p>Desktop executes locally, Git carries implementation, Drive carries evidence and review records, and UniSpace remains the operator decision surface, powered by LightSpeed. Alignment is shown only after current evidence validates.</p>
       <div class="site-chain">
-        ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${escapeSiteLabel(item)}</span>`).join("")}
+        ${authority.map((item, index) => `${index ? "<i>→</i>" : ""}<span>${item}</span>`).join("")}
       </div>
       <p><strong>Launch state:</strong> ${launchState}</p>
     `;
