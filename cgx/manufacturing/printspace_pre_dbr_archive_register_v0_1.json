@@ -771,8 +771,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md",
-      "git_blob_sha1": "5c740d2b04bdd041cdad1ae985f534472490faf1",
-      "reason": "Owner release matrix and ordered PrintSpace→FileSpace→DataSpace→UniSpace→Grex/outreach gates; private scope only"
+      "git_blob_sha1": "aa90de4cc458aefd4be0797cfae41dcff7f008c3",
+      "reason": "Existing private software release gate reconciled in place for rc.2 five-space source projection and explicit native/rights/physical holds; prior rc.1 preserved"
     },
     {
       "id": "PC01-PROT-076",
@@ -799,6 +799,24 @@
       "path": "cgx/manufacturing/__init__.py",
       "git_blob_sha1": "5708a2262cfd10da2a590171808eee20ec990100",
       "reason": "Existing manufacturing public facade exposes source-replayed shared facet and reverse auditor"
+    },
+    {
+      "id": "PC01-PROT-079",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740017039,
+      "archive_sha256": "4bfa7007bb7c64b40559032ea5bad178c5fac8729b258db3dcc9d4e1a96922e3",
+      "reason": "Exact final CI-created private rc.2 package container with software ZIP bytes sha256 2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2, byte-for-byte local match; no public release, provider expires 2026-12-22"
+    },
+    {
+      "id": "PC01-PROT-080",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739797368,
+      "archive_sha256": "f265fc2ab1a7acfb90e1bb4cb08f69b4daa1fb49ce7c837fc25fcb62ab4821c6",
+      "reason": "Independent 27-stage review regression PASS including source-aligned H0/R0 nested roots, negative T173/native ternary and private rc.2 build; all 27 logs match recorded SHA256 and byte lengths; provider expires 2026-12-22"
     }
   ],
   "archive_review_gates": [
