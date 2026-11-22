@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-lkI7MRbIlGkShP8CfYsg1W4RFYZK003fkq78efxFAp0='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-uyO+4k6/lU+Alb1+tmBTu2Oimpz64nb5LsAFT3cJ2lQ='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>UniSpace · Offline CGX GUI</title>
 <style>
 :root{color-scheme:dark;--surface:#172321;--line:#354944;--ink:#f4f7f6;--muted:#b0c1bd;--accent:#b9f3dc}
@@ -14,9 +14,9 @@ header strong{font-size:1.2rem;color:var(--accent)}small,p{color:var(--muted)}h1
 main{display:grid;grid-template-columns:minmax(15rem,1fr) minmax(0,2.5fr);gap:1.25rem;align-items:start}
 aside,.panel{padding:1.1rem;border:1px solid var(--line);background:var(--surface);border-radius:.8rem;overflow-wrap:anywhere}
 section.group{background:transparent}#scene>.group{padding:0;border:0}
-aside form,aside section{display:grid;gap:.55rem;margin-bottom:1rem}aside section:last-child{margin-bottom:0}
+aside form,aside section{display:grid;grid-template-columns:minmax(0,1fr);gap:.55rem;margin-bottom:1rem}aside section:last-child{margin-bottom:0}
 button,input,textarea{font:inherit;color:inherit;max-width:100%}button,input,textarea{background:#101e1b;border:1px solid var(--line);border-radius:.4rem;padding:.4rem .65rem}button{cursor:pointer}button:hover,button[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
-textarea,input[type=search]{width:100%}label{font-weight:600}a{color:var(--accent)}nav,.actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-weight:600}a{color:var(--accent)}nav,.actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
 .children,.file-cards{display:grid;gap:.65rem}.children.grid,.file-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))}.file-cards{list-style:none;padding:0}.file-cards li{border:1px solid var(--line);border-radius:.45rem;padding:.65rem}table{border-collapse:collapse;width:100%}td,th{text-align:left;border-bottom:1px solid var(--line);padding:.45rem}
 .metric strong{font-size:2rem;color:var(--accent)}#filter{margin:.3rem 0 1rem}#status{margin:.3rem 0 1rem;min-height:1.5rem}
 @media(max-width:48rem){main{grid-template-columns:1fr}}@media print{aside,header a,#status,#filter,label[for=filter],nav{display:none}main{display:block}}
@@ -88,7 +88,7 @@ textarea,input[type=search]{width:100%}label{font-weight:600}a{color:var(--accen
 		"grexes": []
 	};
 	//#endregion
-	//#region app/lib/unispace.mjs
+	//#region .sites-checkout/app/lib/unispace.mjs
 	const ROOT = _offline_unispace_catalogue_default.parent;
 	const SPACES = [
 		{
@@ -482,7 +482,7 @@ textarea,input[type=search]{width:100%}label{font-weight:600}a{color:var(--accen
 		return graph.nodes.filter((node) => !node.archived && (!spec.facet || node.facets.includes(spec.facet)) && (!spec.kind || node.kind === spec.kind) && (!spec.status || node.status === spec.status) && (!matched || matched.has(node.id)));
 	}
 	//#endregion
-	//#region app/lib/uni-interface.mjs
+	//#region .sites-checkout/app/lib/uni-interface.mjs
 	const INTERFACE_SCHEMA = "cgx.unispace.interface/1";
 	const ARRANGEMENTS = [
 		"grid",
@@ -846,7 +846,7 @@ textarea,input[type=search]{width:100%}label{font-weight:600}a{color:var(--accen
 		return matches;
 	}
 	//#endregion
-	//#region portable/shell.mjs
+	//#region .sites-checkout/portable/shell.mjs
 	const byId = (id) => document.getElementById(id);
 	const make = (tag, value) => {
 		const node = document.createElement(tag);
