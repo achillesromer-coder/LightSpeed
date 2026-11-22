@@ -39,6 +39,12 @@ EXPECTED_PROTECTED = {
     "cgx/manufacturing/printstack.py",
     "cgx/manufacturing/binding.py",
     "cgx/manufacturing/volumetric.py",
+    "cgx/manufacturing/composition.py",
+    "cgx/manufacturing/printspace_composite_pilot_v0_1.json",
+    "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+    "tools/verify_unispace_product.py",
+    "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+    "apps/lightspeed-go/src/cgxUniSpaceLoadCommandSurface.mjs",
     "cgx/component_atlas/component_geometry_atlas_v0_1.json",
     "cgx/component_atlas/raphael_component_geometry_search_v0_1.json",
 }
