@@ -17,14 +17,16 @@ export type AchillesLocalFacet = Readonly<{
   boundary: string;
   state: "OBSERVED_UI_CONTROL_NOT_CONNECTED";
 }>;
-export const ACHILLES_LOCAL_FACETS: readonly AchillesLocalFacet[] = Object.freeze([
+const ACHILLES_LOCAL_FACET_ROWS: AchillesLocalFacet[] = [
   { id: "agent_runtime", label: "Agent runtime", observed: "Pause, start and stop agent actions are present in the local shell.", boundary: "Actual run state and mutations are not exposed by this UniSpace projection.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
   { id: "cpu_policy", label: "Resource policy", observed: "CPU ceiling slider spans 10–100 in steps of 5; displayed presets are 40, 70 and 95.", boundary: "No CPU setting is read or changed from this page.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
   { id: "failure_policy", label: "Reliability", observed: "An auto-disable-failing-agents option is present.", boundary: "Option state and agent failures are unknown until authenticated local readback.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
   { id: "llm_sorter", label: "Sorting", observed: "A generic LLM sorter pass is offered as a local option.", boundary: "No model-selection or inference invocation is made here.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
   { id: "loaded_models", label: "Model inventory", observed: "The shell exposes a loaded-models information region.", boundary: "No weights, model identities or active count were verified by the HTTP snapshot.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
   { id: "operator_notes", label: "Operational notes", observed: "The shell exposes an operational notes region.", boundary: "No notes or private content are copied into UniSpace.", state: "OBSERVED_UI_CONTROL_NOT_CONNECTED" },
-].map((f) => Object.freeze(f)));
+];
+export const ACHILLES_LOCAL_FACETS: readonly AchillesLocalFacet[] =
+  Object.freeze(ACHILLES_LOCAL_FACET_ROWS.map((f) => Object.freeze(f)));
 
 export function resolveAchillesLocalShellUrl(input: unknown): typeof ACHILLES_LOCAL_SHELL_URL {
   if (typeof input !== "string" || input.length > 64) throw new TypeError("ACHILLES_LOCAL_EXACT_ORIGIN_REQUIRED");
