@@ -209,8 +209,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/review_gate.py",
-      "git_blob_sha1": "1cc30dce253943b8fbfdc2c7a88e6b2815ef74e4",
-      "reason": "Active canonical review gate, including exact canonical IR reference/hash crosswalk; protected on current branch"
+      "git_blob_sha1": "401f17e152d0b1d4f3cca95f1a65e631da66b7bc",
+      "reason": "Canonical source-hash-bound process and optional H0 geometry review gate; one CGX manufacturing IR, physical execution stays separate."
     },
     {
       "id": "PC01-PROT-007",
