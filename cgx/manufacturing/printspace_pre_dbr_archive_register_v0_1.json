@@ -552,6 +552,15 @@
       "path": "docs/engineering/PRINTSPACE_CGX_FILESPACE_FACETS_2026-11-22.md",
       "git_blob_sha1": "e5d75fbe7707d997769485eb3329fe030c79c5cb",
       "reason": "Source and rights qualification architecture, product manufacturing and owner/native DBR acceptance conditions"
+    },
+    {
+      "id": "PC01-PROT-049",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14737720027,
+      "archive_sha256": "1a6674969946242563ee5d9090d8532d9ff1f94432e08fd0cb6bfc3c9861974d",
+      "reason": "Independently read and SHA256/length-verified 23-stage PrintSpace digital-only CI including CGX 80-facet source graph/H0/selective hydration, virtual factory 756 cases, 216 analytic model cases and 12-service back-down review. All 23 steps PASS, zero log integrity mismatches. Artifact provider expiry 2026-12-22; durable owner evidence copy needs separate authorisation."
     }
   ],
   "archive_review_gates": [
