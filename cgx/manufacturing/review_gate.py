@@ -274,7 +274,7 @@ def main() -> int:
 if __name__ == "__main__":
     raise SystemExit(main())
 
-def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict) -> dict:
+def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict, *, geometry_composition: dict | None = None) -> dict:
     """Bind the read-only PrintSpace preflight to one *actual* canonical CGX IR.
 
     The standalone compile_review() is useful for proposed processes; this entry
@@ -335,6 +335,28 @@ def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict) -> di
             hold("CANONICAL_IR_BLOCKERS", "manufacturing_ir.blockers", "Canonical IR has unresolved consequential blockers")
         if manufacturing_ir.get("compile_state") != "DIGITAL_PLAN":
             hold("CANONICAL_IR_COMPILE_STATE", "manufacturing_ir.compile_state", "Unexpected canonical digital state")
+
+    # Same canonical build hash anchors both process and geometry. No new
+    # compiler/master/LOAD source, and no geometry check grants physical proof.
+    if geometry_composition is not None:
+        from .composition import compile_geometry_composition
+        geometry = compile_geometry_composition(geometry_composition)
+        result["geometry_projection"] = {
+            "state": geometry["state"],
+            "graph_sha256": geometry.get("geometry_composite_hash"),
+            "load_h0": geometry.get("load_h0"),
+            "hold_codes": geometry["hold_codes"],
+            "source_and_material_evidence_verified": False,
+            "native_load_admitted": False,
+        }
+        if geometry["state"] != "REVIEW_ONLY":
+            hold("GEOMETRY_COMPOSITION_HOLD", "geometry_composition", "Exact geometry review has unresolved source or topology gates")
+        if (not isinstance(manufacturing_ir, dict) or
+            geometry_composition.get("manufacturing_ir_ref") != manufacturing_ir.get("cgx_uri")):
+            hold("GEOMETRY_IR_URI_MISMATCH", "geometry_composition.manufacturing_ir_ref", "Geometry must match this exact existing CGX build URI")
+        if (not isinstance(manufacturing_ir, dict) or
+            geometry_composition.get("manufacturing_ir_configuration_hash") != manufacturing_ir.get("configuration_hash")):
+            hold("GEOMETRY_IR_HASH_MISMATCH", "geometry_composition.manufacturing_ir_configuration_hash", "Geometry must bind to exact canonical IR configuration hash")
     result["findings"] = sorted(findings, key=lambda x: (x["code"], x["subject"], x["detail"]))
     result["state"] = "HOLD" if findings else "REVIEW_ONLY"
     result["physical_machine_authorised"] = False
