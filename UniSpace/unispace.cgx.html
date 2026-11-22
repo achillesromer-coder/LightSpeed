@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-lkI7MRbIlGkShP8CfYsg1W4RFYZK003fkq78efxFAp0='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-WCLPQOcfD+8YcDDMHPZYhMZTxRfNCN4ucxeOZ2+0Cwc='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>UniSpace · Offline CGX GUI</title>
 <style>
 :root{color-scheme:dark;--surface:#172321;--line:#354944;--ink:#f4f7f6;--muted:#b0c1bd;--accent:#b9f3dc}
@@ -16,7 +16,7 @@ aside,.panel{padding:1.1rem;border:1px solid var(--line);background:var(--surfac
 section.group{background:transparent}#scene>.group{padding:0;border:0}
 aside form,aside section{display:grid;grid-template-columns:minmax(0,1fr);gap:.55rem;margin-bottom:1rem}aside section:last-child{margin-bottom:0}
 button,input,textarea{font:inherit;color:inherit;max-width:100%}button,input,textarea{background:#101e1b;border:1px solid var(--line);border-radius:.4rem;padding:.4rem .65rem}button{cursor:pointer}button:hover,button[aria-pressed=true]{border-color:var(--accent);color:var(--accent)}
-textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-weight:600}a{color:var(--accent)}nav,.actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+pre{max-height:34vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-weight:600}a{color:var(--accent)}nav,.actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
 .children,.file-cards{display:grid;gap:.65rem}.children.grid,.file-cards{grid-template-columns:repeat(auto-fit,minmax(min(100%,13rem),1fr))}.file-cards{list-style:none;padding:0}.file-cards li{border:1px solid var(--line);border-radius:.45rem;padding:.65rem}table{border-collapse:collapse;width:100%}td,th{text-align:left;border-bottom:1px solid var(--line);padding:.45rem}
 .metric strong{font-size:2rem;color:var(--accent)}#filter{margin:.3rem 0 1rem}#status{margin:.3rem 0 1rem;min-height:1.5rem}
 @media(max-width:48rem){main{grid-template-columns:1fr}}@media print{aside,header a,#status,#filter,label[for=filter],nav{display:none}main{display:block}}
@@ -35,12 +35,18 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 <label for="layout">Open a .cgx layout</label>
 <input id="layout" type="file" accept=".cgx,.json,.cgxui,application/json">
 <button id="export" type="button">Download .cgx layout</button>
+<button id="dossier" type="button">Export workspace dossier</button>
 </section>
 <section>
-<label for="files">Select local FileSpace entries</label>
+<label for="files">Add local files to the workspace</label>
 <input id="files" type="file" multiple>
 <button id="clear" type="button">Clear selection</button>
-<small>This shell reads names, sizes and dates from files you select. Layout exports contain the layout and filters.</small>
+<small>The file widget uses names, sizes and dates from the files you select.</small>
+</section>
+<section>
+<label for="document">Read a text document</label>
+<input id="document" type="file" accept=".txt,.md,.csv,.json,.cgx">
+<button id="read-full" type="button" disabled>LOAD full document</button>
 </section>
 </aside>
 <section aria-label="Generated workspace">
@@ -48,9 +54,10 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 <p id="status" role="status">Offline workspace. Files stay on this device.</p>
 <label for="filter">Filter this interface</label><input id="filter" type="search" maxlength="100">
 <div id="scene"></div>
+<h2 id="document-title"></h2><pre id="document-text" tabindex="0"></pre>
 </section>
 </main>
-<script type="application/json" id="initial-layout">{"schema":"cgx.unispace.interface/1","parent":"cgx:root:cognigrex","title":"UniSpace: one-root five-facet operator review","body":{"id":"root","type":"group","title":"UniSpace: one-root five-facet operator review","layout":"tabs","children":[{"id":"view-0","type":"collection","title":"FileSpace","dataset":"files","facet":"file_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-1","type":"collection","title":"DataSpace","dataset":"records","facet":"data_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-2","type":"collection","title":"SocialSpace","dataset":"handoffs","facet":"social_space","kind":"Handoff","status":"","query":"","layout":"cards","limit":18},{"id":"view-3","type":"collection","title":"PrintSpace","dataset":"workspace","facet":"print_space","kind":"","status":"","query":"","layout":"cards","limit":18},{"id":"view-4","type":"collection","title":"IntelligenceSpace","dataset":"workspace","facet":"intelligence_space","kind":"","status":"","query":"","layout":"cards","limit":18}]}}</script>
+<script type="application/json" id="initial-layout">{"schema":"cgx.unispace.interface/1","parent":"cgx:root:cognigrex","title":"Documents","body":{"id":"root","type":"group","title":"Documents","layout":"tabs","children":[{"id":"view-0","type":"collection","title":"FileSpace","dataset":"files","facet":"file_space","kind":"","status":"","query":"","layout":"table","limit":18},{"id":"view-1","type":"metric","title":"FileSpace count","dataset":"files","facet":"","kind":"","status":"","query":""}]}}</script>
 <script>(function() {
 	//#region \0offline-unispace-catalogue
 	var _offline_unispace_catalogue_default = {
@@ -766,7 +773,8 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 			const quoted = fragment.match(/"([^"\n]+)"/)?.[1] ?? "";
 			const topic = spec.kind ? spec.kind === "Research" ? "Research" : spec.kind + "s" : DATASETS[dataset];
 			const metric = /\b(counts?|metrics?|totals?|number of)\b/i.test(fragment);
-			const groupTitle = metric ? topic + " count" : topic;
+			const scopedTitle = spec.status ? topic + " · " + spec.status : topic;
+			const groupTitle = metric ? scopedTitle + " count" : scopedTitle;
 			const filters = {
 				id: "view-" + index,
 				title: groupTitle,
@@ -844,6 +852,44 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 			].some((field) => field.toLowerCase().includes(query)));
 		}
 		return matches;
+	}
+	function fields(value, allowed) {
+		if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some((key) => !allowed.includes(key))) throw new Error("Unexpected fields in this CGX document.");
+	}
+	function workspaceDossier(design) {
+		return {
+			schema: "cgx.unispace.view-state/1",
+			parent: ROOT,
+			design: validateInterface(design)
+		};
+	}
+	function readWorkspaceDossier(value) {
+		fields(value, [
+			"schema",
+			"parent",
+			"design"
+		]);
+		if (value.schema !== "cgx.unispace.view-state/1" || value.parent !== ROOT) throw new Error("Unrecognised workspace dossier.");
+		return validateInterface(value.design);
+	}
+	function isDocumentName(name) {
+		return /\.(txt|md|csv|json|cgx)$/i.test(name);
+	}
+	async function decodeDocument(blob, { partial = false } = {}) {
+		if (blob.size > 2097152) throw new Error("Documents are limited to 2 MiB.");
+		try {
+			return new TextDecoder("utf-8", { fatal: true }).decode(await blob.arrayBuffer(), { stream: partial });
+		} catch {
+			throw new Error("This file is not a UTF-8 text document. Open supported CGX layouts in Interface Studio.");
+		}
+	}
+	function downloadDossier(value, filename) {
+		const address = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2) + "\n"], { type: "application/json" }));
+		const link = document.createElement("a");
+		link.href = address;
+		link.download = filename;
+		link.click();
+		setTimeout(() => URL.revokeObjectURL(address), 1e3);
 	}
 	//#endregion
 	//#region portable/shell.mjs
@@ -968,7 +1014,9 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 		if (!file) return;
 		const sequence = ++importSequence;
 		try {
-			const next = await readInterfaceFile(file, { portableOnly: file.name.toLowerCase().endsWith(".cgx") });
+			if (file.size > 131072) throw new Error("Layouts are limited to 128 KiB.");
+			const value = JSON.parse(await file.text());
+			const next = value?.schema === "cgx.unispace.view-state/1" ? readWorkspaceDossier(value) : await readInterfaceFile(file, { portableOnly: file.name.toLowerCase().endsWith(".cgx") });
 			if (sequence === importSequence) useDesign(next, "Layout opened locally.");
 		} catch (error) {
 			if (sequence === importSequence) status.textContent = error.message;
@@ -1003,6 +1051,37 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 		status.textContent = "Local file selection cleared.";
 		render();
 	});
+	let reviewedFile;
+	let documentRequest = 0;
+	async function readDocument(full) {
+		const request = ++documentRequest;
+		const output = byId("document-text");
+		const readFull = byId("read-full");
+		output.textContent = "";
+		readFull.disabled = true;
+		if (!reviewedFile) return;
+		const file = reviewedFile;
+		try {
+			if (!isDocumentName(file.name) || file.size > 2097152) throw new Error("Choose a text document up to 2 MiB.");
+			const partial = !full && file.size > 64 * 1024;
+			const bytes = partial ? file.slice(0, 64 * 1024) : file;
+			const result = await decodeDocument(bytes, { partial });
+			if (request !== documentRequest) return;
+			byId("document-title").textContent = file.name;
+			output.textContent = result || "Empty document";
+			readFull.disabled = !partial;
+			status.textContent = bytes.size + " of " + file.size + " document bytes read.";
+		} catch (error) {
+			if (request === documentRequest) status.textContent = error.message;
+		}
+	}
+	byId("document").addEventListener("change", (event) => {
+		reviewedFile = event.currentTarget.files[0];
+		byId("document-title").textContent = "";
+		readDocument(false);
+	});
+	byId("read-full").addEventListener("click", () => void readDocument(true));
+	byId("dossier").addEventListener("click", () => downloadDossier(workspaceDossier(design), "workspace.view.cgx"));
 	search.addEventListener("input", render);
 	byId("export").addEventListener("click", () => {
 		const link = make("a");
