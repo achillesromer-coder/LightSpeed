@@ -439,6 +439,54 @@
       "artifact_id": 14734969656,
       "archive_sha256": "298008b3679f74f15515d4e0caafa5b33ebadcac4d1a418aee6b082b8efb31d7",
       "reason": "Independently inspected 21-stage source-bound analytical cross-domain emulation archive, 216 synthetic scenarios, 15 paired factorial interactions, numerical energy residual tests and existing 12-service reverse source; provider expiry 2026-12-22 pending owner-authorised durable retention."
+    },
+    {
+      "id": "PC01-PROT-035",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_virtual_factory_catalog_v0_1.json",
+      "git_blob_sha1": "bde15eed2be9421f575f1e143b1d142a876c7617",
+      "reason": "Unqualified source-indexed printer/product/environment hierarchy; not source CAD, qualified material BOM or operating machine profile"
+    },
+    {
+      "id": "PC01-PROT-036",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/virtual_factory.py",
+      "git_blob_sha1": "2618d22d86ebe1393c3dafbcb2b4bc33217569fd",
+      "reason": "Canonical read-only source-derived multi-product printer view, 756-case size/role sweep and reverse source replay"
+    },
+    {
+      "id": "PC01-PROT-037",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_studio_v0_1.html",
+      "git_blob_sha1": "241c9aaebf0fa2296f0fadb0c6d931054ee5f1c3",
+      "reason": "Offline third-party canvas printer/table viewer, timeline, scaling and conceptual phone hierarchy; no device/mint authority"
+    },
+    {
+      "id": "PC01-PROT-038",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_studio.py",
+      "git_blob_sha1": "f94e2a80ffb41da8734daaf3b1c1d801594aef9e",
+      "reason": "Single reproducible build source of canonical offline HTML from source-bound catalogue; explicit --check drift detection"
+    },
+    {
+      "id": "PC01-PROT-039",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_virtual_factory.py",
+      "git_blob_sha1": "6fca0102ceeb3805a5ab67ff6fc2c231eed8451b",
+      "reason": "Deterministic 756 synthetic cases, hierarchy, safety and negative source/authority replay regression"
+    },
+    {
+      "id": "PC01-PROT-040",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_VIRTUAL_FACTORY_RELEASE_GATES_2026-11-22.md",
+      "git_blob_sha1": "33efb2875eba76b09ec2222d8c0ec02b67ed6fbe",
+      "reason": "Engineering acceptance, device supply boundaries, in-situ limits and commercialisation governance handoff"
     }
   ],
   "archive_review_gates": [
