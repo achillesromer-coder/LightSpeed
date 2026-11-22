@@ -10,7 +10,7 @@
     "product/diode": "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
     "product/phone": "sha256:86a881c7e705884043b83af1449242d71a9ad8f7893ea1f5bf1761e17546cafd"
   },
-  "root_namespace": "cgx://printspace/",
+  "root_namespace": "cgx://romer.industries/romer/printspace/",
   "root_ref": "sha256:0074bbcdc191c953633e1ecdef457b39c82aa2d6ea98230fb59bf0ea5b012451",
   "schema": "CGX-PRINTSPACE-LOAD-LITE-H0/0.1",
   "source_bytes_hydrated": 0,
