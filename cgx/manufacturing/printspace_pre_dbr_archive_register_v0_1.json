@@ -773,6 +773,24 @@
       "path": "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md",
       "git_blob_sha1": "5c740d2b04bdd041cdad1ae985f534472490faf1",
       "reason": "Owner release matrix and ordered PrintSpace→FileSpace→DataSpace→UniSpace→Grex/outreach gates; private scope only"
+    },
+    {
+      "id": "PC01-PROT-076",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739736412,
+      "archive_sha256": "9108d834184010bc7d3b1f19b17aa14959cebd672a250e95307244ff6322ab8b",
+      "reason": "Private PrintSpace Studio 0.1.0-rc.1 evaluation CI artifact. Inner 61,343-byte ZIP SHA256 d40efd048a03ae0586ab2f43e37577f1c5f98b458494d4b2efd7fa6394c17e1e is byte-for-byte identical to independent local build; manifest and sidecar integrity checked. Public distribution, native admission and machine permissions remain false. Provider expiry 2026-12-22; owner-authorised durable retention pending."
+    },
+    {
+      "id": "PC01-PROT-077",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739463189,
+      "archive_sha256": "38d0f5389349e77bce21adab0279f3e2697733991b657cf69394ec717da95640",
+      "reason": "Independently inspected canonical 27-stage PrintSpace digital/software regression receipt: 27/27 PASS, zero log-byte/SHA256 mismatches, 18.236 seconds recorded serial suite including private RC package tests. No public distribution, physical manufacture, DBR or mint authority. Provider expiry 2026-12-22; durable owner retention pending."
     }
   ],
   "archive_review_gates": [
