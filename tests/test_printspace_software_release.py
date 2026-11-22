@@ -165,3 +165,20 @@ def test_no_release_time_or_owner_credential_depends_on_execution_date():
     manifest = json.loads(a[MANIFEST]);assert "built_at" not in manifest
     assert manifest["source_reference"]["symbolic_facets"] == 80
     assert manifest["source_reference"]["sample_products"] == 3
+
+
+def test_rc2_reuses_one_offline_studio_with_five_view_contexts():
+    assert VERSION == '0.1.0-rc.2'
+    members=archive_members(build(ROOT))
+    html=members['PrintSpace.Studio.offline.html'].decode('utf-8')
+    assert html.count('id="space"') == 1
+    for facet in ('file_space','data_space','print_space',
+                  'intelligence_space','social_space'):
+        assert f'value="{facet}"' in html
+    assert 'Cognigrex.cgx' in html and 'Romer.cgx' in html
+    assert 'native_ternary_encoded:false' in html
+    assert 't173_mesh_admitted:false' in html
+    doc=json.loads(members['data/load-lite-h0.json'])
+    assert doc['root_namespace']=='cgx://romer.industries/romer/printspace/'
+    assert doc['native_admitted'] is False and doc['source_bytes_hydrated'] == 0
+    assert all(v is False for v in json.loads(members[MANIFEST])['safety_flags'].values())
