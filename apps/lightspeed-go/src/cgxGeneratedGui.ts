@@ -9,7 +9,7 @@ export const CGX_GENERATED_GUI_ROOT = "cgx:root:cognigrex" as const;
 export type CgxFacetId =
   | "file_space" | "data_space" | "social_space" | "print_space" | "intelligence_space";
 export type CgxShellWorkspace =
-  | "command" | "activity" | "objects" | "sources" | "filespace";
+  | "command" | "activity" | "objects" | "sources" | "filespace" | "system";
 
 export interface CgxCollectionPanel {
   readonly id: string;
