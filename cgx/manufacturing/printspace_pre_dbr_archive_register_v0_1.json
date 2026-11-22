@@ -849,6 +849,24 @@
       "path": "docs/engineering/PRINTSPACE_PRODUCTISATION_OPEN_THREADS_AND_AUTOMATED_HANDOFF_2026-11-22.md",
       "git_blob_sha1": "554aa7ffec306a7b111b75184c1512eb39ca751c",
       "reason": "Counted productisation inventory and existing coordinator handoff contract; no public publication or FileSpace activation"
+    },
+    {
+      "id": "PC01-PROT-085",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740637628,
+      "archive_sha256": "605c091567a7fc7901b47d38c1698dccbe6824b9b98f8f71e22068223324af58",
+      "reason": "Source-bound PrintSpace 28-stage sequential regression and 16 open product gate handoff receipt; all 28 logs independently size/hash checked; private rc2 pinned; source-only with no release/DBR authority; provider expiry 2026-12-22."
+    },
+    {
+      "id": "PC01-PROT-086",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740194018,
+      "archive_sha256": "260fb34252cc1934763ad85183c523e22c54f6980ed05d051b3ad247ccd83248",
+      "reason": "Final exact-head GitHub private software 0.1.0-rc.2 CI wrapper. Inner ZIP 63404 bytes SHA256 2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2, byte-identical to independently inspected original. Not signed or publicly authorised. Expires 2026-12-22."
     }
   ],
   "archive_review_gates": [
