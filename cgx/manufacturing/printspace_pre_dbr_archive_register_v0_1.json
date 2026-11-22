@@ -583,7 +583,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs",
-      "git_blob_sha1": "dcec2b857e8178ffb7ba9d8c8d9e65bc39ef787d",
+      "git_blob_sha1": "47dffb311400888c03f432c75b95c703a92392c3",
       "reason": "Uses existing UniSpace HostObjectContextGate and LoadLibraryLensPlan; no source hydration, permission or DBR grant"
     },
     {
@@ -591,7 +591,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs",
-      "git_blob_sha1": "0602852bd71248bd3244b4dd2e4cbbef4b3c9b78",
+      "git_blob_sha1": "fb58bc411b40722104a81811145a42c7a9d74680",
       "reason": "Node interop and negative source/rights/collision tests with synthetic host responses only"
     },
     {
