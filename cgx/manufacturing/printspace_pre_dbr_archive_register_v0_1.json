@@ -209,8 +209,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/review_gate.py",
-      "git_blob_sha1": "401f17e152d0b1d4f3cca95f1a65e631da66b7bc",
-      "reason": "Canonical source-hash-bound process and optional H0 geometry review gate; one CGX manufacturing IR, physical execution stays separate."
+      "git_blob_sha1": "9ea0edfef002cee340b3c5f1208cbb60019300da",
+      "reason": "Current source-hash-bound canonical CGX manufacturing IR review, including the directed witness interface planning projection"
     },
     {
       "id": "PC01-PROT-007",
@@ -340,6 +340,22 @@
       "path": "cgx/manufacturing/exact_contact.py",
       "git_blob_sha1": "580093dabcefbe4ba3fa471c7cc65b00ed9386ea",
       "reason": "Active bounded exact rational convex contact analysis; reused by composition; independent physical interface qualification remains unverified."
+    },
+    {
+      "id": "PC01-PROT-023",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/interface_qualification.py",
+      "git_blob_sha1": "787e0a11cc5d909840717f602a1ad38241e59618",
+      "reason": "Canonical PrintSpace read-only source-index and directed material-coupon planning adapter; does not authenticate external receipts"
+    },
+    {
+      "id": "PC01-PROT-024",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json",
+      "git_blob_sha1": "a2236e3873e1053b7d409743fcd1bb43db13de17",
+      "reason": "Synthetic source-matrix row selection fixture for unmeasured four-direction witness-plan testing; no material lot evidence"
     }
   ],
   "archive_review_gates": [
