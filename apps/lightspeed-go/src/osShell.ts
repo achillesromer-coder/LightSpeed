@@ -1,4 +1,6 @@
 import "./osShell.css";
+import cgxStudioSource from "../../../docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json?raw";
+import { mountCgxGeneratedGui } from "./cgxGeneratedGui";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
 import {
   AGENT_ROLES,
@@ -381,6 +383,25 @@ const installShell = (): void => {
   shell.prepend(makeWorkflow());
   shell.prepend(makeStatusStrip());
   document.body.append(makePalette());
+
+  // Mount the existing source-qualified .cgx Interface Studio projection inside
+  // the SAME UniSpace shell. It never replaces legacy views or hosts a runtime.
+  const tabRail = shell.querySelector<HTMLElement>(".tabs");
+  if (tabRail) {
+    const generated = document.createElement("section");
+    generated.id = "ls-cgx-generated-gui";
+    generated.className = "ls-cgx-generated-gui";
+    generated.setAttribute("aria-label", "Generated Cognigrex FileSpace operator interface");
+    tabRail.after(generated);
+    try {
+      mountCgxGeneratedGui(generated, cgxStudioSource, (view) => setActiveView(view));
+    } catch {
+      // A damaged or unqualified contract must never prevent the old shell
+      // from loading; there is no auto-fetch, execution or silent fallback.
+      generated.textContent = "Generated .cgx layout held: review the source schema. Existing UniSpace views remain available.";
+      generated.dataset.sourceState = "held";
+    }
+  }
 
   const heading = shell.querySelector(".topbar h1");
   if (heading) heading.textContent = "UniSpace";
