@@ -469,7 +469,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/build_printspace_studio.py",
-      "git_blob_sha1": "294b1fd993f47f82718559832aea5217f64f0200",
+      "git_blob_sha1": "b175dd105c495500d49a5fab48f29ec86a51940c",
       "reason": "Existing offline viewer generator extended to pin bundle/H0 export hashes, no source or machine authority promotion"
     },
     {
@@ -502,7 +502,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx.py",
-      "git_blob_sha1": "b3eba9f85d868d460eacc1356adf855cb1ced727",
+      "git_blob_sha1": "8b9b0a89a426e512072ee62e3cb0d297ad071b48",
       "reason": "Deterministic portable CGX FileSpace faceted graph, bounded H0 and selective hydration, compression transport and original catalogue reverse source; no native rights or machine access"
     },
     {
@@ -510,7 +510,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx_bundle_v0_1.json",
-      "git_blob_sha1": "cf92b67338b0b6e25a4c5bbf279a5f5c987c192e",
+      "git_blob_sha1": "8362ea0fbc05dff11424a118322f0a495c9413a0",
       "reason": "80 source-pinned conceptual object facets; exact canonical hash graph; no actual CAD/material/source bytes embedded"
     },
     {
@@ -518,7 +518,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx_h0_v0_1.json",
-      "git_blob_sha1": "78d8621d9b92ca5c58b1e988be265f1f275cdfaa",
+      "git_blob_sha1": "3496f18b38400941ee65e566674ca88871de9a30",
       "reason": "Nonhydrating Load.Lite H0 product root aliases and SHA, no private/source payload bytes or native lease"
     },
     {
@@ -526,7 +526,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx_lite_v0_1.json",
-      "git_blob_sha1": "39d10383568ca6f021aed4520ced19bd8cd8f108",
+      "git_blob_sha1": "204370b11898ad84ad9ac0c3596f22396bf0f3c4",
       "reason": "Deterministic conventional zlib transport fixture, bounded decompression and canonical SHA readback, NOT native ternary compression"
     },
     {
@@ -534,7 +534,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/build_printspace_cgx_bundle.py",
-      "git_blob_sha1": "e4b45b91855055ecacd6d09cddaabd552e08f3bf",
+      "git_blob_sha1": "586b3827c9871168707c1252645799e9d42f4130",
       "reason": "Reproducible source-to-graph H0 and portable lite builder with --check drift gating"
     },
     {
@@ -542,7 +542,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "tests/test_printspace_cgx_bundle.py",
-      "git_blob_sha1": "8333df14dbf5b4f9d6bee075bc6d228c0157e594",
+      "git_blob_sha1": "218adcb7ce8c54b897fb7a69ab7b0d56357eab65",
       "reason": "Offline bundle integrity, selective nested product hydration, rights denial, tamper checks, source-replay regression"
     },
     {
@@ -550,7 +550,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "docs/engineering/PRINTSPACE_CGX_FILESPACE_FACETS_2026-11-22.md",
-      "git_blob_sha1": "9ad57c17515d6e76748db2bc1451cbe0ded73be8",
+      "git_blob_sha1": "e5d75fbe7707d997769485eb3329fe030c79c5cb",
       "reason": "Source and rights qualification architecture, product manufacturing and owner/native DBR acceptance conditions"
     }
   ],
