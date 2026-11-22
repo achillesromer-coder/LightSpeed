@@ -1,0 +1,31 @@
+name: CGX Automation Archive Source Review
+
+on:
+  push:
+    branches:
+      - review/cgx-living-consolidation-20261118
+    paths:
+      - tools/cgx_automation_archive_review.py
+      - tests/test_cgx_automation_archive_review.py
+      - .github/workflows/cgx-automation-archive-review.yml
+  pull_request:
+    paths:
+      - tools/cgx_automation_archive_review.py
+      - tests/test_cgx_automation_archive_review.py
+      - .github/workflows/cgx-automation-archive-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fail-closed-source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bounded source-only negative tests (no provider credentials)
+        run: python -m unittest discover -s tests -p test_cgx_automation_archive_review.py -v
