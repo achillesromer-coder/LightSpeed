@@ -69,7 +69,7 @@ const safe=(s:unknown,max=112):s is string=>typeof s==="string"&&s.length>0&&s.l
 const themes:SpatialTheme[]=["neutral","forest","industrial","cosmos","arcade"];
 const lights:SpatialLight[]=["day","dusk","night"];
 const kinds:SpatialNodeKind[]=["facet","grex","game","profile","object"];
-const workspaces:CgxShellWorkspace[]=["command","activity","objects","sources","filespace"];
+const workspaces:CgxShellWorkspace[]=["command","activity","objects","sources","filespace","system"];
 const layers:SpatialNodeLayer[]=["ground","overlay"];
 const relations:SpatialRelation[]=["related","depends_on","gateway"];
 
@@ -228,13 +228,13 @@ export function createSpatialHomebase(plan:CgxGeneratedGuiPlan):SpatialHomebase{
     {id:"eco-evidence",label:"Environmental evidence",room:"eco",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"sources",sourceRef:null,targetRoom:null},
     {id:"romer-systems",label:"System architecture",room:"romer",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:"objects",sourceRef:null,targetRoom:null},
     {id:"romer-files",label:"FileSpace references",room:"romer",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"filespace",sourceRef:null,targetRoom:null},
-    {id:"game-worlds",label:"World collection",room:"games",kind:"object",layer:"ground",x:3,y:4,w:4,h:2,facet:null,workspace:null,sourceRef:null,targetRoom:null},
+    {id:"game-worlds",label:"World collection",room:"games",kind:"object",layer:"ground",x:3,y:4,w:4,h:2,facet:null,workspace:"filespace",sourceRef:null,targetRoom:null},
     {id:"game-profiles",label:"Player profiles",room:"games",kind:"profile",layer:"ground",x:10,y:4,w:4,h:2,facet:null,workspace:"activity",sourceRef:null,targetRoom:null},
     {id:"desporte-state",label:"Persistence review",room:"desporte",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:"sources",sourceRef:null,targetRoom:null},
     {id:"desporte-receipts",label:"Recovery receipts",room:"desporte",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"activity",sourceRef:null,targetRoom:null},
     {id:"raphael-shapes",label:"Geometry catalogue",room:"raphael",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:"objects",sourceRef:null,targetRoom:null},
     {id:"raphael-evidence",label:"Scientific evidence",room:"raphael",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"sources",sourceRef:null,targetRoom:null},
-    {id:"achilles-oversight",label:"Local oversight",room:"achilles",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:null,sourceRef:null,targetRoom:null},
+    {id:"achilles-oversight",label:"Local oversight",room:"achilles",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:"system",sourceRef:null,targetRoom:null},
     {id:"achilles-reviews",label:"Governance reviews",room:"achilles",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"activity",sourceRef:null,targetRoom:null},
     {id:"neo-command",label:"Command intake",room:"neo",kind:"object",layer:"ground",x:2,y:3,w:4,h:2,facet:null,workspace:"command",sourceRef:null,targetRoom:null},
     {id:"neo-routing",label:"Agent routing",room:"neo",kind:"object",layer:"ground",x:9,y:3,w:4,h:2,facet:null,workspace:"activity",sourceRef:null,targetRoom:null},
