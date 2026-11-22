@@ -226,7 +226,7 @@ export function mountCgxGeneratedGui(
     preview.innerHTML = renderCgxGeneratedGuiMarkup(plan, selected);
     preview.querySelectorAll<HTMLButtonElement>("[data-cgx-gui-tab]").forEach((button) => {
       button.addEventListener("click", () => {
-        selected = button.dataset.cgxGuiTab;
+        selected = button.dataset.cgxGuiTab || plan.panels[0]?.id;
         paint();
       });
     });
