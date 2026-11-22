@@ -18,7 +18,7 @@ html_template=r'''<!doctype html>
 </style>
 </head>
 <body><div class="shell">
-<header><div class="brand"><div class="mark">P</div><div><strong>PrintSpace <span style="font-weight:400;color:#9edbd0">Studio</span></strong><small>CGX · UniSpace · Digital manufacturing</small></div></div><div class="headRight"><span class="flag">UNQUALIFIED DIGITAL DEMONSTRATOR</span><button id="exportBtn" aria-label="Export read-only scene JSON">Export scene JSON</button></div></header>
+<header><div class="brand"><div class="mark">P</div><div><strong>PrintSpace <span style="font-weight:400;color:#9edbd0">Studio</span></strong><small>CGX · UniSpace · Digital manufacturing</small></div></div><div class="headRight"><span class="flag">UNQUALIFIED DIGITAL DEMONSTRATOR</span><button id="exportBtn" aria-label="Export read-only scene JSON">Export scene JSON</button><button id="cgxH0Btn" aria-label="Export zero-hydration CGX source handshake">CGX H0</button><button id="cgxBundleBtn" aria-label="Export self-contained, read-only CGX object package">CGX Package</button></div></header>
 <section class="hero"><div><div class="eyebrow">Universal assembly and machine viewer · v0.1</div><h1>From a single diode to a complete<br/>system-scale assembly.</h1><p>Explore printer configurations, conceptual parts, process sequences, and terrestrial or in-situ environments. All geometry and machine dimensions here are illustrative—no verified CAD, actual toolpaths or hardware actuation.</p></div><div class="summary"><div class="mini"><strong>7</strong><span>Printer roles</span></div><div class="mini"><strong>3</strong><span>Product levels</span></div><div class="mini"><strong>756</strong><span>Scenario grid</span></div></div></section>
 <div class="main">
 <aside class="panel p15"><h2 class="title">01 / Assembly selection</h2><div class="formField"><label for="product">Product hierarchy</label><select id="product"></select></div><div class="formField"><label for="printer">Printer-family projection</label><select id="printer"></select></div><div class="formField"><label for="environment">Operating environment</label><select id="environment"></select></div><div class="divider"></div><h2 class="title">02 / Variable scale</h2><div class="formField"><div class="sliderLine"><label for="scale">Product geometric scale</label><strong id="scaleVal">1.00×</strong></div><input id="scale" type="range" min="0.25" max="4" step="0.05" value="1" /></div><div class="formField"><div class="sliderLine"><label for="printerScale">Synthetic printer scale</label><strong id="printerScaleVal">1.00×</strong></div><input id="printerScale" type="range" min="0.5" max="4" step="0.05" value="1" /></div><div class="formField"><div class="sliderLine"><label for="explode">Assembly exploded view</label><span id="explodeVal">0%</span></div><input id="explode" type="range" min="0" max="100" step="1" value="18" /></div><label class="switch"><input type="checkbox" id="showPrinter" checked /> Show printer and table</label><label class="switch"><input type="checkbox" id="showHidden" /> Ghost unreached stages</label><div class="divider"></div><h2 class="title">03 / Digital envelope</h2><div class="stat"><div><b id="modelDim">—</b><small>Product bounds mm</small></div><div><b id="bedDim">—</b><small>Synthetic bed mm</small></div><div><b id="partCount">—</b><small>Conceptual parts</small></div><div><b id="stepCount">—</b><small>Process stages</small></div></div><p class="tiny" id="fitNote" style="margin:12px 0 0"></p></aside>
@@ -29,10 +29,15 @@ html_template=r'''<!doctype html>
 <div class="footer">© CGX PrintSpace digital demonstrator. Self-contained offline viewer; locally generated illustrative geometry only. No backend, actuator, payment, remote telemetry, machine instruction, rights or technical certification is provided.</div>
 </div>
 <script id="catalogData" type="application/json">CATALOG_JSON</script>
+<script id="cgxData" type="application/json">CGX_BUNDLE_JSON</script>
+<script id="cgxH0Data" type="application/json">CGX_H0_JSON</script>
 <script>
 (()=>{
 'use strict';
 const C=JSON.parse(document.getElementById('catalogData').textContent);
+// Generated from the same catalogue at build time. Hashes are not owner attestations.
+const CGX=JSON.parse(document.getElementById('cgxData').textContent);
+const H0=JSON.parse(document.getElementById('cgxH0Data').textContent);
 const beds={structural:[350,350,240],functional:[200,200,100],fiber:[420,360,200],hybrid:[300,300,180],feedstock:[300,300,180],metrology:[450,450,240],mobile:[190,200,140]};
 const el=id=>document.getElementById(id);
 const state={product:'diode',printer:'hybrid',env:'terrestrial',scale:1,printerScale:1,explode:18,stage:0,yaw:-0.69,elev:.70,zoom:1.0,showPrinter:true,showHidden:false,playing:false};
@@ -75,6 +80,9 @@ function play(){if(state.playing){stop();return}state.playing=true;el('play').te
 el('play').addEventListener('click',play);el('prev').addEventListener('click',()=>{stop();state.stage=Math.max(0,state.stage-1);sync()});el('next').addEventListener('click',()=>{stop();state.stage=Math.min(p().steps.length-1,state.stage+1);sync()});el('stage').addEventListener('input',e=>{stop();state.stage=Number(e.target.value);sync()});el('scale').addEventListener('input',e=>{state.scale=Number(e.target.value);sync()});el('printerScale').addEventListener('input',e=>{state.printerScale=Number(e.target.value);sync()});el('explode').addEventListener('input',e=>{state.explode=Number(e.target.value);sync()});el('showPrinter').addEventListener('change',e=>{state.showPrinter=e.target.checked;requestDraw()});el('showHidden').addEventListener('change',e=>{state.showHidden=e.target.checked;requestDraw()});el('resetCamera').addEventListener('click',()=>{state.yaw=-.69;state.elev=.7;state.zoom=1;requestDraw()});el('presetIso').addEventListener('click',()=>{state.yaw=-.69;state.elev=.7;requestDraw()});el('presetTop').addEventListener('click',()=>{state.elev=1.52;requestDraw()});
 canvas.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw:state.yaw,elev:state.elev};canvas.setPointerCapture(e.pointerId)});canvas.addEventListener('pointermove',e=>{if(!drag)return;state.yaw=drag.yaw+(e.clientX-drag.x)*.009;state.elev=Math.min(1.55,Math.max(.19,drag.elev+(e.clientY-drag.y)*.008));requestDraw()});canvas.addEventListener('pointerup',()=>drag=null);canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('wheel',e=>{e.preventDefault();state.zoom=Math.min(3.5,Math.max(.35,state.zoom*(e.deltaY<0?1.08:.92)));requestDraw()},{passive:false});
 el('exportBtn').addEventListener('click',()=>{const data=JSON.stringify({schema:'CGX-PRINTSPACE-VIEWER-EXPORT/0.1',catalogue_sha256:'CAT_SHA',selection:makeScene(),evidence_status:'UNQUALIFIED_SYNTHETIC_VIEW',physical_machine_authorised:false,native_dbr_written:false,scene_source:'OFFLINE_BROWSER_DEMO'},null,2);const blob=new Blob([data],{type:'application/json'});const url=URL.createObjectURL(blob);const anchor=document.createElement('a');anchor.href=url;anchor.download='printspace-digital-view-'+state.product+'.json';anchor.click();setTimeout(()=>URL.revokeObjectURL(url),500)});
+function exportCGX(data,name){const blob=new Blob([JSON.stringify(data,null,2)+'\n'],{type:'application/json'});const href=URL.createObjectURL(blob);const link=document.createElement('a');link.href=href;link.download=name;link.click();setTimeout(()=>URL.revokeObjectURL(href),500)}
+el('cgxH0Btn').addEventListener('click',()=>exportCGX(H0,'PrintSpace.LOAD.Lite.H0.cgx.json'));
+el('cgxBundleBtn').addEventListener('click',()=>exportCGX(CGX,'PrintSpace.FileSpace.Bundle.cgx.json'));
 if('ResizeObserver' in window)new ResizeObserver(requestDraw).observe(canvas);window.addEventListener('resize',requestDraw);el('catalogSha').textContent='CAT_SHA';sync();
 window.__printspaceTest={state,makeScene,select:(product,printer,environment,scale,step)=>{Object.assign(state,{product,printer,env:environment,scale,stage:step});for(const id of ['product','printer','environment'])el(id).value=state[id==='environment'?'env':id];sync();return makeScene()},catalogue:C};
 })();
@@ -82,7 +90,15 @@ window.__printspaceTest={state,makeScene,select:(product,printer,environment,sca
 </body></html>'''
 # JSON text is restricted and any '<' avoided in script-owned data
 embedded=json.dumps(catalog,ensure_ascii=True,separators=(',',':')).replace('<','\\u003c')
-html_out=html_template.replace('CATALOG_JSON',embedded).replace('CAT_SHA',hashvalue)
+bundle=json.loads((base/'cgx/manufacturing/printspace_cgx_bundle_v0_1.json').read_text(encoding='utf-8'))
+h0=json.loads((base/'cgx/manufacturing/printspace_cgx_h0_v0_1.json').read_text(encoding='utf-8'))
+assert bundle['source_catalogue_sha256']==hashvalue, 'CGX bundle points to stale source catalogue'
+assert h0['bundle_sha256']==bundle['bundle_sha256'], 'CGX H0 mismatch'
+assert bundle['machine_authorised'] is False and bundle['native_load_hydration'] is False
+cgx_embedded=json.dumps(bundle,ensure_ascii=True,separators=(',',':')).replace('<','\\u003c')
+h0_embedded=json.dumps(h0,ensure_ascii=True,separators=(',',':')).replace('<','\\u003c')
+html_out=(html_template.replace('CATALOG_JSON',embedded).replace('CAT_SHA',hashvalue)
+          .replace('CGX_BUNDLE_JSON',cgx_embedded).replace('CGX_H0_JSON',h0_embedded))
 out=base/'cgx/manufacturing/printspace_studio_v0_1.html'
 if '--check' in __import__('sys').argv:
     if not out.is_file() or out.read_text(encoding='utf-8')!=html_out:
