@@ -81,3 +81,19 @@ It validates candidate geometry identity/units/source, the reserved T174 sentine
 
 **Still open:** exact 411-row owner-matrix ingestion and per-row revision crosswalk, verified geometry/rights admission, machine and material source lots, measured coupon experiments, link from actual `compile_component` output to the per-operation review envelope, public library entitlement/billing, and actual C0 integration only following commissioning.
 
+
+## 22 November operational batching and RDC reserve policy
+
+**Owner-supplied current budget:** treat **25% RDC calls remaining** as the protected normal reserve and **24% remaining** as the emergency floor. Do not spend routine Remote Desktop Commander calls at or below 25%. Any emergency draw requires an explicit consequence and approval; never run unknown, restart or destructive local commands simply to consume budget. This is a policy declaration, not an independent connector-usage readback. The review work below used **no RDC calls**.
+
+The bounded runner lives at `scripts/run_cgx_printspace_batch.py` and uses the existing canonical LightSpeed repository and tests. It is not an additional root scheduler, agent, database, or print execution service. Its CLI exposes only named allowlisted test profiles, a fixed local repo root, bounded step/total timeout and an inter-stage rest. Each stage serially exits before the next begins; it writes a checkpoint JSON atomically after completion, plus each stage's log, length and SHA-256. A timeout/failure stops the remaining sequence and returns a nonzero exit code. Test-only PASS cannot promote physical evidence or permissions.
+
+For an **already verified local checkout of this branch** (after installing `pytest`), operators may choose a single explicit execution:
+
+```powershell
+python scripts/run_cgx_printspace_batch.py --profile comprehensive --step-limit-seconds 240 --total-limit-seconds 1200 --rest-seconds 2 --output-dir "$env:TEMP\cgx-printspace-batches"
+```
+
+The CI path runs the same allowed comprehensive profile inside a GitHub-hosted checkout, uses the CI temporary directory for receipts, and uploads an artifact named `pc01-printspace-sequential-regression` irrespective of test outcome. Review those checkpoints and GitHub Actions outcome before attempting any next phase. CI does not need local network access, RDC, or machine control. This script does not fetch remote assets, change hardware, restart local services, make commits, mint or publish.
+
+**Backpressure:** only one child test command runs at a time; the short pause is a configurable cooling interval, not a measured CPU/thermal safety monitor. Do not claim it protects an overloaded local workstation without independent telemetry. Full local run was not performed during this GitHub-only commit.
