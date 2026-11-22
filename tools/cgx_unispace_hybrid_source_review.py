@@ -9,9 +9,12 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
-from .cgx_automation_archive_review import review as review_archive
-from .cgx_unispace_branch_convergence import review_git_snapshot, ROOT
-from .cgx_unispace_overlap_review import review_overlap
+import sys
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from tools.cgx_automation_archive_review import review as review_archive
+from tools.cgx_unispace_branch_convergence import review_git_snapshot, ROOT
+from tools.cgx_unispace_overlap_review import review_overlap
 
 SCHEMA = "CGX-UNISPACE-HYBRID-SOURCE-PROJECTION/0.1"
 SPACES = ("FileSpace","DataSpace","SocialSpace","PrintSpace","IntelligenceSpace")
