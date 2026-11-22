@@ -700,6 +700,46 @@
       "artifact_id": 14738334759,
       "archive_sha256": "fdd7052ef255348d000dd83d915e0ca4da97f3ce0ba0872725cd4d2c7c128df9",
       "reason": "Independent 25-stage CGX PrintSpace sequential CI receipt with no log-byte/SHA256 mismatches, including bounded Node R0 batch review and 256/512-case synthetic Ed25519 sweeps tested in LightSpeed GO. No persistent host nonce ledger, rights or actual PC01 release. Provider expiry 2026-12-22; authorised durable owner retention pending."
+    },
+    {
+      "id": "PC01-PROT-067",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0AtomicReview.mjs",
+      "git_blob_sha1": "8a2fdc4b2a2c35764521097a16ec3256bcecc0c2",
+      "reason": "Fail-closed signed R0 verify-first host atomic nonce adapter; no authenticated owner ledger or native release"
+    },
+    {
+      "id": "PC01-PROT-068",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0AtomicReview.test.mjs",
+      "git_blob_sha1": "6d238bd3828101ffaba76deeab677365e4ad9b3e",
+      "reason": "Real Ed25519 synthetic signatures; host SQLite worker concurrency, cross-product duplicates, restart and unavailable-ledger negative tests"
+    },
+    {
+      "id": "PC01-PROT-069",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/printspace_r0_sqlite_reference_ledger.py",
+      "git_blob_sha1": "59e33891cb77bc019b92549dadb2cac31debd7c7",
+      "reason": "Isolated test-only SQLite WAL atomic unique nonce insert; not owner production DBR or persistent service"
+    },
+    {
+      "id": "PC01-PROT-070",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_r0_atomic_ledger_smoke.py",
+      "git_blob_sha1": "fb24aeac72c355c40aa35be951b54e013f5ea614",
+      "reason": "Parallel test subprocesses prove isolated transaction uniqueness and malformed input denial"
+    },
+    {
+      "id": "PC01-PROT-071",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_ATOMIC_LEDGER_REFERENCE_2026-11-22.md",
+      "git_blob_sha1": "ff757a11558af3bf23f852c3c97099dad818f489",
+      "reason": "Exact host integration, independent trust/root/source/rights gating and empirical ledger requirements"
     }
   ],
   "archive_review_gates": [
