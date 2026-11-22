@@ -22,6 +22,7 @@ from .composition import compile_geometry_composition, digest
 from .solid_metrics import measure_composite_nominal
 from .interface_qualification import plan_interface_witnesses
 from .review_gate import review_existing_manufacturing_ir
+from .tolerance_clearance import screen_static_tolerances
 
 SCHEMA = "CGX-PRINTSPACE-DIGITAL-SERVICE-STACK/0.1"
 BACKTRACE_SCHEMA = "CGX-PRINTSPACE-DIGITAL-SERVICE-BACKTRACE/0.1"
@@ -101,13 +102,15 @@ def _jsonable_limited(*args: Any) -> bool:
 
 
 def compile_digital_service_stack(manufacturing_ir: Any, geometry_request: Any,
-                                  interface_selections: Any, process_packet: Any = None) -> dict:
+                                  interface_selections: Any, process_packet: Any = None,
+                                  *, clearance_plan: Any = None) -> dict:
     """Bottom-up deterministic provenance DAG, NOT a machine/physical build."""
     if (not isinstance(manufacturing_ir, dict) or not isinstance(geometry_request, dict)
             or not isinstance(interface_selections, dict)
-            or (process_packet is not None and not isinstance(process_packet, dict))):
+            or (process_packet is not None and not isinstance(process_packet, dict))
+            or (clearance_plan is not None and not isinstance(clearance_plan, dict))):
         return _hold("SERVICE_INPUT_SCHEMA")
-    if not _jsonable_limited(manufacturing_ir, geometry_request, interface_selections, process_packet):
+    if not _jsonable_limited(manufacturing_ir, geometry_request, interface_selections, process_packet, clearance_plan):
         return _hold("SERVICE_INPUT_NONCANONICAL_OR_OVERSIZE")
     if manufacturing_ir.get("schema") != IR_SCHEMA:
         return _hold("CANONICAL_IR_SCHEMA")
@@ -146,6 +149,18 @@ def compile_digital_service_stack(manufacturing_ir: Any, geometry_request: Any,
             or plan["geometry_composite_sha256"] != geometry["geometry_composite_hash"]
             or metrics["geometry_composite_hash"] != geometry["geometry_composite_hash"]):
         return _hold("INTER_STAGE_SOURCE_REF_DRIFT")
+
+    # Optional, specifically bounded STATIC keep-out analysis attaches to the
+    # existing twelve services; it cannot create a machine/path certification.
+    # No option retains the exact previous service root for existing consumers.
+    static_clearance = None
+    if clearance_plan is not None:
+        static_clearance = screen_static_tolerances(geometry_request, clearance_plan, geometry)
+        if static_clearance.get("state") != "SCREENED_STATIC_DIGITAL_ONLY":
+            return _hold("STATIC_TOLERANCE_OR_KEEP_OUT_UNRESOLVED")
+        if (static_clearance.get("manufacturing_ir_ref") != uri or
+            static_clearance.get("manufacturing_ir_configuration_hash") != ir_sha):
+            return _hold("STATIC_CLEARANCE_IR_MISMATCH")
 
     # The existing review gate is the only process review; a source-class plan
     # can never create actual material, geometry, tool or C0 evidence.
@@ -243,6 +258,15 @@ def compile_digital_service_stack(manufacturing_ir: Any, geometry_request: Any,
                               "machine_authorised": False, "mint_authorised": False,
                               "commercial_release_authorised": False},
     }
+    if static_clearance is not None:
+        data["G1_EXACT_CONTACT"]["static_screen_sha256"] = static_clearance["screen_sha256"]
+        data["G1_EXACT_CONTACT"]["synthetic_normal_gap_budgets_um"] = [
+            {"from": x["from"], "to": x["to"], "um": x["possible_normal_gap_um"]}
+            for x in static_clearance["interface_uncertainty"]
+        ]
+        data["E0_ENVIRONMENT_CONTROL"]["synthetic_fixed_keepout_screen"] = "DIGITAL_ONLY"
+        data["E0_ENVIRONMENT_CONTROL"]["machine_toolpath_and_swept_geometry_evidence"] = None
+        data["S0_FUNCTIONAL_SERVICE_SCOPES"]["static_tolerance_source"] = "UNMEASURED_SYNTHETIC"
     status = {
         "R0_SOURCE": "SOURCE_SNAPSHOT_ONLY",
         "G0_NOMINAL_SOLIDS": "DIGITAL_REVIEW",
@@ -310,20 +334,28 @@ def compile_digital_service_stack(manufacturing_ir: Any, geometry_request: Any,
         "commercial_release_authorised": False,
         "load_mode": "H0_NONHYDRATING",
     }
+    if static_clearance is not None:
+        envelope["input_sha256s"]["clearance_plan"] = digest(clearance_plan)
+        envelope["static_screen_sha256"] = static_clearance["screen_sha256"]
+        envelope["static_screen_state"] = static_clearance["state"]
+        envelope["static_screen_risks"] = static_clearance["collision_risk_identifiers"]
+        envelope["hold_codes"].append("STATIC_SCREEN_NOT_PHYSICAL_TOOLPATH_CERTIFICATION")
     envelope["manifest_sha256"] = digest(envelope)
     return envelope
 
 
 def verify_digital_service_stack_backwards(bundle: Any, manufacturing_ir: Any,
                                            geometry_request: Any, interface_selections: Any,
-                                           process_packet: Any = None) -> dict:
+                                           process_packet: Any = None,
+                                           *, clearance_plan: Any = None) -> dict:
     """Recompile original inputs, then verify every stage in REVERSE dependency order.
 
     Not a proof of external source authenticity or measured physics. No
     witness claims can be accepted merely because a self-hashed bundle exists.
     """
     expected = compile_digital_service_stack(
-        manufacturing_ir, geometry_request, interface_selections, process_packet
+        manufacturing_ir, geometry_request, interface_selections, process_packet,
+        clearance_plan=clearance_plan,
     )
     if not isinstance(bundle, dict) or expected["state"] != "DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD":
         return {"schema": BACKTRACE_SCHEMA, "state": "HOLD", "mismatch_layers": list(STAGE_ORDER),
