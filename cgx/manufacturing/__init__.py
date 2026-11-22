@@ -108,3 +108,15 @@ __all__.append("screen_static_tolerances")
 # Bounded analytical electrothermal / mechanical factorial screening. Not a solver or host control.
 from .cross_domain_emulation import run_cross_domain_emulation, equation_kernel_fingerprint
 __all__.extend(["run_cross_domain_emulation", "equation_kernel_fingerprint"])
+
+# Optional non-actuating third-party product and printer viewer projection.
+from .virtual_factory import (
+    load_catalogue as load_virtual_factory_catalogue,
+    compile_scene as compile_virtual_factory_scene,
+    reverse_scene as reverse_virtual_factory_scene,
+    sweep_scenarios as sweep_virtual_factory_scenarios,
+)
+__all__.extend([
+    "load_virtual_factory_catalogue", "compile_virtual_factory_scene",
+    "reverse_virtual_factory_scene", "sweep_virtual_factory_scenarios",
+])
