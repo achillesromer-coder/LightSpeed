@@ -15,6 +15,7 @@ on:
       - cgx/review/unispace_source_path_overlap_20261122.json
       - tools/cgx_unispace_hybrid_source_review.py
       - tests/test_cgx_unispace_hybrid_source_review.py
+      - docs/architecture/CGX_UNISPACE_BATCH_CONVERGENCE_20261122.md
       - .github/workflows/cgx-automation-archive-review.yml
   pull_request:
     paths:
@@ -28,6 +29,7 @@ on:
       - cgx/review/unispace_source_path_overlap_20261122.json
       - tools/cgx_unispace_hybrid_source_review.py
       - tests/test_cgx_unispace_hybrid_source_review.py
+      - docs/architecture/CGX_UNISPACE_BATCH_CONVERGENCE_20261122.md
       - .github/workflows/cgx-automation-archive-review.yml
   workflow_dispatch:
 
