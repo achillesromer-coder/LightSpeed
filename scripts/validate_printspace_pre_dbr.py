@@ -40,6 +40,7 @@ EXPECTED_PROTECTED = {
     "cgx/manufacturing/binding.py",
     "cgx/manufacturing/volumetric.py",
     "cgx/manufacturing/composition.py",
+    "cgx/manufacturing/exact_contact.py",
     "cgx/manufacturing/printspace_composite_pilot_v0_1.json",
     "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
     "tools/verify_unispace_product.py",
