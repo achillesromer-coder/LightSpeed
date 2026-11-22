@@ -122,3 +122,15 @@ def test_public_archive_gate_never_applies_to_protected_source():
     row["protected_active"][0]["disposition"] = "READY_FOR_ACHILLES_ARCHIVE_REVIEW"
     with pytest.raises(module.RegisterHold):
         module.validate_register(row)
+
+
+def test_stale_current_review_gate_git_blob_is_rejected():
+    row = proposal()
+    for protected in row["protected_active"]:
+        if protected.get("path") == "cgx/manufacturing/review_gate.py":
+            protected["git_blob_sha1"] = "0" * 40
+            break
+    else:
+        raise AssertionError("current review gate is not protected")
+    with pytest.raises(module.RegisterHold, match="stale protected active Git blob"):
+        module.validate_register(row)
