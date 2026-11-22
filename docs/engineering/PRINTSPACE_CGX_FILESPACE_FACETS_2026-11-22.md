@@ -45,3 +45,49 @@ Build order: `python scripts/build_printspace_cgx_bundle.py` → `python scripts
 **Before a complete commercially printable phone:** separately qualify the board, semiconductor processes, encapsulation, power storage, RF/EMC, antenna integration, display, camera, mechanical reliability, thermal safety and all externally sourced/licensed parts. Choose a hybrid multi-process network when warranted. A user-facing product claim must be narrower than the actual independent measurements and standards verification.
 
 **Retention and reserves:** pre-DBR register protects current canonical sources and evidence; historical candidates are proposals only. No deletions, archive moves, signed mint/DBR or machine operations are authorised by this module. No RDC calls required; preserve the user-declared 25% normal reserve and 24% emergency floor.
+
+## In-place single-root facet routing and representation selection (RC 0.1.0-rc.2)
+
+This revision **edits** the existing `printspace_cgx.py`, the same generated
+single-window Studio, and the existing private software packager; it creates no
+new FileSpace, DataSpace, resident inference engine, source corpus, or CGX root.
+The pre-existing UniSpace five-contract-facet source design is reviewed in
+separate draft PR #232, so the lightweight PrintSpace projection explicitly
+does **not** imply that that PR has been merged, installed or admitted.
+
+`project_space_context()` requires the original source catalogue, its exact
+80-facet rebuilt bundle, the independently supplied `domains.json` and
+`cognigrex_parent_topology.json` source objects, and an explicit product and
+workspace facet. It fails closed if their parent/child topology drifts. All
+projections use the single parent `Cognigrex.cgx` and existing child `Romer.cgx`.
+The existing H0 namespace now identifies that child-scoped PrintSpace view as
+`cgx://romer.industries/romer/printspace/` rather than suggesting an independent
+`cgx://printspace/` root. Regenerate the existing H0 fixture, native R0 review
+fixture and offline HTML from the original catalogue, **never patch hashes**.
+
+Five UI/workspace views share the same underlying symbolic facets:
+
+- **FileSpace:** content-addressed H0 references and alias graph; zero private bodies
+- **DataSpace:** source/evidence references only, zero authenticated measurements
+- **PrintSpace:** bounded digital box geometry and process stages, non-actuating
+- **IntelligenceSpace:** source-aware planning only, zero model inference
+- **SocialSpace:** provenance context only, zero messages or publication
+
+This is a *projection of already owned objects*, not five parallel services.
+The UI selects the view in its existing left-side panel while preserving the
+same canvas, source bundle, product and printer selectors. All scene exports
+carry their selected workspace facet and explicit false authority flags.
+
+**Representation decision:** the canonical JSON compatibility representation is
+usable for the independently replayed symbolic catalogue. Requests for native
+ternary transport or T173 exact mesh admission are **HOLD**, because no genuine
+encoder, accepted T173 coordinates/incidence and geometry proof, source rights or
+machine authorisation has been supplied. T174 remains the non-mintable sentinel.
+It would be scientifically unsound to silently treat a synthetic axis-aligned
+box as a validated Raphael solid, or ordinary zlib as native CGX ternary storage.
+
+`verify_space_context_back_down()` recompiles the projection against all four
+original inputs and rejects false rights, measurements, root changes or DBR
+claims. Internal hashes remain self-checks; independently authenticated source
+registry, native ACL/DBR, machine C0 and experimental material acceptance remain
+separate production gates. The software RC remains **private**, not public GA.
