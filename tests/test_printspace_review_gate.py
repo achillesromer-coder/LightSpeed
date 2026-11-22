@@ -157,5 +157,67 @@ class PrintSpaceReviewTests(unittest.TestCase):
         self.assertIn("UNKNOWN_OPERATION", c)
 
 
+
+
+class CanonicalIRBindingTests(unittest.TestCase):
+    """Synthetic tests: a declared match does not verify external source evidence."""
+
+    def example(self):
+        from cgx.manufacturing import compile_component, find_archetype, load_default_atlas
+        from cgx.manufacturing import review_existing_manufacturing_ir
+        ir = compile_component(
+            find_archetype(load_default_atlas(), "PN rectifier diode"),
+            build_id="pc01-synthetic",
+        )
+        packet = fixture()
+        packet["manufacturing_ir_ref"] = ir["cgx_uri"]
+        packet["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        return review_existing_manufacturing_ir, ir, packet
+
+    def test_unbound_canonical_ir_cannot_be_overridden_by_synthetic_receipts(self):
+        review, ir, packet = self.example()
+        out = review(ir, packet)
+        self.assertEqual(out["state"], "HOLD")
+        self.assertTrue(out["binding_proof"]["canonical_ir_hash_matched"])
+        codes = {f["code"] for f in out["findings"]}
+        self.assertIn("EXACT_CGXI_UNBOUND", codes)
+        self.assertIn("CANONICAL_IR_BLOCKERS", codes)
+        self.assertIn("CANONICAL_INSTANCE_NOT_READY", codes)
+        self.assertFalse(out["physical_machine_authorised"])
+
+    def test_wrong_uri_and_hash_block_even_when_geometry_review_is_synthetic_pass(self):
+        review, ir, packet = self.example()
+        packet["manufacturing_ir_ref"] = "cgx://manufacturing/build/other"
+        packet["manufacturing_ir_configuration_hash"] = "0" * 64
+        out = review(ir, packet)
+        self.assertEqual(out["state"], "HOLD")
+        codes = {f["code"] for f in out["findings"]}
+        self.assertIn("CANONICAL_IR_URI_MISMATCH", codes)
+        self.assertIn("CANONICAL_IR_HASH_MISMATCH", codes)
+
+    def test_mutated_canonical_ir_requires_rehash_and_review(self):
+        review, ir, packet = self.example()
+        ir["scope_decision"]["included"].pop("material", None)
+        out = review(ir, packet)
+        self.assertEqual(out["state"], "HOLD")
+        self.assertIn("CANONICAL_IR_HASH_MISMATCH", {f["code"] for f in out["findings"]})
+
+    def test_synthetic_ready_instance_still_not_a_machine_licence_or_qualification(self):
+        from cgx.manufacturing.compiler import _canonical_hash
+        review, ir, packet = self.example()
+        ir["instance_ref"] = "CGXI-SYNTHETIC"
+        ir["binding_progress"] = "BUILD_READY"
+        ir["execution_state"] = "BUILD_READY"
+        ir["blockers"] = []
+        ir["configuration_hash"] = _canonical_hash({k: v for k, v in ir.items() if k != "configuration_hash"})
+        packet["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        result = review(ir, packet)
+        self.assertEqual(result["state"], "REVIEW_ONLY")
+        self.assertTrue(result["binding_proof"]["canonical_ir_hash_matched"])
+        self.assertFalse(result["binding_proof"]["trusted_external_receipt"])
+        for field in ("physical_machine_authorised", "mint_authorised", "commercial_release_authorised"):
+            self.assertFalse(result[field])
+
+
 if __name__ == "__main__":
     unittest.main()
