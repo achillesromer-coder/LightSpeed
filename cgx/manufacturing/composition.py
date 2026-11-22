@@ -129,8 +129,8 @@ def compile_geometry_composition(request: dict[str, Any]) -> dict[str, Any]:
         admitted[source["shape_id"]] = {"shape_id": source["shape_id"],
                                         "shape_sha256": canonical["sha256"],
                                         "metrics": canonical["metrics"],
-                                        "vertices": source["vertices_mm"],
-                                        "faces": source["faces"],
+                                        "vertices": [list(v) for v in source["vertices_mm"]],
+                                        "faces": [list(face) for face in source["faces"]],
                                         "rights_ref": source["rights_ref"],
                                         "source_ref": source["source_ref"]}
     nodes = {}
@@ -150,7 +150,7 @@ def compile_geometry_composition(request: dict[str, Any]) -> dict[str, Any]:
             "shape_sha256": src["shape_sha256"],
             "kernel_id": row["kernel_id"],
             "kernel_sha256": digest(kernels[row["kernel_id"]]), "material_slot": row["material_slot"],
-            "translate_mm": row["translate_mm"],
+            "translate_mm": list(row["translate_mm"]),
             "bounds_mm": _aabb(src["vertices"], row["translate_mm"]),
         }
     canonical_interfaces = []
