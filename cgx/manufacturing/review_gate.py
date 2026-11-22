@@ -273,3 +273,71 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict) -> dict:
+    """Bind the read-only PrintSpace preflight to one *actual* canonical CGX IR.
+
+    The standalone compile_review() is useful for proposed processes; this entry
+    point additionally checks the existing component compiler's exact URI,
+    configuration SHA256 and unresolved instance gates. It is NOT a verified
+    material, geometry, tool, lease, source signature or production receipt.
+    """
+    from .compiler import SCHEMA as CANONICAL_IR_SCHEMA, _canonical_hash
+
+    result = compile_review(packet)
+    findings = list(result["findings"])
+
+    def hold(code: str, subject: str, detail: str) -> None:
+        finding = {"code": code, "subject": subject, "detail": detail}
+        if finding not in findings:
+            findings.append(finding)
+
+    result["binding_proof"] = {
+        "state": "DECLARATIONS_AND_LOCAL_HASH_ONLY",
+        "trusted_external_receipt": False,
+        "canonical_ir_hash_matched": False,
+        "canonical_ir_uri_matched": False,
+        "real_instance_evidence_verified": False,
+    }
+    if not isinstance(manufacturing_ir, dict):
+        hold("CANONICAL_IR_MISSING", "manufacturing_ir", "Actual canonical manufacturing IR object required")
+    else:
+        uri = manufacturing_ir.get("cgx_uri")
+        raw_hash = manufacturing_ir.get("configuration_hash")
+        if manufacturing_ir.get("schema") != CANONICAL_IR_SCHEMA:
+            hold("CANONICAL_IR_SCHEMA", "manufacturing_ir.schema", "Unexpected canonical IR schema")
+        if not isinstance(uri, str) or packet.get("manufacturing_ir_ref") != uri:
+            hold("CANONICAL_IR_URI_MISMATCH", "manufacturing_ir.cgx_uri", "Review must reference the exact emitted CGX build URI")
+        else:
+            result["binding_proof"]["canonical_ir_uri_matched"] = True
+        if (not isinstance(raw_hash, str) or not DIGEST.fullmatch(raw_hash)):
+            hold("CANONICAL_IR_HASH_MISSING", "manufacturing_ir.configuration_hash", "Exact canonical configuration hash required")
+        else:
+            try:
+                computed = _canonical_hash({key: value for key, value in manufacturing_ir.items() if key != "configuration_hash"})
+            except (ValueError, TypeError):
+                computed = None
+            if computed != raw_hash or packet.get("manufacturing_ir_configuration_hash") != raw_hash:
+                hold("CANONICAL_IR_HASH_MISMATCH", "manufacturing_ir.configuration_hash", "Recompute canonical IR and match exact frozen review input")
+            else:
+                result["binding_proof"]["canonical_ir_hash_matched"] = True
+        if manufacturing_ir.get("physical_execution") is not False:
+            hold("CANONICAL_IR_EXECUTION", "manufacturing_ir.physical_execution", "Canonical machine-neutral IR must not execute hardware")
+        operations = manufacturing_ir.get("operations")
+        if not isinstance(operations, list) or any(not isinstance(op, dict) or op.get("physical_execution") is not False for op in operations):
+            hold("CANONICAL_IR_OPERATION_EXECUTION", "manufacturing_ir.operations", "All canonical operation nodes must remain non-executing")
+        if not isinstance(manufacturing_ir.get("instance_ref"), str) or not manufacturing_ir["instance_ref"]:
+            hold("EXACT_CGXI_UNBOUND", "manufacturing_ir.instance_ref", "Canonical instance identity missing")
+        if manufacturing_ir.get("binding_progress") != "BUILD_READY" or manufacturing_ir.get("execution_state") != "BUILD_READY":
+            hold("CANONICAL_INSTANCE_NOT_READY", "manufacturing_ir.binding_progress", "Existing manufacturing compiler has not closed exact-instance gates")
+        blockers = manufacturing_ir.get("blockers")
+        if not isinstance(blockers, list) or blockers:
+            hold("CANONICAL_IR_BLOCKERS", "manufacturing_ir.blockers", "Canonical IR has unresolved consequential blockers")
+        if manufacturing_ir.get("compile_state") != "DIGITAL_PLAN":
+            hold("CANONICAL_IR_COMPILE_STATE", "manufacturing_ir.compile_state", "Unexpected canonical digital state")
+    result["findings"] = sorted(findings, key=lambda x: (x["code"], x["subject"], x["detail"]))
+    result["state"] = "HOLD" if findings else "REVIEW_ONLY"
+    result["physical_machine_authorised"] = False
+    result["mint_authorised"] = False
+    result["commercial_release_authorised"] = False
+    return result
