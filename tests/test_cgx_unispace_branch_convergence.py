@@ -85,7 +85,8 @@ class ConvergenceTests(unittest.TestCase):
 
     def test_reject_invalid_sha(self):
         with self.assertRaises(ConvergenceHold):
-            review_git_snapshot(snap(row(1,"a",head_sha="notsha")))
+            s=snap(row(1,"a"));s["records"][0]["head_sha"]="notsha"
+            review_git_snapshot(s)
 
     def test_reject_self_base(self):
         with self.assertRaises(ConvergenceHold):
