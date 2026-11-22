@@ -1,0 +1,1704 @@
+{
+  "aliases": {
+    "environment/controlled": "sha256:74a3d95317efd0f4f927f4f004779572ab8ca1ea595b78b1f43b19353dd1a68f",
+    "environment/in_situ": "sha256:dd4a6dd467194ab9a4f23d0156e800b76369fdebfbb9be6f53e8bac7112864ad",
+    "environment/terrestrial": "sha256:fe56c0b1e92a99db5ffa6d3fafda03aa244cae6a1a80f51782f5840f199b8638",
+    "part/board/b-board": "sha256:14a097523ef5d4e019d06138771fdb9b5aff64caff08c02f65c3d3ce2a6aeb21",
+    "part/board/b-chip": "sha256:29b3c453fec4e93a9c5b07c3e0fc5acad5bd2ae6c02f0c5e6171efc77066532a",
+    "part/board/b-connect": "sha256:6c07f0fedd5f6190effee1bc59037e9ca134814ab4a3a24bf77c8d8401b62c42",
+    "part/board/b-diode": "sha256:1c1b287cff0bc2a96422e768c9da2823766b5701b9d6d0adabd438e106b8b4ff",
+    "part/board/b-trace1": "sha256:f7853859246696df72dcd6d62024c933964adbe8cfca2ee3b5417018c852bbba",
+    "part/board/b-trace2": "sha256:f5eb5dd1a6becb47d8fcb9df79b828ad152cdbd2e083fba28f6631f3a6140d0e",
+    "part/diode/d-dielectric": "sha256:978d9acba8749214ba638b5b24ed60e8a8958f381f9bab7ee70dbf869aba3b2e",
+    "part/diode/d-substrate": "sha256:b9572f13ee46aca2680ac9bd4b5cbc05b6bd90b534bb89db0bf456756232827a",
+    "part/diode/d-terminal": "sha256:644242cebd7de037a829ad2431ccf836205c3a3b057ddf134f93e6afa4e7d3fa",
+    "part/diode/d-trace": "sha256:19041f92f4ecf91c3c6ea785509ca88aa52fb53e39ce1d4b7c52ba96bad22233",
+    "part/phone/p-battery": "sha256:ce71328e5563e1fa66bba880023aab6e306048ecd1824ebf0324dcdcda7af2a1",
+    "part/phone/p-board": "sha256:3230c913816496a2e7037b7ffe004bd7d45371cd9171afc293e228e0f72e0ac9",
+    "part/phone/p-camera": "sha256:c71d94945e4008ded317b1ae3254c38b349d871f98e5adc9ce2bccb86995c334",
+    "part/phone/p-cover": "sha256:75cc5aa43ace612f6f075e08f99fa65166dc42369605a131352136708b1a48c1",
+    "part/phone/p-display": "sha256:07ea16af2fc31f1f27884e552535ae94864a9c5dfce69054006c101a8be65b75",
+    "part/phone/p-rf": "sha256:663eae1ca3a2d52221f8f2c09270bddde4c46342d8f815db5ab238e4c9cb7572",
+    "part/phone/p-shell": "sha256:d18ee1c5c3b1666059a0be7cc4de08794ceb3a9545124ed29f1cefcc0c689a17",
+    "part/phone/p-soc": "sha256:639b1f2bc7531af26e495c25ab1783cb0dc9c80f4205e2c7a2940fa5cd9ac562",
+    "primitive/box-037b669c4b236ed62b8840440b432d4f579ed36b62cb15531a6e038506fe527a": "sha256:aff77001e3d0f85cf10597f51bb38a2c92088fa10f738dda7a554b49010a33eb",
+    "primitive/box-08bdca66e03a7f185118df8a962a6458ab8e447e90663eefb0fce4c2af293852": "sha256:084ffd7e5c6ae4a4cc9560a158b3eb5580f598e3d3ae5533a3259daff8d51e75",
+    "primitive/box-2f751848f56320bc462c77641240d0952f932d876ffe02125fb5683bb4637e45": "sha256:cdd7775a45364ce190378f20938c59f06d8181582a2fe14b170b4f8ec8fd029a",
+    "primitive/box-56b0469cab61d318b923f331dba29e42510788c91e46f42d8b916bccf800fe0d": "sha256:16908865e6e0aa2cee64ff107e77a06dc762a6193a3e74ec683596bab32c0dac",
+    "primitive/box-602aba565dbab60146228e5ae81496fd42a5bcc3f9aad87f60e93872d3d57150": "sha256:0911d4a6db4f6f63076c88ed1beac8dfa3d9bb6720c958e08c90aa8db58dae0c",
+    "primitive/box-9b632aa4ecdc0fbab6b2de44387974078505c79acb553dcc73ae6506d44b4afd": "sha256:1997c8d57df566bcf84ba3a6b0b7e316c6520516d02e4d4ca633f922a481c17d",
+    "primitive/box-a7353e51e16322b460c7bebd9d711d52e08dc3cfb2818da712d4b6d8e3b77dde": "sha256:08aa48243b3f5faba9e0a565037c5ecc8bf9cf036611d9455534a59cd94f8892",
+    "primitive/box-b6ab85a3015a4ac75eb6f44198a663df29fd78eab4dd2b5b3e17d8248cad80ba": "sha256:d9fbe13931d62365d0112455ca6813db7c735d0a21145f5d49e0a6e4d6563fb6",
+    "primitive/box-cad869915e82381276e3a8714cf2480659f557e8d0f9616855cfae1a2145a83e": "sha256:adcaead54f68b5bc0b169cea66cd00b21b09499e98a5c10ac7c915ab59e6d14f",
+    "primitive/box-d458e99b2e73d5a7e7c2f30049dc621b35a4a47e63c2f06958b01eea947d4e1c": "sha256:fbd47cb490ec5435bd48b1bda9dbf84981728ced90747cbd634431fba4cc4d6d",
+    "primitive/box-dc761bff5490d6b0af199dbc1997412101af39c15f7545b128e26297df359e63": "sha256:1e12af16ce42c66c4dbe10afdfbb1ac0f7a87a5b6d1d132b3193af548988d756",
+    "primitive/box-e7fb654cbba468c1fbbcc62ba1c7a4a51ff65b5d84acb3891a43d10b4f427b49": "sha256:55f59a441cb057846451f7de9446197130c3b03543cba996e6eac3f9d244ce22",
+    "primitive/box-ef634b1c86d96c68e41c6c414908d17a15cec6db8868fce8afc6cc958f12699a": "sha256:f0ee8e42cdbb9084f104514c01ea4d55092eb687ed4932a5d67d1fb02c9c73f8",
+    "primitive/box-f725a5d6d8a01e87b420b8bdca85aab4ed0878854e35dc4229532f014224eb6a": "sha256:92ac44285b543c70d8a0c2f1eb6a2ca454644ba005ee99592183ba201a039c55",
+    "primitive/box-f87534a06d1cee7203f35c761845c7ee2b5297e6f1039c1c2d80d3eea54fb739": "sha256:ddbb4a9f9938d768c2c642aabc7e16623191da23289ce73d61963e66a5d9b5b5",
+    "primitive/box-ff1e28ca5d7b5d2d72a769c7f7b8a7d626174394c80d607cfafb4138a6f2fe5f": "sha256:e28aa09e7c068f8c75fadcf92f8399cda42daaca11a259fb1313797565e79493",
+    "printer/feedstock": "sha256:6ffcf94dfdc39e48294ef1852a707c14426b7f082802ade38c2dfa14d5c42cf5",
+    "printer/fiber": "sha256:7880db3a175047fb99642cfdc49277419dec6728457974961720a0d86178e70a",
+    "printer/functional": "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+    "printer/hybrid": "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+    "printer/metrology": "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad",
+    "printer/mobile": "sha256:a33c6e3d988d3db07751e8d3bc7799d3d4d5178ede7e2e2920cb5c3def856574",
+    "printer/structural": "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+    "product/board": "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910",
+    "product/diode": "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
+    "product/phone": "sha256:86a881c7e705884043b83af1449242d71a9ad8f7893ea1f5bf1761e17546cafd",
+    "root/printspace": "sha256:0074bbcdc191c953633e1ecdef457b39c82aa2d6ea98230fb59bf0ea5b012451",
+    "source/equations": "sha256:b431f0d90ec5d0554007232617e9291c3ee2943d7b2e9e30ac4f290e7e9d6863",
+    "source/geometry": "sha256:6d1b6f1bb40349024d8de987b1afda220f0dd9fdac35ab1da10d3d0e16d3bbad",
+    "source/load": "sha256:81d9e06ddbb601f85483beae4f4461da85c44c0a4a786fe1fe7f2c65e210ee81",
+    "source/manufacturing_ir": "sha256:a7b869c4bfd5a80f15421badd718b3acbaf4bde1375a3fd050cbe204e0db3abc",
+    "source/materials": "sha256:4270218bcf0eb66a5b20fe7c5e0bdac4faf894a9b72f53980d39d3d839bce92a",
+    "source/pc01": "sha256:d13c8295afa71226de6ae673b917cf5be0cda1b9b3970946dd4f40734273a74d",
+    "source/raphael": "sha256:2e4ed90a919a59d40c34c88d295ab50cde786adbe500a367a57afea47a2c1a8e",
+    "source/simulation": "sha256:acb3a7f2c6d31bfcefcd47b45bfef14d0f8e83a6b930f01a89959ce654a98ea7",
+    "stage/board/0": "sha256:e3a9b01d1eba4fd5bde3bc1be2c8b75464fa915ffeb3976907190c56f01b2c33",
+    "stage/board/1": "sha256:8d88b3cef491fb7a30df363736a140db9393600c984a56303756d9b229c73687",
+    "stage/board/2": "sha256:a3a6be6f10c6a2c6400f61b60a739a788b2a5248c53350c2e14583c224638d0e",
+    "stage/board/3": "sha256:4b84c62889004c0500b046d802bbed9b72206f3ab117530cea564535cd1730d0",
+    "stage/board/4": "sha256:075a9273b16fcf666895b35e42e2c4eab771a6c8c6aba6e1c562de6ab9c2f2ca",
+    "stage/board/5": "sha256:932eba308432f1484b380653b8091743bf8838fd405d1586a9b62824ca852e04",
+    "stage/board/6": "sha256:47534ecffb43abe71e432fc37da0427eff8c25d99263490110d867c015c543b6",
+    "stage/board/7": "sha256:e04127b942e11fd78e846b3250c8d79d09dca61e95fabe9c0a4cf6145fda383a",
+    "stage/diode/0": "sha256:6b116984518d7816536ac20c1692956167efcc6901d5d9a3c5a57d884b26ef05",
+    "stage/diode/1": "sha256:6984354c09406d2698b5d3b33389fd6c39f4868dbe2079cc66d7dc0d8aa5c5df",
+    "stage/diode/2": "sha256:e4e4fbc8ce900405927b2c0fdd73d86440f43aba40f6473e7910d5fb414ffbac",
+    "stage/diode/3": "sha256:f0d7a3b5321836a30e577e8d05dc6f2c19f961883215c10cdb12e5acebf22410",
+    "stage/diode/4": "sha256:f604993254732cbbb2450118e8093409e1b629e8289193868ead0b110c3bba9d",
+    "stage/diode/5": "sha256:2e7559cd726111382fb61bb15e5876d9f591a7aba10a0189930e50b4b21617d7",
+    "stage/phone/0": "sha256:482543e007382e5d663742b4d3131f8d0b5a6d911e7592e018214a7827eccd81",
+    "stage/phone/1": "sha256:ce314351366b1923d2cde6742cf555b4276ba2319bd916255c302dba1fa9b633",
+    "stage/phone/2": "sha256:163e680caf63424fcd7a6c9138540c6dbe69673e5dfa3f0d420d628544fd2c66",
+    "stage/phone/3": "sha256:6c5d7cae1463ffce4f15ad7ef1c725c5baab12b21560cfd45f7dabe20784f210",
+    "stage/phone/4": "sha256:faae421cb457b8c3f795f73404bded43f2d33087ca71507e56d714e381075258",
+    "stage/phone/5": "sha256:05fc20f18eff2da59ddb90c88e98be9da53b345cb93d007ae2690a94e07723fe",
+    "stage/phone/6": "sha256:299f7428be4aea01bc200a1a7e8a2ba7a3a511dbd5b8669b71ea5e070905048d",
+    "stage/phone/7": "sha256:717e6f33c1909c4cd23b9e1e19f7d46fa6c2a089b9b0a78526332ba79fdd0694",
+    "stage/phone/8": "sha256:7753fe11ad7050de227df5fd8462cb42ec55c69892194a5f559ae8a4f79a7147",
+    "stage/phone/9": "sha256:fe4d8ba487c7a3c660a3d0e8f5660621e0497e0036422049a131c6d05a87d266"
+  },
+  "bundle_sha256": "sha256:4d78928273facb97b210867beb4bd58b611ac29ed8d62f09c470f2b7d7d83acc",
+  "commercial_release_authorised": false,
+  "content_addressed": true,
+  "format": "CANONICAL_JSON_UTF8_SHA256_SELF_CHECK_ONLY",
+  "machine_authorised": false,
+  "mint_authorised": false,
+  "native_load_hydration": false,
+  "objects": {
+    "sha256:0074bbcdc191c953633e1ecdef457b39c82aa2d6ea98230fb59bf0ea5b012451": {
+      "deps": [
+        "sha256:2e4ed90a919a59d40c34c88d295ab50cde786adbe500a367a57afea47a2c1a8e",
+        "sha256:4270218bcf0eb66a5b20fe7c5e0bdac4faf894a9b72f53980d39d3d839bce92a",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:6d1b6f1bb40349024d8de987b1afda220f0dd9fdac35ab1da10d3d0e16d3bbad",
+        "sha256:6ffcf94dfdc39e48294ef1852a707c14426b7f082802ade38c2dfa14d5c42cf5",
+        "sha256:74a3d95317efd0f4f927f4f004779572ab8ca1ea595b78b1f43b19353dd1a68f",
+        "sha256:7880db3a175047fb99642cfdc49277419dec6728457974961720a0d86178e70a",
+        "sha256:81d9e06ddbb601f85483beae4f4461da85c44c0a4a786fe1fe7f2c65e210ee81",
+        "sha256:86a881c7e705884043b83af1449242d71a9ad8f7893ea1f5bf1761e17546cafd",
+        "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910",
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
+        "sha256:a33c6e3d988d3db07751e8d3bc7799d3d4d5178ede7e2e2920cb5c3def856574",
+        "sha256:a7b869c4bfd5a80f15421badd718b3acbaf4bde1375a3fd050cbe204e0db3abc",
+        "sha256:acb3a7f2c6d31bfcefcd47b45bfef14d0f8e83a6b930f01a89959ce654a98ea7",
+        "sha256:b431f0d90ec5d0554007232617e9291c3ee2943d7b2e9e30ac4f290e7e9d6863",
+        "sha256:d13c8295afa71226de6ae673b917cf5be0cda1b9b3970946dd4f40734273a74d",
+        "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad",
+        "sha256:dd4a6dd467194ab9a4f23d0156e800b76369fdebfbb9be6f53e8bac7112864ad",
+        "sha256:fe56c0b1e92a99db5ffa6d3fafda03aa244cae6a1a80f51782f5840f199b8638"
+      ],
+      "device_authorised": false,
+      "kind": "printspace-digital-root",
+      "native_admitted": false,
+      "payload": {
+        "catalogue_identity": "CGX-PF-DIODE-TO-PHONE-20261122",
+        "catalogue_sha256": "6f7724e0069fd65e56ba77a43b73dd5ff40616d69cf9a01d2f2fe78960ad1bd1",
+        "commercial_release_authorised": false,
+        "in_situ_qualified": false,
+        "material_lots_verified": false,
+        "native_dbr_written": false,
+        "physical_machine_authorised": false,
+        "printer_physically_built_and_verified": false,
+        "private_load_hydration_enabled": false,
+        "product_ids": [
+          "board",
+          "diode",
+          "phone"
+        ],
+        "release_gates": [
+          "design provenance and licensing",
+          "validated CAD units and geometry incidence",
+          "sourced material lots",
+          "bidirectional process compatibility",
+          "calibrated equipment and tool envelopes",
+          "independent C0 machine safety",
+          "controlled terrestrial or in-situ process environment",
+          "physical reference coupons and uncertainty",
+          "functional subsystem metrology",
+          "native parent DBR / release approval"
+        ],
+        "source_cad_verified": false
+      }
+    },
+    "sha256:05fc20f18eff2da59ddb90c88e98be9da53b345cb93d007ae2690a94e07723fe": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:663eae1ca3a2d52221f8f2c09270bddde4c46342d8f815db5ab238e4c9cb7572"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "rf",
+        "ordinal": 5,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-rf",
+        "title": "INSERT RF/CAMERA"
+      }
+    },
+    "sha256:075a9273b16fcf666895b35e42e2c4eab771a6c8c6aba6e1c562de6ab9c2f2ca": {
+      "deps": [
+        "sha256:1c1b287cff0bc2a96422e768c9da2823766b5701b9d6d0adabd438e106b8b4ff",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "diode",
+        "ordinal": 4,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-diode",
+        "title": "INSERT DIODE"
+      }
+    },
+    "sha256:07ea16af2fc31f1f27884e552535ae94864a9c5dfce69054006c101a8be65b75": {
+      "deps": [
+        "sha256:084ffd7e5c6ae4a4cc9560a158b3eb5580f598e3d3ae5533a3259daff8d51e75",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-display",
+        "position_mm": [
+          3,
+          3,
+          12
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-08bdca66e03a7f185118df8a962a6458ab8e447e90663eefb0fce4c2af293852",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Display assembly"
+      }
+    },
+    "sha256:084ffd7e5c6ae4a4cc9560a158b3eb5580f598e3d3ae5533a3259daff8d51e75": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          69,
+          154,
+          3
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:08aa48243b3f5faba9e0a565037c5ecc8bf9cf036611d9455534a59cd94f8892": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          20,
+          22,
+          3
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:0911d4a6db4f6f63076c88ed1beac8dfa3d9bb6720c958e08c90aa8db58dae0c": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          4,
+          4,
+          1
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:14a097523ef5d4e019d06138771fdb9b5aff64caff08c02f65c3d3ce2a6aeb21": {
+      "deps": [
+        "sha256:55f59a441cb057846451f7de9446197130c3b03543cba996e6eac3f9d244ce22",
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-board",
+        "position_mm": [
+          0,
+          0,
+          0
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-e7fb654cbba468c1fbbcc62ba1c7a4a51ff65b5d84acb3891a43d10b4f427b49",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Board substrate"
+      }
+    },
+    "sha256:163e680caf63424fcd7a6c9138540c6dbe69673e5dfa3f0d420d628544fd2c66": {
+      "deps": [
+        "sha256:3230c913816496a2e7037b7ffe004bd7d45371cd9171afc293e228e0f72e0ac9",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "board",
+        "ordinal": 2,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-board",
+        "title": "ASSEMBLE BOARD MODULE"
+      }
+    },
+    "sha256:16908865e6e0aa2cee64ff107e77a06dc762a6193a3e74ec683596bab32c0dac": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          66,
+          15,
+          2
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:19041f92f4ecf91c3c6ea785509ca88aa52fb53e39ce1d4b7c52ba96bad22233": {
+      "deps": [
+        "sha256:0911d4a6db4f6f63076c88ed1beac8dfa3d9bb6720c958e08c90aa8db58dae0c",
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "d-trace",
+        "position_mm": [
+          0,
+          0,
+          3
+        ],
+        "product_id": "diode",
+        "shape_alias": "primitive/box-602aba565dbab60146228e5ae81496fd42a5bcc3f9aad87f60e93872d3d57150",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Conductor candidate"
+      }
+    },
+    "sha256:1997c8d57df566bcf84ba3a6b0b7e316c6520516d02e4d4ca633f922a481c17d": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          2,
+          2,
+          1
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:1c1b287cff0bc2a96422e768c9da2823766b5701b9d6d0adabd438e106b8b4ff": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
+        "sha256:ddbb4a9f9938d768c2c642aabc7e16623191da23289ce73d61963e66a5d9b5b5"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": "diode",
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-diode",
+        "position_mm": [
+          5,
+          9,
+          2.5
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-f87534a06d1cee7203f35c761845c7ee2b5297e6f1039c1c2d80d3eea54fb739",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Diode functional block"
+      }
+    },
+    "sha256:1e12af16ce42c66c4dbe10afdfbb1ac0f7a87a5b6d1d132b3193af548988d756": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          71,
+          156,
+          1
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:299f7428be4aea01bc200a1a7e8a2ba7a3a511dbd5b8669b71ea5e070905048d": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:c71d94945e4008ded317b1ae3254c38b349d871f98e5adc9ce2bccb86995c334"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "camera",
+        "ordinal": 6,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-camera",
+        "title": "INSERT CAMERA"
+      }
+    },
+    "sha256:29b3c453fec4e93a9c5b07c3e0fc5acad5bd2ae6c02f0c5e6171efc77066532a": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:f0ee8e42cdbb9084f104514c01ea4d55092eb687ed4932a5d67d1fb02c9c73f8"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-chip",
+        "position_mm": [
+          18,
+          8,
+          2.5
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-ef634b1c86d96c68e41c6c414908d17a15cec6db8868fce8afc6cc958f12699a",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "External IC"
+      }
+    },
+    "sha256:2e4ed90a919a59d40c34c88d295ab50cde786adbe500a367a57afea47a2c1a8e": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+        "signature_verified": false
+      }
+    },
+    "sha256:2e7559cd726111382fb61bb15e5876d9f591a7aba10a0189930e50b4b21617d7": {
+      "deps": [
+        "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "metrology",
+        "name": "inspect",
+        "ordinal": 5,
+        "real_sensor_receipt": null,
+        "target_part_id": null,
+        "title": "WITNESS HOLD"
+      }
+    },
+    "sha256:3230c913816496a2e7037b7ffe004bd7d45371cd9171afc293e228e0f72e0ac9": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910",
+        "sha256:d9fbe13931d62365d0112455ca6813db7c735d0a21145f5d49e0a6e4d6563fb6"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": "board",
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-board",
+        "position_mm": [
+          10,
+          38,
+          4
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-b6ab85a3015a4ac75eb6f44198a663df29fd78eab4dd2b5b3e17d8248cad80ba",
+        "source_kind": "hybrid",
+        "status": "UNQUALIFIED_ASSEMBLY",
+        "title": "Board module"
+      }
+    },
+    "sha256:4270218bcf0eb66a5b20fe7c5e0bdac4faf894a9b72f53980d39d3d839bce92a": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json",
+        "signature_verified": false
+      }
+    },
+    "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "multi-head sequencing",
+            "external-part insertion"
+          ],
+          "id": "hybrid",
+          "limitations": [
+            "tool-change tolerance not measured"
+          ],
+          "ref": "UTP-PF-HYBRID-001",
+          "title": "Hybrid assembly cell",
+          "tool": "Tool-change carriage",
+          "view_colour": "#83e7ca"
+        }
+      }
+    },
+    "sha256:47534ecffb43abe71e432fc37da0427eff8c25d99263490110d867c015c543b6": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:6c07f0fedd5f6190effee1bc59037e9ca134814ab4a3a24bf77c8d8401b62c42"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "conn",
+        "ordinal": 6,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-connect",
+        "title": "CONNECT"
+      }
+    },
+    "sha256:482543e007382e5d663742b4d3131f8d0b5a6d911e7592e018214a7827eccd81": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "prepare",
+        "ordinal": 0,
+        "real_sensor_receipt": null,
+        "target_part_id": null,
+        "title": "PREPARE CELL"
+      }
+    },
+    "sha256:4b84c62889004c0500b046d802bbed9b72206f3ab117530cea564535cd1730d0": {
+      "deps": [
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:f5eb5dd1a6becb47d8fcb9df79b828ad152cdbd2e083fba28f6631f3a6140d0e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "functional",
+        "name": "return",
+        "ordinal": 3,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-trace2",
+        "title": "ROUTE RETURN"
+      }
+    },
+    "sha256:55f59a441cb057846451f7de9446197130c3b03543cba996e6eac3f9d244ce22": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          36,
+          24,
+          2
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "shells",
+            "fixtures"
+          ],
+          "id": "structural",
+          "limitations": [
+            "no microelectronics qualification"
+          ],
+          "ref": "UTP-PF-STRUCT-001",
+          "title": "Structural deposition",
+          "tool": "Structural head",
+          "view_colour": "#52b2ed"
+        }
+      }
+    },
+    "sha256:639b1f2bc7531af26e495c25ab1783cb0dc9c80f4205e2c7a2940fa5cd9ac562": {
+      "deps": [
+        "sha256:08aa48243b3f5faba9e0a565037c5ecc8bf9cf036611d9455534a59cd94f8892",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-soc",
+        "position_mm": [
+          25,
+          54,
+          7
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-a7353e51e16322b460c7bebd9d711d52e08dc3cfb2818da712d4b6d8e3b77dde",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Processor / memory"
+      }
+    },
+    "sha256:644242cebd7de037a829ad2431ccf836205c3a3b057ddf134f93e6afa4e7d3fa": {
+      "deps": [
+        "sha256:1997c8d57df566bcf84ba3a6b0b7e316c6520516d02e4d4ca633f922a481c17d",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "d-terminal",
+        "position_mm": [
+          4,
+          1,
+          2
+        ],
+        "product_id": "diode",
+        "shape_alias": "primitive/box-9b632aa4ecdc0fbab6b2de44387974078505c79acb553dcc73ae6506d44b4afd",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "External terminal concept"
+      }
+    },
+    "sha256:663eae1ca3a2d52221f8f2c09270bddde4c46342d8f815db5ab238e4c9cb7572": {
+      "deps": [
+        "sha256:16908865e6e0aa2cee64ff107e77a06dc762a6193a3e74ec683596bab32c0dac",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-rf",
+        "position_mm": [
+          4,
+          12,
+          4
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-56b0469cab61d318b923f331dba29e42510788c91e46f42d8b916bccf800fe0d",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "RF / antenna assembly"
+      }
+    },
+    "sha256:6984354c09406d2698b5d3b33389fd6c39f4868dbe2079cc66d7dc0d8aa5c5df": {
+      "deps": [
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:b9572f13ee46aca2680ac9bd4b5cbc05b6bd90b534bb89db0bf456756232827a"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "structural",
+        "name": "deposit",
+        "ordinal": 1,
+        "real_sensor_receipt": null,
+        "target_part_id": "d-substrate",
+        "title": "STRUCTURE"
+      }
+    },
+    "sha256:6b116984518d7816536ac20c1692956167efcc6901d5d9a3c5a57d884b26ef05": {
+      "deps": [
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:b9572f13ee46aca2680ac9bd4b5cbc05b6bd90b534bb89db0bf456756232827a"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "structural",
+        "name": "prepare",
+        "ordinal": 0,
+        "real_sensor_receipt": null,
+        "target_part_id": "d-substrate",
+        "title": "PREPARE"
+      }
+    },
+    "sha256:6c07f0fedd5f6190effee1bc59037e9ca134814ab4a3a24bf77c8d8401b62c42": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:e28aa09e7c068f8c75fadcf92f8399cda42daaca11a259fb1313797565e79493"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-connect",
+        "position_mm": [
+          31,
+          6,
+          2
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-ff1e28ca5d7b5d2d72a769c7f7b8a7d626174394c80d607cfafb4138a6f2fe5f",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "External connector"
+      }
+    },
+    "sha256:6c5d7cae1463ffce4f15ad7ef1c725c5baab12b21560cfd45f7dabe20784f210": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:639b1f2bc7531af26e495c25ab1783cb0dc9c80f4205e2c7a2940fa5cd9ac562"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "soc",
+        "ordinal": 3,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-soc",
+        "title": "INSERT PROCESSOR"
+      }
+    },
+    "sha256:6d1b6f1bb40349024d8de987b1afda220f0dd9fdac35ab1da10d3d0e16d3bbad": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx.manufacturing.composition",
+        "signature_verified": false
+      }
+    },
+    "sha256:6ffcf94dfdc39e48294ef1852a707c14426b7f082802ade38c2dfa14d5c42cf5": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "feedstock conditioning (concept)"
+          ],
+          "id": "feedstock",
+          "limitations": [
+            "no validated chemistry or storage constraints"
+          ],
+          "ref": "UTP-PF-FEED-001",
+          "title": "Feedstock preparation",
+          "tool": "Feedstock station",
+          "view_colour": "#ffc68c"
+        }
+      }
+    },
+    "sha256:717e6f33c1909c4cd23b9e1e19f7d46fa6c2a089b9b0a78526332ba79fdd0694": {
+      "deps": [
+        "sha256:07ea16af2fc31f1f27884e552535ae94864a9c5dfce69054006c101a8be65b75",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "screen",
+        "ordinal": 7,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-display",
+        "title": "FIT DISPLAY"
+      }
+    },
+    "sha256:74a3d95317efd0f4f927f4f004779572ab8ca1ea595b78b1f43b19353dd1a68f": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "operating-environment-assumption",
+      "native_admitted": false,
+      "payload": {
+        "real_environment_qualified": false,
+        "source_profile": {
+          "ambient_pressure_pa_assumed": 101325,
+          "enclosure": "Atmosphere-controlled (unverified)",
+          "gravity_m_s2_assumed": 9.81,
+          "id": "controlled",
+          "status": "ASSUMED_PURGE_HISTORY_MISSING",
+          "title": "Controlled enclosure"
+        }
+      }
+    },
+    "sha256:75cc5aa43ace612f6f075e08f99fa65166dc42369605a131352136708b1a48c1": {
+      "deps": [
+        "sha256:1e12af16ce42c66c4dbe10afdfbb1ac0f7a87a5b6d1d132b3193af548988d756",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-cover",
+        "position_mm": [
+          2,
+          2,
+          16
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-dc761bff5490d6b0af199dbc1997412101af39c15f7545b128e26297df359e63",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Protective cover"
+      }
+    },
+    "sha256:7753fe11ad7050de227df5fd8462cb42ec55c69892194a5f559ae8a4f79a7147": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:75cc5aa43ace612f6f075e08f99fa65166dc42369605a131352136708b1a48c1"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "cover",
+        "ordinal": 8,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-cover",
+        "title": "SEAL COVER"
+      }
+    },
+    "sha256:7880db3a175047fb99642cfdc49277419dec6728457974961720a0d86178e70a": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "reinforcement routes (concept)"
+          ],
+          "id": "fiber",
+          "limitations": [
+            "no fibre path or tension calibration"
+          ],
+          "ref": "UTP-PF-FIBER-001",
+          "title": "Fibre reinforcement",
+          "tool": "Fibre routing head",
+          "view_colour": "#acb7ff"
+        }
+      }
+    },
+    "sha256:81d9e06ddbb601f85483beae4f4461da85c44c0a4a786fe1fe7f2c65e210ee81": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+        "signature_verified": false
+      }
+    },
+    "sha256:86a881c7e705884043b83af1449242d71a9ad8f7893ea1f5bf1761e17546cafd": {
+      "deps": [
+        "sha256:05fc20f18eff2da59ddb90c88e98be9da53b345cb93d007ae2690a94e07723fe",
+        "sha256:07ea16af2fc31f1f27884e552535ae94864a9c5dfce69054006c101a8be65b75",
+        "sha256:163e680caf63424fcd7a6c9138540c6dbe69673e5dfa3f0d420d628544fd2c66",
+        "sha256:299f7428be4aea01bc200a1a7e8a2ba7a3a511dbd5b8669b71ea5e070905048d",
+        "sha256:3230c913816496a2e7037b7ffe004bd7d45371cd9171afc293e228e0f72e0ac9",
+        "sha256:482543e007382e5d663742b4d3131f8d0b5a6d911e7592e018214a7827eccd81",
+        "sha256:639b1f2bc7531af26e495c25ab1783cb0dc9c80f4205e2c7a2940fa5cd9ac562",
+        "sha256:663eae1ca3a2d52221f8f2c09270bddde4c46342d8f815db5ab238e4c9cb7572",
+        "sha256:6c5d7cae1463ffce4f15ad7ef1c725c5baab12b21560cfd45f7dabe20784f210",
+        "sha256:717e6f33c1909c4cd23b9e1e19f7d46fa6c2a089b9b0a78526332ba79fdd0694",
+        "sha256:75cc5aa43ace612f6f075e08f99fa65166dc42369605a131352136708b1a48c1",
+        "sha256:7753fe11ad7050de227df5fd8462cb42ec55c69892194a5f559ae8a4f79a7147",
+        "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910",
+        "sha256:c71d94945e4008ded317b1ae3254c38b349d871f98e5adc9ce2bccb86995c334",
+        "sha256:ce314351366b1923d2cde6742cf555b4276ba2319bd916255c302dba1fa9b633",
+        "sha256:ce71328e5563e1fa66bba880023aab6e306048ecd1824ebf0324dcdcda7af2a1",
+        "sha256:d18ee1c5c3b1666059a0be7cc4de08794ceb3a9545124ed29f1cefcc0c689a17",
+        "sha256:faae421cb457b8c3f795f73404bded43f2d33087ca71507e56d714e381075258",
+        "sha256:fe4d8ba487c7a3c660a3d0e8f5660621e0497e0036422049a131c6d05a87d266"
+      ],
+      "device_authorised": false,
+      "kind": "nested-digital-assembly",
+      "native_admitted": false,
+      "payload": {
+        "bounds_mm": [
+          90,
+          180,
+          20
+        ],
+        "external_parts_require_individual_source_rights": true,
+        "physical_printability_verified": false,
+        "product_id": "phone",
+        "product_key": "CGX-PHONE-SYSTEM-DEMO",
+        "source_assembly_authentic": false,
+        "title": "Phone-scale hybrid assembly"
+      }
+    },
+    "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910": {
+      "deps": [
+        "sha256:075a9273b16fcf666895b35e42e2c4eab771a6c8c6aba6e1c562de6ab9c2f2ca",
+        "sha256:14a097523ef5d4e019d06138771fdb9b5aff64caff08c02f65c3d3ce2a6aeb21",
+        "sha256:1c1b287cff0bc2a96422e768c9da2823766b5701b9d6d0adabd438e106b8b4ff",
+        "sha256:29b3c453fec4e93a9c5b07c3e0fc5acad5bd2ae6c02f0c5e6171efc77066532a",
+        "sha256:47534ecffb43abe71e432fc37da0427eff8c25d99263490110d867c015c543b6",
+        "sha256:4b84c62889004c0500b046d802bbed9b72206f3ab117530cea564535cd1730d0",
+        "sha256:6c07f0fedd5f6190effee1bc59037e9ca134814ab4a3a24bf77c8d8401b62c42",
+        "sha256:8d88b3cef491fb7a30df363736a140db9393600c984a56303756d9b229c73687",
+        "sha256:932eba308432f1484b380653b8091743bf8838fd405d1586a9b62824ca852e04",
+        "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
+        "sha256:a3a6be6f10c6a2c6400f61b60a739a788b2a5248c53350c2e14583c224638d0e",
+        "sha256:e04127b942e11fd78e846b3250c8d79d09dca61e95fabe9c0a4cf6145fda383a",
+        "sha256:e3a9b01d1eba4fd5bde3bc1be2c8b75464fa915ffeb3976907190c56f01b2c33",
+        "sha256:f5eb5dd1a6becb47d8fcb9df79b828ad152cdbd2e083fba28f6631f3a6140d0e",
+        "sha256:f7853859246696df72dcd6d62024c933964adbe8cfca2ee3b5417018c852bbba"
+      ],
+      "device_authorised": false,
+      "kind": "nested-digital-assembly",
+      "native_admitted": false,
+      "payload": {
+        "bounds_mm": [
+          44,
+          32,
+          8
+        ],
+        "external_parts_require_individual_source_rights": true,
+        "physical_printability_verified": false,
+        "product_id": "board",
+        "product_key": "CGX-BOARD-ASSEMBLY-DEMO",
+        "source_assembly_authentic": false,
+        "title": "Board / sensor-module demonstrator"
+      }
+    },
+    "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "traces (concept)",
+            "dielectric layers (concept)"
+          ],
+          "id": "functional",
+          "limitations": [
+            "no actual line resolution or dielectric qualification"
+          ],
+          "ref": "UTP-PF-FUNC-001",
+          "title": "Functional deposition",
+          "tool": "Fine-feature head",
+          "view_colour": "#edb878"
+        }
+      }
+    },
+    "sha256:8d88b3cef491fb7a30df363736a140db9393600c984a56303756d9b229c73687": {
+      "deps": [
+        "sha256:14a097523ef5d4e019d06138771fdb9b5aff64caff08c02f65c3d3ce2a6aeb21",
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "structural",
+        "name": "base",
+        "ordinal": 1,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-board",
+        "title": "DEPOSIT SUBSTRATE"
+      }
+    },
+    "sha256:92ac44285b543c70d8a0c2f1eb6a2ca454644ba005ee99592183ba201a039c55": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          28,
+          1,
+          0.5
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:932eba308432f1484b380653b8091743bf8838fd405d1586a9b62824ca852e04": {
+      "deps": [
+        "sha256:29b3c453fec4e93a9c5b07c3e0fc5acad5bd2ae6c02f0c5e6171efc77066532a",
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "ic",
+        "ordinal": 5,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-chip",
+        "title": "INSERT IC"
+      }
+    },
+    "sha256:978d9acba8749214ba638b5b24ed60e8a8958f381f9bab7ee70dbf869aba3b2e": {
+      "deps": [
+        "sha256:0911d4a6db4f6f63076c88ed1beac8dfa3d9bb6720c958e08c90aa8db58dae0c",
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "d-dielectric",
+        "position_mm": [
+          0,
+          0,
+          2
+        ],
+        "product_id": "diode",
+        "shape_alias": "primitive/box-602aba565dbab60146228e5ae81496fd42a5bcc3f9aad87f60e93872d3d57150",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Interlayer"
+      }
+    },
+    "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861": {
+      "deps": [
+        "sha256:19041f92f4ecf91c3c6ea785509ca88aa52fb53e39ce1d4b7c52ba96bad22233",
+        "sha256:2e7559cd726111382fb61bb15e5876d9f591a7aba10a0189930e50b4b21617d7",
+        "sha256:644242cebd7de037a829ad2431ccf836205c3a3b057ddf134f93e6afa4e7d3fa",
+        "sha256:6984354c09406d2698b5d3b33389fd6c39f4868dbe2079cc66d7dc0d8aa5c5df",
+        "sha256:6b116984518d7816536ac20c1692956167efcc6901d5d9a3c5a57d884b26ef05",
+        "sha256:978d9acba8749214ba638b5b24ed60e8a8958f381f9bab7ee70dbf869aba3b2e",
+        "sha256:b9572f13ee46aca2680ac9bd4b5cbc05b6bd90b534bb89db0bf456756232827a",
+        "sha256:e4e4fbc8ce900405927b2c0fdd73d86440f43aba40f6473e7910d5fb414ffbac",
+        "sha256:f0d7a3b5321836a30e577e8d05dc6f2c19f961883215c10cdb12e5acebf22410",
+        "sha256:f604993254732cbbb2450118e8093409e1b629e8289193868ead0b110c3bba9d"
+      ],
+      "device_authorised": false,
+      "kind": "nested-digital-assembly",
+      "native_admitted": false,
+      "payload": {
+        "bounds_mm": [
+          8,
+          8,
+          5
+        ],
+        "external_parts_require_individual_source_rights": true,
+        "physical_printability_verified": false,
+        "product_id": "diode",
+        "product_key": "CGX-PC01-DIODE-DEMO",
+        "source_assembly_authentic": false,
+        "title": "Diode / interlayer demonstrator"
+      }
+    },
+    "sha256:a33c6e3d988d3db07751e8d3bc7799d3d4d5178ede7e2e2920cb5c3def856574": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "modular remote deployment planning"
+          ],
+          "id": "mobile",
+          "limitations": [
+            "no vacuum, low-g or thermal cycling qualification"
+          ],
+          "ref": "UTP-PF-MOBILE-001",
+          "title": "Mobile / in-situ platform",
+          "tool": "Sealed service head",
+          "view_colour": "#d5adff"
+        }
+      }
+    },
+    "sha256:a3a6be6f10c6a2c6400f61b60a739a788b2a5248c53350c2e14583c224638d0e": {
+      "deps": [
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:f7853859246696df72dcd6d62024c933964adbe8cfca2ee3b5417018c852bbba"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "functional",
+        "name": "route",
+        "ordinal": 2,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-trace1",
+        "title": "ROUTE SIGNALS"
+      }
+    },
+    "sha256:a7b869c4bfd5a80f15421badd718b3acbaf4bde1375a3fd050cbe204e0db3abc": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx.manufacturing.compiler",
+        "signature_verified": false
+      }
+    },
+    "sha256:acb3a7f2c6d31bfcefcd47b45bfef14d0f8e83a6b930f01a89959ce654a98ea7": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx.manufacturing.cross_domain_emulation",
+        "signature_verified": false
+      }
+    },
+    "sha256:adcaead54f68b5bc0b169cea66cd00b21b09499e98a5c10ac7c915ab59e6d14f": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          12,
+          12,
+          6
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:aff77001e3d0f85cf10597f51bb38a2c92088fa10f738dda7a554b49010a33eb": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          56,
+          35,
+          5
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:b431f0d90ec5d0554007232617e9291c3ee2943d7b2e9e30ac4f290e7e9d6863": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+        "signature_verified": false
+      }
+    },
+    "sha256:b9572f13ee46aca2680ac9bd4b5cbc05b6bd90b534bb89db0bf456756232827a": {
+      "deps": [
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:ddbb4a9f9938d768c2c642aabc7e16623191da23289ce73d61963e66a5d9b5b5"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "d-substrate",
+        "position_mm": [
+          0,
+          0,
+          0
+        ],
+        "product_id": "diode",
+        "shape_alias": "primitive/box-f87534a06d1cee7203f35c761845c7ee2b5297e6f1039c1c2d80d3eea54fb739",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Structural substrate"
+      }
+    },
+    "sha256:c71d94945e4008ded317b1ae3254c38b349d871f98e5adc9ce2bccb86995c334": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:adcaead54f68b5bc0b169cea66cd00b21b09499e98a5c10ac7c915ab59e6d14f"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-camera",
+        "position_mm": [
+          55,
+          15,
+          4
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-cad869915e82381276e3a8714cf2480659f557e8d0f9616855cfae1a2145a83e",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Camera module"
+      }
+    },
+    "sha256:cdd7775a45364ce190378f20938c59f06d8181582a2fe14b170b4f8ec8fd029a": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          75,
+          160,
+          4
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:ce314351366b1923d2cde6742cf555b4276ba2319bd916255c302dba1fa9b633": {
+      "deps": [
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:d18ee1c5c3b1666059a0be7cc4de08794ceb3a9545124ed29f1cefcc0c689a17"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "structural",
+        "name": "shell",
+        "ordinal": 1,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-shell",
+        "title": "PRINT CHASSIS CONCEPT"
+      }
+    },
+    "sha256:ce71328e5563e1fa66bba880023aab6e306048ecd1824ebf0324dcdcda7af2a1": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:aff77001e3d0f85cf10597f51bb38a2c92088fa10f738dda7a554b49010a33eb"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-battery",
+        "position_mm": [
+          9,
+          114,
+          4
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-037b669c4b236ed62b8840440b432d4f579ed36b62cb15531a6e038506fe527a",
+        "source_kind": "external",
+        "status": "SOURCE_REQUIRED",
+        "title": "Battery pack"
+      }
+    },
+    "sha256:d13c8295afa71226de6ae673b917cf5be0cda1b9b3970946dd4f40734273a74d": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "opaque-source-reference",
+      "native_admitted": false,
+      "payload": {
+        "original_bytes_embedded": false,
+        "owner_rights_verified": false,
+        "ref": "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
+        "signature_verified": false
+      }
+    },
+    "sha256:d18ee1c5c3b1666059a0be7cc4de08794ceb3a9545124ed29f1cefcc0c689a17": {
+      "deps": [
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d",
+        "sha256:cdd7775a45364ce190378f20938c59f06d8181582a2fe14b170b4f8ec8fd029a"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "p-shell",
+        "position_mm": [
+          0,
+          0,
+          0
+        ],
+        "product_id": "phone",
+        "shape_alias": "primitive/box-2f751848f56320bc462c77641240d0952f932d876ffe02125fb5683bb4637e45",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Structural chassis"
+      }
+    },
+    "sha256:d9fbe13931d62365d0112455ca6813db7c735d0a21145f5d49e0a6e4d6563fb6": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          54,
+          72,
+          3
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "printer-family-role",
+      "native_admitted": false,
+      "payload": {
+        "nominal_machine_dimensions": null,
+        "real_toolheads_verified": false,
+        "source_role": {
+          "capabilities": [
+            "inspection workflow"
+          ],
+          "id": "metrology",
+          "limitations": [
+            "no calibrated hardware available"
+          ],
+          "ref": "UTP-PF-METRO-001",
+          "title": "Measurement and witness",
+          "tool": "Inspection station",
+          "view_colour": "#b9e0ff"
+        }
+      }
+    },
+    "sha256:dd4a6dd467194ab9a4f23d0156e800b76369fdebfbb9be6f53e8bac7112864ad": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "operating-environment-assumption",
+      "native_admitted": false,
+      "payload": {
+        "real_environment_qualified": false,
+        "source_profile": {
+          "ambient_pressure_pa_assumed": 0,
+          "enclosure": "Sealed remote processing cell",
+          "gravity_m_s2_assumed": 1.62,
+          "id": "in_situ",
+          "status": "ILLUSTRATIVE_NOT_SPACE_QUALIFIED",
+          "title": "In-situ / remote environment"
+        }
+      }
+    },
+    "sha256:ddbb4a9f9938d768c2c642aabc7e16623191da23289ce73d61963e66a5d9b5b5": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          4,
+          4,
+          2
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:e04127b942e11fd78e846b3250c8d79d09dca61e95fabe9c0a4cf6145fda383a": {
+      "deps": [
+        "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "metrology",
+        "name": "inspect",
+        "ordinal": 7,
+        "real_sensor_receipt": null,
+        "target_part_id": null,
+        "title": "WITNESS HOLD"
+      }
+    },
+    "sha256:e28aa09e7c068f8c75fadcf92f8399cda42daaca11a259fb1313797565e79493": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          5,
+          9,
+          3
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:e3a9b01d1eba4fd5bde3bc1be2c8b75464fa915ffeb3976907190c56f01b2c33": {
+      "deps": [
+        "sha256:14a097523ef5d4e019d06138771fdb9b5aff64caff08c02f65c3d3ce2a6aeb21",
+        "sha256:5a90e2a961c778e6e8b107a388f8cbe202c3d55490486880754397965380433d"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "structural",
+        "name": "prepare",
+        "ordinal": 0,
+        "real_sensor_receipt": null,
+        "target_part_id": "b-board",
+        "title": "PREPARE BOARD"
+      }
+    },
+    "sha256:e4e4fbc8ce900405927b2c0fdd73d86440f43aba40f6473e7910d5fb414ffbac": {
+      "deps": [
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:978d9acba8749214ba638b5b24ed60e8a8958f381f9bab7ee70dbf869aba3b2e"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "functional",
+        "name": "layer",
+        "ordinal": 2,
+        "real_sensor_receipt": null,
+        "target_part_id": "d-dielectric",
+        "title": "INTERLAYER"
+      }
+    },
+    "sha256:f0d7a3b5321836a30e577e8d05dc6f2c19f961883215c10cdb12e5acebf22410": {
+      "deps": [
+        "sha256:19041f92f4ecf91c3c6ea785509ca88aa52fb53e39ce1d4b7c52ba96bad22233",
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "functional",
+        "name": "trace",
+        "ordinal": 3,
+        "real_sensor_receipt": null,
+        "target_part_id": "d-trace",
+        "title": "CONDUCTIVE CANDIDATE"
+      }
+    },
+    "sha256:f0ee8e42cdbb9084f104514c01ea4d55092eb687ed4932a5d67d1fb02c9c73f8": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          10,
+          10,
+          2.5
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:f5eb5dd1a6becb47d8fcb9df79b828ad152cdbd2e083fba28f6631f3a6140d0e": {
+      "deps": [
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:92ac44285b543c70d8a0c2f1eb6a2ca454644ba005ee99592183ba201a039c55"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-trace2",
+        "position_mm": [
+          2,
+          15,
+          2
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-f725a5d6d8a01e87b420b8bdca85aab4ed0878854e35dc4229532f014224eb6a",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Return routing"
+      }
+    },
+    "sha256:f604993254732cbbb2450118e8093409e1b629e8289193868ead0b110c3bba9d": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:644242cebd7de037a829ad2431ccf836205c3a3b057ddf134f93e6afa4e7d3fa"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "insert",
+        "ordinal": 4,
+        "real_sensor_receipt": null,
+        "target_part_id": "d-terminal",
+        "title": "EXTERNAL CONTACT"
+      }
+    },
+    "sha256:f7853859246696df72dcd6d62024c933964adbe8cfca2ee3b5417018c852bbba": {
+      "deps": [
+        "sha256:8ca1fac4707fc024791287195a0810b667269e3256128ad3d93010a2347ee862",
+        "sha256:fbd47cb490ec5435bd48b1bda9dbf84981728ced90747cbd634431fba4cc4d6d"
+      ],
+      "device_authorised": false,
+      "kind": "product-part-placement",
+      "native_admitted": false,
+      "payload": {
+        "child_product_id": null,
+        "electrical_or_material_function_verified": false,
+        "part_id": "b-trace1",
+        "position_mm": [
+          2,
+          5,
+          2
+        ],
+        "product_id": "board",
+        "shape_alias": "primitive/box-d458e99b2e73d5a7e7c2f30049dc621b35a4a47e63c2f06958b01eea947d4e1c",
+        "source_kind": "digital",
+        "status": "UNQUALIFIED_DIGITAL",
+        "title": "Signal routing"
+      }
+    },
+    "sha256:faae421cb457b8c3f795f73404bded43f2d33087ca71507e56d714e381075258": {
+      "deps": [
+        "sha256:4660bca2a8c649a8bdb85aa449a238f0960e12fa44b31660ac7694eb5e0da09e",
+        "sha256:ce71328e5563e1fa66bba880023aab6e306048ecd1824ebf0324dcdcda7af2a1"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "hybrid",
+        "name": "battery",
+        "ordinal": 4,
+        "real_sensor_receipt": null,
+        "target_part_id": "p-battery",
+        "title": "INSERT BATTERY"
+      }
+    },
+    "sha256:fbd47cb490ec5435bd48b1bda9dbf84981728ced90747cbd634431fba4cc4d6d": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "illustrative-geometry-primitive",
+      "native_admitted": false,
+      "payload": {
+        "cad_source_verified": false,
+        "geometry_mesh_admitted": false,
+        "nominal_size_mm": [
+          30,
+          1,
+          0.5
+        ],
+        "shape": "axis-aligned-box",
+        "units": "mm"
+      }
+    },
+    "sha256:fe4d8ba487c7a3c660a3d0e8f5660621e0497e0036422049a131c6d05a87d266": {
+      "deps": [
+        "sha256:db1405964db4eaa96f942e2ccaacc5bdff2bbd7233a427b3f360b2f1cc0beaad"
+      ],
+      "device_authorised": false,
+      "kind": "nonactuating-process-stage",
+      "native_admitted": false,
+      "payload": {
+        "executed": false,
+        "machine_role": "metrology",
+        "name": "inspect",
+        "ordinal": 9,
+        "real_sensor_receipt": null,
+        "target_part_id": null,
+        "title": "WITNESS HOLD"
+      }
+    },
+    "sha256:fe56c0b1e92a99db5ffa6d3fafda03aa244cae6a1a80f51782f5840f199b8638": {
+      "deps": [],
+      "device_authorised": false,
+      "kind": "operating-environment-assumption",
+      "native_admitted": false,
+      "payload": {
+        "real_environment_qualified": false,
+        "source_profile": {
+          "ambient_pressure_pa_assumed": 101325,
+          "enclosure": "Workshop guard enclosure",
+          "gravity_m_s2_assumed": 9.81,
+          "id": "terrestrial",
+          "status": "ASSUMED_UNCALIBRATED",
+          "title": "Terrestrial workshop"
+        }
+      }
+    }
+  },
+  "root": "sha256:0074bbcdc191c953633e1ecdef457b39c82aa2d6ea98230fb59bf0ea5b012451",
+  "schema": "CGX-PRINTSPACE-FILESPACE-BUNDLE/0.1",
+  "source_bytes_hydrated": 0,
+  "source_catalogue_sha256": "6f7724e0069fd65e56ba77a43b73dd5ff40616d69cf9a01d2f2fe78960ad1bd1",
+  "state": "DIGITAL_REFERENCE_ONLY_NATIVE_UNADMITTED"
+}
