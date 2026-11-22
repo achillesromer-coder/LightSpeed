@@ -4,8 +4,9 @@
 
 ## Shipping product for this checkpoint
 
-- Version **0.1.0-rc.1**, **private owner software evaluation only**.
+- Version **0.1.0-rc.2**, **private owner software evaluation only**. The prior rc.1 ZIP remains an immutable historical candidate; rc.2 is a separate deterministic rebuild, not a public launch.
 - One standalone browser-launchable `PrintSpace.Studio.offline.html` and explicit viewer instructions. No server, account, plugins, remote assets, user analytics or machine connection.
+- The SAME existing window now selects five source/workspace facet views on the SAME Cognigrex parent and Römer child, without a new native store, second GUI, model inference engine or scheduler. The updated H0 namespace is child-scoped; the CGX 80-facet source identity is unchanged.
 - Frozen canonical source-catalogue, CGX digital bundle, nonhydrating H0, ordinary zlib compatibility transport and three-product native-unadmitted R0 review input. These are internal-reference and demonstration objects only.
 - The current geometry and manufacturing hierarchy includes a conceptual diode, hybrid board and phone. Only selected synthetic geometry and tool-envelope assumptions have been tested. Actual phone subsystem function, materials, silicon fabrication, fully qualified 4D effects, space conditions and real machine printing remain **unverified**.
 - The package has its own `MANIFEST.json` with fixed source paths, file sizes and SHA-256; an **unsigned** external ZIP SHA-256 sidecar; a component list; clearly stated release holds; and no embedded credentials or tools.
@@ -21,7 +22,7 @@ python -m pytest -q tests/test_printspace_software_release.py
 
 The build rederives the entire CGX graph from the original catalogue, checks H0 and lossless portable transport, reproduces R0 from source, requires all native/device/privacy/rights gates to remain false, forbids runtime remote dependencies in the HTML, uses a sorted filename set, fixed 1980 ZIP timestamps and stable compression parameters. ZIP verification checks internal paths, duplicate members, decompression budget, exact bytes, file hashes, source replay, manifest safety state and the external checksum when provided. It is reproducible for the same source/toolchain; the ZIP digest is **not** a signer-attested publisher identity.
 
-The canonical project regression is now **27 read-only sequential stages** including private software packaging. The existing LightSpeed GO tests and source / host R0 / sequential manufacturing checks remain mandatory. The software release package is an additive output of the same Git tree, not a second independent distribution code path.
+The canonical project regression is now **27 read-only sequential stages** including private software packaging. An independently source-replayed five-facet projection and negative T173/native-ternary admission tests are included in the existing CGX facet suite. Only canonical JSON digital review is currently supported; the five-space source mesh remains separately reviewed in draft PR #232 and is not automatically admitted into this PR. The existing LightSpeed GO tests and source / host R0 / sequential manufacturing checks remain mandatory. The software release package is an additive output of the same Git tree, not a second independent distribution code path.
 
 ## Release decision matrix
 
