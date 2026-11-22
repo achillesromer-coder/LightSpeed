@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-WCLPQOcfD+8YcDDMHPZYhMZTxRfNCN4ucxeOZ2+0Cwc='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-4TEM3v4wWOxjRmA3KUfhx77XuZdXJ1CMmWKZujE0qVc='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>UniSpace · Offline CGX GUI</title>
 <style>
 :root{color-scheme:dark;--surface:#172321;--line:#354944;--ink:#f4f7f6;--muted:#b0c1bd;--accent:#b9f3dc}
@@ -853,6 +853,9 @@ pre{max-height:34vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}te
 		}
 		return matches;
 	}
+	//#endregion
+	//#region app/lib/uni-shell.mjs
+	const surfaceRoute = (surface) => surface === "desktop" ? "desktop:review" : surface;
 	function fields(value, allowed) {
 		if (!value || typeof value !== "object" || Array.isArray(value) || Object.keys(value).some((key) => !allowed.includes(key))) throw new Error("Unexpected fields in this CGX document.");
 	}
@@ -935,7 +938,7 @@ pre{max-height:34vh;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}te
 		if (block.type === "tools") {
 			for (const surface of block.surfaces) {
 				const link = make("a", SURFACES[surface]);
-				link.href = "https://lightspeed-go.nathaniel-b.chatgpt.site/#view=" + surface;
+				link.href = "https://lightspeed-go.nathaniel-b.chatgpt.site/#view=" + encodeURIComponent(surfaceRoute(surface));
 				link.target = "_blank";
 				link.rel = "noopener noreferrer";
 				panel.append(link, " ");
