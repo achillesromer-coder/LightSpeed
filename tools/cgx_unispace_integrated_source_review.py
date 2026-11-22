@@ -54,7 +54,7 @@ def inspect_gateway(text: str) -> dict:
         raise ReviewHold("original source route table missing")
     chunk=route_array.group(1)
     lines=[s.strip() for s in chunk.splitlines() if s.strip() and not s.strip().startswith("//")]
-    items=[{"path":m[0],"title":m[1],"type":m[2],"facet":m[3],"evidence":m[4]}
+    items=[{"path":m[1],"title":m[2],"type":m[3],"facet":m[4],"evidence":m[5]}
            for m in ROUTES.finditer(chunk)]
     if len(lines)!=len(items) or len(items)!=51:
         raise ReviewHold("public gateway source route census changed")
