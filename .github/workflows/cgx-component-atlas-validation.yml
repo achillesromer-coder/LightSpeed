@@ -36,6 +36,9 @@ on:
       - "apps/lightspeed-go/src/printspaceR0AtomicReview.test.mjs"
       - "scripts/printspace_r0_sqlite_reference_ledger.py"
       - "tests/test_printspace_r0_atomic_ledger_smoke.py"
+      - "scripts/package_printspace_software.py"
+      - "tests/test_printspace_software_release.py"
+      - "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md"
       - "docs/engineering/PRINTSPACE_R0_ATOMIC_LEDGER_REFERENCE_2026-11-22.md"
       - "tests/test_printspace_r0_batch_smoke.py"
       - "docs/engineering/PRINTSPACE_R0_BATCH_SWEEP_EXECUTION_2026-11-22.md"
@@ -93,6 +96,9 @@ on:
       - "apps/lightspeed-go/src/printspaceR0AtomicReview.test.mjs"
       - "scripts/printspace_r0_sqlite_reference_ledger.py"
       - "tests/test_printspace_r0_atomic_ledger_smoke.py"
+      - "scripts/package_printspace_software.py"
+      - "tests/test_printspace_software_release.py"
+      - "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md"
       - "docs/engineering/PRINTSPACE_R0_ATOMIC_LEDGER_REFERENCE_2026-11-22.md"
       - "tests/test_printspace_r0_batch_smoke.py"
       - "docs/engineering/PRINTSPACE_R0_BATCH_SWEEP_EXECUTION_2026-11-22.md"
@@ -171,6 +177,11 @@ jobs:
         run: python -m pytest -q tests/test_printspace_composition.py
       - name: Validate PrintSpace pre-DBR archive review register
         run: python -m pytest -q tests/test_printspace_pre_dbr_archive_register.py && python scripts/validate_printspace_pre_dbr.py
+      - name: Build private reproducible PrintSpace software RC (no public publication)
+        run: |
+          python scripts/package_printspace_software.py build --out "$RUNNER_TEMP/printspace-private-rc"
+          python scripts/package_printspace_software.py check --out "$RUNNER_TEMP/printspace-private-rc"
+          python scripts/package_printspace_software.py verify --out "$RUNNER_TEMP/printspace-private-rc"
       - name: Validate PrintSpace sequential batch harness
         run: python -m pytest -q tests/test_run_cgx_printspace_batch.py
       - name: Run bounded comprehensive PrintSpace batch
@@ -348,3 +359,11 @@ jobs:
                   json.loads(path.read_text(encoding="utf-8"))
           print("CGX component/manufacturing JSON validation PASS")
           PY
+      - name: Archive private PrintSpace software release candidate (not a deployment)
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pc01-printspace-software-private-rc
+          path: ${{ runner.temp }}/printspace-private-rc/
+          if-no-files-found: error
+          retention-days: 30
