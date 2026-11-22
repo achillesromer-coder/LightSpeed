@@ -194,3 +194,23 @@ Each region references the exact observed directional_sha256. Fingerprints bind 
 **Next empirical gate.** Identify or acquire real material lots with observed batch, storage and provider source evidence; choose an engineer-approved machine, process route, deposition orientation and calibrated tools; pre-register both A-to-B and B-to-A comparators and control specimens; independently review oxygen/moisture/pressure/temperature/time exposure, cure and surface-conditioning risks. Specify objective mechanical/electrical readbacks, acceptance thresholds, independent uncertainty and rejection handling *before* any authorised run. No sample counts, mixing recipes, strengths, energy doses or qualification claims are assigned without a signed protocol and native evidence. Non-ambient, chemical, heated and EM steps require independent C0 approval.
 
 **Retained audit.** tests/test_printspace_interface_witness_plan.py tests deterministic four-coupon generation and fail-closed row/identity/authority cases. The existing sequential CI batch increases to 17 stages and emits an unmeasured witness-plan receipt. Achilles's pre-DBR register now protects 24 current/source/evidence references and retains 3 historical candidates pending separate approval. Archive/deletion/native admission are unauthorised. RDC normal reserve 25%; emergency floor 24%. No routine RDC usage.
+
+
+### Owner-source spot-check and 17-stage witness regression receipt — 22 November 2026
+
+**Live Drive readback, bounded to exactly three rows:** selected owner sheet 32_CGX_Universal_Type1_Tech_Matrix_v0_1 in spreadsheet 1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8; each row was separately read at A:B (matrix/archetype identity) and AK:BH (24 directional/compiler fields). The SHA-256 recomputed over UTF-8 JSON.stringify([sheet_row,matrix_id,archetype_id,24 field strings]) matched the committed read-only source index:
+
+- Row 258 / T1M-0257 / CGA-M-001 / STRUCTURE_DATUM: 79e1f684061160701bfbef7da797aedba6f05e7317025c35acb6cfb5e45efdc0 — MATCH.
+- Row 410 / T1M-0409 / CGA-DIEL-001 / DIELECTRIC_ISOLATION: 186095ddb9bb75a50104abbe62eaa5f2015e6aecca7c7ef28eb2e958cdab0663 — MATCH.
+- Row 40 / T1M-0039 / CGA-I-001 / CONDUCTOR_INTERCONNECT: 55ad6b189c9b1c9f562f7ee9402a9b48f4c83ea072787039b46d163dc420bab7 — MATCH.
+
+The selected source text explicitly states that interface allowance is directional (X→Y does not imply Y→X), depends on the exact process and prior-layer damage envelope, and is subordinate to UTP-106 instance/material/process evidence. Matching source strings does not establish that the material lots, tools or processing histories exist. This **spot-check does not reverify the other 408 rows**, provider-wide permissions, independently accepted geometry or owner DBR.
+
+**Digital GitHub evidence:** existing component-atlas CI run 44971628913 at the implementation/documentation-head preceding this note, completed SUCCESS. The dedicated 17-step comprehensive regression receipt records 17 PASS, no mismatched source log length/SHA256, 10.682 s of recorded stage execution, and explicit machine/mint/commercial authority false. The archived output contains the synthetic composite, sequential logs/receipt and the new exact unmeasured four-direction witness plan. GitHub artifact 14734011739, ZIP digest 2dc79d05c7a4cb0b3b25ef568f9e9f9e5e47c457c980e58116a05841360530d6; 30-day provider expiry reported as 22 December 2026, pending long-term owner evidence capture.
+
+- Exact unmeasured witness plan SHA-256: 6923cc437535a33c9b8e526633bff415e8aef018ed331c670300f691870d5d31.
+- Synthetic forward/reverse coupon keys for interlayer/conductor: CGX-WITNESS-CEEBDBCD45AAEED0505E and CGX-WITNESS-B176B16F93C9BB866F1B.
+- Synthetic forward/reverse coupon keys for structure/interlayer: CGX-WITNESS-FD6302402A669999F1FA and CGX-WITNESS-6093810BD53202C63BB8.
+- All four measurement, material-lot and tool-calibration receipt fields: NULL; state PLAN_READY_UNQUALIFIED. These keys are *proposed digital specimen identifiers*, not native mint, acquisition, test completion or owner release receipts.
+
+**One-version retention:** new witness planner and pilot selection fixture are added to the same review branch and recorded as protected active evidence/source in the existing Achilles pre-DBR register (24 protected; 3 historical review candidates). No second CGX manufacturing root, private LOAD hydration, autonomous device sequence, physical operation, archive move or original source deletion occurred. PR remains unmerged pending owner and engineering release gates.
