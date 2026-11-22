@@ -220,6 +220,70 @@
       "artifact_id": 14731609373,
       "archive_sha256": "7de4f06606eb6e780300a1f02d0c907e2adce0aa71f036eb8c7801b2435e56b3",
       "reason": "Latest independently checked 13-stage batch log/receipt artifact; preserve for audit and reproducibility."
+    },
+    {
+      "id": "PC01-PROT-008",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+      "git_blob_sha1": "049b58731afb7633e16e0a36fafa011c77fedd36",
+      "reason": "411-entry geometry atlas is the existing canonical engineering implementation mirror, not redundant with a hash-only 24-field matrix projection."
+    },
+    {
+      "id": "PC01-PROT-009",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/raphael_component_geometry_search_v0_1.json",
+      "git_blob_sha1": "fd18ea0d1d966f74e980592070396fd6208f10a0",
+      "reason": "Raphael search-variable source lineage is not equal to admitted mesh assets or substitutable by the new preflight."
+    },
+    {
+      "id": "PC01-PROT-010",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+      "git_blob_sha1": "17f6be96c78c2816d5997aaf19cfe5481fc0382f",
+      "reason": "Original printable solid-state engineering extension includes distinct ontology/source semantics and must be retained."
+    },
+    {
+      "id": "PC01-PROT-011",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/compiler.py",
+      "git_blob_sha1": "db75aacf07cb64fc9eb94af81c79d8befdd6f996",
+      "reason": "Canonical manufacturing IR builder; PrintSpace review gate is an overlay, not a replacement."
+    },
+    {
+      "id": "PC01-PROT-012",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printstack.py",
+      "git_blob_sha1": "bbd47e8adbbc19a577103e6e92065f34c72b3c70",
+      "reason": "Canonical printable 4D stack and compound decomposition generator."
+    },
+    {
+      "id": "PC01-PROT-013",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/binding.py",
+      "git_blob_sha1": "ee8d435c0788aca32db117de4f5ff54fe1705956",
+      "reason": "Exact CGXI source, lot, tool and witness coupon evidence-bound resolver."
+    },
+    {
+      "id": "PC01-PROT-014",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/volumetric.py",
+      "git_blob_sha1": "c42dbebcda27dad7251844ad847487eeb91cfd6b",
+      "reason": "Canonical volumetric topology component and associated deterministic resolution."
+    },
+    {
+      "id": "PC01-PROT-015",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
+      "git_blob_sha1": "ee41de7ea927ad1d28fcdcf327a70754ad43cd74",
+      "reason": "Owner-derived manufacturing IR contract, namespaces and source/evidence precedence rules."
     }
   ],
   "archive_review_gates": [
