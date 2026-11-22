@@ -13,6 +13,7 @@ from typing import Any
 
 from tools.verify_unispace_product import canonical_integer_mesh_review
 from .volumetric import load_volumetric_kernel
+from .exact_contact import exact_convex_contact, ContactHold
 
 SCHEMA = "CGX-PRINTSPACE-GEOMETRY-COMPOSITION/0.1"
 RESULT_SCHEMA = "CGX-PRINTSPACE-COMPOSITION-REVIEW/0.1"
@@ -129,6 +130,7 @@ def compile_geometry_composition(request: dict[str, Any]) -> dict[str, Any]:
                                         "shape_sha256": canonical["sha256"],
                                         "metrics": canonical["metrics"],
                                         "vertices": source["vertices_mm"],
+                                        "faces": source["faces"],
                                         "rights_ref": source["rights_ref"],
                                         "source_ref": source["source_ref"]}
     nodes = {}
@@ -169,13 +171,41 @@ def compile_geometry_composition(request: dict[str, Any]) -> dict[str, Any]:
         if edge.get("evidence_state") not in ("UNTESTED", "PROPOSED"):
             return hold("FALSE_QUALIFICATION_ATTEMPT")
         relation = _aabb_relation(nodes[source]["bounds_mm"], nodes[target]["bounds_mm"])
-        if edge["kind"] == "CONTACT_CANDIDATE" and relation == "AABB_DISJOINT":
+        a = nodes[source]; b = nodes[target]
+        mesh_a = admitted[a["shape_id"]]; mesh_b = admitted[b["shape_id"]]
+        try:
+            contact = exact_convex_contact(
+                {"vertices_mm": mesh_a["vertices"], "faces": mesh_a["faces"]}, a["translate_mm"],
+                {"vertices_mm": mesh_b["vertices"], "faces": mesh_b["faces"]}, b["translate_mm"])
+        except ContactHold as exc:
+            return hold(str(exc))
+        relation_exact = contact["relation"]
+        if edge["kind"] == "CONTACT_CANDIDATE" and relation_exact == "DISJOINT":
             return hold("DECLARED_CONTACT_DISJOINT")
-        if edge["kind"] == "SEPARATED" and relation != "AABB_DISJOINT":
+        if edge["kind"] == "SEPARATED" and relation_exact != "DISJOINT":
             return hold("SEPARATION_NOT_DEMONSTRATED_BY_BOUNDS")
+        if edge["kind"] == "INTERLAYER" and relation_exact != "FACE_CONTACT":
+            return hold("INTERLAYER_NO_FINITE_CONTACT_AREA")
+        if edge["kind"] in ("CONTACT_CANDIDATE", "INTERLAYER") and relation_exact == "VOLUME_OVERLAP":
+            return hold("UNRESOLVED_INTERPENETRATING_REGIONS")
+        if edge["kind"] == "EMBEDDED":
+            if relation_exact == "DISJOINT":
+                return hold("EMBEDDED_REGIONS_DISJOINT")
+            if relation_exact == "VOLUME_OVERLAP":
+                return hold("EMBEDDED_BOOLEAN_UNRESOLVED")
         canonical_interfaces.append({"from": source, "to": target,
                                      "kind": edge["kind"], "bounds_relation": relation,
+                                     "exact_convex_contact": contact,
                                      "evidence_state": edge["evidence_state"],
+                                     "directional_coupon_status": "PENDING_BOTH_DIRECTIONS_INDEPENDENTLY",
+                                     "lot_tool_environment_binding": "NOT_VERIFIED",
+                                     "interface_qualification_plan": [
+                                         "SOURCE_LOT_AND_TOOL_IDENTITY",
+                                         "SOURCE_TO_TARGET_DEPOSITION_COUPON",
+                                         "TARGET_TO_SOURCE_SEPARATE_COUPON",
+                                         "ATMOSPHERE_SURFACE_PREP_AND_CURE_HISTORY",
+                                         "MEASURED_INTERFACE_FUNCTION_AND_DAMAGE_READBACK",
+                                     ],
                                      "physical_compatibility": "NOT_VERIFIED"})
     if len(nodes) > 1 and not canonical_interfaces:
         return hold("UNCONNECTED_COMPOSITION")
