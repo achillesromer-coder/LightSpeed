@@ -691,6 +691,15 @@
       "path": "docs/engineering/PRINTSPACE_R0_BATCH_SWEEP_EXECUTION_2026-11-22.md",
       "git_blob_sha1": "6d0736abce00d2da2f1bbab10f6da07669442e86",
       "reason": "Sweep contracts, no-authority proof ceiling, latency baseline and real host ledger requirements"
+    },
+    {
+      "id": "PC01-PROT-066",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14738334759,
+      "archive_sha256": "fdd7052ef255348d000dd83d915e0ca4da97f3ce0ba0872725cd4d2c7c128df9",
+      "reason": "Independent 25-stage CGX PrintSpace sequential CI receipt with no log-byte/SHA256 mismatches, including bounded Node R0 batch review and 256/512-case synthetic Ed25519 sweeps tested in LightSpeed GO. No persistent host nonce ledger, rights or actual PC01 release. Provider expiry 2026-12-22; authorised durable owner retention pending."
     }
   ],
   "archive_review_gates": [
