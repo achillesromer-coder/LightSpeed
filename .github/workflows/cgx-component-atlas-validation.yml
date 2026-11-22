@@ -15,6 +15,7 @@ on:
       - "tests/test_printspace_owner_matrix_projection.py"
       - "tests/test_printspace_composition.py"
       - "tests/test_printspace_exact_contact.py"
+      - "tests/test_printspace_interface_witness_plan.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -44,6 +45,7 @@ on:
       - "tests/test_printspace_owner_matrix_projection.py"
       - "tests/test_printspace_composition.py"
       - "tests/test_printspace_exact_contact.py"
+      - "tests/test_printspace_interface_witness_plan.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -87,6 +89,8 @@ jobs:
         run: python -m pytest -q tests/test_cgx_quantitative_invariants.py
       - name: Validate Type-I stack and equation kernels
         run: python -m pytest -q tests/test_universal_type1_stack_compiler.py tests/test_type1_equation_kernel.py
+      - name: Validate directional PrintSpace witness plan
+        run: python -m pytest -q tests/test_printspace_interface_witness_plan.py
       - name: Validate exact convex PrintSpace contact
         run: python -m pytest -q tests/test_printspace_exact_contact.py
       - name: Validate CGX PrintSpace geometry composition
@@ -121,6 +125,24 @@ jobs:
           out.mkdir(parents=True, exist_ok=True)
           target = out / "pc01-synthetic-composition-review.json"
           target.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          # Same canonical geometry, same owner Drive metadata projection.
+          # The receipt is a source-indexed TEST PLAN, not observed materials.
+          from cgx.manufacturing import plan_interface_witnesses
+          from cgx.manufacturing import compile_component, find_archetype, load_default_atlas
+          ir = compile_component(find_archetype(load_default_atlas(), "PN rectifier diode"),
+                                 build_id="pc01-three-layer-coupon")
+          selections = json.loads(Path("cgx/manufacturing/pc01_interface_witness_plan_v0_1.json").read_text())
+          selections["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+          witness = plan_interface_witnesses(result, selections)
+          assert witness["state"] == "PLAN_READY_UNQUALIFIED", witness["hold_codes"]
+          assert len(witness["plan"]["interfaces"]) == 2
+          assert sum(len(x["directions"]) for x in witness["plan"]["interfaces"]) == 4
+          assert witness["material_interface_qualified"] is False
+          assert witness["machine_authorised"] is False
+          assert witness["evidence_independently_verified"] is False
+          receipt_path = out / "pc01-synthetic-directional-witness-plan.json"
+          receipt_path.write_text(json.dumps(witness, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
           print(json.dumps({"state":result["state"], "geometry_composite_hash":result["geometry_composite_hash"],
             "instances":len(result["graph"]["instances"]), "source_shapes":len(result["graph"]["shape_catalogue"]),
             "load_hydration":result["load_h0"]["hydration"], "receipt":str(target)}, sort_keys=True))
