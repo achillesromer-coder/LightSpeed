@@ -561,6 +561,62 @@
       "artifact_id": 14737720027,
       "archive_sha256": "1a6674969946242563ee5d9090d8532d9ff1f94432e08fd0cb6bfc3c9861974d",
       "reason": "Independently read and SHA256/length-verified 23-stage PrintSpace digital-only CI including CGX 80-facet source graph/H0/selective hydration, virtual factory 756 cases, 216 analytic model cases and 12-service back-down review. All 23 steps PASS, zero log integrity mismatches. Artifact provider expiry 2026-12-22; durable owner evidence copy needs separate authorisation."
+    },
+    {
+      "id": "PC01-PROT-050",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_host_preflight.py",
+      "git_blob_sha1": "42a11d2dc33c6d2e7ddf7d3a952363659aa35f3e",
+      "reason": "Read-only exact FileSpace source and R0 candidate identity/rights review; no native Object_ID admission"
+    },
+    {
+      "id": "PC01-PROT-051",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_host_r0_review_v0_1.json",
+      "git_blob_sha1": "95d96af1bdb690d3609e7d89b245ee061abe3510",
+      "reason": "Deterministic zero-identity 3-product R0 canonical handoff, no registry or rights claims"
+    },
+    {
+      "id": "PC01-PROT-052",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs",
+      "git_blob_sha1": "dcec2b857e8178ffb7ba9d8c8d9e65bc39ef787d",
+      "reason": "Uses existing UniSpace HostObjectContextGate and LoadLibraryLensPlan; no source hydration, permission or DBR grant"
+    },
+    {
+      "id": "PC01-PROT-053",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs",
+      "git_blob_sha1": "0602852bd71248bd3244b4dd2e4cbbef4b3c9b78",
+      "reason": "Node interop and negative source/rights/collision tests with synthetic host responses only"
+    },
+    {
+      "id": "PC01-PROT-054",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_host_preflight.py",
+      "git_blob_sha1": "a31dea91708d742a6a1f46a006e9ed787ff3db0c",
+      "reason": "Python source-catalogue back-down exact identity and auth/secret rejection tests"
+    },
+    {
+      "id": "PC01-PROT-055",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_host_preflight.py",
+      "git_blob_sha1": "ca427db12531daa4abca62786f8362858b7b4fac",
+      "reason": "Reproducible source-only R0 manifest with --check drift gate"
+    },
+    {
+      "id": "PC01-PROT-056",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_HOST_CROSSWALK_2026-11-22.md",
+      "git_blob_sha1": "92f384ef6cbdfb40cffe6e4642646e82f154e5d8",
+      "reason": "Authoritative source/rights/ACL/DBR and machine proof acceptance criteria"
     }
   ],
   "archive_review_gates": [
