@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-uyO+4k6/lU+Alb1+tmBTu2Oimpz64nb5LsAFT3cJ2lQ='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-lkI7MRbIlGkShP8CfYsg1W4RFYZK003fkq78efxFAp0='; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
 <title>UniSpace · Offline CGX GUI</title>
 <style>
 :root{color-scheme:dark;--surface:#172321;--line:#354944;--ink:#f4f7f6;--muted:#b0c1bd;--accent:#b9f3dc}
@@ -88,7 +88,7 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 		"grexes": []
 	};
 	//#endregion
-	//#region .sites-checkout/app/lib/unispace.mjs
+	//#region app/lib/unispace.mjs
 	const ROOT = _offline_unispace_catalogue_default.parent;
 	const SPACES = [
 		{
@@ -482,7 +482,7 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 		return graph.nodes.filter((node) => !node.archived && (!spec.facet || node.facets.includes(spec.facet)) && (!spec.kind || node.kind === spec.kind) && (!spec.status || node.status === spec.status) && (!matched || matched.has(node.id)));
 	}
 	//#endregion
-	//#region .sites-checkout/app/lib/uni-interface.mjs
+	//#region app/lib/uni-interface.mjs
 	const INTERFACE_SCHEMA = "cgx.unispace.interface/1";
 	const ARRANGEMENTS = [
 		"grid",
@@ -846,7 +846,7 @@ textarea,input[type=search],input[type=file]{width:100%;min-width:0}label{font-w
 		return matches;
 	}
 	//#endregion
-	//#region .sites-checkout/portable/shell.mjs
+	//#region portable/shell.mjs
 	const byId = (id) => document.getElementById(id);
 	const make = (tag, value) => {
 		const node = document.createElement(tag);
