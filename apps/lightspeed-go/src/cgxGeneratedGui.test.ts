@@ -107,7 +107,7 @@ describe("Generated CGX FileSpace GUI compiler, not native admission", () => {
       layout:"rows",limit:12
     });
     const plan = compileCgxGeneratedGui(x);
-    expect(plan.panels.at(-1)?.workspace).toBeNull();
+    expect(plan.panels[plan.panels.length - 1]?.workspace).toBeNull();
     expect(plan.panels).toHaveLength(6);
     expect(plan.parent).toBe(CGX_GENERATED_GUI_ROOT);
   });
