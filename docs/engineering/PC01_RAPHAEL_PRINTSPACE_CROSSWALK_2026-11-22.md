@@ -278,4 +278,13 @@ A conservative AABB interval expands each nominal region by its declared transla
 
 **Next empirical requirements.** Exact source-identified real tool and machine workspace geometry, independent C0 safety constraints, observed calibration/position-error envelopes, thermal/chemical cure changes, fixture and tooling tolerances, orientation/swept collision kernel, validated sample plans, and measured downstream test receipts. These are separate input/evidence gates; no real print or toolpath command was issued.
 
-**Retention.** Achilles's existing pre-DBR register now protects 29 active/source/evidence references and still carries three historical archive-review candidates. No archive/deletion/DBR/write authority is promoted; zero Remote Desktop Commander calls. Preserve 25 percent normal RDC reserve and 24 percent emergency floor.
+**Retention.** Achilles's existing pre-DBR register now protects 30 active/source/evidence references including the 20-stage synthetic audit artifact and still carries three historical archive-review candidates. No archive/deletion/DBR/write authority is promoted; zero Remote Desktop Commander calls. Preserve 25 percent normal RDC reserve and 24 percent emergency floor.
+
+
+### Static tolerance and back-down evidence — independently checked 20-stage baseline
+
+Implementation CI run 44974564977 completed SUCCESS. Retrieved artifact ID 14734629721 (21,030 bytes), ZIP SHA256 8cf47ea0945f72977f003ac27f8714c65369d26702a0391f4587ad82b2f90618, provider expiry 22 December 2026. All 20 stage logs independently matched the receipt's recorded size and SHA256; 20/20 PASS_TESTS_ONLY, zero mismatches and 14.2 seconds recorded sequential test execution. This is a digital software test; CI did not authenticate any physical machine or print a specimen.
+
+Synthetic face normal uncertainty screen SHA256: 280acc9fb8d8493be9dc59bfe131312636eec1501748ccb3ce1a5ebd27a982a4. The structural to interlayer directed contact has a hypothetical possible 125 micrometre gap or interference; the interlayer to conductor contact has 100 micrometre possible gap or interference. At the deliberately synthetic fixed keep-out, the conservative AABB axis gaps under these hypothetical bounds are 1950 micrometres for structure, 1925 for interlayer and 1975 for conductor. Every result retains physical_tolerances_verified=false, moving_toolpaths_evaluated=false and physical_clearance_authorised=false.
+
+Enhanced twelve-service root SHA256: b9d9a67b1d747b29e6eae89a993ec986835b389b95ac5519650f345ba8a67318, different from the previously protected no-screen root as required. Its reverse-audit receipt state is PASS_DIGITAL_ONLY (manifest matched). No physical claims or source-rights promotion. Achilles pre-DBR retained original 3 archive proposals and now **30 protected** references, including the exact 20-stage artifact. This is a retention review pointer, not proof of permanent owner archive readback.
