@@ -91,7 +91,7 @@ export function mountCgxImmersiveHomebase(
   cameraView.setAttribute("aria-hidden","true");
   let history:SpatialHomebase[]=[];
   let redo:SpatialHomebase[]=[];
-  let baseline=spatialSnapshot(layout);
+  const originalSnapshot=spatialSnapshot(layout);
   const panel=element("section","ls-spatial-immersive");
   panel.dataset.viewMode=mode;
   const header=element("header","ls-spatial-header");
@@ -154,7 +154,6 @@ export function mountCgxImmersiveHomebase(
   const saveDraft=():void=>{
     try{
       localStorage.setItem(DRAFT_KEY,spatialSnapshot(layout));
-      baseline=spatialSnapshot(layout);
       setNote("Local browser draft saved. NOT a FileSpace/DBR commit or cross-device sync.");
     }catch{setNote("Browser storage unavailable; use explicit JSON export.");}
   };
@@ -239,7 +238,7 @@ export function mountCgxImmersiveHomebase(
   toolbar.append(modes,cameraToggle,editToggle,action("Undo",undo),action("Redo",redoOp),
     action("Save local",saveDraft),action("Load local",restoreDraft),
     action("Export .cgx layout",exportDraft),action("Import layout",()=>importInput.click()),
-    action("Restore original",()=>attempt(()=>compileSpatialHomebase(baseline),"Saved local baseline restored")),
+    action("Restore seed",()=>attempt(()=>compileSpatialHomebase(originalSnapshot),"Original local seed restored")),
     collapse,importInput);
   const addControls=element("div","ls-spatial-add");
   const labelInput=document.createElement("input");
