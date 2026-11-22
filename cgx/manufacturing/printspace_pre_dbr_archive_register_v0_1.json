@@ -461,16 +461,16 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_studio_v0_1.html",
-      "git_blob_sha1": "75b523249cf2a9f1a16a3f3f3361122114010b60",
-      "reason": "Offline third-party canvas printer/table viewer, timeline, scaling and conceptual phone hierarchy; no device/mint authority"
+      "git_blob_sha1": "8af15faeac336eadb4cc92dbcb4defd006967bfa",
+      "reason": "Existing standalone viewer with CGX package and H0 exports; browser tested; conceptual only"
     },
     {
       "id": "PC01-PROT-038",
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/build_printspace_studio.py",
-      "git_blob_sha1": "65b66aa394b59159705f3d8ed695cb235a8f81a3",
-      "reason": "Single reproducible build source of canonical offline HTML from source-bound catalogue; explicit --check drift detection"
+      "git_blob_sha1": "294b1fd993f47f82718559832aea5217f64f0200",
+      "reason": "Existing offline viewer generator extended to pin bundle/H0 export hashes, no source or machine authority promotion"
     },
     {
       "id": "PC01-PROT-039",
@@ -496,6 +496,62 @@
       "artifact_id": 14736430893,
       "archive_sha256": "21774ba102f995d3d04504d26e198b2487ed3a04813a7bc9ca4554d44ab9639b",
       "reason": "Verified 22-stage integrated CI receipt including source-bound 216-case electrothermal emulation, bounded 756-case virtual-factory scenarios, source generator build check, original geometry, witness/source review and 12-service reverse audit; 22/22 pass and no log hash mismatches; provider artifact expires 2026-12-22, requires separately approved durable owner evidence capture."
+    },
+    {
+      "id": "PC01-PROT-042",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx.py",
+      "git_blob_sha1": "b3eba9f85d868d460eacc1356adf855cb1ced727",
+      "reason": "Deterministic portable CGX FileSpace faceted graph, bounded H0 and selective hydration, compression transport and original catalogue reverse source; no native rights or machine access"
+    },
+    {
+      "id": "PC01-PROT-043",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_bundle_v0_1.json",
+      "git_blob_sha1": "cf92b67338b0b6e25a4c5bbf279a5f5c987c192e",
+      "reason": "80 source-pinned conceptual object facets; exact canonical hash graph; no actual CAD/material/source bytes embedded"
+    },
+    {
+      "id": "PC01-PROT-044",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_h0_v0_1.json",
+      "git_blob_sha1": "78d8621d9b92ca5c58b1e988be265f1f275cdfaa",
+      "reason": "Nonhydrating Load.Lite H0 product root aliases and SHA, no private/source payload bytes or native lease"
+    },
+    {
+      "id": "PC01-PROT-045",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_lite_v0_1.json",
+      "git_blob_sha1": "39d10383568ca6f021aed4520ced19bd8cd8f108",
+      "reason": "Deterministic conventional zlib transport fixture, bounded decompression and canonical SHA readback, NOT native ternary compression"
+    },
+    {
+      "id": "PC01-PROT-046",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_cgx_bundle.py",
+      "git_blob_sha1": "e4b45b91855055ecacd6d09cddaabd552e08f3bf",
+      "reason": "Reproducible source-to-graph H0 and portable lite builder with --check drift gating"
+    },
+    {
+      "id": "PC01-PROT-047",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_cgx_bundle.py",
+      "git_blob_sha1": "8333df14dbf5b4f9d6bee075bc6d228c0157e594",
+      "reason": "Offline bundle integrity, selective nested product hydration, rights denial, tamper checks, source-replay regression"
+    },
+    {
+      "id": "PC01-PROT-048",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_CGX_FILESPACE_FACETS_2026-11-22.md",
+      "git_blob_sha1": "9ad57c17515d6e76748db2bc1451cbe0ded73be8",
+      "reason": "Source and rights qualification architecture, product manufacturing and owner/native DBR acceptance conditions"
     }
   ],
   "archive_review_gates": [
