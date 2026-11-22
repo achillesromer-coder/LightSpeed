@@ -122,7 +122,7 @@ describe("Generated CGX FileSpace GUI compiler, not native admission", () => {
   it("renders labels as escaped text, not trusted HTML", () => {
     const plan = compileCgxGeneratedGui(source);
     const markup = renderCgxGeneratedGuiMarkup(plan);
-    expect(markup).toContain("Source review");
+    expect(markup).toContain("Source-review only");
     expect(markup).not.toContain("contenteditable");
     expect(markup).not.toContain("<iframe");
     expect(markup).not.toContain("onerror=");
