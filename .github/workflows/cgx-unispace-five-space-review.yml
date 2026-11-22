@@ -140,7 +140,7 @@ jobs:
           assert not o["owner_acceptance_observed"] and not o["side_effects_performed"]
           print("Cross-space handoff: 51 OPEN, five source facets, zero native authority")
           PY
-      - name: Run integrated archive, branch, overlap and hybrid source regressions (65 cases)
+      - name: Run integrated archive, branch, overlap and hybrid source regressions (70 cases)
         run: |
           python -m unittest discover -s tests -p test_cgx_automation_archive_review.py -v
           python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
@@ -152,6 +152,7 @@ jobs:
             --prs cgx/review/unispace_git_pr_source_snapshot_20261122.json \
             --overlaps cgx/review/unispace_source_path_overlap_20261122.json \
             --gates cgx/review/unispace_crossspace_gate_register_v0_1.json \
+            --mesh-json facet-source-review.json \
             > unispace-hybrid-source-review.json
           python - <<'PY'
           import json
@@ -160,6 +161,10 @@ jobs:
           assert item["canonical_root"] == "cgx:root:cognigrex"
           assert len(item["facets"]) == 5
           assert item["cross_space_gates_read_back"] == 51
+          assert item["exact_crossspace_mesh_bound"] is True
+          assert item["original_crossspace_review"]["source_mesh_observed"] is True
+          assert item["original_crossspace_review"]["task_count"] == 51
+          assert item["original_crossspace_review"]["native_admitted"] is False
           assert item["overlap_pairs"] == 5
           assert item["projection_state"] == "OPEN_SOURCE_REVIEW_NO_NATIVE_PROMOTION"
           for forbidden in ("native_dbr_performed","merge_performed","publish_performed",
@@ -167,7 +172,7 @@ jobs:
               assert item[forbidden] is False
           assert item["historic_automation_run_history_complete"] is False
           assert item["source_head_mismatches"], "Stale source head observations cannot silently qualify"
-          print("Integrated five facets / 51 open gates / 65 source regressions, native authority HELD")
+          print("Integrated five facets / exact 51-gate register / 70 source regressions, native authority HELD")
           PY
       - name: Preserve source-only five-facet and 51-task review receipts
         uses: actions/upload-artifact@v4
