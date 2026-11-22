@@ -16,7 +16,7 @@
       "git_blob": "1d58f7a2432d5d4dbea376cc17af8a47159688c0"
     },
     "cgx/domain_templates/toolkit_registry.json": {
-      "git_blob": "0dbd3247322b6755be263231e7076877160e85ef"
+      "git_blob": "da8adede321336b05bb2164ba6817e40f70530b1"
     },
     "cgx/domain_templates/plugin_selector_registry.json": {
       "git_blob": "e182e2fe6e723e0e54e4dc8c9c07657dc514c0bd"
@@ -945,7 +945,7 @@
       "source_key": "cgx-core",
       "display": "cgx-core",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "filespace",
         "db-r",
@@ -970,7 +970,7 @@
       "source_key": "lightspeed",
       "display": "lightspeed",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "compute-routing",
         "jobs",
@@ -990,7 +990,7 @@
       "source_key": "openai",
       "display": "openai",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "reasoning",
         "vision",
@@ -1008,7 +1008,7 @@
       "source_key": "local-llm",
       "display": "local-llm",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "private-reasoning",
         "offline-reasoning"
@@ -1024,7 +1024,7 @@
       "source_key": "google-drive",
       "display": "google-drive",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "read",
         "range-read",
@@ -1045,7 +1045,7 @@
       "source_key": "github",
       "display": "github",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "code",
         "branches",
@@ -1065,7 +1065,7 @@
       "source_key": "python",
       "display": "python",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "analysis",
         "simulation",
@@ -1083,7 +1083,7 @@
       "source_key": "freecad",
       "display": "freecad",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "cad",
         "fcstd",
@@ -1103,7 +1103,7 @@
       "source_key": "web",
       "display": "web",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "research",
         "public-evidence",
@@ -1120,7 +1120,7 @@
       "source_key": "email",
       "display": "email",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "draft",
         "attachment-package",
@@ -1137,7 +1137,7 @@
       "source_key": "calendar",
       "display": "calendar",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "read",
         "schedule-gated"
@@ -1153,7 +1153,7 @@
       "source_key": "ccc",
       "display": "ccc",
       "source_registry": "cgx/domain_templates/toolkit_registry.json",
-      "source_git_blob": "0dbd3247322b6755be263231e7076877160e85ef",
+      "source_git_blob": "da8adede321336b05bb2164ba6817e40f70530b1",
       "capabilities": [
         "discover",
         "plan",
