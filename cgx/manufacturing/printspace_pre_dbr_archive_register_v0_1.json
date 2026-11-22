@@ -749,6 +749,30 @@
       "artifact_id": 14739043653,
       "archive_sha256": "b9f2eb8eb21c49634c51e819d1b85e12a00e6cc7285243a4a5474b3ded6bb8ea",
       "reason": "Independently verified 26-stage PrintSpace sequential CI, including real three-role R0 signature verification before SQLite reference unique atomic insert; 26/26 PASS and zero archived log hash/byte mismatches, with LightSpeed GO 305 test cases passed. Not a production owner ledger/DBR, native trust registry, real source rights or machine C0; provider artifact expires 2026-12-22 and durable owner retention remains separately gated."
+    },
+    {
+      "id": "PC01-PROT-073",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/package_printspace_software.py",
+      "git_blob_sha1": "137ce131b9beeb0573f02185c1a05b73491fe507",
+      "reason": "Reproducible private CGX PrintSpace 0.1.0-rc.1 offline software archive, strict source/authority replay, ZIP hash readback and unsigned checksum; no public release"
+    },
+    {
+      "id": "PC01-PROT-074",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_software_release.py",
+      "git_blob_sha1": "31a67deacbc8a9927f0ea7edf8563f4cb4d08863",
+      "reason": "14 independent digital package/manifest/source, external dependency, duplicate path and authority forgery tests"
+    },
+    {
+      "id": "PC01-PROT-075",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md",
+      "git_blob_sha1": "5c740d2b04bdd041cdad1ae985f534472490faf1",
+      "reason": "Owner release matrix and ordered PrintSpace→FileSpace→DataSpace→UniSpace→Grex/outreach gates; private scope only"
     }
   ],
   "archive_review_gates": [
