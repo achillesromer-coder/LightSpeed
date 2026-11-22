@@ -430,6 +430,15 @@
       "path": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
       "git_blob_sha1": "ff65474eb744273d8502d11417321cc35e6fae00",
       "reason": "Existing canonical Type-I twenty-equation-kernel source; emulator references relevant primitive laws and numeric-versus-symbolic gates, not a second numerical authority."
+    },
+    {
+      "id": "PC01-PROT-034",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14734969656,
+      "archive_sha256": "298008b3679f74f15515d4e0caafa5b33ebadcac4d1a418aee6b082b8efb31d7",
+      "reason": "Independently inspected 21-stage source-bound analytical cross-domain emulation archive, 216 synthetic scenarios, 15 paired factorial interactions, numerical energy residual tests and existing 12-service reverse source; provider expiry 2026-12-22 pending owner-authorised durable retention."
     }
   ],
   "archive_review_gates": [
