@@ -18,6 +18,7 @@ on:
       - "tests/test_printspace_interface_witness_plan.py"
       - "tests/test_printspace_solid_metrics.py"
       - "tests/test_printspace_digital_service_stack.py"
+      - "tests/test_printspace_tolerance_clearance.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -50,6 +51,7 @@ on:
       - "tests/test_printspace_interface_witness_plan.py"
       - "tests/test_printspace_solid_metrics.py"
       - "tests/test_printspace_digital_service_stack.py"
+      - "tests/test_printspace_tolerance_clearance.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -95,6 +97,8 @@ jobs:
         run: python -m pytest -q tests/test_universal_type1_stack_compiler.py tests/test_type1_equation_kernel.py
       - name: Validate exact PrintSpace nominal solid metrics
         run: python -m pytest -q tests/test_printspace_solid_metrics.py
+      - name: Validate synthetic static PrintSpace tolerance screen
+        run: python -m pytest -q tests/test_printspace_tolerance_clearance.py
       - name: Validate bottom-up CGX digital services and reverse source trace
         run: python -m pytest -q tests/test_printspace_digital_service_stack.py
       - name: Validate directional PrintSpace witness plan
@@ -178,6 +182,35 @@ jobs:
             json.dumps(services, indent=2, sort_keys=True) + "\n", encoding="utf-8")
           (out / "pc01-synthetic-back-down-audit.json").write_text(
             json.dumps(audit, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          # This remains a static conservative synthetic AABB analysis; the
+          # printhead sweep, device C0, real tool and measured placement bounds
+          # are UNVERIFIED. Keep previous no-plan manifest unchanged.
+          from cgx.manufacturing import screen_static_tolerances
+          tol = json.loads(Path("cgx/manufacturing/pc01_tolerance_static_screen_v0_1.json").read_text())
+          tol["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+          static = screen_static_tolerances(source_geometry, tol)
+          assert static["state"] == "SCREENED_STATIC_DIGITAL_ONLY", static["hold_codes"]
+          assert len(static["interface_uncertainty"]) == 2
+          assert len(static["static_keepout_results"]) == 3
+          assert sorted(e["possible_normal_gap_um"] for e in static["interface_uncertainty"]) == [100, 125]
+          assert static["moving_toolpaths_evaluated"] is False
+          assert static["physical_clearance_authorised"] is False
+          bounded_services = compile_digital_service_stack(
+            ir, source_geometry, selections, clearance_plan=tol)
+          assert bounded_services["state"] == "DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD"
+          assert len(bounded_services["layers"]) == 12
+          assert bounded_services["static_screen_sha256"] == static["screen_sha256"]
+          backwards = verify_digital_service_stack_backwards(
+            bounded_services, ir, source_geometry, selections, clearance_plan=tol)
+          assert backwards["state"] == "PASS_DIGITAL_ONLY", backwards
+          assert backwards["machine_authorised"] is False
+          for name, payload in (
+              ("pc01-synthetic-static-tolerance-screen.json", static),
+              ("pc01-synthetic-tolerance-service-stack.json", bounded_services),
+              ("pc01-synthetic-tolerance-back-down-audit.json", backwards),
+          ):
+              (out / name).write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
 
 
           print(json.dumps({"state":result["state"], "geometry_composite_hash":result["geometry_composite_hash"],
