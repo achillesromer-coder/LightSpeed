@@ -3,7 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from cgx.load_minimum.gptExportShardReview import inspect_raw_shard,inspect_originals,IntakeHold
+from cgx.load_minimum.gptExportShardReview import inspect_raw_shard,inspect_originals,IntakeHold,RECORD_HASH_ALGORITHM
 
 def example(one="x"):
     return [{"id":one,"conversation_id":one,
@@ -23,6 +23,30 @@ def manifest(names,sizes):
            "files":names,"sharded":True,"shard_count":len(names)}}})
 
 class OriginalShardReviewTests(unittest.TestCase):
+    def test_canonical_algorithm_is_explicit_and_versioned(self):
+        b=raw(example())
+        row,_,_=inspect_raw_shard(b,declaration(b))
+        self.assertEqual(RECORD_HASH_ALGORITHM,
+                         "PYTHON_JSON_SORT_KEYS_COMPACT_UTF8_ALLOW_NAN_FALSE/1")
+        self.assertEqual(row["canonical_record_hash_algorithm"],RECORD_HASH_ALGORITHM)
+        self.assertEqual(row["node_identity_scope"],
+                         "SHARD_FILENAME_PLUS_RECORD_ORDINAL_PLUS_NODE_KEY")
+
+    def test_repeat_mapping_node_keys_are_source_scoped_not_deduplicated(self):
+        recs=[
+          {"id":"one","conversation_id":"one",
+           "mapping":{"shared":{"id":"shared","message":None,"parent":None}}},
+          {"id":"two","conversation_id":"two",
+           "mapping":{"shared":{"id":"shared","message":None,"parent":None}}}
+        ]
+        b=raw(recs)
+        item,record_ids,conversation_ids=inspect_raw_shard(b,declaration(b))
+        self.assertEqual(item["records"],2)
+        self.assertEqual(item["mapping_nodes"],2)
+        self.assertEqual(len(record_ids),2)
+        self.assertEqual(len(conversation_ids),2)
+        self.assertFalse(item["native_dbr"])
+
     def test_valid_shard_is_private_non_native(self):
         b=raw(example())
         x,ids,convs=inspect_raw_shard(b,declaration(b))
