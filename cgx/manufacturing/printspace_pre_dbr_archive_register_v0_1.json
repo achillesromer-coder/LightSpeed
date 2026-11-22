@@ -290,8 +290,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/composition.py",
-      "git_blob_sha1": "4ba4b833d561494722b1adc29ead451e625c401a",
-      "reason": "Active digital composite assembly/reference resolver over existing VGK kernels and UniSpace convex verifier; do not archive."
+      "git_blob_sha1": "421d140ebe20f047aca544d8655ba18e3fed655e",
+      "reason": "Current canonical PrintSpace compositional reference graph, now with bounded exact convex face/edge/point/overlap classification and unqualified directional coupons."
     },
     {
       "id": "PC01-PROT-017",
@@ -332,6 +332,14 @@
       "path": "apps/lightspeed-go/src/cgxUniSpaceLoadCommandSurface.mjs",
       "git_blob_sha1": "7863387d3253e4020de5aadea1de3254b0850511",
       "reason": "Existing LOAD/CCC child FileSpace command projection, review-only and non-executing."
+    },
+    {
+      "id": "PC01-PROT-022",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/exact_contact.py",
+      "git_blob_sha1": "580093dabcefbe4ba3fa471c7cc65b00ed9386ea",
+      "reason": "Active bounded exact rational convex contact analysis; reused by composition; independent physical interface qualification remains unverified."
     }
   ],
   "archive_review_gates": [
