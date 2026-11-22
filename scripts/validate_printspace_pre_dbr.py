@@ -8,6 +8,7 @@ Achilles/owner approvals. Archive/move/delete operations are deliberately absent
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -152,6 +153,18 @@ def validate_register(doc: dict[str, Any]) -> dict[str, Any]:
             if not isinstance(row["path"], str) or not _is_sha1(row.get("git_blob_sha1")):
                 _fail("protected source must have exact Git identity")
             protected_paths.add(row["path"])
+            # Verify protected active source against Git's blob identity, not
+            # just syntactic SHA1. A stale "current" pointer must fail closed.
+            rel = Path(row["path"])
+            if rel.is_absolute() or ".." in rel.parts or "\\" in row["path"]:
+                _fail("unsafe active-source path")
+            active = ROOT / rel
+            if not active.is_file():
+                _fail("protected canonical source is missing: " + row["path"])
+            original = active.read_bytes()
+            git_blob_sha1 = hashlib.sha1(b"blob " + str(len(original)).encode("ascii") + b"\0" + original).hexdigest()
+            if git_blob_sha1 != row["git_blob_sha1"]:
+                _fail("stale protected active Git blob pointer: " + row["path"])
         elif not _is_sha256(row.get("archive_sha256")) or not isinstance(row.get("artifact_id"), int):
             _fail("protected CI artifact must have exact SHA256")
     if EXPECTED_PROTECTED - protected_paths:
