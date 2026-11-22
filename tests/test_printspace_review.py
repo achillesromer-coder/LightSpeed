@@ -1,0 +1,141 @@
+"""Negative-path focused tests; synthetic IDs are not real evidence receipts."""
+import copy
+import importlib.util
+from pathlib import Path
+import json
+import unittest
+
+spec = importlib.util.spec_from_file_location("printspace_review", Path(__file__).resolve().parents[1] / "tools" / "compile_printspace_review.py")
+compiler = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(compiler)
+
+
+def fixture():
+    return {
+        "schema": "CGX-PRINTSPACE-REVIEW-INPUT/0.1",
+        "article_id": "PC01-TEST-001", "source_revision": "SYNTHETIC-TEST-NOT-AUTHORITY",
+        "geometry": {"catalogue_position": 1, "source_id": "SYNTHETIC-GEO", "units": "mm", "coordinate_frame": "XYZ", "admission_receipt": "SYNTHETIC-ONLY", "rights_ref": "SYNTHETIC", "sha256": "a" * 64, "minimum_feature_mm": 0.4},
+        "rights": {"status": "CLEARED", "licence_ref": "SYNTHETIC-ONLY"},
+        "machine": {"physical_state": "NOT_BUILT", "safety_control": "INDEPENDENT_C0", "initial_atmosphere": "AMBIENT", "tool_ids": ["T1", "T2"], "minimum_feature_mm": 0.3},
+        "material_lots": {"A": {"passport_ref": "A-SYNTHETIC"}, "B": {"passport_ref": "B-SYNTHETIC"}},
+        "interfaces": [{"id": "AB", "predecessor_lot": "A", "successor_lot": "B", "status": "QUALIFIED", "evidence_ref": "FAKE-TEST-RECEIPT", "process_revision": "SYNTHETIC"}],
+        "operations": [
+            {"id": "p0", "kind": "PREPARE", "depends_on": []},
+            {"id": "d1", "kind": "DEPOSIT", "depends_on": ["p0"], "material_lot_id": "A", "tool_id": "T1"},
+            {"id": "d2", "kind": "DEPOSIT", "depends_on": ["d1"], "material_lot_id": "B", "on_material_lot_id": "A", "on_operation_id": "d1", "interface_id": "AB", "tool_id": "T2"},
+            {"id": "seal", "kind": "ENCAPSULATE", "depends_on": ["d2"], "barrier_ref": "SYNTHETIC-BARRIER", "post_seal_test_id": "test"},
+            {"id": "test", "kind": "VERIFY", "depends_on": ["seal"], "test_type": "POST_SEAL", "evidence_ref": "SYNTHETIC-TEST"},
+        ]
+    }
+
+
+def codes(doc):
+    return {f["code"] for f in compiler.compile_review(doc)["findings"]}
+
+
+class PrintSpaceReviewTests(unittest.TestCase):
+    def test_review_deterministic_and_without_authority(self):
+        p = fixture()
+        a = compiler.compile_review(p)
+        self.assertEqual(a, compiler.compile_review(copy.deepcopy(p)))
+        self.assertEqual(a["state"], "REVIEW_ONLY")
+        self.assertEqual(a["ordered_operations"], ["p0", "d1", "d2", "seal", "test"])
+        for k in ("physical_machine_authorised", "mint_authorised", "commercial_release_authorised"):
+            self.assertFalse(a[k])
+        self.assertEqual(a["evidence_status"], "DECLARED_NOT_INDEPENDENTLY_VERIFIED")
+
+    def test_catalogue_sentinel_rejected(self):
+        p = fixture(); p["geometry"]["catalogue_position"] = 174
+        self.assertIn("GEOMETRY_NOT_ADMITTED", codes(p))
+
+    def test_direction_not_reversible(self):
+        p = fixture()
+        p["operations"][2]["material_lot_id"] = "A"
+        p["operations"][2]["on_material_lot_id"] = "B"
+        self.assertIn("DIRECTIONAL_INTERFACE", codes(p))
+
+    def test_gradient_with_missing_composition_law(self):
+        p = fixture(); p["operations"][2]["gradient"] = {"minimum_feature_mm": 0.4, "coupon_receipt": "TEST"}
+        self.assertIn("GRADIENT_UNQUALIFIED", codes(p))
+
+    def test_encapsulation_needs_post_seal(self):
+        p = fixture(); p["operations"][3]["post_seal_test_id"] = "none"
+        self.assertIn("POST_SEAL_TEST", codes(p))
+
+    def test_field_activation_needs_measurements(self):
+        p = fixture(); p["operations"].append({"id": "act", "kind": "ACTIVATE", "depends_on": ["test"], "stimulus": "EM", "field": {"frequency_hz": 2.4e9}})
+        self.assertIn("EM_DOSE_UNBOUND", codes(p))
+
+    def test_purge_needs_chamber_rating(self):
+        p = fixture(); p["operations"].insert(1, {"id": "gas", "kind": "PURGE", "depends_on": ["p0"], "target_atmosphere": "VACUUM", "sensor_calibration_ref": "SYN", "transition_receipt": "SYN"})
+        self.assertIn("UNRATED_CHAMBER", codes(p))
+
+    def test_rights_blocked(self):
+        p = fixture(); p["rights"]["status"] = "UNKNOWN"; p["commercial_release_requested"] = True
+        self.assertIn("RIGHTS_BLOCK", codes(p))
+
+    def test_cyclic_dependencies_rejected(self):
+        p = fixture(); p["operations"][0]["depends_on"] = ["test"]
+        a = compiler.compile_review(p)
+        self.assertEqual(a["state"], "HOLD")
+        self.assertIn("CYCLIC_PROCESS", {f["code"] for f in a["findings"]})
+
+    def test_unqualified_reverse_and_undeclared_lot(self):
+        p = fixture(); p["operations"][2]["on_material_lot_id"] = "B"
+        self.assertIn("PREDECESSOR_NOT_DEPOSITED", codes(p))
+        p["operations"][2]["material_lot_id"] = "NO_LOT"
+        self.assertIn("UNBOUND_MATERIAL", codes(p))
+
+    def test_oxygen_budget(self):
+        p = fixture(); p["operations"].insert(1, {"id": "gas", "kind": "PURGE", "depends_on": ["p0"], "target_atmosphere": "CONTROLLED_GAS", "measured_o2_ppm": 800, "maximum_o2_ppm": 500, "sensor_calibration_ref": "SYN", "transition_receipt": "SYN"})
+        p["operations"][2]["depends_on"] = ["gas"]
+        self.assertIn("OXYGEN_BUDGET", codes(p))
+
+    def test_out_of_order_layer_rejected(self):
+        p = fixture(); p["operations"][2]["depends_on"] = ["p0"]
+        self.assertIn("PREDECESSOR_NOT_DEPOSITED", codes(p))
+
+    def test_resolution_and_tool_constraints(self):
+        p = fixture(); p["geometry"]["minimum_feature_mm"] = 0.05
+        p["operations"][2]["tool_id"] = "unknown"
+        c = codes(p)
+        self.assertIn("RESOLUTION_EXCEEDED", c)
+        self.assertIn("UNAVAILABLE_TOOL", c)
+
+    def test_unsafe_control_plan(self):
+        p = fixture(); p["machine"]["safety_control"] = "DELEGATED_C2"
+        self.assertIn("C0_NOT_INDEPENDENT", codes(p))
+
+    def test_positive_synthetic_gradient_and_purge(self):
+        p = fixture()
+        p["operations"].insert(1, {"id": "gas", "kind": "PURGE", "depends_on": ["p0"], "target_atmosphere": "CONTROLLED_GAS", "sensor_calibration_ref": "SYN", "transition_receipt": "SYN", "measured_o2_ppm": 200, "maximum_o2_ppm": 500})
+        p["operations"][2]["depends_on"] = ["gas"]
+        p["operations"][2]["required_atmosphere"] = "CONTROLLED_GAS"
+        p["operations"][3]["required_atmosphere"] = "CONTROLLED_GAS"
+        p["operations"][3]["gradient"] = {"composition_law_ref": "SYN", "spatial_field_ref": "SYN", "coupon_receipt": "SYN", "minimum_feature_mm": 0.4}
+        self.assertEqual(compiler.compile_review(p)["state"], "REVIEW_ONLY")
+
+    def test_later_purge_invalidates_earlier_atmosphere(self):
+        p = fixture()
+        p["operations"].insert(1, {"id": "inert", "kind": "PURGE", "depends_on": ["p0"], "target_atmosphere": "CONTROLLED_GAS", "sensor_calibration_ref": "SYN", "transition_receipt": "SYN", "measured_o2_ppm": 200, "maximum_o2_ppm": 500})
+        p["operations"].insert(2, {"id": "reset", "kind": "PURGE", "depends_on": ["inert"], "target_atmosphere": "AMBIENT", "sensor_calibration_ref": "SYN", "transition_receipt": "SYN"})
+        p["operations"][3]["depends_on"] = ["reset"]
+        p["operations"][3]["required_atmosphere"] = "CONTROLLED_GAS"
+        self.assertIn("MISSING_ATMOSPHERE", codes(p))
+
+    def test_parallel_environment_conflict(self):
+        p = fixture()
+        p["operations"].append({"id": "inert", "kind": "PURGE", "depends_on": ["p0"], "target_atmosphere": "CONTROLLED_GAS", "sensor_calibration_ref": "SYN", "transition_receipt": "SYN", "measured_o2_ppm": 200, "maximum_o2_ppm": 500})
+        p["operations"][1]["depends_on"] = ["p0", "inert"]
+        self.assertIn("AMBIGUOUS_ATMOSPHERE", codes(p))
+
+    def test_malformed_dependency_and_unknown_kind(self):
+        p = fixture(); p["operations"][1]["depends_on"] = ["MISSING"]
+        p["operations"][2]["kind"] = "EXECUTE_NOW"
+        c = codes(p)
+        self.assertIn("UNKNOWN_DEPENDENCY", c)
+        self.assertIn("UNKNOWN_OPERATION", c)
+
+
+if __name__ == "__main__":
+    unittest.main()
