@@ -94,3 +94,9 @@ __all__.extend(["exact_convex_contact", "ContactHold"])
 # Planning-only directional witness packets; real lot/tool evidence remains external.
 from .interface_qualification import plan_interface_witnesses
 __all__.append("plan_interface_witnesses")
+
+# Bounded nominal solid measurements and read-only composite service dependency DAG.
+from .solid_metrics import exact_nominal_convex_metrics, measure_composite_nominal
+from .digital_service_stack import compile_digital_service_stack, verify_digital_service_stack_backwards
+__all__.extend(["exact_nominal_convex_metrics", "measure_composite_nominal",
+                "compile_digital_service_stack", "verify_digital_service_stack_backwards"])
