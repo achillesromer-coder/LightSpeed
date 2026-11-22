@@ -130,12 +130,15 @@ from .printspace_cgx import (
     pack_lite as pack_printspace_cgx_lite,
     unpack_lite as unpack_printspace_cgx_lite,
     verify_back_down as verify_printspace_cgx_back_down,
+    project_space_context as project_printspace_shared_facet,
+    verify_space_context_back_down as verify_printspace_shared_facet_back_down,
 )
 __all__.extend([
     "build_printspace_cgx_bundle","verify_printspace_cgx_bundle",
     "printspace_cgx_h0","hydrate_printspace_cgx",
     "pack_printspace_cgx_lite","unpack_printspace_cgx_lite",
     "verify_printspace_cgx_back_down",
+    "project_printspace_shared_facet", "verify_printspace_shared_facet_back_down",
 ])
 
 # Existing UniSpace host/LOAD R0 review: no private hydration or native Object_ID.
