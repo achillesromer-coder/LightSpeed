@@ -406,6 +406,30 @@
       "artifact_id": 14734629721,
       "archive_sha256": "8cf47ea0945f72977f003ac27f8714c65369d26702a0391f4587ad82b2f90618",
       "reason": "Independent 20-stage service/tolerance regression artifact, exact 125/100um synthetic face-gap budgets, STATIC AABB keep-out screening, optional 12-service immutable manifest and PASS_DIGITAL_ONLY reverse replay; expires 2026-12-22; capture to authorised owner evidence store before expiry."
+    },
+    {
+      "id": "PC01-PROT-031",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/cross_domain_emulation.py",
+      "git_blob_sha1": "ef9aed87b0e50baae1e9334fd0668490839df6a4",
+      "reason": "21-stage bounded source-anchored analytical electrothermal and expansion sweep; synthetic constitutive assumptions with no external solver or machine authority."
+    },
+    {
+      "id": "PC01-PROT-032",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_synthetic_cross_sweep_v0_1.json",
+      "git_blob_sha1": "19058e134fdb9d0798b24ef0d1f77bfc3963722c",
+      "reason": "216-case six-factor synthetic scenario source; equation hash populated only from live canonical catalogue at runtime and no physical material parameters attested."
+    },
+    {
+      "id": "PC01-PROT-033",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+      "git_blob_sha1": "ff65474eb744273d8502d11417321cc35e6fae00",
+      "reason": "Existing canonical Type-I twenty-equation-kernel source; emulator references relevant primitive laws and numeric-versus-symbolic gates, not a second numerical authority."
     }
   ],
   "archive_review_gates": [
