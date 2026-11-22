@@ -23,7 +23,7 @@ def proposal() -> dict:
 def test_full_registry_stays_non_executing_and_reversible():
     report = module.validate_register(proposal())
     assert report["status"] == "PASS_REGISTER_INVARIANTS_ONLY"
-    assert (report["candidate_count"], report["protected_count"]) == (3, 49)
+    assert (report["candidate_count"], report["protected_count"]) == (3, 56)
     assert report["archive_executions"] == report["deletions"] == report["dbr_mutations"] == 0
     assert report["real_source_or_approval_reverified"] is False
 
