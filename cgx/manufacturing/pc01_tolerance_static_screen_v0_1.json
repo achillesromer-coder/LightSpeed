@@ -1,0 +1,53 @@
+{
+  "schema": "CGX-PRINTSPACE-TOLERANCE-STATIC-SCREEN/0.1",
+  "units": "um",
+  "uncertainty_kind": "SYNTHETIC_SYMMETRIC_TRANSLATION_BOUNDS",
+  "screen_kind": "STATIC_CONSERVATIVE_AABB_ONLY",
+  "evidence_state": "UNMEASURED",
+  "geometry_composite_sha256": "55b8de2df57a8b19ecda4d5ab0ed0619de57789e21e793ea2170a68b00dfb613",
+  "manufacturing_ir_ref": "cgx://manufacturing/build/pc01-three-layer-coupon",
+  "manufacturing_ir_configuration_hash": null,
+  "instance_uncertainties": [
+    {
+      "instance_id": "structure",
+      "max_abs_translation_error_um": [
+        50,
+        50,
+        50
+      ]
+    },
+    {
+      "instance_id": "interface",
+      "max_abs_translation_error_um": [
+        75,
+        75,
+        75
+      ]
+    },
+    {
+      "instance_id": "conductive",
+      "max_abs_translation_error_um": [
+        25,
+        25,
+        25
+      ]
+    }
+  ],
+  "static_keepouts": [
+    {
+      "id": "SYNTHETIC-AABB-X-01",
+      "zone_kind": "SYNTHETIC_FIXED_KEEP_OUT",
+      "lower_um": [
+        6000,
+        -1000,
+        -1000
+      ],
+      "upper_um": [
+        8000,
+        5000,
+        5000
+      ]
+    }
+  ],
+  "minimum_nominal_static_clearance_um": 500
+}
