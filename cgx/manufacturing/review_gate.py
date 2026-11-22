@@ -351,11 +351,13 @@ def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict, *, ge
         }
         if geometry["state"] != "REVIEW_ONLY":
             hold("GEOMETRY_COMPOSITION_HOLD", "geometry_composition", "Exact geometry review has unresolved source or topology gates")
+        geo_ref = geometry_composition.get("manufacturing_ir_ref") if isinstance(geometry_composition, dict) else None
+        geo_hash = geometry_composition.get("manufacturing_ir_configuration_hash") if isinstance(geometry_composition, dict) else None
         if (not isinstance(manufacturing_ir, dict) or
-            geometry_composition.get("manufacturing_ir_ref") != manufacturing_ir.get("cgx_uri")):
+            geo_ref != manufacturing_ir.get("cgx_uri")):
             hold("GEOMETRY_IR_URI_MISMATCH", "geometry_composition.manufacturing_ir_ref", "Geometry must match this exact existing CGX build URI")
         if (not isinstance(manufacturing_ir, dict) or
-            geometry_composition.get("manufacturing_ir_configuration_hash") != manufacturing_ir.get("configuration_hash")):
+            geo_hash != manufacturing_ir.get("configuration_hash")):
             hold("GEOMETRY_IR_HASH_MISMATCH", "geometry_composition.manufacturing_ir_configuration_hash", "Geometry must bind to exact canonical IR configuration hash")
     result["findings"] = sorted(findings, key=lambda x: (x["code"], x["subject"], x["detail"]))
     result["state"] = "HOLD" if findings else "REVIEW_ONLY"
