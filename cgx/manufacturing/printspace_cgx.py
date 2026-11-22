@@ -252,7 +252,7 @@ def h0_handshake(bundle: dict, *, expected_catalogue_sha256: str | None = None) 
     return {'schema':H0_SCHEMA,'state':'H0_NONHYDRATING_SOURCE_INDEX_ONLY',
             'bundle_sha256':bundle['bundle_sha256'],'catalogue_sha256':bundle['source_catalogue_sha256'],
             'root_ref':bundle['root'],'products':{alias:key for alias,key in bundle['aliases'].items() if alias.startswith('product/')},
-            'root_namespace':'cgx://printspace/','object_count':audit['objects'],
+            'root_namespace':'cgx://romer.industries/romer/printspace/','object_count':audit['objects'],
             'source_bytes_hydrated':0,'native_admitted':False,
             'machine_authorised':False, 'parent_dbr_receipt':None}
 
@@ -319,6 +319,118 @@ def verify_back_down(bundle: Any, original_catalogue: dict) -> dict:
             'root_sha256':expected['bundle_sha256'],'objects':len(expected['objects']),
             'source_authenticated':False,'rights_verified':False,
             'physical_qualification':False,'machine_authorised':False,'native_dbr_written':False}
+
+
+
+# The source mesh on the separate review branch declares these five views of
+# ONE root. They are not five engines, stores, filespaces or native abilities.
+SPACE_FACETS = frozenset((
+    'file_space', 'data_space', 'print_space', 'social_space', 'intelligence_space',
+))
+PARENT_ROOT = 'Cognigrex.cgx'
+ROMER_CHILD = 'Romer.cgx'
+ROMER_URI = 'cgx://romer.industries/romer'
+
+
+def project_space_context(bundle: dict, original_catalogue: dict,
+                          domains: dict, topology: dict, *,
+                          product_id: str = 'diode', facet: str = 'print_space',
+                          representation: str = 'auto') -> dict:
+    """Use existing source metadata to inspect ONE space through ONE CGX root.
+
+    The contract inputs must be re-read from independently checked source files
+    upstream. Their hashes in this result are self-consistency, NOT signed
+    authority. T173 mesh and native ternary require independent admission; a
+    synthetic box and zlib JSON do not become either by renaming a field.
+    """
+    if facet not in SPACE_FACETS or type(product_id) is not str:
+        raise CGXHold('UNKNOWN_SPACE_OR_PRODUCT')
+    if representation not in ('auto', 'canonical_json', 't173', 'ternary'):
+        raise CGXHold('UNKNOWN_REPRESENTATION')
+    if representation == 't173':
+        raise CGXHold('T173_EXACT_MESH_AND_RIGHTS_ADMISSION_MISSING')
+    if representation == 'ternary':
+        raise CGXHold('NATIVE_TERNARY_TRANSPORT_NOT_ADMITTED')
+    if (not isinstance(domains, dict) or not isinstance(topology, dict)
+            or domains.get('schema') != 'CGX-DOMAIN-TEMPLATES/0.4'
+            or topology.get('schema') != 'CGX-COGNIGREX-PARENT-TOPOLOGY/0.2'
+            or domains.get('parent_filespace', {}).get('file') != PARENT_ROOT
+            or topology.get('root', {}).get('file') != PARENT_ROOT):
+        raise CGXHold('CANONICAL_PARENT_SOURCE_MISMATCH')
+    child = domains.get('domains', {}).get('romer')
+    actual_children = topology.get('root', {}).get('children')
+    if (not isinstance(child, dict) or not isinstance(actual_children, list)
+            or child.get('file') != ROMER_CHILD
+            or child.get('namespace') != ROMER_URI
+            or sum(type(c) is dict and c.get('id') == 'romer'
+                   and c.get('file') == ROMER_CHILD for c in actual_children) != 1):
+        raise CGXHold('ROMER_CHILD_SOURCE_MISMATCH')
+    _check_no_authority(domains)
+    _check_no_authority(topology)
+    # It is essential that a self-consistent substitute bundle cannot supply
+    # the original expected source without a recompilation and comparison.
+    if verify_back_down(bundle, original_catalogue)['state'] != 'PASS_DIGITAL_ONLY':
+        raise CGXHold('ORIGINAL_CATALOGUE_REPLAY_REQUIRED')
+    alias='product/'+product_id
+    if alias not in bundle['aliases']:
+        raise CGXHold('UNKNOWN_PRODUCT_ALIAS')
+    audit=check_bundle(bundle, expected_catalogue_sha256=canonical_digest(original_catalogue))
+    key=bundle['aliases'][alias]
+    # No physical or private source data is hydrated by these views.
+    details={
+        'file_space': {'view': 'CONTENT_ADDRESS_AND_H0', 'geometry':'NOT_RESOLVED',
+                       'payload_objects': 0, 'external_asset_bytes':0},
+        'data_space': {'view': 'EVIDENCE_REFS_ONLY', 'geometry':'NOT_RESOLVED',
+                       'payload_objects':0, 'measured_readings':None,
+                       'source_rights_and_lot_attestations':None},
+        'print_space': {'view':'NOMINAL_DIGITAL_GEOMETRY_AND_SEQUENCE',
+                        'geometry':'SYNTHETIC_AXIS_ALIGNED_BOX_MM',
+                        'payload_objects':hydrate(bundle,product_id=product_id,
+                                                 expected_catalogue_sha256=bundle['source_catalogue_sha256'])['objects_hydrated'],
+                        't173_admitted':False, 'real_toolpath':None},
+        'social_space': {'view':'PROVENANCE_CONTEXT_ONLY', 'geometry':'NOT_RESOLVED',
+                         'payload_objects':0, 'messages_sent':0},
+        'intelligence_space': {'view':'SOURCE_AWARE_PLANNING_ONLY', 'geometry':'NOT_RESOLVED',
+                               'payload_objects':0, 'model_inference_executed':False},
+    }
+    projection={
+        'schema':'CGX-PRINTSPACE-SINGLE-ROOT-SPACE-PROJECTION/0.1',
+        'state':'SOURCE_REPLAYED_DIGITAL_REVIEW_ONLY',
+        'root_carrier':PARENT_ROOT, 'child_carrier':ROMER_CHILD,
+        'canonical_child_namespace':ROMER_URI,
+        'product_alias':alias, 'product_facet_sha256':key,
+        'selected_space':facet, 'representation':'CANONICAL_JSON_DIGITAL_REVIEW_ONLY',
+        'facet_view':details[facet],
+        'source_refs':{'domain_registry_sha256':_sha(domains),
+                       'parent_topology_sha256':_sha(topology),
+                       'catalogue_sha256':bundle['source_catalogue_sha256'],
+                       'bundle_sha256':bundle['bundle_sha256']},
+        'available_spaces':sorted(SPACE_FACETS),
+        'source_facets':audit['objects'], 'h0_native_admitted':False,
+        'source_rights_authenticated':False, 'native_ternary_encoded':False,
+        't173_exact_mesh_admitted':False, 'native_file_or_data_space_attached':False,
+        'native_dbr_written':False, 'machine_authorised':False,
+        'commercial_release_authorised':False,
+    }
+    projection['projection_sha256']=_sha(projection)
+    return projection
+
+
+def verify_space_context_back_down(claimed: Any, bundle: dict,
+                                   original_catalogue: dict, domains: dict,
+                                   topology: dict, *, product_id: str = 'diode',
+                                   facet: str = 'print_space',
+                                   representation: str = 'auto') -> dict:
+    """Recompute from all four original inputs, never trust claimed hashes."""
+    try:
+        expected=project_space_context(bundle,original_catalogue,domains,topology,
+                                       product_id=product_id,facet=facet,
+                                       representation=representation)
+    except (CGXHold,KeyError,TypeError,ValueError,RecursionError):
+        return {'state':'HOLD','native_admitted':False,'machine_authorised':False}
+    return {'state':'PASS_DIGITAL_ONLY' if type(claimed) is dict and claimed==expected else 'HOLD',
+            'projection_sha256':expected['projection_sha256'],
+            'native_admitted':False,'machine_authorised':False}
 
 
 def pack_lite(bundle: dict, *, expected_catalogue_sha256: str | None = None) -> dict:
