@@ -1,4 +1,5 @@
 import "./osShell.css";
+import "./cgxGeneratedGui.css";
 import cgxStudioSource from "../../../docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json?raw";
 import { mountCgxGeneratedGui } from "./cgxGeneratedGui";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
