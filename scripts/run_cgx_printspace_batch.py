@@ -48,6 +48,7 @@ SUITES = (
     ("atomic-r0-ledger-reference", "tests/test_printspace_r0_atomic_ledger_smoke.py"),
     ("software-private-rc", "tests/test_printspace_software_release.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
+    ("software-handoff-register", "tests/test_printspace_product_handoff.py"),
 )
 
 
