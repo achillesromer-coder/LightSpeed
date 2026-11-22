@@ -12,6 +12,7 @@ from pathlib import Path
 from cgx.load_minimum.gptExportManifestIntake import project_manifest_bytes, SHARD_RE, IntakeHold
 
 SCHEMA="LOAD-GPT-ORIGINAL-SHARD-SOURCE-REVIEW/0.1"
+RECORD_HASH_ALGORITHM="PYTHON_JSON_SORT_KEYS_COMPACT_UTF8_ALLOW_NAN_FALSE/1"
 MAX_SHARD_BYTES=128*1024*1024
 MAX_RECORDS=1000
 MAX_MAPPING_NODES=100000
@@ -54,7 +55,9 @@ def inspect_raw_shard(raw: bytes, declaration: dict) -> tuple[dict,set[str],set[
                       "mapping_nodes":len(mapping),"minted":False})
     return ({"name":name,"original_sha256":sha(raw),"original_bytes":len(raw),
              "records":len(body),"mapping_nodes":nodes,"null_message_nodes":empty,
-             "record_index":index,"source_body_in_receipt":False,"native_dbr":False},
+             "record_index":index,"canonical_record_hash_algorithm":RECORD_HASH_ALGORITHM,
+             "node_identity_scope":"SHARD_FILENAME_PLUS_RECORD_ORDINAL_PLUS_NODE_KEY",
+             "source_body_in_receipt":False,"native_dbr":False},
             ids,convs)
 
 def inspect_originals(manifest_raw: bytes, directory: Path) -> dict:
@@ -77,6 +80,8 @@ def inspect_originals(manifest_raw: bytes, directory: Path) -> dict:
     return {"schema":SCHEMA,"status":"SOURCE_R0_VERIFIED_PRIVATE_NOT_NATIVE_ADMITTED",
       "root":"cgx:root:cognigrex","manifest_sha256":sha(manifest_raw),
       "shard_count":len(rows),"original_bytes":bytes_total,"records":count,
+      "canonical_record_hash_algorithm":RECORD_HASH_ALGORITHM,
+      "node_identity_scope":"SHARD_FILENAME_PLUS_RECORD_ORDINAL_PLUS_NODE_KEY",
       "mapping_nodes":nodes_total,"shards":rows,
       "private_owner_scope":True,"public_published":False,"model_trained":False,
       "canonical_write":False,"mint":False,"dbr_verified":False,
