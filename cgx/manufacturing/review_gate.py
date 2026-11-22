@@ -274,7 +274,7 @@ def main() -> int:
 if __name__ == "__main__":
     raise SystemExit(main())
 
-def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict, *, geometry_composition: dict | None = None) -> dict:
+def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict, *, geometry_composition: dict | None = None, interface_selections: dict | None = None) -> dict:
     """Bind the read-only PrintSpace preflight to one *actual* canonical CGX IR.
 
     The standalone compile_review() is useful for proposed processes; this entry
@@ -359,6 +359,37 @@ def review_existing_manufacturing_ir(manufacturing_ir: dict, packet: dict, *, ge
         if (not isinstance(manufacturing_ir, dict) or
             geo_hash != manufacturing_ir.get("configuration_hash")):
             hold("GEOMETRY_IR_HASH_MISMATCH", "geometry_composition.manufacturing_ir_configuration_hash", "Geometry must bind to exact canonical IR configuration hash")
+    # Witness coupons are planning requirements ONLY. Fingerprints from the
+    # owner Drive matrix are source-class selectors, never material passports.
+    # The existing CGXI/IR must still bind the exact process, rights, lots
+    # and machine through independently trusted host/owner evidence.
+    if interface_selections is not None:
+        from .interface_qualification import plan_interface_witnesses
+        witness = plan_interface_witnesses(
+            geometry if geometry_composition is not None else None,
+            interface_selections,
+        )
+        result["witness_projection"] = {
+            "state": witness["state"],
+            "plan_sha256": witness["plan_sha256"],
+            "hold_codes": witness["hold_codes"],
+            "coupon_plans": sum(len(x["directions"]) for x in witness["plan"]["interfaces"])
+                if isinstance(witness.get("plan"), dict) else 0,
+            "owner_source_snapshot_only": True,
+            "independent_material_evidence_verified": False,
+            "machine_authorised": False,
+            "native_dbr_written": False,
+        }
+        if geometry_composition is None:
+            hold("WITNESS_REQUIRES_GEOMETRY", "interface_selections", "Witness plan must bind the existing exact geometry graph")
+        if witness["state"] != "PLAN_READY_UNQUALIFIED":
+            hold("WITNESS_PLAN_HOLD", "interface_selections", "Directional witness-plan source identity or geometry is not reviewable")
+        if (not isinstance(manufacturing_ir, dict) or
+            not isinstance(interface_selections, dict) or
+            interface_selections.get("manufacturing_ir_configuration_hash") != manufacturing_ir.get("configuration_hash") or
+            interface_selections.get("manufacturing_ir_ref") != manufacturing_ir.get("cgx_uri")):
+            hold("WITNESS_IR_MISMATCH", "interface_selections", "Witness plan must bind the same canonical CGXI build URI and configuration SHA256")
+        hold("MATERIAL_INTERFACE_EVIDENCE_PENDING", "interface_selections", "A→B and B→A require separately witnessed material lots, deposition routes, calibrations, controls and measured test receipts")
     result["findings"] = sorted(findings, key=lambda x: (x["code"], x["subject"], x["detail"]))
     result["state"] = "HOLD" if findings else "REVIEW_ONLY"
     result["physical_machine_authorised"] = False
