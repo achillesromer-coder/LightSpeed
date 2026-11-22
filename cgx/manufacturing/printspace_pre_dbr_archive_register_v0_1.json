@@ -650,6 +650,15 @@
       "path": "docs/engineering/PRINTSPACE_R0_THREE_ROLE_SIGNATURE_REVIEW_2026-11-22.md",
       "git_blob_sha1": "752ed1200cd1ba948fcf235d6ac94b099da9537a",
       "reason": "Evidence trust root, source registry, rights/ACL, revocation ledger and R0-only operational acceptance checklist"
+    },
+    {
+      "id": "PC01-PROT-061",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14738715892,
+      "archive_sha256": "ab5dbae64db1a471f599df8edc099577168d235d6d9a780e5908f49468df84c9",
+      "reason": "Independently read and SHA256/length-verified 24-stage PrintSpace source/geometry/CGX/UniSpace CI, with unchanged three-product zero-native-ID R0 review and backtrace. This checkpoint includes three-role Ed25519 verifier syntax, and actual LightSpeed GO Vitest separately passed all 10 synthetic cryptographic tests (286 total). No real owner trust roots, DBR, machine, rights attestation. GitHub artifact expires 2026-12-22; approved durable owner retention still required."
     }
   ],
   "archive_review_gates": [
