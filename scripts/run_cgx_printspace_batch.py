@@ -49,6 +49,7 @@ SUITES = (
     ("software-private-rc", "tests/test_printspace_software_release.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
     ("software-handoff-register", "tests/test_printspace_product_handoff.py"),
+    ("software-rc2-static-preflight", "tests/test_printspace_rc_static.py"),
 )
 
 
