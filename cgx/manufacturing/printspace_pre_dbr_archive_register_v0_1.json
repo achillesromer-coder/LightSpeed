@@ -626,6 +626,30 @@
       "artifact_id": 14737873157,
       "archive_sha256": "fc0450043d3c2dbba7f97dfad62d98ed284449f2209eb9497867cdc42aba7d3c",
       "reason": "Verified 24-stage PrintSpace CGX -> UniSpace native R0 review-only crosswalk regression, canonical 3-product no-ID fixture, full source backtrace and actual UniSpace/LightSpeed GO test/build. All 24 sequential stages PASS and 0 archived log hash/length mismatches; digital-only. Artifact provider expiry 2026-12-22, owner-approved durable evidence capture remains necessary."
+    },
+    {
+      "id": "PC01-PROT-058",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs",
+      "git_blob_sha1": "6dacc7d85f30cadc1a32736313d2c9e995166bd6",
+      "reason": "Read-only Ed25519 registry/rights/host three-role R0 verifier with externally pinned public key fingerprints, nonce/expiry/revocation and explicit no-native authority"
+    },
+    {
+      "id": "PC01-PROT-059",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.test.mjs",
+      "git_blob_sha1": "0001f5e875a8b038c34183cfe2b4ea1b94968ac7",
+      "reason": "In-memory synthetic 3-role cryptographic source/identity/rights hold and negative replay/tamper tests; no owner private keys"
+    },
+    {
+      "id": "PC01-PROT-060",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_THREE_ROLE_SIGNATURE_REVIEW_2026-11-22.md",
+      "git_blob_sha1": "752ed1200cd1ba948fcf235d6ac94b099da9537a",
+      "reason": "Evidence trust root, source registry, rights/ACL, revocation ledger and R0-only operational acceptance checklist"
     }
   ],
   "archive_review_gates": [
