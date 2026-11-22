@@ -461,16 +461,16 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_studio_v0_1.html",
-      "git_blob_sha1": "8af15faeac336eadb4cc92dbcb4defd006967bfa",
-      "reason": "Existing standalone viewer with CGX package and H0 exports; browser tested; conceptual only"
+      "git_blob_sha1": "6aee579b385ebcd92481539b1ba61876a0643828",
+      "reason": "Existing single-window viewer enhanced with all five read-only workspace facets and explicit false authority flags"
     },
     {
       "id": "PC01-PROT-038",
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/build_printspace_studio.py",
-      "git_blob_sha1": "b175dd105c495500d49a5fab48f29ec86a51940c",
-      "reason": "Existing offline viewer generator extended to pin bundle/H0 export hashes, no source or machine authority promotion"
+      "git_blob_sha1": "3bc031096696a3e631f28dde6598f40339f4d7c4",
+      "reason": "Reproducible same-window studio generator, no new renderer or runtime"
     },
     {
       "id": "PC01-PROT-039",
@@ -502,8 +502,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx.py",
-      "git_blob_sha1": "8b9b0a89a426e512072ee62e3cb0d297ad071b48",
-      "reason": "Deterministic portable CGX FileSpace faceted graph, bounded H0 and selective hydration, compression transport and original catalogue reverse source; no native rights or machine access"
+      "git_blob_sha1": "d68045dc73201aa7b7021f7ba80657228537979c",
+      "reason": "In-place source-replayed five-facet routing on single Cognigrex parent and Romer child; deny unadmitted native ternary and T173 meshes"
     },
     {
       "id": "PC01-PROT-043",
@@ -518,8 +518,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_cgx_h0_v0_1.json",
-      "git_blob_sha1": "3496f18b38400941ee65e566674ca88871de9a30",
-      "reason": "Nonhydrating Load.Lite H0 product root aliases and SHA, no private/source payload bytes or native lease"
+      "git_blob_sha1": "7ec8809bb7f010735cbfe4e7644a12d8823f806a",
+      "reason": "Regenerated exact nonhydrating H0 namespace under existing Romer child, not independent printspace root"
     },
     {
       "id": "PC01-PROT-045",
@@ -542,16 +542,16 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "tests/test_printspace_cgx_bundle.py",
-      "git_blob_sha1": "218adcb7ce8c54b897fb7a69ab7b0d56357eab65",
-      "reason": "Offline bundle integrity, selective nested product hydration, rights denial, tamper checks, source-replay regression"
+      "git_blob_sha1": "04bbb44a6dccdebc0c1a3dd31b92b55f7dc00b4c",
+      "reason": "Tests all five source-replayed facets on three products, source/rights/ternary/T173 negative gates"
     },
     {
       "id": "PC01-PROT-048",
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "docs/engineering/PRINTSPACE_CGX_FILESPACE_FACETS_2026-11-22.md",
-      "git_blob_sha1": "e5d75fbe7707d997769485eb3329fe030c79c5cb",
-      "reason": "Source and rights qualification architecture, product manufacturing and owner/native DBR acceptance conditions"
+      "git_blob_sha1": "5d2fbee5f52e54e9cce176ed38eedb9961d44bad",
+      "reason": "In-place one root source-hash routing and geometry/transport proof ceiling"
     },
     {
       "id": "PC01-PROT-049",
@@ -575,8 +575,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_host_r0_review_v0_1.json",
-      "git_blob_sha1": "95d96af1bdb690d3609e7d89b245ee061abe3510",
-      "reason": "Deterministic zero-identity 3-product R0 canonical handoff, no registry or rights claims"
+      "git_blob_sha1": "3c49ca265eb53f891df5f9547daff19810e1abdc",
+      "reason": "Regenerated exact R0 source handoff after existing H0 nesting, zero native identity admission"
     },
     {
       "id": "PC01-PROT-052",
@@ -755,16 +755,16 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/package_printspace_software.py",
-      "git_blob_sha1": "137ce131b9beeb0573f02185c1a05b73491fe507",
-      "reason": "Reproducible private CGX PrintSpace 0.1.0-rc.1 offline software archive, strict source/authority replay, ZIP hash readback and unsigned checksum; no public release"
+      "git_blob_sha1": "73e809030237be3146d7db59068f7d7faca25dab",
+      "reason": "Private RC2 deterministic packaging from same source objects and unchanged eight source assets"
     },
     {
       "id": "PC01-PROT-074",
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "tests/test_printspace_software_release.py",
-      "git_blob_sha1": "31a67deacbc8a9927f0ea7edf8563f4cb4d08863",
-      "reason": "14 independent digital package/manifest/source, external dependency, duplicate path and authority forgery tests"
+      "git_blob_sha1": "93ffe96388a5588a5f3745f142c987c6a104b09e",
+      "reason": "Private RC2 manifest/hash, single-pane UI and release authority regression"
     },
     {
       "id": "PC01-PROT-075",
@@ -791,6 +791,14 @@
       "artifact_id": 14739463189,
       "archive_sha256": "38d0f5389349e77bce21adab0279f3e2697733991b657cf69394ec717da95640",
       "reason": "Independently inspected canonical 27-stage PrintSpace digital/software regression receipt: 27/27 PASS, zero log-byte/SHA256 mismatches, 18.236 seconds recorded serial suite including private RC package tests. No public distribution, physical manufacture, DBR or mint authority. Provider expiry 2026-12-22; durable owner retention pending."
+    },
+    {
+      "id": "PC01-PROT-078",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/__init__.py",
+      "git_blob_sha1": "5708a2262cfd10da2a590171808eee20ec990100",
+      "reason": "Existing manufacturing public facade exposes source-replayed shared facet and reverse auditor"
     }
   ],
   "archive_review_gates": [
