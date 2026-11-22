@@ -8,6 +8,10 @@ on:
       - "tools/cgx_unispace_facet_mesh.py"
       - "tools/cgx_living_consolidation_review.py"
       - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_crossspace_review.py"
+      - "tests/test_cgx_unispace_crossspace_review.py"
+      - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
+      - "docs/architecture/UNISPACE_CROSSSPACE_GATE_RECONCILIATION_20261122.md"
       - "tests/test_cgx_living_consolidation_review.py"
       - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_topology.py"
       - "cgx/domain_templates/**"
@@ -23,6 +27,10 @@ on:
       - "tools/cgx_unispace_facet_mesh.py"
       - "tools/cgx_living_consolidation_review.py"
       - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_crossspace_review.py"
+      - "tests/test_cgx_unispace_crossspace_review.py"
+      - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
+      - "docs/architecture/UNISPACE_CROSSSPACE_GATE_RECONCILIATION_20261122.md"
       - "tests/test_cgx_living_consolidation_review.py"
       - "cgx/domain_templates/**"
       - "apps/lightspeed-go/src/osShell.ts"
@@ -58,7 +66,9 @@ jobs:
           python -m py_compile \
             tools/cgx_unispace_facet_mesh.py \
             tools/cgx_living_consolidation_review.py \
-            tests/test_cgx_unispace_facet_mesh.py
+            tests/test_cgx_unispace_facet_mesh.py \
+            tools/cgx_unispace_crossspace_review.py \
+            tests/test_cgx_unispace_crossspace_review.py
       - name: Run facet denial and composition regression
         run: python -m pytest -q tests/test_cgx_unispace_facet_mesh.py
       - name: Run existing consolidation and family regression
@@ -91,6 +101,24 @@ jobs:
           assert p["semantic_state_mutated"] is False
           assert p["model_inference_executed"] is False
           print("Five source-qualified workspace facets; zero native promotion")
+          PY
+      - name: Validate source-only 51 open cross-space gates and existing five facets
+        run: |
+          python -m pytest -q tests/test_cgx_unispace_crossspace_review.py
+          python tools/cgx_unispace_crossspace_review.py --repo . \
+            --mesh-json facet-source-review.json --out crossspace-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o = json.loads(Path("crossspace-source-review.json").read_text(encoding="utf-8"))
+          assert o["state"] == "SOURCE_REVIEW_ONLY_51_TASKS_OPEN"
+          assert o["task_count"] == 51
+          assert o["source_verified_printspace_open"] == 16
+          assert o["proposed_crossspace_open"] == 35
+          assert o["source_mesh_observed"] is True
+          assert not o["native_admitted"] and not o["archive_delete_authorised"]
+          assert not o["owner_acceptance_observed"] and not o["side_effects_performed"]
+          print("Cross-space handoff: 51 OPEN, five source facets, zero native authority")
           PY
       - name: Set up Node for UniSpace shell verification
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
