@@ -284,6 +284,54 @@
       "path": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
       "git_blob_sha1": "ee41de7ea927ad1d28fcdcf327a70754ad43cd74",
       "reason": "Owner-derived manufacturing IR contract, namespaces and source/evidence precedence rules."
+    },
+    {
+      "id": "PC01-PROT-016",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/composition.py",
+      "git_blob_sha1": "21b85d2a79db140ecbbfd779465c61387efdeada",
+      "reason": "Active digital composite assembly/reference resolver over existing VGK kernels and UniSpace convex verifier; do not archive."
+    },
+    {
+      "id": "PC01-PROT-017",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_composite_pilot_v0_1.json",
+      "git_blob_sha1": "373b09756ebf8f57546c903eebdc947804b2452f",
+      "reason": "Current synthetic three-region validation fixture; not a physical qualification, retain for reproducibility."
+    },
+    {
+      "id": "PC01-PROT-018",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+      "git_blob_sha1": "c5e92038495a15a66fb6008925a1bb3e92d7bd8b",
+      "reason": "Existing forty-record VGK geometry/topology kernel source of shapes and reference contracts."
+    },
+    {
+      "id": "PC01-PROT-019",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tools/verify_unispace_product.py",
+      "git_blob_sha1": "59918f899e792fd516907fb93d1c46d2d82b3a3a",
+      "reason": "Existing bounded exact convex integer mesh canonicalizer reused rather than reimplemented."
+    },
+    {
+      "id": "PC01-PROT-020",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+      "git_blob_sha1": "ca7d935d03f2408694aaad9eee0bd2111b5b46a7",
+      "reason": "Existing LOAD.cgx review-only Alexandria H0 lens contract; not a native activation."
+    },
+    {
+      "id": "PC01-PROT-021",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/cgxUniSpaceLoadCommandSurface.mjs",
+      "git_blob_sha1": "7863387d3253e4020de5aadea1de3254b0850511",
+      "reason": "Existing LOAD/CCC child FileSpace command projection, review-only and non-executing."
     }
   ],
   "archive_review_gates": [
