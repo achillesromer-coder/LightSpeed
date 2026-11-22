@@ -2,6 +2,9 @@
 import json
 import unittest
 from copy import deepcopy
+import hashlib
+from tools.cgx_unispace_hybrid_source_review import HybridHold
+from tools.cgx_unispace_crossspace_review import CrossSpaceHold
 from pathlib import Path
 from tools.cgx_unispace_hybrid_source_review import compose, HybridHold
 from tools.cgx_unispace_branch_convergence import ConvergenceHold
@@ -25,6 +28,27 @@ def gate():
 def observed():
     return {"schema":"CGX-AUTOMATION-ARCHIVE-OBSERVATIONS/0.1",
             "canonical_root":"cgx:root:cognigrex","observations":[]}
+
+def original_gates():
+    p=Path(__file__).resolve().parents[1]/"cgx/review/unispace_crossspace_gate_register_v0_1.json"
+    raw=p.read_bytes()
+    return json.loads(raw), hashlib.sha256(raw).hexdigest()
+
+def synthetic_source_mesh():
+    """Source-contract shape fixture; independently built real mesh is checked by CI."""
+    ids=("file_space","data_space","social_space","print_space","intelligence_space")
+    return {"mesh":{
+        "schema":"CGX-UNISPACE-SINGLE-ROOT-FACET-MESH/0.1",
+        "canonical_root_id":"cgx:root:cognigrex",
+        "state":"SOURCE_CONTRACT_MESH_OBSERVED",
+        "facet_count":5,"unique_contract_count":12,"unique_service_count":7,
+        "new_root_created":False,"new_database_created":False,
+        "model_weights_modified":False,"native_execution_authorized":False,
+        "mint_or_network_authorized":False,"source_hydration_performed":False,
+        "facets":[{"id":id,"state":"SOURCE_CONTRACTS_PRESENT",
+                   "execution_authorized":False,"independent_native_admission":False}
+                  for id in ids]
+    }}
 
 class HybridSourceTests(unittest.TestCase):
     def test_real_sources_one_canonical_parent(self):
@@ -82,6 +106,42 @@ class HybridSourceTests(unittest.TestCase):
     def test_review_receipt_reproducible(self):
         p,f=real()
         self.assertEqual(compose(p,f)["review_sha256"],compose(p,f)["review_sha256"])
+
+
+    def test_exact_original_register_is_bound_to_existing_mesh_shape(self):
+        p,f=real()
+        g,sha=original_gates()
+        result=compose(p,f,gates=g,source_mesh=synthetic_source_mesh(),
+                       source_register_sha256=sha)
+        self.assertTrue(result["exact_crossspace_mesh_bound"])
+        self.assertEqual(result["original_crossspace_review"]["task_count"],51)
+        self.assertEqual(result["original_crossspace_review"]["source_mesh_observed"],True)
+        self.assertFalse(result["original_crossspace_review"]["native_admitted"])
+
+    def test_wrong_source_bytes_digest_is_held(self):
+        p,f=real()
+        g,_=original_gates()
+        with self.assertRaises(HybridHold):
+            compose(p,f,gates=g,source_mesh=synthetic_source_mesh(),
+                    source_register_sha256="0"*64)
+
+    def test_crossspace_mesh_wrong_root_fails_closed(self):
+        p,f=real();g,sha=original_gates()
+        mesh=synthetic_source_mesh()
+        mesh["mesh"]["canonical_root_id"]="cgx:root:unauthorised"
+        with self.assertRaises(CrossSpaceHold):
+            compose(p,f,gates=g,source_mesh=mesh,source_register_sha256=sha)
+
+    def test_mesh_without_original_registry_is_held(self):
+        p,f=real()
+        with self.assertRaises(HybridHold):
+            compose(p,f,source_mesh=synthetic_source_mesh())
+
+    def test_registry_only_source_review_remains_not_mesh_qualified(self):
+        p,f=real();g,_=original_gates()
+        item=compose(p,f,gates=g)
+        self.assertFalse(item["exact_crossspace_mesh_bound"])
+        self.assertIn("SOURCE_FACET_MESH",{x["id"] for x in item["pending_conditions"]})
 
 if __name__=="__main__":
     unittest.main()
