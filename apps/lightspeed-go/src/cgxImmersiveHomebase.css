@@ -65,3 +65,10 @@
 @media(max-width:970px){.ls-spatial-frame{grid-template-columns:1fr}.ls-spatial-inspector{max-height:none}.ls-spatial-stage{min-height:300px}}
 @media(max-width:570px){.ls-spatial-stage{min-height:300px;aspect-ratio:1.2}.ls-spatial-immersive{padding:10px}.ls-spatial-object strong{font-size:9px}.ls-spatial-object small{font-size:7px}.ls-spatial-coordinate-edit{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){.ls-spatial-immersive *{scroll-behavior:auto;animation:none;transition:none}}
+
+/* Optional AR passthrough is local camera video, not WebXR tracked anchors. */
+.ls-spatial-camera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.73;pointer-events:none;transform:scaleX(-1)}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-stage::before{z-index:1;background-color:rgba(0,21,26,.12)}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-relations{z-index:2}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-object{z-index:3;backdrop-filter:blur(9px);background:rgba(6,36,43,.8)!important}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-object[data-selected=true]{z-index:4}
