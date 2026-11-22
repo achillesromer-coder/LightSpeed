@@ -119,6 +119,12 @@ def screen_static_tolerances(geometry_request: Any, plan: Any, geometry_review: 
             or geometry["load_h0"].get("source_bytes_hydrated") != 0
             or geometry.get("geometry_composite_hash") != digest(geometry["graph"])):
         return _hold("EXACT_DIGITAL_GEOMETRY_UNBOUND")
+    # A caller-supplied projection must still match freshly recomputed source
+    # geometry. An internally self-hashed stale graph is never sufficient.
+    if geometry_review is not None:
+        replay = compile_geometry_composition(geometry_request)
+        if replay != geometry:
+            return _hold("GEOMETRY_SOURCE_REPLAY_MISMATCH")
     ghash = geometry["geometry_composite_hash"]
     if (plan.get("geometry_composite_sha256") != ghash
             or geometry["graph"].get("manufacturing_ir_ref") != ref
