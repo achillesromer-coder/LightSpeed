@@ -659,6 +659,38 @@
       "artifact_id": 14738715892,
       "archive_sha256": "ab5dbae64db1a471f599df8edc099577168d235d6d9a780e5908f49468df84c9",
       "reason": "Independently read and SHA256/length-verified 24-stage PrintSpace source/geometry/CGX/UniSpace CI, with unchanged three-product zero-native-ID R0 review and backtrace. This checkpoint includes three-role Ed25519 verifier syntax, and actual LightSpeed GO Vitest separately passed all 10 synthetic cryptographic tests (286 total). No real owner trust roots, DBR, machine, rights attestation. GitHub artifact expires 2026-12-22; approved durable owner retention still required."
+    },
+    {
+      "id": "PC01-PROT-062",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0BatchSweep.mjs",
+      "git_blob_sha1": "4d8241853c2ff67f0ff7657c48f2c8ec279f7e3a",
+      "reason": "Bounded 512-case deterministic Ed25519 R0 review batching and within-batch nonce collision holds; negative-only history hints, no actual challenge ledger"
+    },
+    {
+      "id": "PC01-PROT-063",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0BatchSweep.test.mjs",
+      "git_blob_sha1": "fd5f19255a6c4c2e716cdf11e6ea8df1f4517c0d",
+      "reason": "256-case signed positive/negative sweep and 512-case duplicate-challenge failure, cryptographic root/identity/clock checks and input back-down tests"
+    },
+    {
+      "id": "PC01-PROT-064",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_r0_batch_smoke.py",
+      "git_blob_sha1": "c3d0d7ab03ab2d4b193bc9bc2c7bae93e85122e5",
+      "reason": "No-npm Node integration checks for existing 25-stage sequential PrintSpace regression"
+    },
+    {
+      "id": "PC01-PROT-065",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_BATCH_SWEEP_EXECUTION_2026-11-22.md",
+      "git_blob_sha1": "6d0736abce00d2da2f1bbab10f6da07669442e86",
+      "reason": "Sweep contracts, no-authority proof ceiling, latency baseline and real host ledger requirements"
     }
   ],
   "archive_review_gates": [
