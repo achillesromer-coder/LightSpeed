@@ -17,6 +17,9 @@ on:
       - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
       - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
       - "tests/test_cgx_unispace_crossspace_review.py"
+      - "docs/romer-web-hooks/uos_universal_gateway_embed.html"
+      - "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md"
+      - "tests/uos_universal_gateway.test.mjs"
       - "tools/cgx_automation_archive_review.py"
       - "tools/cgx_unispace_branch_convergence.py"
       - "tools/cgx_unispace_overlap_review.py"
@@ -53,6 +56,9 @@ on:
       - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
       - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
       - "tests/test_cgx_unispace_crossspace_review.py"
+      - "docs/romer-web-hooks/uos_universal_gateway_embed.html"
+      - "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md"
+      - "tests/uos_universal_gateway.test.mjs"
       - "tools/cgx_automation_archive_review.py"
       - "tools/cgx_unispace_branch_convergence.py"
       - "tools/cgx_unispace_overlap_review.py"
@@ -225,6 +231,8 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Regress passive UOS public gateway (51 route map, six missing links, no peer authority)
+        run: node --test tests/uos_universal_gateway.test.mjs
       - name: Install immutable LightSpeed GO dependencies
         working-directory: apps/lightspeed-go
         run: npm ci
