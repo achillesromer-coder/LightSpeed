@@ -124,3 +124,14 @@ def test_noninteger_translation_cannot_be_rounded():
         pass
     else:
         raise AssertionError("Float translation cannot be silently rounded")
+
+
+def test_snapshot_does_not_alias_mutable_request_translation_or_vertices():
+    p = pilot()
+    graph = compile_geometry_composition(p)
+    assert graph["state"] == "REVIEW_ONLY"
+    before = json.dumps(graph, sort_keys=True)
+    p["instances"][0]["translate_mm"][0] = 123
+    p["source_shapes"][0]["vertices_mm"][0][0] = 123
+    p["source_shapes"][0]["faces"][0][0] = 6
+    assert json.dumps(graph, sort_keys=True) == before
