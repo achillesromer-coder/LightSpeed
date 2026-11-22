@@ -155,9 +155,8 @@ def test_mutable_geometry_snapshot_does_not_claim_fresh_review():
     assert prior["state"]=="REVIEW_ONLY"
     g["instances"][0]["translate_mm"][0]+=1
     r=screen_static_tolerances(g,p,prior)
-    # The source graph hash and expected request must agree. The separate
-    # reverse full service audit always recomputes original source objects.
-    assert r["state"] in ("SCREENED_STATIC_DIGITAL_ONLY","HOLD")
+    assert r["state"] == "HOLD"
+    assert "GEOMETRY_SOURCE_REPLAY_MISMATCH" in r["hold_codes"]
     assert r["physical_clearance_authorised"] is False
 
 
