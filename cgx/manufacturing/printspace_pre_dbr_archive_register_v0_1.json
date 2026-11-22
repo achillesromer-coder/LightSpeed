@@ -370,8 +370,8 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/digital_service_stack.py",
-      "git_blob_sha1": "2b55bac750d298902bc3c21b17ba58d17ab4981b",
-      "reason": "Canonical 12-service digital source/geometry/process/LOAD projection and reverse source-replay audit; strictly non-executing."
+      "git_blob_sha1": "808396ae5ebfdadb8f415a03caca8fb61cc556bb",
+      "reason": "Existing canonical 12-service dependency DAG; optional static keep-out/tolerance source crosswalk and original-input reverse replay, non-executing."
     },
     {
       "id": "PC01-PROT-027",
@@ -381,6 +381,22 @@
       "artifact_id": 14734346016,
       "archive_sha256": "b6a767f1c2e9057ea478eff9b2f4fd5ca0b88b37047aa3def742bb0ad2c49522",
       "reason": "Full 19-stage canonical digital service-stack/regression readback, synthetic nominal solid metrics, four directional coupon plans and PASS_DIGITAL_ONLY reverse-audit artifact; provider expiry 2026-12-22; Achilles to preserve independently before expiry"
+    },
+    {
+      "id": "PC01-PROT-028",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/tolerance_clearance.py",
+      "git_blob_sha1": "eaa9b62ccc1697eced5203654dfcc4cbda9baf61",
+      "reason": "Conservative static bounding-envelope micrometre screen with real tool sweep, physical placement uncertainty and C0 explicitly unverified."
+    },
+    {
+      "id": "PC01-PROT-029",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_tolerance_static_screen_v0_1.json",
+      "git_blob_sha1": "cfa0dbbaddb55b4cec22d93c2b2efcd524ab6898",
+      "reason": "Synthetic, unmeasured 50/75/25 micrometre placement-error and fixed keep-out fixture; not real calibration or production clearance."
     }
   ],
   "archive_review_gates": [
