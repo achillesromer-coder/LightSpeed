@@ -43,6 +43,7 @@ SUITES = (
     ("cross-domain-emulation", "tests/test_printspace_cross_domain_emulation.py"),
     ("virtual-factory", "tests/test_printspace_virtual_factory.py"),
     ("cgx-filespace-facets", "tests/test_printspace_cgx_bundle.py"),
+    ("native-r0-review", "tests/test_printspace_host_preflight.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
