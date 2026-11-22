@@ -290,7 +290,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/composition.py",
-      "git_blob_sha1": "21b85d2a79db140ecbbfd779465c61387efdeada",
+      "git_blob_sha1": "4ba4b833d561494722b1adc29ead451e625c401a",
       "reason": "Active digital composite assembly/reference resolver over existing VGK kernels and UniSpace convex verifier; do not archive."
     },
     {
