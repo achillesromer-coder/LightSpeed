@@ -149,10 +149,10 @@ def fold_unispace_lineage(mesh: dict[str, Any], records: list[dict[str, Any]],
     for (obj, rev), row in sorted(unique.items()):
         public = row["rights"] in STATE_PUBLIC and row["profile_scope"] is None
         owner = audience == "owner_review"
-        profile = audience == "profile_authenticated" and (
-            row["profile_scope"] is None or row["profile_scope"] == "profile")
-        # Fail closed for restricted owner data; owner gets metadata only.
-        metadata_visible = public or owner or profile
+        # Audience is merely a presentation hint, NOT a signed ProfileSpace
+        # session. Never expose nonpublic source locators from this planner.
+        # A host must independently enforce the scoped signed hydration gate.
+        metadata_visible = public
         projected.append({
             "object_id": obj, "revision": rev, "kind": row["kind"],
             "facets": row["facets"], "rights": row["rights"],
