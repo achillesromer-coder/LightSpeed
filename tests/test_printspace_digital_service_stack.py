@@ -242,3 +242,90 @@ def test_canonical_scope_service_selection_stays_input_bound():
     assert out["service_scope_not_empirically_modelled"] is True
     assert out["mass_and_density"] is None
     assert out["physically_qualified"] is False
+
+
+def static_plan_inputs():
+    ir, geometry, selection = inputs()
+    plan = json.loads((DIR / "pc01_tolerance_static_screen_v0_1.json").read_text())
+    plan["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+    return ir, geometry, selection, plan
+
+
+def test_optional_static_screen_preserves_legacy_twelve_stage_root():
+    old = compile_pilot()
+    assert old["manifest_sha256"] == "ca600888ab97bbe4a9b7d641d6b66733463f482c97a16bf84d132da457c333e9"
+    assert "static_screen_sha256" not in old
+    assert "clearance_plan" not in old["input_sha256s"]
+    assert back(old)["state"] == "PASS_DIGITAL_ONLY"
+
+
+def test_static_screen_binds_same_canonical_ir_and_reverse_provenance():
+    ir, geo, sel, plan = static_plan_inputs()
+    result = compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)
+    assert result["state"] == "DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD"
+    assert result["static_screen_state"] == "SCREENED_STATIC_DIGITAL_ONLY"
+    assert result["static_screen_risks"] == []
+    assert len(result["layers"]) == 12
+    assert result["independent_witness_candidates"] == 4
+    assert result["nominal_sum_volume_mm3_exact"] == "64"
+    assert result["static_screen_sha256"] != result["geometry_sha256"]
+    assert result["input_sha256s"]["clearance_plan"]
+    assert "STATIC_SCREEN_NOT_PHYSICAL_TOOLPATH_CERTIFICATION" in result["hold_codes"]
+    assert result["machine_authorised"] is False
+    audit = verify_digital_service_stack_backwards(
+        result, ir, geo, sel, clearance_plan=plan)
+    assert audit["state"] == "PASS_DIGITAL_ONLY"
+    assert audit["external_source_bodies_or_rights_authenticated"] is False
+
+
+def test_static_screen_drives_g1_e0_and_s0_only_when_requested():
+    ir, geo, sel, plan = static_plan_inputs()
+    legacy = compile_digital_service_stack(ir, geo, sel)
+    bounded = compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)
+    changed = {x["id"] for x, y in zip(legacy["layers"], bounded["layers"])
+               if x["node_sha256"] != y["node_sha256"]}
+    assert "R0_SOURCE" not in changed
+    assert "G0_NOMINAL_SOLIDS" not in changed
+    assert "G1_EXACT_CONTACT" in changed
+    assert "E0_ENVIRONMENT_CONTROL" in changed
+    assert "S0_FUNCTIONAL_SERVICE_SCOPES" in changed
+    assert "A0_AUTHORITY_HOLD" in changed
+    assert bounded["load_mode"] == "H0_NONHYDRATING"
+    assert not bounded["native_dbr_written"]
+
+
+def test_static_keepout_collision_propagates_a_hard_hold():
+    ir, geo, sel, plan = static_plan_inputs()
+    plan["static_keepouts"][0]["lower_um"][0] = 4000
+    plan["static_keepouts"][0]["upper_um"][0] = 4500
+    out = compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)
+    assert out["state"] == "HOLD_DIGITAL_INPUT"
+    assert "STATIC_TOLERANCE_OR_KEEP_OUT_UNRESOLVED" in out["hold_codes"]
+    assert out["machine_authorised"] is False
+
+
+def test_static_plan_revision_detected_by_reverse_audit_even_if_self_hashed():
+    ir, geo, sel, plan = static_plan_inputs()
+    result = compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)
+    assert result["state"] == "DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD"
+    plan["instance_uncertainties"][0]["max_abs_translation_error_um"][2] += 20
+    audit = verify_digital_service_stack_backwards(
+        result, ir, geo, sel, clearance_plan=plan)
+    assert audit["state"] == "HOLD"
+    assert audit["manifest_matched"] is False
+
+
+def test_absent_static_plan_cannot_validate_stronger_manifest():
+    ir, geo, sel, plan = static_plan_inputs()
+    result = compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)
+    assert verify_digital_service_stack_backwards(
+        result, ir, geo, sel)["state"] == "HOLD"
+
+
+def test_stale_static_ir_hash_and_untrusted_real_machine_evidence_rejected():
+    ir, geo, sel, plan = static_plan_inputs()
+    plan["manufacturing_ir_configuration_hash"] = "0"*64
+    assert compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)["state"] == "HOLD_DIGITAL_INPUT"
+    ir, geo, sel, plan = static_plan_inputs()
+    plan["physical_clearance_authorised"] = True
+    assert compile_digital_service_stack(ir, geo, sel, clearance_plan=plan)["state"] == "HOLD_DIGITAL_INPUT"
