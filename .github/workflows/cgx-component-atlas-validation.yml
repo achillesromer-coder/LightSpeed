@@ -93,6 +93,31 @@ jobs:
         run: python -m pytest -q tests/test_run_cgx_printspace_batch.py
       - name: Run bounded comprehensive PrintSpace batch
         run: python scripts/run_cgx_printspace_batch.py --profile comprehensive --step-limit-seconds 240 --total-limit-seconds 1200 --rest-seconds 0.25 --output-dir "$RUNNER_TEMP/cgx-printspace-batch"
+      - name: Compile synthetic PrintSpace composite pilot receipt
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from cgx.manufacturing import compile_geometry_composition
+          src = Path("cgx/manufacturing/printspace_composite_pilot_v0_1.json")
+          data = json.loads(src.read_text(encoding="utf-8"))
+          result = compile_geometry_composition(data)
+          assert result["state"] == "REVIEW_ONLY", result["hold_codes"]
+          assert len(result["graph"]["instances"]) == 3
+          assert len(result["graph"]["shape_catalogue"]) == 2
+          assert len(result["graph"]["interfaces"]) == 2
+          assert result["machine_authorised"] is False
+          assert result["mint_authorised"] is False
+          assert result["rights_verified"] is False
+          assert result["load_h0"]["source_bytes_hydrated"] == 0
+          out = Path(os.environ["RUNNER_TEMP"]) / "cgx-printspace-batch"
+          out.mkdir(parents=True, exist_ok=True)
+          target = out / "pc01-synthetic-composition-review.json"
+          target.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          print(json.dumps({"state":result["state"], "geometry_composite_hash":result["geometry_composite_hash"],
+            "instances":len(result["graph"]["instances"]), "source_shapes":len(result["graph"]["shape_catalogue"]),
+            "load_hydration":result["load_h0"]["hydration"], "receipt":str(target)}, sort_keys=True))
+          PY
       - name: Archive sequential checkpoints and readbacks
         if: always()
         uses: actions/upload-artifact@v4
