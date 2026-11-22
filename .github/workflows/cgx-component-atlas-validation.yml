@@ -16,6 +16,8 @@ on:
       - "tests/test_printspace_composition.py"
       - "tests/test_printspace_exact_contact.py"
       - "tests/test_printspace_interface_witness_plan.py"
+      - "tests/test_printspace_solid_metrics.py"
+      - "tests/test_printspace_digital_service_stack.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -46,6 +48,8 @@ on:
       - "tests/test_printspace_composition.py"
       - "tests/test_printspace_exact_contact.py"
       - "tests/test_printspace_interface_witness_plan.py"
+      - "tests/test_printspace_solid_metrics.py"
+      - "tests/test_printspace_digital_service_stack.py"
       - "scripts/run_cgx_printspace_batch.py"
       - "docs/engineering/PC01_RAPHAEL_PRINTSPACE_CROSSWALK_2026-11-22.md"
       - "tests/test_cgx_exact_binding_bridge.py"
@@ -89,6 +93,10 @@ jobs:
         run: python -m pytest -q tests/test_cgx_quantitative_invariants.py
       - name: Validate Type-I stack and equation kernels
         run: python -m pytest -q tests/test_universal_type1_stack_compiler.py tests/test_type1_equation_kernel.py
+      - name: Validate exact PrintSpace nominal solid metrics
+        run: python -m pytest -q tests/test_printspace_solid_metrics.py
+      - name: Validate bottom-up CGX digital services and reverse source trace
+        run: python -m pytest -q tests/test_printspace_digital_service_stack.py
       - name: Validate directional PrintSpace witness plan
         run: python -m pytest -q tests/test_printspace_interface_witness_plan.py
       - name: Validate exact convex PrintSpace contact
@@ -142,6 +150,35 @@ jobs:
           assert witness["evidence_independently_verified"] is False
           receipt_path = out / "pc01-synthetic-directional-witness-plan.json"
           receipt_path.write_text(json.dumps(witness, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          # Stack existing geometry, material, process scope and LOAD H0 in a
+          # deterministic service DAG. Reverse trace replays original inputs;
+          # not an external owner attestation or a physical qualification.
+          from cgx.manufacturing import (
+            compile_digital_service_stack, verify_digital_service_stack_backwards,
+            measure_composite_nominal,
+          )
+          source_geometry = dict(data)
+          source_geometry["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+          solid = measure_composite_nominal(data, result)
+          assert solid["nominal_sum_volume_mm3_exact"] == "64"
+          assert solid["union_volume_mm3_exact"] is None and solid["mass"] is None
+          services = compile_digital_service_stack(ir, source_geometry, selections)
+          assert services["state"] == "DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD", services["hold_codes"]
+          assert len(services["layers"]) == 12
+          assert services["independent_witness_candidates"] == 4
+          assert services["nominal_sum_volume_mm3_exact"] == "64"
+          assert services["physically_qualified"] is False
+          assert services["machine_authorised"] is False
+          audit = verify_digital_service_stack_backwards(services, ir, source_geometry, selections)
+          assert audit["state"] == "PASS_DIGITAL_ONLY", audit
+          assert audit["machine_authorised"] is False
+          (out / "pc01-synthetic-nominal-solid-metrics.json").write_text(
+            json.dumps(solid, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          (out / "pc01-synthetic-digital-service-stack.json").write_text(
+            json.dumps(services, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+          (out / "pc01-synthetic-back-down-audit.json").write_text(
+            json.dumps(audit, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
 
           print(json.dumps({"state":result["state"], "geometry_composite_hash":result["geometry_composite_hash"],
             "instances":len(result["graph"]["instances"]), "source_shapes":len(result["graph"]["shape_catalogue"]),
