@@ -100,3 +100,7 @@ from .solid_metrics import exact_nominal_convex_metrics, measure_composite_nomin
 from .digital_service_stack import compile_digital_service_stack, verify_digital_service_stack_backwards
 __all__.extend(["exact_nominal_convex_metrics", "measure_composite_nominal",
                 "compile_digital_service_stack", "verify_digital_service_stack_backwards"])
+
+# Conservative synthetic micro-metre placement bounds and static keep-out review.
+from .tolerance_clearance import screen_static_tolerances
+__all__.append("screen_static_tolerances")
