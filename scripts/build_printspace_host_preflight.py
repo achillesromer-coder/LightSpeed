@@ -7,7 +7,9 @@ hydration. The fixture intentionally has ZERO accepted candidate Object_IDs.
 from __future__ import annotations
 import argparse
 import json
+import sys
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from cgx.manufacturing.virtual_factory import load_catalogue
 from cgx.manufacturing.printspace_cgx import build_bundle
 from cgx.manufacturing.printspace_host_preflight import prepare_r0_host_review, verify_r0_host_review_back_down
