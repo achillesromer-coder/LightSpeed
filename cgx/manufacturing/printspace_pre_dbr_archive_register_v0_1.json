@@ -461,7 +461,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "cgx/manufacturing/printspace_studio_v0_1.html",
-      "git_blob_sha1": "241c9aaebf0fa2296f0fadb0c6d931054ee5f1c3",
+      "git_blob_sha1": "75b523249cf2a9f1a16a3f3f3361122114010b60",
       "reason": "Offline third-party canvas printer/table viewer, timeline, scaling and conceptual phone hierarchy; no device/mint authority"
     },
     {
@@ -469,7 +469,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "scripts/build_printspace_studio.py",
-      "git_blob_sha1": "f94e2a80ffb41da8734daaf3b1c1d801594aef9e",
+      "git_blob_sha1": "65b66aa394b59159705f3d8ed695cb235a8f81a3",
       "reason": "Single reproducible build source of canonical offline HTML from source-bound catalogue; explicit --check drift detection"
     },
     {
