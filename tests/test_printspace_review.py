@@ -129,6 +129,22 @@ class PrintSpaceReviewTests(unittest.TestCase):
         p["operations"][1]["depends_on"] = ["p0", "inert"]
         self.assertIn("AMBIGUOUS_ATMOSPHERE", codes(p))
 
+    def test_malformed_untrusted_types_fail_closed(self):
+        p = fixture()
+        p["operations"][2]["material_lot_id"] = {}
+        p["operations"][3]["post_seal_test_id"] = []
+        p["interfaces"][0]["predecessor_lot"] = {}
+        p["operations"][2]["kind"] = {}
+        self.assertEqual(compiler.compile_review(p)["state"], "HOLD")
+
+    def test_nonfinite_input_fails_closed(self):
+        p = fixture(); p["machine"]["minimum_feature_mm"] = float("inf")
+        self.assertIn("NONCANONICAL_INPUT", codes(p))
+
+    def test_empty_process_fails_closed(self):
+        p = fixture(); p["operations"] = []
+        self.assertIn("EMPTY_PROCESS", codes(p))
+
     def test_malformed_dependency_and_unknown_kind(self):
         p = fixture(); p["operations"][1]["depends_on"] = ["MISSING"]
         p["operations"][2]["kind"] = "EXECUTE_NOW"
