@@ -12,6 +12,9 @@ import re
 import subprocess
 from pathlib import Path
 from typing import Any
+import sys
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from tools.cgx_unispace_crossspace_review import (
     EXPECTED_SHA256 as GATE_SHA256,
@@ -102,8 +105,8 @@ def validate_contracts(data: dict[str, dict[str, Any]], registry: dict[str, Any]
     for name, val in v.get("default_budget",{}).items():
         if name.startswith("max_"):
             ceiling=v.get("hard_ceiling",{}).get(name)
-            _require(type(val) is int and 0 < val <= ceiling
-                     and type(ceiling) is int, "invalid viewport bound")
+            _require(type(val) is int and type(ceiling) is int
+                     and 0 < val <= ceiling, "invalid viewport bound")
     actions=c.get("actions")
     _require(isinstance(actions,dict) and len(actions)==10, "LOAD action census changed")
     action_cards=[]
