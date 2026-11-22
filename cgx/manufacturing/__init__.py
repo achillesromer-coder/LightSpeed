@@ -120,3 +120,20 @@ __all__.extend([
     "load_virtual_factory_catalogue", "compile_virtual_factory_scene",
     "reverse_virtual_factory_scene", "sweep_virtual_factory_scenarios",
 ])
+
+# Read-only source-addressed FileSpace CGX facet bridge; no native LOAD/mint.
+from .printspace_cgx import (
+    build_bundle as build_printspace_cgx_bundle,
+    check_bundle as verify_printspace_cgx_bundle,
+    h0_handshake as printspace_cgx_h0,
+    hydrate as hydrate_printspace_cgx,
+    pack_lite as pack_printspace_cgx_lite,
+    unpack_lite as unpack_printspace_cgx_lite,
+    verify_back_down as verify_printspace_cgx_back_down,
+)
+__all__.extend([
+    "build_printspace_cgx_bundle","verify_printspace_cgx_bundle",
+    "printspace_cgx_h0","hydrate_printspace_cgx",
+    "pack_printspace_cgx_lite","unpack_printspace_cgx_lite",
+    "verify_printspace_cgx_back_down",
+])
