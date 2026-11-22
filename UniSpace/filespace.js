@@ -81,6 +81,19 @@ async function selectGeometry(state, slot) {
       ui(button).disabled=false;
       ui(button).onclick=()=>{ui('quadrants').firstElementChild.click();ui('query').value=path;filter();ui('members').focus();};
     }
+    const roleRecord = state.rows.find(entry => entry.path === row.role);
+    if (!roleRecord) return;
+    const role = JSON.parse(text.decode(await checked(state, roleRecord)));
+    if (revision !== geometryRevision || state !== session || !role.historicalCounts) return;
+    const counts = new Map();
+    for (const face of mesh.f) counts.set(face.length, (counts.get(face.length) || 0) + 1);
+    const inventory = [...counts].sort(([a], [b]) => a - b)
+      .map(([sides, count]) => count + ' with ' + sides + ' sides').join(', ');
+    const details = ['Mesh faces: ' + inventory];
+    if (typeof role.d === 'string' && role.d) details.push('Historical label: ' + role.d);
+    if (typeof role.inv === 'string' && role.inv) details.push('Historical inventory: ' + role.inv);
+    ui('geometry-note').textContent += '. ' + details.join('. ');
+
   }catch(error){if(revision===geometryRevision && state===session)ui('geometry-note').textContent=error.message;}
 }
 async function prepareGeometry(state){
