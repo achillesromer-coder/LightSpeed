@@ -33,6 +33,8 @@ on:
       - "tests/test_cgx_unispace_hybrid_source_review.py"
       - "cgx/load_minimum/gptExportShardReview.py"
       - "tests/test_cgx_gpt_export_original_shard_review.py"
+      - "cgx/load_minimum/gptExportSparseHydrate.py"
+      - "tests/test_cgx_gpt_export_sparse_hydrate.py"
       - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
       - "cgx/review/unispace_source_path_overlap_20261122.json"
       - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
@@ -77,6 +79,8 @@ on:
       - "tests/test_cgx_unispace_hybrid_source_review.py"
       - "cgx/load_minimum/gptExportShardReview.py"
       - "tests/test_cgx_gpt_export_original_shard_review.py"
+      - "cgx/load_minimum/gptExportSparseHydrate.py"
+      - "tests/test_cgx_gpt_export_sparse_hydrate.py"
       - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
       - "cgx/review/unispace_source_path_overlap_20261122.json"
       - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
@@ -185,6 +189,17 @@ jobs:
           assert "cgx.load_minimum.gptExportManifestIntake" in source
           assert "SOURCE_R0_VERIFIED_PRIVATE_NOT_NATIVE_ADMITTED" in source
           print("Original LOAD manifest adapter reused; private source bodies not used in CI")
+          PY
+      - name: Source-backed R0/R1 selective private hydration and policy denial (32 synthetic cases)
+        run: |
+          python -m unittest discover -s tests -p test_cgx_gpt_export_sparse_hydrate.py -v
+          python - <<'PY'
+          from pathlib import Path
+          source=Path("cgx/load_minimum/gptExportSparseHydrate.py").read_text(encoding="utf-8")
+          assert "inspect_originals" in source
+          assert "host_acl_and_signed_lease_verified" in source
+          assert "PRIVATE_HOST_POLICY_DENIED" in source
+          print("Full original R0/R1 parity and private one-record hydration are synthetically tested; no owner data in CI")
           PY
       - name: Resolve single-root 51-gate UniSpace hybrid review evidence
         run: |
