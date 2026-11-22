@@ -39,6 +39,7 @@ SUITES = (
     ("directional-witness-plan", "tests/test_printspace_interface_witness_plan.py"),
     ("nominal-solid-metrics", "tests/test_printspace_solid_metrics.py"),
     ("digital-service-backtrace", "tests/test_printspace_digital_service_stack.py"),
+    ("static-tolerance-screen", "tests/test_printspace_tolerance_clearance.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
