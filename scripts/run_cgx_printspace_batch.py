@@ -36,6 +36,7 @@ SUITES = (
     ("pre-dbr-archive", "tests/test_printspace_pre_dbr_archive_register.py"),
     ("geometry-composition", "tests/test_printspace_composition.py"),
     ("exact-convex-contact", "tests/test_printspace_exact_contact.py"),
+    ("directional-witness-plan", "tests/test_printspace_interface_witness_plan.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
