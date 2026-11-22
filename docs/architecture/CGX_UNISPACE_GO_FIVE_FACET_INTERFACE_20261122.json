@@ -1,0 +1,75 @@
+{
+  "design": {
+    "schema": "cgx.unispace.interface/1",
+    "parent": "cgx:root:cognigrex",
+    "title": "UniSpace: one-root five-facet operator review",
+    "body": {
+      "id": "root",
+      "type": "group",
+      "title": "UniSpace: one-root five-facet operator review",
+      "layout": "tabs",
+      "children": [
+        {
+          "id": "view-0",
+          "type": "collection",
+          "title": "FileSpace",
+          "dataset": "files",
+          "facet": "file_space",
+          "kind": "",
+          "status": "",
+          "query": "",
+          "layout": "cards",
+          "limit": 18
+        },
+        {
+          "id": "view-1",
+          "type": "collection",
+          "title": "DataSpace",
+          "dataset": "records",
+          "facet": "data_space",
+          "kind": "",
+          "status": "",
+          "query": "",
+          "layout": "cards",
+          "limit": 18
+        },
+        {
+          "id": "view-2",
+          "type": "collection",
+          "title": "SocialSpace",
+          "dataset": "handoffs",
+          "facet": "social_space",
+          "kind": "Handoff",
+          "status": "",
+          "query": "",
+          "layout": "cards",
+          "limit": 18
+        },
+        {
+          "id": "view-3",
+          "type": "collection",
+          "title": "PrintSpace",
+          "dataset": "workspace",
+          "facet": "print_space",
+          "kind": "",
+          "status": "",
+          "query": "",
+          "layout": "cards",
+          "limit": 18
+        },
+        {
+          "id": "view-4",
+          "type": "collection",
+          "title": "IntelligenceSpace",
+          "dataset": "workspace",
+          "facet": "intelligence_space",
+          "kind": "",
+          "status": "",
+          "query": "",
+          "layout": "cards",
+          "limit": 18
+        }
+      ]
+    }
+  }
+}
