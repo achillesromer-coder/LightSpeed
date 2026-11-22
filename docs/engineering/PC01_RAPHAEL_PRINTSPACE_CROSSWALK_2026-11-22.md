@@ -214,3 +214,42 @@ The selected source text explicitly states that interface allowance is direction
 - All four measurement, material-lot and tool-calibration receipt fields: NULL; state PLAN_READY_UNQUALIFIED. These keys are *proposed digital specimen identifiers*, not native mint, acquisition, test completion or owner release receipts.
 
 **One-version retention:** new witness planner and pilot selection fixture are added to the same review branch and recorded as protected active evidence/source in the existing Achilles pre-DBR register (24 protected; 3 historical review candidates). No second CGX manufacturing root, private LOAD hydration, autonomous device sequence, physical operation, archive move or original source deletion occurred. PR remains unmerged pending owner and engineering release gates.
+
+
+## 22 November — 12-service bottom-up digital composite and reverse audit
+
+**Single authoritative implementation, no new root.** This continues draft PR #236 and the canonical cgx.manufacturing family. It reuses the owner Drive source index and VGK40, UniSpace's exact convex mesh verifier, existing PrintSpace composition, exact convex contact, material-class witness planning, canonical manufacturing IR, process-review gate, and LOAD.cgx H0 references. No independent manufacturing compiler, archive database, machine driver, source corpus or native LOAD agent was created.
+
+**Exact nominal solid mathematics.** The new cgx/manufacturing/solid_metrics.py uses the already-verified closed outward-facing integer convex mesh and signed tetrahedra to compute rational volume and centroid. For a source-face triangle (a,b,c), its signed six-times-volume is det(a,b,c), with corresponding first-moment contributions. Integer arithmetic is retained until the final rational output; face area squared is computed exactly, and irrational face area is not rounded into a false exact number. Source vertices, face loops and placement translations are copied into the digital composition review rather than aliased to mutable caller input. This is not a Boolean union, tolerance stack-up, mesh-to-toolpath conversion, density or mass analysis.
+
+The synthetic three-layer coupon has 2 unique shape definitions and 3 placements:
+- Structure: 4×4×2 mm, nominal volume 32 mm3, centroid (2,2,1) mm.
+- Interlayer: 4×4×1 mm, nominal volume 16 mm3, centroid (2,2,2.5) mm.
+- Conductor: 4×4×1 mm, nominal volume 16 mm3, centroid (2,2,3.5) mm.
+- Exact nominal sum volume = 64 mm3; volume-weighted geometric centroid = (2,2,2) mm. Geometric face contact at both planned interfaces = 16 mm2 each.
+- Material density, real centre of mass, measured adhesion, conductivity, exact Boolean union, nonconvex geometry, environmental damage and 4D actuation remain unqualified/uncomputed. The illustrative canonical IR emitter fixture uses a PN rectifier archetype purely to exercise frozen-build logic; that does not make it a real PC01 device or recipe.
+
+**Twelve existing-service projections, one content-addressed manifest.** The new cgx/manufacturing/digital_service_stack.py assembles a bounded directed acyclic graph whose layers carry source ownership, exact payload digest, upstream node SHA-256 links, their own node SHA-256 and explicit proof ceiling:
+
+| Layer ID | Reused service and purpose | Strict ceiling |
+| --- | --- | --- |
+| R0_SOURCE | Source geometry keys, owner row SHA-256s and VGK40 library | Observed/synthetic source-only |
+| G0_NOMINAL_SOLIDS | Exact rational volume and centroid | Digital; no Boolean or mass |
+| G1_EXACT_CONTACT | Convex face/edge/point/disjoint/overlap geometry | No physical interface proof |
+| M0_MATERIAL_ARCHETYPES | Owner's 411-row metadata index | Planning classes, no actual lots |
+| I0_DIRECTIONAL_INTERFACES | Two exact face interfaces with directional ownership | Not a qualified material interface |
+| P0_MANUFACTURING_IR | Existing CGX build URI and frozen configuration hash | Non-executing manufacturing IR |
+| P1_PROCESS_REVIEW | Existing source-aware process and sequencing review | Declarations, not independent proof |
+| E0_ENVIRONMENT_CONTROL | Needed atmosphere, cure, pressure, moisture, field and C0 | Actual sensor history/calibration unbound |
+| Q0_WITNESS_COUPONS | Four uniquely keyed A→B/B→A witness plans | No raw physical measurements |
+| S0_FUNCTIONAL_SERVICE_SCOPES | Scopes selected by existing canonical IR | Solvers and measured parameters unbound |
+| L0_LOAD_H0 | Source-only FileSpace shorthand/alias and component graph key | H0, no private hydration |
+| A0_AUTHORITY_HOLD | Source rights, native parent DBR, C0 and release | All authority denied |
+
+**Bottom-up build and back-down regression.** compile_digital_service_stack() checks that all four original input domains—the canonical IR, geometry, owner matrix row choices and optional process packet—share the correct build URI/source hashes. It compiles the existing digital projections and emits immutable content-addressed service dependencies. verify_digital_service_stack_backwards() requires the **same original objects again**, recompiles the complete stack and traverses the source graph from A0_AUTHORITY_HOLD back to R0_SOURCE. It rejects stale IR changes, modified face geometry or translation, altered owner matrix rows, missing/duplicate service nodes, changed payload hashes or dependency edges, false material/host/DBR authority and unadmitted T173 candidates. A successful result is PASS_DIGITAL_ONLY: this is a deterministic digital regression, never independent external source or physical qualification.
+
+**Cloud execution and receipts.** The existing bounded serial runner has grown from 17 to **19** comprehensive test stages (adding nominal-solid metrics and the full digital service/back-trace). The existing GitHub Actions job produces, alongside earlier composite and directional witness fixtures, a nominal geometry JSON, complete 12-node service stack JSON, and backwards audit JSON. Every new output has explicit false flags for machine execution, physical qualification, minting, commercial release and DBR mutation. Engineering source files remain in one draft branch. No RDC calls or BouwerBase local host operations are implied.
+
+**Hard remaining engineering gates.** The digital service stack does not supply actual material passports, deposition recipes, verified atmosphere/surface history, temperature/field/chemical response, calibrated machine tolerances, witnessed coupons or independently accepted T173 meshes. Complete those through owner-source identity, directional A→B and B→A controlled tests, quantitative uncertainty, independent C0 and original DBR governance. Nonconvex Boolean geometry and tool clearance remain separate proof requirements. Synthetic successful tests never become a signed release.
+
+**Achilles pre-DBR:** 26 protected current source/evidence references (including the two new modules and frozen composition), 3 historical archive candidates and no archive/delete authority. Preserve RDC reserve at 25% normal / 24% emergency.
