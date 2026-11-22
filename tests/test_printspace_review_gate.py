@@ -298,5 +298,72 @@ class CanonicalIRGeometryCompositionTests(unittest.TestCase):
             self.assertFalse(out[key])
 
 
+
+
+class CanonicalIRDirectionalWitnessTests(unittest.TestCase):
+    """A valid source-index plan never constitutes physical interface acceptance."""
+
+    def inputs(self):
+        from cgx.manufacturing import compile_component, find_archetype, load_default_atlas
+        from cgx.manufacturing import review_existing_manufacturing_ir
+        from cgx.manufacturing.compiler import _canonical_hash
+        root = Path(__file__).resolve().parents[1] / "cgx/manufacturing"
+        ir = compile_component(find_archetype(load_default_atlas(), "PN rectifier diode"),
+                               build_id="pc01-three-layer-coupon")
+        ir["instance_ref"] = "CGXI-SYNTHETIC-UNTRUSTED"
+        ir["binding_progress"] = "BUILD_READY"
+        ir["execution_state"] = "BUILD_READY"
+        ir["blockers"] = []
+        ir["configuration_hash"] = _canonical_hash({k: v for k, v in ir.items() if k != "configuration_hash"})
+        process = fixture()
+        process["manufacturing_ir_ref"] = ir["cgx_uri"]
+        process["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        geometry = json.loads((root / "printspace_composite_pilot_v0_1.json").read_text())
+        geometry["manufacturing_ir_ref"] = ir["cgx_uri"]
+        geometry["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        selection = json.loads((root / "pc01_interface_witness_plan_v0_1.json").read_text())
+        selection["manufacturing_ir_ref"] = ir["cgx_uri"]
+        selection["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        return review_existing_manufacturing_ir, ir, process, geometry, selection
+
+    def test_exact_four_directional_witnesses_still_hold_execution(self):
+        review, ir, process, geometry, selection = self.inputs()
+        output = review(ir, process, geometry_composition=geometry, interface_selections=selection)
+        self.assertEqual(output["witness_projection"]["state"], "PLAN_READY_UNQUALIFIED")
+        self.assertEqual(output["witness_projection"]["coupon_plans"], 4)
+        self.assertTrue(output["binding_proof"]["canonical_ir_hash_matched"])
+        self.assertEqual(output["state"], "HOLD")
+        self.assertIn("MATERIAL_INTERFACE_EVIDENCE_PENDING", {x["code"] for x in output["findings"]})
+        self.assertFalse(output["witness_projection"]["independent_material_evidence_verified"])
+        self.assertFalse(output["physical_machine_authorised"])
+        self.assertFalse(output["commercial_release_authorised"])
+
+    def test_stale_owner_matrix_row_blocks_selection(self):
+        review, ir, process, geometry, selection = self.inputs()
+        selection["region_selections"][0]["directional_sha256"] = "0" * 64
+        output = review(ir, process, geometry_composition=geometry, interface_selections=selection)
+        self.assertEqual(output["witness_projection"]["state"], "HOLD")
+        self.assertIn("WITNESS_PLAN_HOLD", {x["code"] for x in output["findings"]})
+
+    def test_ir_configuration_revision_not_inherited_by_witness(self):
+        review, ir, process, geometry, selection = self.inputs()
+        selection["manufacturing_ir_configuration_hash"] = "0" * 64
+        output = review(ir, process, geometry_composition=geometry, interface_selections=selection)
+        self.assertIn("WITNESS_IR_MISMATCH", {x["code"] for x in output["findings"]})
+
+    def test_no_or_invalid_geometry_prevents_witness_resolution(self):
+        review, ir, process, geometry, selection = self.inputs()
+        output = review(ir, process, interface_selections=selection)
+        self.assertIn("WITNESS_REQUIRES_GEOMETRY", {x["code"] for x in output["findings"]})
+        self.assertEqual(output["witness_projection"]["state"], "HOLD")
+
+    def test_caller_claimed_material_qualification_cannot_promote_ir(self):
+        review, ir, process, geometry, selection = self.inputs()
+        selection["evidence_state"] = "QUALIFIED"
+        output = review(ir, process, geometry_composition=geometry, interface_selections=selection)
+        self.assertIn("WITNESS_PLAN_HOLD", {x["code"] for x in output["findings"]})
+        self.assertFalse(output["mint_authorised"])
+
+
 if __name__ == "__main__":
     unittest.main()
