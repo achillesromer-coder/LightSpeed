@@ -219,5 +219,84 @@ class CanonicalIRBindingTests(unittest.TestCase):
             self.assertFalse(result[field])
 
 
+
+
+class CanonicalIRGeometryCompositionTests(unittest.TestCase):
+    """Geometry references and process IR are the SAME frozen build, never separate masters."""
+
+    def packet(self):
+        from cgx.manufacturing import compile_component, find_archetype, load_default_atlas
+        from cgx.manufacturing import review_existing_manufacturing_ir
+        ir = compile_component(find_archetype(load_default_atlas(), "PN rectifier diode"),
+                               build_id="pc01-three-layer-coupon")
+        process = fixture()
+        process["manufacturing_ir_ref"] = ir["cgx_uri"]
+        process["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        example = json.loads(
+            (Path(__file__).resolve().parents[1] /
+             "cgx/manufacturing/printspace_composite_pilot_v0_1.json").read_text()
+        )
+        example["manufacturing_ir_ref"] = ir["cgx_uri"]
+        example["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        return review_existing_manufacturing_ir, ir, process, example
+
+    def test_composition_links_to_exact_same_ir_but_unbound_instance_holds(self):
+        func, ir, process, geometry = self.packet()
+        out = func(ir, process, geometry_composition=geometry)
+        self.assertEqual(out["state"], "HOLD")
+        self.assertEqual(out["geometry_projection"]["state"], "REVIEW_ONLY")
+        self.assertEqual(out["geometry_projection"]["load_h0"]["hydration"], "H0_METADATA_ONLY")
+        self.assertFalse(out["geometry_projection"]["source_and_material_evidence_verified"])
+        self.assertIn("CANONICAL_INSTANCE_NOT_READY", {e["code"] for e in out["findings"]})
+        self.assertFalse(out["physical_machine_authorised"])
+
+    def test_mutated_ir_geometry_hash_holds(self):
+        func, ir, process, geometry = self.packet()
+        geometry["manufacturing_ir_configuration_hash"] = "0" * 64
+        out = func(ir, process, geometry_composition=geometry)
+        self.assertIn("GEOMETRY_IR_HASH_MISMATCH", {e["code"] for e in out["findings"]})
+
+    def test_cross_build_geometry_uri_holds(self):
+        func, ir, process, geometry = self.packet()
+        geometry["manufacturing_ir_ref"] = "cgx://manufacturing/build/another-candidate"
+        out = func(ir, process, geometry_composition=geometry)
+        self.assertIn("GEOMETRY_IR_URI_MISMATCH", {e["code"] for e in out["findings"]})
+
+    def test_unadmitted_raphael_composite_does_not_pass(self):
+        func, ir, process, geometry = self.packet()
+        geometry["source_shapes"][0]["t173_position"] = 1
+        out = func(ir, process, geometry_composition=geometry)
+        self.assertEqual(out["state"], "HOLD")
+        self.assertIn("GEOMETRY_COMPOSITION_HOLD", {e["code"] for e in out["findings"]})
+        self.assertFalse(out["mint_authorised"])
+
+    def test_malformed_geometry_bridge_returns_explicit_hold(self):
+        func, ir, process, geometry = self.packet()
+        out = func(ir, process, geometry_composition=["bad"])
+        codes = {e["code"] for e in out["findings"]}
+        self.assertEqual(out["state"], "HOLD")
+        self.assertIn("GEOMETRY_COMPOSITION_HOLD", codes)
+        self.assertIn("GEOMETRY_IR_URI_MISMATCH", codes)
+        self.assertFalse(out["commercial_release_authorised"])
+
+    def test_mock_ready_ir_is_still_review_not_actuation(self):
+        from cgx.manufacturing.compiler import _canonical_hash
+        func, ir, process, geometry = self.packet()
+        ir["instance_ref"] = "CGXI-SYNTHETIC-NOT-REAL"
+        ir["binding_progress"] = "BUILD_READY"
+        ir["execution_state"] = "BUILD_READY"
+        ir["blockers"] = []
+        ir["configuration_hash"] = _canonical_hash({k: v for k, v in ir.items()
+                                                    if k != "configuration_hash"})
+        process["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        geometry["manufacturing_ir_configuration_hash"] = ir["configuration_hash"]
+        out = func(ir, process, geometry_composition=geometry)
+        self.assertEqual(out["state"], "REVIEW_ONLY")
+        self.assertEqual(out["geometry_projection"]["state"], "REVIEW_ONLY")
+        self.assertFalse(out["binding_proof"]["trusted_external_receipt"])
+        for key in ("physical_machine_authorised", "commercial_release_authorised", "mint_authorised"):
+            self.assertFalse(out[key])
+
+
 if __name__ == "__main__":
     unittest.main()
