@@ -617,6 +617,15 @@
       "path": "docs/engineering/PRINTSPACE_R0_HOST_CROSSWALK_2026-11-22.md",
       "git_blob_sha1": "92f384ef6cbdfb40cffe6e4642646e82f154e5d8",
       "reason": "Authoritative source/rights/ACL/DBR and machine proof acceptance criteria"
+    },
+    {
+      "id": "PC01-PROT-057",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14737873157,
+      "archive_sha256": "fc0450043d3c2dbba7f97dfad62d98ed284449f2209eb9497867cdc42aba7d3c",
+      "reason": "Verified 24-stage PrintSpace CGX -> UniSpace native R0 review-only crosswalk regression, canonical 3-product no-ID fixture, full source backtrace and actual UniSpace/LightSpeed GO test/build. All 24 sequential stages PASS and 0 archived log hash/length mismatches; digital-only. Artifact provider expiry 2026-12-22, owner-approved durable evidence capture remains necessary."
     }
   ],
   "archive_review_gates": [
