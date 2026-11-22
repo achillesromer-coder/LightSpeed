@@ -337,6 +337,16 @@ jobs:
       - name: Build the existing UniSpace GUI (no deployment)
         working-directory: apps/lightspeed-go
         run: npm run build -- --outDir "$RUNNER_TEMP/unispace-dist"
+      - name: Capture source-generated shell bundle for exact parity reconciliation
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-reviewed-generated-gui-bundle
+          path: |
+            ${{ runner.temp }}/unispace-dist/index.html
+            ${{ runner.temp }}/unispace-dist/assets/
+            ${{ runner.temp }}/unispace-dist/achilles-mobile.cgx.html
+          if-no-files-found: error
+          retention-days: 1
       - name: Verify tracked desktop entry and generated assets
         working-directory: apps/lightspeed-go
         run: |
