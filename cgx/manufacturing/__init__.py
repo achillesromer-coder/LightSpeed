@@ -77,3 +77,6 @@ from .volumetric import (
     load_volumetric_kernel,
     resolve_volumetric_topology,
 )
+# Optional, read-only sequencing preflight over the canonical manufacturing IR.
+from .review_gate import compile_review as review_printspace_sequence
+__all__.append("review_printspace_sequence")
