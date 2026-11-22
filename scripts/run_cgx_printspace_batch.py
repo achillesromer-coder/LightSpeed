@@ -41,6 +41,7 @@ SUITES = (
     ("digital-service-backtrace", "tests/test_printspace_digital_service_stack.py"),
     ("static-tolerance-screen", "tests/test_printspace_tolerance_clearance.py"),
     ("cross-domain-emulation", "tests/test_printspace_cross_domain_emulation.py"),
+    ("virtual-factory", "tests/test_printspace_virtual_factory.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
