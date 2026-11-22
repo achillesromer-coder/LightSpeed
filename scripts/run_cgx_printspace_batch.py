@@ -42,6 +42,7 @@ SUITES = (
     ("static-tolerance-screen", "tests/test_printspace_tolerance_clearance.py"),
     ("cross-domain-emulation", "tests/test_printspace_cross_domain_emulation.py"),
     ("virtual-factory", "tests/test_printspace_virtual_factory.py"),
+    ("cgx-filespace-facets", "tests/test_printspace_cgx_bundle.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
