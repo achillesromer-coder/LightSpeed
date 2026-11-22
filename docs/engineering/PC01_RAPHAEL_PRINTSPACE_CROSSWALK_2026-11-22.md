@@ -67,3 +67,17 @@ A source-licensed digital design may be publishable before PC01 hardware is buil
 - **Git implementation:** [LightSpeed](https://github.com/achillesromer-coder/LightSpeed) existing `cgx/component_atlas`, `tools/verify_unispace_product.py`, `tests/test_unispace_product.py`; this branch provides a crosswalk only.
 - **Raphael geometry evidence:** [NCNBOUWER/Raphael](https://github.com/NCNBOUWER/Raphael) and the existing 173/174 audit. Falsification and empirical validation remain independent.
 - **Approval gates:** (A) lock exact source coordinates/units and material-rights references, (B) choose first physical coupon route and host safety owner, (C) separately approve public licensing/product terms. These are gates, not requests to approve unsafe hardware execution.
+
+
+## 22 November continuation — actual tested integration
+
+**No competing engine.** Repo discovery confirmed the existing canonical manufacturing IR at `cgx/manufacturing/compiler.py`, the 4D stack adapter at `cgx/manufacturing/printstack.py`, the exact-binding gate at `cgx/manufacturing/binding.py`, and the volumetric kernel at `cgx/manufacturing/volumetric.py`. The isolated prototype was consequently refactored into a **pure review gate**, `cgx/manufacturing/review_gate.py`, exported as `cgx.manufacturing.review_printspace_sequence`. The review input **must reference** an existing `cgx://manufacturing/build/<id>` URI; it does not compile a rival manufacturing IR or grant downstream authority.
+
+It validates candidate geometry identity/units/source, the reserved T174 sentinel, exact directed material lot edges, typed DAG ordering, active atmosphere across sequential or parallel branches, calibrated transition metadata, gradient composition and resolution, encapsulation requiring a dependent post-seal test, EM field exposure parameters, machine-local C0 declaration, and rights before any candidate is projected.
+
+**Review result contract:** `HOLD` or `REVIEW_ONLY`; both have `physical_machine_authorised=false`, `mint_authorised=false` and `commercial_release_authorised=false`. The review result says `DECLARED_NOT_INDEPENDENTLY_VERIFIED` because arbitrary receipt identifiers cannot establish physical evidence or provenance. Interoperability with the canonical IR is currently a **referenced review overlay**, not automatic assembly of a fully source-bound PC01 build packet.
+
+**Test evidence:** 22 standalone synthetic regression cases passed locally on 22 Nov 2026, plus a separate 400-input malformed-data investigation with no unhandled exceptions after hardening. The shared CGX component-atlas CI includes `tests/test_printspace_review_gate.py`; consult the corresponding GitHub Actions result for branch validation. No printer or local machine tests were run.
+
+**Still open:** exact 411-row owner-matrix ingestion and per-row revision crosswalk, verified geometry/rights admission, machine and material source lots, measured coupon experiments, link from actual `compile_component` output to the per-operation review envelope, public library entitlement/billing, and actual C0 integration only following commissioning.
+
