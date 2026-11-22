@@ -122,7 +122,7 @@ jobs:
       - name: Validate exact PrintSpace nominal solid metrics
         run: python -m pytest -q tests/test_printspace_solid_metrics.py
       - name: Validate native R0 PrintSpace / UniSpace host and LOAD review crosswalk
-        run: python -m pytest -q tests/test_printspace_host_preflight.py && python scripts/build_printspace_host_preflight.py --check && node --test apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs
+        run: python -m pytest -q tests/test_printspace_host_preflight.py && python scripts/build_printspace_host_preflight.py --check && node --check apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs
       - name: Validate PrintSpace CGX FileSpace facets, H0 and offline lossless source replay
         run: python -m pytest -q tests/test_printspace_cgx_bundle.py && python scripts/build_printspace_cgx_bundle.py --check
       - name: Validate PrintSpace virtual factory source, 756-scenario sweep and offline UI generation
