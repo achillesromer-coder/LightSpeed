@@ -35,6 +35,12 @@ EXPECTED_PROTECTED = {
     "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
     "cgx/manufacturing/review_gate.py",
     "cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json",
+    "cgx/manufacturing/compiler.py",
+    "cgx/manufacturing/printstack.py",
+    "cgx/manufacturing/binding.py",
+    "cgx/manufacturing/volumetric.py",
+    "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+    "cgx/component_atlas/raphael_component_geometry_search_v0_1.json",
 }
 
 
