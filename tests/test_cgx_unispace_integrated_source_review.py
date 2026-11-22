@@ -3,14 +3,15 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 from tools.cgx_unispace_integrated_source_review import (
-    ROOT, PUBLIC_GATEWAY, ReviewHold, build, inspect_gateway,
+    PUBLIC_GATEWAY, ReviewHold, build, inspect_gateway,
 )
 
-HTML = (ROOT / PUBLIC_GATEWAY).read_text(encoding="utf-8")
+REPO_ROOT = Path(__file__).resolve().parents[1]
+HTML = (REPO_ROOT / PUBLIC_GATEWAY).read_text(encoding="utf-8")
 
 class SourceConvergenceTests(unittest.TestCase):
     def test_real_sources_one_root_with_distinct_route_and_gate_namespaces(self):
-        item=build(ROOT)
+        item=build(REPO_ROOT)
         n=item["independent_scope_counts"]
         self.assertEqual(item["canonical_root"],"cgx:root:cognigrex")
         self.assertEqual(n["root_count"],1)
@@ -24,7 +25,7 @@ class SourceConvergenceTests(unittest.TestCase):
         self.assertEqual(n["PrintSpace_workstreams"],16)
 
     def test_real_inputs_retain_all_release_holds(self):
-        item=build(ROOT)
+        item=build(REPO_ROOT)
         self.assertEqual(item["state"],"INTEGRATED_SOURCE_REVIEW_NOT_DEPLOYED")
         self.assertEqual(len(item["open_conditions"]),9)
         self.assertTrue(item["original_sources_retained"])
@@ -35,7 +36,7 @@ class SourceConvergenceTests(unittest.TestCase):
             self.assertFalse(item[key],key)
 
     def test_source_identities_reproducible(self):
-        self.assertEqual(build(ROOT)["review_sha256"],build(ROOT)["review_sha256"])
+        self.assertEqual(build(REPO_ROOT)["review_sha256"],build(REPO_ROOT)["review_sha256"])
 
     def test_gateway_has_unique_routes_and_six_nonexistent_public_links(self):
         item=inspect_gateway(HTML)
@@ -90,7 +91,7 @@ class SourceConvergenceTests(unittest.TestCase):
         with self.assertRaises(ReviewHold):inspect_gateway(HTML+" "*60000)
 
     def test_gateway_is_not_a_native_handoff(self):
-        item=build(ROOT)
+        item=build(REPO_ROOT)
         gw=item["public_gateway"]
         self.assertFalse(gw["published_pages_created"])
         self.assertFalse(gw["execution_authorised"])
