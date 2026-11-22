@@ -37,6 +37,8 @@ SUITES = (
     ("geometry-composition", "tests/test_printspace_composition.py"),
     ("exact-convex-contact", "tests/test_printspace_exact_contact.py"),
     ("directional-witness-plan", "tests/test_printspace_interface_witness_plan.py"),
+    ("nominal-solid-metrics", "tests/test_printspace_solid_metrics.py"),
+    ("digital-service-backtrace", "tests/test_printspace_digital_service_stack.py"),
     ("printspace-review", "tests/test_printspace_review_gate.py"),
 )
 
