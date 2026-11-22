@@ -1,4 +1,4 @@
-name: CGX Automation Archive Source Review
+name: CGX Living Convergence Source Review
 
 on:
   push:
@@ -7,11 +7,17 @@ on:
     paths:
       - tools/cgx_automation_archive_review.py
       - tests/test_cgx_automation_archive_review.py
+      - tools/cgx_unispace_branch_convergence.py
+      - tests/test_cgx_unispace_branch_convergence.py
+      - cgx/review/unispace_git_pr_source_snapshot_20261122.json
       - .github/workflows/cgx-automation-archive-review.yml
   pull_request:
     paths:
       - tools/cgx_automation_archive_review.py
       - tests/test_cgx_automation_archive_review.py
+      - tools/cgx_unispace_branch_convergence.py
+      - tests/test_cgx_unispace_branch_convergence.py
+      - cgx/review/unispace_git_pr_source_snapshot_20261122.json
       - .github/workflows/cgx-automation-archive-review.yml
   workflow_dispatch:
 
@@ -21,11 +27,15 @@ permissions:
 jobs:
   fail-closed-source-check:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Bounded source-only negative tests (no provider credentials)
+      - name: Archive provenance and bounded historical ingestion (17 cases)
         run: python -m unittest discover -s tests -p test_cgx_automation_archive_review.py -v
+      - name: UniSpace PR convergence and cross-space gate validation (22 cases)
+        run: python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
+      - name: Generate deterministic non-authoritative review plan
+        run: python tools/cgx_unispace_branch_convergence.py --snapshot cgx/review/unispace_git_pr_source_snapshot_20261122.json > /tmp/cgx-source-review-plan.json
