@@ -36,7 +36,7 @@ describe("CGX single-root top-down home-base geometry and microclimate views",()
     }
     expect(p.nodes.find(n=>n.id==="desporte-state")?.workspace).toBe("sources");
     expect(p.nodes.find(n=>n.id==="neo-command")?.workspace).toBe("command");
-    expect(p.nodes.find(n=>n.id==="achilles-oversight")?.workspace).toBeNull();
+    expect(p.nodes.find(n=>n.id==="achilles-oversight")?.workspace).toBe("system");
   });
   it("microclimates are visual presets, not measured conditions",()=>{
     const v=seed();expect(v.rooms.every(x=>x.climate==="VISUAL_PRESET_ONLY")).toBe(true);
