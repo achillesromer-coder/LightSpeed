@@ -49,6 +49,7 @@ EXPECTED_PROTECTED = {
     "cgx/manufacturing/cross_domain_emulation.py",
     "cgx/manufacturing/virtual_factory.py",
     "cgx/manufacturing/printspace_cgx.py",
+    "cgx/manufacturing/__init__.py",
     "cgx/manufacturing/printspace_host_preflight.py",
     "cgx/manufacturing/printspace_host_r0_review_v0_1.json",
     "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs",
