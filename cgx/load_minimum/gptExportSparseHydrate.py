@@ -52,6 +52,9 @@ def _parse(raw: bytes, code: str):
             object_pairs_hook=_unique_pairs,
             parse_constant=lambda name: (_ for _ in ()).throw(ValueError(name)),
         )
+    except IntakeHold:
+        # Preserve the precise fail-closed source-integrity code for diagnostics.
+        raise
     except (ValueError, UnicodeError, RecursionError) as exc:
         raise IntakeHold(code) from exc
 
