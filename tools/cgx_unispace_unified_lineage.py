@@ -244,3 +244,203 @@ def fold_engine_reference_catalogue(mesh: dict[str, Any],
     result["engine_reference_catalogue"] = "REFERENCE_ONLY_NO_SOURCE_BYTES"
     result["source_revision_pins_qualified"] = False
     return result
+
+
+# Ternary is a reversible DIGITAL transport selection. A T173 catalogue
+# position does not itself encode a proven 3-D solid, source licence, model
+# capability or physical storage medium.
+TRIT_BYTE_WIDTH = 6  # 3**5 < 256 <= 3**6
+MAX_CAPSULE_BYTES = 8192
+
+
+def bytes_to_ternary(payload: bytes) -> str:
+    """Lossless fixed-width digital ternary for approved small source bytes.
+
+    No compression claim; source bytes are six trits each and ordinary JSON,
+    GPU, network and host APIs continue to use binary encodings.
+    """
+    if not isinstance(payload, bytes) or len(payload) > MAX_CAPSULE_BYTES:
+        raise LineageHold("ternary payload must be bounded binary bytes")
+    return "".join(
+        "".join(str((byte // (3 ** power)) % 3)
+                for power in (5, 4, 3, 2, 1, 0))
+        for byte in payload
+    )
+
+
+def ternary_to_bytes(trits: str) -> bytes:
+    """Reject malformed, overlong or noncanonical ternary byte groups."""
+    if (not isinstance(trits, str) or len(trits) % TRIT_BYTE_WIDTH
+            or len(trits) > MAX_CAPSULE_BYTES * TRIT_BYTE_WIDTH
+            or any(digit not in "012" for digit in trits)):
+        raise LineageHold("invalid ternary binary bridge")
+    output = bytearray()
+    for offset in range(0, len(trits), TRIT_BYTE_WIDTH):
+        value = int(trits[offset:offset + TRIT_BYTE_WIDTH], 3)
+        if value > 255:
+            raise LineageHold("noncanonical ternary byte")
+        output.append(value)
+    return bytes(output)
+
+
+def compile_ternary_shape_capsule(
+    mesh: dict[str, Any], source_record: dict[str, Any],
+    *, position: int, children: list[str] | None = None,
+    payload: bytes | None = None,
+    source_owned_and_embed_approved: bool = False,
+) -> dict[str, Any]:
+    """Compose source-linked shape/code into ONE existing CGX facet lineage.
+
+    Default is an R0 reference capsule (no source bytes). Embedding only
+    supports explicitly owner-approved, hash-matched, licenced source bytes.
+    The shape index is research-only: never a verified solid geometry, mint,
+    peer-sync receipt, independent model training or machine instruction.
+    """
+    folded = fold_unispace_lineage(mesh, [source_record], audience="offline_guest",
+                                  view="graph")
+    if folded["source_revision_count"] != 1:
+        raise LineageHold("ambiguous source identity for capsule")
+    row = folded["records"][0]
+    if row["source_uri"] is None or row["sha256"] is None:
+        raise LineageHold("capsule requires qualified public source digest")
+    shape = ternary_shape_token(position)
+    if source_record["t173_position"] not in (None, position):
+        raise LineageHold("source shape position mismatch")
+    if children is None:
+        children = []
+    if (not isinstance(children, list) or len(children) > 64
+            or any(not isinstance(x, str) or not ID.fullmatch(x)
+                   or x == row["object_id"] for x in children)
+            or len(set(children)) != len(children)):
+        raise LineageHold("invalid child reference set")
+    if payload is None:
+        if source_owned_and_embed_approved:
+            raise LineageHold("empty owner embedding attestation")
+        transport = "REFERENCE_HASH_ONLY"
+        trits = None
+        payload_size = None
+    else:
+        if (not source_owned_and_embed_approved
+                or source_record["rights"] != "cleared_distribution"
+                or not source_record["licence"]):
+            raise LineageHold("source embedding not explicitly rights-qualified")
+        trits = bytes_to_ternary(payload)
+        if hashlib.sha256(payload).hexdigest() != row["sha256"]:
+            raise LineageHold("source payload differs from provenance digest")
+        if ternary_to_bytes(trits) != payload:
+            raise LineageHold("ternary round-trip integrity failure")
+        payload_size = len(payload)
+        transport = "BOUNDED_RIGHTS_APPROVED_DIGITAL_EMBED"
+    core = {
+        "schema": "CGX-UNISPACE-TERNARY-SHAPE-CAPSULE/0.1",
+        "canonical_root_id": ROOT_ID,
+        "object_id": row["object_id"],
+        "revision": row["revision"],
+        "source_uri": row["source_uri"],
+        "source_sha256": row["sha256"],
+        "facets": row["facets"],
+        "rights": row["rights"],
+        "licence": row["licence"],
+        "shape": shape,
+        "child_object_refs": sorted(children),
+        "transport": transport,
+        "payload_binary_bytes": payload_size,
+        "payload_ternary": trits,
+        "source_lineage_receipt_sha256": folded["lineage_receipt_sha256"],
+        "source_metadata_only_for_unqualified_third_parties": True,
+        "native_mesh_verified": False,
+        "physical_shape_embedding_verified": False,
+        "training_executed": False,
+        "mint_authorized": False,
+        "canonical_write_authorized": False,
+        "network_published": False,
+    }
+    digest = hashlib.sha256(
+        json.dumps(core, sort_keys=True, separators=(",", ":"),
+                   ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+    return {**core, "capsule_sha256": digest}
+
+
+def validate_ternary_shape_capsule(capsule: dict[str, Any]) -> dict[str, Any]:
+    """Independent integrity check, without trusting flags as authority."""
+    if not isinstance(capsule, dict) or set(capsule) != {
+        "schema", "canonical_root_id", "object_id", "revision",
+        "source_uri", "source_sha256", "facets", "rights", "licence",
+        "shape", "child_object_refs", "transport", "payload_binary_bytes",
+        "payload_ternary", "source_lineage_receipt_sha256",
+        "source_metadata_only_for_unqualified_third_parties",
+        "native_mesh_verified", "physical_shape_embedding_verified",
+        "training_executed", "mint_authorized", "canonical_write_authorized",
+        "network_published", "capsule_sha256"
+    }:
+        raise LineageHold("invalid shape capsule fields")
+    if capsule["schema"] != "CGX-UNISPACE-TERNARY-SHAPE-CAPSULE/0.1" or (
+        capsule["canonical_root_id"] != ROOT_ID
+        or not isinstance(capsule["shape"], dict)
+        or capsule["shape"] != ternary_shape_token(
+            capsule["shape"].get("catalogue_index"))
+        or any(capsule[x] is not False for x in (
+            "native_mesh_verified", "physical_shape_embedding_verified",
+            "training_executed", "mint_authorized", "canonical_write_authorized",
+            "network_published"))
+        or capsule["source_metadata_only_for_unqualified_third_parties"] is not True
+    ):
+        raise LineageHold("shape capsule authority or catalogue mismatch")
+    if (not isinstance(capsule["object_id"], str)
+            or not ID.fullmatch(capsule["object_id"])
+            or not isinstance(capsule["revision"], str)
+            or not REV.fullmatch(capsule["revision"])
+            or not isinstance(capsule["source_uri"], str)
+            or not SOURCE.fullmatch(capsule["source_uri"])
+            or not isinstance(capsule["source_sha256"], str)
+            or not SHA.fullmatch(capsule["source_sha256"])
+            or not isinstance(capsule["source_lineage_receipt_sha256"], str)
+            or not SHA.fullmatch(capsule["source_lineage_receipt_sha256"])
+            or not isinstance(capsule["facets"], list)
+            or len(capsule["facets"]) == 0
+            or len(set(capsule["facets"])) != len(capsule["facets"])
+            or any(f not in FACETS for f in capsule["facets"])
+            or not isinstance(capsule["child_object_refs"], list)
+            or len(capsule["child_object_refs"]) > 64
+            or len(set(capsule["child_object_refs"]))
+               != len(capsule["child_object_refs"])
+            or capsule["child_object_refs"] != sorted(capsule["child_object_refs"])
+            or any(not isinstance(c, str) or not ID.fullmatch(c)
+                   or c == capsule["object_id"]
+                   for c in capsule["child_object_refs"])
+            or capsule["rights"] not in RIGHTS
+            or not isinstance(capsule["licence"], str)
+            or not LICENSE.fullmatch(capsule["licence"])):
+        raise LineageHold("invalid shape capsule source identity")
+    transport = capsule["transport"]
+    if transport == "REFERENCE_HASH_ONLY":
+        if capsule["payload_binary_bytes"] is not None or (
+                capsule["payload_ternary"] is not None):
+            raise LineageHold("reference capsule secretly contains source bytes")
+        payload_matches = None
+    elif transport == "BOUNDED_RIGHTS_APPROVED_DIGITAL_EMBED":
+        length = capsule["payload_binary_bytes"]
+        if (capsule["rights"] != "cleared_distribution"
+                or type(length) is not int
+                or not 0 <= length <= MAX_CAPSULE_BYTES):
+            raise LineageHold("embedded payload rights or length invalid")
+        decoded = ternary_to_bytes(capsule["payload_ternary"])
+        if len(decoded) != length:
+            raise LineageHold("embedded source length mismatch")
+        payload_matches = hashlib.sha256(decoded).hexdigest() == capsule["source_sha256"]
+        if not payload_matches:
+            raise LineageHold("embedded source SHA-256 mismatch")
+    else:
+        raise LineageHold("unknown shape capsule transport")
+    core = {k: v for k, v in capsule.items() if k != "capsule_sha256"}
+    digest = hashlib.sha256(json.dumps(core, sort_keys=True,
+                             separators=(",", ":"), ensure_ascii=True
+                             ).encode("utf-8")).hexdigest()
+    if digest != capsule["capsule_sha256"]:
+        raise LineageHold("capsule integrity SHA-256 mismatch")
+    return {"schema": capsule["schema"], "integrity": "HASH_VERIFIED",
+            "source_digest_matches_embedded_payload": payload_matches,
+            "canonical_root_id": ROOT_ID,
+            "shape_is_research_only": True, "native_admitted": False,
+            "owner_signer_verified": False, "mint_authorized": False}
