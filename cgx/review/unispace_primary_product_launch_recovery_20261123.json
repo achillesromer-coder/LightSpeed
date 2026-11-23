@@ -403,10 +403,10 @@
       "name": "Public-safe release package, site and support readiness",
       "class": "EXTERNAL_PUBLISH_HOLD",
       "depends_on": [
-        "B02",
-        "B05"
+        "B00",
+        "B02"
       ],
-      "done_when": "actual browser verified /cgx routes, download+SHA, README, changelog, release notes, accessibility, support/contact and separate public approval",
+      "done_when": "Rights-reviewed public-safe offline/S91 preview installed at approved website routes, SHA downloads and browser/UAT/security/accessibility pass; if native missing, private/native features visibly disabled and no native minted claims",
       "source_commands": [
         "python tools/verify_unispace_product.py"
       ],
@@ -441,7 +441,7 @@
     {
       "id": "R2",
       "name": "Public-safe bounded software preview",
-      "scope": "DOCUMENTED_OFFLINE_DEMO_NO_PRIVATE_DATA_OR_NATIVE_PEER_CLAIMS",
+      "scope": "PUBLIC_SAFE_OFFLINE_AND_NON_NATIVE_PREVIEW_WITH_RIGHTS_BROWSER_UAT_AND_OWNER_PUBLISH_APPROVAL; NO_SIGNED_DBR_OR_CHAIN_MINT_CLAIM",
       "now": "BLOCKED_LIVE_UAT_RIGHTS_PUBLIC_SIGNOFF"
     },
     {
@@ -536,5 +536,5 @@
     "public_launch_finished": false,
     "physical_PrintSpace_qualified": false
   },
-  "next_action": "QUALIFY_B03_CURRENT_NATIVE_HOST_SIGNER_INDEPENDENT_REVIEW_WHILE_B02_EXISTING_PRODUCT_SHELL_BUILD_QA_PROCEEDS_IN_PARALLEL"
+  "next_action": "B00/B01/B02_PARALLEL; B06_PUBLIC_SAFE_PREVIEW_AFTER_B00_B02_INDEPENDENT_OF_MINT; B03/B04/B05_SEPARATE_NATIVE_MINT_CRITICAL_PATH"
 }
