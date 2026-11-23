@@ -551,3 +551,89 @@ def fold_ternary_capsule_graph(capsules: list[dict[str, Any]],
         "public_deployment_verified": False,
         "mint_authorized": False,
     }
+
+
+def plan_source_milestone_receipt(graph: dict[str, Any], *,
+                                  milestone: str,
+                                  changed_object_ids: list[str],
+                                  prior_manifest_sha256: str | None = None
+                                  ) -> dict[str, Any]:
+    """Coalesce intermediate development into an optional milestone proposal.
+
+    This is NOT a signed native DBR receipt. It preserves reference history
+    and never deletes development logs, original revisions or rollback data.
+    Actual owner approval and native signing/readback are independent.
+    """
+    if not isinstance(graph, dict) or graph.get("schema") != (
+            "CGX-UNISPACE-UNIFIED-CAPSULE-GRAPH/0.1"):
+        raise LineageHold("verified capsule source graph required")
+    if graph.get("canonical_root_id") != ROOT_ID or not all(
+            graph.get(key) is False for key in (
+                "native_persistence_verified", "independent_profile_lease_verified",
+                "third_party_engine_installed", "public_deployment_verified",
+                "mint_authorized", "source_bytes_copied_into_graph",
+            )):
+        raise LineageHold("unqualified milestone graph authority")
+    canonical = {
+        "schema": graph.get("schema"),
+        "canonical_root_id": ROOT_ID,
+        "selected_revisions": graph.get("selected_revisions"),
+        "history": graph.get("history"),
+        "ordered_selected_capsules": graph.get("ordered_selected_capsules"),
+    }
+    computed = hashlib.sha256(
+        json.dumps(canonical, sort_keys=True, separators=(",", ":"),
+                   ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+    if graph.get("manifest_sha256") != computed:
+        raise LineageHold("milestone graph source integrity mismatch")
+    if milestone not in {
+            "source_convergence", "component_revision",
+            "rights_qualification", "regression_accepted",
+            "software_release_candidate", "native_handoff_review",
+            "recovery_witness", "public_release_review",
+    }:
+        raise LineageHold("milestone not admissible as source-only receipt")
+    if prior_manifest_sha256 is not None:
+        _checked_text(prior_manifest_sha256, SHA, "prior_manifest_sha256")
+    if (not isinstance(changed_object_ids, list)
+            or len(changed_object_ids) > 256
+            or len(set(changed_object_ids)) != len(changed_object_ids)
+            or any(not isinstance(i, str) or not ID.fullmatch(i)
+                   or i not in canonical["selected_revisions"]
+                   for i in changed_object_ids)):
+        raise LineageHold("invalid changed component set")
+    if prior_manifest_sha256 == computed:
+        return {
+            "schema": "CGX-SOURCE-MILESTONE-RECEIPT-PLAN/0.1",
+            "state": "SUPPRESS_DUPLICATE_MILESTONE_CANDIDATE",
+            "canonical_root_id": ROOT_ID,
+            "candidate": None, "prior_source_history_deleted": False,
+            "native_receipt_signed": False, "mint_or_publish_authorized": False,
+        }
+    if not changed_object_ids:
+        raise LineageHold("changed canonical source requires explicit component IDs")
+    core = {
+        "canonical_root_id": ROOT_ID,
+        "milestone": milestone,
+        "manifest_sha256": computed,
+        "prior_manifest_sha256": prior_manifest_sha256,
+        "changed_object_ids": sorted(changed_object_ids),
+        "historical_revision_count": graph["revision_count"],
+        "selected_object_count": graph["selected_object_count"],
+        "source_history_is_preserved": True,
+        "original_source_bytes_embedded": False,
+    }
+    digest = hashlib.sha256(
+        json.dumps(core, sort_keys=True, separators=(",", ":"),
+                   ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema": "CGX-SOURCE-MILESTONE-RECEIPT-PLAN/0.1",
+        "state": "SOURCE_MILESTONE_CANDIDATE_REQUIRES_OWNER_DBR",
+        "canonical_root_id": ROOT_ID,
+        "candidate": {**core, "candidate_sha256": digest},
+        "prior_source_history_deleted": False,
+        "native_receipt_signed": False,
+        "mint_or_publish_authorized": False,
+    }
