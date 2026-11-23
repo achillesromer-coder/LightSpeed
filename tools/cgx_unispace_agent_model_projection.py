@@ -125,7 +125,7 @@ def build(repo: Path, *, tracked: set[str] | None = None) -> dict[str, Any]:
         if not isinstance(entry, dict):
             raise AgentModelHold("invalid domain owner")
         owner = entry.get("principal_agent")
-        if owner not in {"Achilles", "Neo", "Athene"} or owner in owned_roles:
+        if owner not in {"Achilles", "Neo", "Athene"} or owner.lower() in owned_roles:
             raise AgentModelHold("ambiguous principal agent ownership")
         owned_roles[owner.lower()] = {
             "domain": key,
