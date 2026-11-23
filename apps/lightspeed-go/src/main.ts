@@ -884,17 +884,29 @@ const refreshDesktop = async (): Promise<void> => {
                 entry.available_routes + ' available / ' + entry.gated_routes +
                 ' gated · native admission pending</li>'
               ).join("");
-              const aliasRows = family.hash_equal_aliases.map((item) =>
-                '<li>' + item.names.map((name) => escapeHtml(name)).join(' ≡ ') +
-                ' · same source hash</li>'
+              const contentRows = family.content_groups.map((item) =>
+                '<li><strong>' + escapeHtml(item.display_name) + '</strong> · ' +
+                item.bytes + ' bytes · ' + escapeHtml(item.sha256.slice(0, 12)) +
+                (item.reference_names.length > 1
+                  ? ' · same-byte names: ' + item.reference_names.map(escapeHtml).join(' ≡ ')
+                  : '') +
+                ' · observation only, not native object admission</li>'
               ).join("");
+              const retainedEmpty = family.retained_empty_carrier_names.length;
               familyPanel.innerHTML =
                 '<summary>CGX family · ' + family.selector_count + ' registered selectors</summary>' +
                 '<p class="muted">' + family.installed_carrier_count +
-                ' observed .cgx filenames / ' + family.unique_carrier_hash_count +
-                ' unique source hashes. Installed carrier ≠ native mint.</p>' +
+                ' observed .cgx filenames consolidated into ' + family.content_groups.length +
+                ' content groups (' + family.collapsed_alias_card_count +
+                ' duplicate display card(s) suppressed). Identical bytes do not prove semantic identity or native mint.</p>' +
                 '<ul>' + selectorRows + '</ul>' +
-                (aliasRows ? '<p class="muted">Content-equal carriers:</p><ul>' + aliasRows + '</ul>' : '');
+                '<details><summary>One content card per unique hash</summary><ul>' +
+                contentRows + '</ul></details>' +
+                '<p class="muted">Storage namespace ' +
+                (family.storage_root_is_alias ? 'resolves through an existing alias/junction' : 'is a direct root') +
+                '. Zero-byte carrier holds: ' + retainedEmpty +
+                '. Deleted: ' + (family.deletion_performed ? 'yes' : 'no') +
+                '. No carrier aliases are deletion-authorised by this presentation.</p>';
               capabilityMount.appendChild(familyPanel);
             }
           } catch {

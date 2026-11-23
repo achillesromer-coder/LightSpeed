@@ -17,7 +17,7 @@ from verify_unispace_product import verify
 ROOT = Path(__file__).resolve().parents[1]
 PRODUCT = ROOT / "UniSpace"
 PUBLIC = ROOT / "apps/lightspeed-go/public"
-KIT = ("FileSpace.html", "CGX.cgx", "index.html", "unispace.css", "unispace.js", "filespace.js", "product.json")
+KIT = ("FileSpace.html", "CGX.cgx", "index.html", "unispace.css", "unispace.js", "filespace.js", "product.json", "unispace.cgx.html")
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -179,13 +179,13 @@ kernel.write_carrier(root,Path(sys.argv[3]))
         (site/"library.html").write_bytes(library_page.replace('<h1>Scientific review sets</h1>', '<h1>Scientific review sets</h1><p><a href="ReviewLibrary.cgx" download>Download the optional review library (.cgx)</a>. Open it with the FileSpace tutorial supplied in this edition.</p>').encode())
         render_family_pages(site)
         page=(site/"index.html").read_text(encoding="utf-8")
-        page=page.replace("<!-- kit-download -->",'<p><a class="button" href="UniSpace.zip" download>Download product + offline tutorial ↓</a></p><p><a href="library.html">Explore the scientific review library →</a></p>')
+        page=page.replace("<!-- kit-download -->",'<p><a class="button" href="UniSpace.zip" download>Download product + offline GUI ↓</a></p><p><a href="library.html">Explore the scientific review library →</a></p>')
         (site/"index.html").write_bytes(page.encode())
         write_json(site/"hosting.json",{"intended_origin":"https://romer.industries","proposed_base_path":"/unispace/",
             "published":False,"scope":"private Raphael review" if raphael_source else "hosting candidate",
             "entry":"index.html","starter_kit":"UniSpace.zip","carrier":"CGX.cgx",
             "carrier_sha256":receipt["sha256"],"kit_sha256":digest(site/"UniSpace.zip"),
-            "tutorial":"FileSpace.html","library":"library.html","catalogue":"assets/catalogue.json",
+            "tutorial":"FileSpace.html","offline_gui":"unispace.cgx.html","library":"library.html","catalogue":"assets/catalogue.json",
             "companion":{"url":"ReviewLibrary.cgx","sha256":digest(companion),"bytes":companion.stat().st_size,"state_id":manifest["state_id"],"object_id":manifest["object_id"],"release":"local review candidate"},
             "renders":renders,"selectors":families,"server_requirements":"Static HTTPS; serve .cgx and .zip as downloadable binary files."})
         site.rename(destination)

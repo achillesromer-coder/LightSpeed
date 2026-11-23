@@ -1,0 +1,74 @@
+/* Spatial CGX immersive-first UI. 2D AR/OS/VR display modes, not WebXR.
+   No remote persistence or native host controls are exposed by visual styling. */
+.ls-spatial-immersive{--sp-glass:rgba(9,22,26,.84);--sp-line:rgba(114,212,207,.25);--sp-ink:#e9fbf8;--sp-soft:#a8bfbc;display:grid;gap:13px;margin:14px 0 21px;padding:clamp(12px,2vw,23px);border:1px solid var(--sp-line);border-radius:20px;color:var(--sp-ink);background:radial-gradient(ellipse at 85% 5%,rgba(33,132,135,.27),transparent 46%),linear-gradient(122deg,#081719,#0a1b22 70%,#0a121b);box-shadow:0 20px 58px rgba(0,0,0,.21);min-width:0;position:relative}
+.ls-spatial-header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:flex-start}
+.ls-spatial-title h2{margin:3px 0;font-size:clamp(22px,3vw,34px);font-weight:650;letter-spacing:-.025em}
+.ls-spatial-title p{margin:0;line-height:1.5;max-width:75ch}
+.ls-spatial-kicker{color:#84d6d7;font-size:10px;font-weight:700;letter-spacing:.105em;text-transform:uppercase;margin:0 0 7px}
+.ls-spatial-subtitle,.ls-spatial-caption{color:var(--sp-soft);font-size:12px;line-height:1.48}
+.ls-spatial-hold{color:#f7d7a1;padding:6px 10px;border:1px solid rgba(242,195,123,.35);border-radius:999px;font-size:10px;font-weight:650}
+.ls-spatial-toolbar{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ls-spatial-modes{display:flex;flex-wrap:wrap;gap:5px;margin-right:8px}
+.ls-spatial-immersive button,.ls-spatial-immersive select,.ls-spatial-immersive input{font:inherit;color:var(--sp-ink);border:1px solid rgba(138,203,201,.25);background:rgba(7,30,38,.86);border-radius:8px;min-height:31px}
+.ls-spatial-immersive button{cursor:pointer;padding:6px 9px;font-size:11px}
+.ls-spatial-immersive button[aria-pressed=true]{border-color:#6ad2cd;background:rgba(39,151,151,.25);color:#b9f5f0}
+.ls-spatial-immersive button:hover{border-color:#8bd1cd}
+.ls-spatial-immersive button:disabled{cursor:not-allowed;opacity:.45}
+.ls-spatial-immersive button:focus-visible,.ls-spatial-immersive input:focus-visible,.ls-spatial-immersive select:focus-visible,.ls-spatial-stage:focus-visible{outline:2px solid #9cf9dc;outline-offset:2px}
+.ls-spatial-breadcrumb{display:flex;align-items:center;flex-wrap:wrap;gap:4px;font-size:11px}
+.ls-spatial-breadcrumb button[aria-current=location]{border-color:#88e6c9;color:#acffde}
+.ls-spatial-frame{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,270px);gap:12px;align-items:stretch}
+.ls-spatial-stage{--sp-bg:radial-gradient(ellipse at center,#1d343c,#061319 75%);position:relative;min-width:0;width:100%;min-height:350px;aspect-ratio:20 / 14;overflow:hidden;isolation:isolate;border:1px solid var(--sp-line);border-radius:15px;background:var(--sp-bg);box-shadow:inset 0 0 80px rgba(0,0,0,.3)}
+.ls-spatial-stage::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(133,210,197,.095) 1px,transparent 1px),linear-gradient(90deg,rgba(133,210,197,.095) 1px,transparent 1px);background-size:5% 7.142857%;opacity:.7}
+.ls-spatial-stage[data-spatial-theme=forest]{--sp-bg:radial-gradient(ellipse at 30% 35%,#184737,#071f20 75%)}
+.ls-spatial-stage[data-spatial-theme=industrial]{--sp-bg:radial-gradient(ellipse at 30% 35%,#333a43,#091820 77%)}
+.ls-spatial-stage[data-spatial-theme=cosmos]{--sp-bg:radial-gradient(ellipse at 40% 55%,#232e61,#090f22 75%)}
+.ls-spatial-stage[data-spatial-theme=arcade]{--sp-bg:radial-gradient(ellipse at 40% 42%,#4c1b52,#11112b 80%)}
+.ls-spatial-stage[data-spatial-light=dusk]{filter:brightness(.82) saturate(.85)}
+.ls-spatial-stage[data-spatial-light=night]{filter:brightness(.68) saturate(.92)}
+.ls-spatial-object{position:absolute;display:flex;flex-direction:column;justify-content:center;gap:4px;align-items:center;padding:5px;text-align:center;min-width:0;min-height:0;overflow:hidden;user-select:none;touch-action:none;border:1px solid rgba(146,233,222,.56)!important;border-radius:10px!important;background:linear-gradient(140deg,rgba(12,53,62,.95),rgba(10,27,36,.9))!important;box-shadow:0 3px 9px rgba(0,0,0,.24);color:#e6fff8!important;z-index:2;cursor:grab!important}
+.ls-spatial-object:active{cursor:grabbing!important}
+.ls-spatial-object[data-spatial-kind=grex]{background:linear-gradient(140deg,#204736,#10291e)!important;border-color:#87d59e!important}
+.ls-spatial-object[data-spatial-kind=game]{background:linear-gradient(140deg,#3b2954,#211633)!important;border-color:#bc8ce9!important}
+.ls-spatial-object[data-spatial-kind=profile]{background:linear-gradient(140deg,#54452b,#282014)!important;border-color:#e3c077!important}
+.ls-spatial-object[data-spatial-kind=object]{background:linear-gradient(140deg,#35424c,#172632)!important;border-color:#9cbbc9!important}
+.ls-spatial-object[data-spatial-layer=overlay]{background:rgba(36,61,66,.72)!important;z-index:3;border-style:dashed!important}
+.ls-spatial-object[data-selected=true]{outline:3px solid #e8ffe0;outline-offset:2px;z-index:4}
+.ls-spatial-object strong{font-size:clamp(10px,1.1vw,14px);line-height:1.2;overflow-wrap:anywhere}
+.ls-spatial-object small{font-size:8px;opacity:.75;letter-spacing:.075em}
+.ls-spatial-relations{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+.ls-spatial-relations line{stroke:#87c5d2;stroke-width:1.5;stroke-dasharray:4 3;opacity:.65}
+.ls-spatial-relations line[data-relationship=depends_on]{stroke:#e7bd83;stroke-dasharray:5 2}
+.ls-spatial-relations line[data-relationship=gateway]{stroke:#c49ceb;stroke-dasharray:none}
+.ls-spatial-compass{position:absolute;right:9px;bottom:8px;pointer-events:none;font-size:10px;color:#b5dad6;opacity:.8;z-index:5}
+.ls-spatial-inspector{min-width:0;display:flex;flex-direction:column;gap:9px;padding:13px;background:rgba(0,0,0,.27);border:1px solid var(--sp-line);border-radius:15px;overflow:auto;max-height:650px}
+.ls-spatial-inspector h3{margin:2px 0;font-size:15px}
+.ls-spatial-inspector p{margin:2px 0}
+.ls-spatial-inspector label{display:grid;gap:4px;font-size:11px;font-weight:600}
+.ls-spatial-inspector select,.ls-spatial-inspector input{max-width:100%;padding:5px 7px;color:#eafff7}
+.ls-spatial-inspector-actions{display:flex;flex-wrap:wrap;gap:6px}
+.ls-spatial-coordinate-edit{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ls-spatial-coordinate-edit input{width:100%;min-width:0}
+.ls-spatial-legend{display:flex;flex-wrap:wrap;gap:5px}
+.ls-spatial-legend span{font-size:10px;border:1px solid var(--sp-line);border-radius:7px;padding:5px 7px}
+.ls-spatial-footer{display:grid;gap:7px}
+.ls-spatial-add{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.ls-spatial-add input{flex:1 1 180px;min-width:120px;padding:6px}
+.ls-spatial-status,.ls-spatial-disclaimer{margin:0;color:var(--sp-soft);font-size:11px;line-height:1.5}
+.ls-spatial-immersive[data-view-mode=ar] .ls-spatial-stage{box-shadow:inset 0 0 45px rgba(46,194,189,.08),0 10px 50px rgba(0,0,0,.2);border-color:#3d9b9a}
+.ls-spatial-immersive[data-view-mode=ar] .ls-spatial-stage::after{content:"AR HUD · 2D SCREEN · NO CAMERA";position:absolute;top:8px;right:10px;color:#9af6d9;font:9px/1.2 ui-monospace,monospace;pointer-events:none}
+.ls-spatial-immersive[data-view-mode=vr] .ls-spatial-stage{box-shadow:inset 0 0 110px #070c1f;background-size:cover;border-color:#8f79d2}
+.ls-spatial-immersive[data-view-mode=vr] .ls-spatial-stage::after{content:"VR STYLE · NO HEADSET SESSION";position:absolute;top:8px;right:10px;color:#d4c3ff;font:9px/1.2 ui-monospace,monospace;pointer-events:none}
+.ls-spatial-immersive[data-view-mode=os] .ls-spatial-object{border-radius:5px!important;box-shadow:5px 5px 0 rgba(0,0,0,.25)!important}
+.ls-spatial-immersive[data-view-mode=plan] .ls-spatial-stage::before{opacity:1}
+.ls-spatial-immersive[data-editing=false] .ls-spatial-object{cursor:default!important}
+@media(max-width:970px){.ls-spatial-frame{grid-template-columns:1fr}.ls-spatial-inspector{max-height:none}.ls-spatial-stage{min-height:300px}}
+@media(max-width:570px){.ls-spatial-stage{min-height:300px;aspect-ratio:1.2}.ls-spatial-immersive{padding:10px}.ls-spatial-object strong{font-size:9px}.ls-spatial-object small{font-size:7px}.ls-spatial-coordinate-edit{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){.ls-spatial-immersive *{scroll-behavior:auto;animation:none;transition:none}}
+
+/* Optional AR passthrough is local camera video, not WebXR tracked anchors. */
+.ls-spatial-camera{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:.73;pointer-events:none;transform:scaleX(-1)}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-stage::before{z-index:1;background-color:rgba(0,21,26,.12)}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-relations{z-index:2}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-object{z-index:3;backdrop-filter:blur(9px);background:rgba(6,36,43,.8)!important}
+.ls-spatial-immersive[data-camera=on] .ls-spatial-object[data-selected=true]{z-index:4}

@@ -1,0 +1,388 @@
+name: CGX UniSpace Five-Space Source Review
+
+on:
+  push:
+    branches:
+      - "review/cgx-unispace-five-facet-mesh-*"
+    paths:
+      - "tools/cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_unified_lineage.py"
+      - "tools/cgx_unispace_attempt_unification_review.py"
+      - "tests/test_cgx_unispace_attempt_unification_review.py"
+      - "cgx/review/unispace_all_attempt_convergence_overlay_20261123.json"
+      - "tools/cgx_unispace_agent_model_projection.py"
+      - "tests/test_cgx_unispace_agent_model_projection.py"
+      - "plugins/source/core-skills/cgx-capability-router/SKILL.md"
+      - "plugins/packages/**/skills/cgx-capability-router/SKILL.md"
+      - "tests/test_cgx_unispace_unified_lineage.py"
+      - "cgx/review/unispace_engine_reference_candidates_v0_1.json"
+      - "tools/cgx_living_consolidation_review.py"
+      - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_crossspace_review.py"
+      - "tools/cgx_unispace_capability_crosswalk.py"
+      - "tools/cgx_unispace_integrated_source_review.py"
+      - "tests/test_cgx_unispace_integrated_source_review.py"
+      - "docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json"
+      - "tests/test_cgx_unispace_capability_crosswalk.py"
+      - "cgx/load_minimum/activation_contract.json"
+      - "cgx/load_minimum/filespace_feature_registry.json"
+      - "cgx/load_minimum/semantic_viewport_contract.json"
+      - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
+      - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
+      - "tests/test_cgx_unispace_crossspace_review.py"
+      - "docs/romer-web-hooks/uos_universal_gateway_embed.html"
+      - "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md"
+      - "tests/uos_universal_gateway.test.mjs"
+      - "tools/cgx_automation_archive_review.py"
+      - "tools/cgx_unispace_branch_convergence.py"
+      - "tools/cgx_unispace_overlap_review.py"
+      - "tools/cgx_unispace_hybrid_source_review.py"
+      - "tests/test_cgx_automation_archive_review.py"
+      - "tests/test_cgx_unispace_branch_convergence.py"
+      - "tests/test_cgx_unispace_overlap_review.py"
+      - "tests/test_cgx_unispace_hybrid_source_review.py"
+      - "cgx/load_minimum/gptExportShardReview.py"
+      - "tests/test_cgx_gpt_export_original_shard_review.py"
+      - "cgx/load_minimum/gptExportSparseHydrate.py"
+      - "tests/test_cgx_gpt_export_sparse_hydrate.py"
+      - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
+      - "cgx/review/unispace_source_path_overlap_20261122.json"
+      - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
+      - "docs/architecture/UNISPACE_CROSSSPACE_GATE_RECONCILIATION_20261122.md"
+      - "tests/test_cgx_living_consolidation_review.py"
+      - "desktop/LightSpeed_Runtime/lightspeed_runtime/cgx_family_topology.py"
+      - "cgx/domain_templates/**"
+      - "apps/lightspeed-go/src/osShell.ts"
+      - "apps/lightspeed-go/src/osShellModel.ts"
+      - "apps/lightspeed-go/src/osShellModel.test.ts"
+      - "apps/lightspeed-go/dist/**"
+      - ".github/workflows/cgx-unispace-five-space-review.yml"
+  pull_request:
+    branches:
+      - "review/cgx-living-consolidation-*"
+    paths:
+      - "tools/cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_unified_lineage.py"
+      - "tools/cgx_unispace_attempt_unification_review.py"
+      - "tests/test_cgx_unispace_attempt_unification_review.py"
+      - "cgx/review/unispace_all_attempt_convergence_overlay_20261123.json"
+      - "tools/cgx_unispace_agent_model_projection.py"
+      - "tests/test_cgx_unispace_agent_model_projection.py"
+      - "plugins/source/core-skills/cgx-capability-router/SKILL.md"
+      - "plugins/packages/**/skills/cgx-capability-router/SKILL.md"
+      - "tests/test_cgx_unispace_unified_lineage.py"
+      - "cgx/review/unispace_engine_reference_candidates_v0_1.json"
+      - "tools/cgx_living_consolidation_review.py"
+      - "tests/test_cgx_unispace_facet_mesh.py"
+      - "tools/cgx_unispace_crossspace_review.py"
+      - "tools/cgx_unispace_capability_crosswalk.py"
+      - "tools/cgx_unispace_integrated_source_review.py"
+      - "tests/test_cgx_unispace_integrated_source_review.py"
+      - "docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json"
+      - "tests/test_cgx_unispace_capability_crosswalk.py"
+      - "cgx/load_minimum/activation_contract.json"
+      - "cgx/load_minimum/filespace_feature_registry.json"
+      - "cgx/load_minimum/semantic_viewport_contract.json"
+      - "cgx/manufacturing/printspace_product_handoff_v0_1.json"
+      - "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json"
+      - "tests/test_cgx_unispace_crossspace_review.py"
+      - "docs/romer-web-hooks/uos_universal_gateway_embed.html"
+      - "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md"
+      - "tests/uos_universal_gateway.test.mjs"
+      - "tools/cgx_automation_archive_review.py"
+      - "tools/cgx_unispace_branch_convergence.py"
+      - "tools/cgx_unispace_overlap_review.py"
+      - "tools/cgx_unispace_hybrid_source_review.py"
+      - "tests/test_cgx_automation_archive_review.py"
+      - "tests/test_cgx_unispace_branch_convergence.py"
+      - "tests/test_cgx_unispace_overlap_review.py"
+      - "tests/test_cgx_unispace_hybrid_source_review.py"
+      - "cgx/load_minimum/gptExportShardReview.py"
+      - "tests/test_cgx_gpt_export_original_shard_review.py"
+      - "cgx/load_minimum/gptExportSparseHydrate.py"
+      - "tests/test_cgx_gpt_export_sparse_hydrate.py"
+      - "cgx/review/unispace_git_pr_source_snapshot_20261122.json"
+      - "cgx/review/unispace_source_path_overlap_20261122.json"
+      - "cgx/review/unispace_crossspace_gate_register_v0_1.json"
+      - "docs/architecture/UNISPACE_CROSSSPACE_GATE_RECONCILIATION_20261122.md"
+      - "tests/test_cgx_living_consolidation_review.py"
+      - "cgx/domain_templates/**"
+      - "apps/lightspeed-go/src/osShell.ts"
+      - "apps/lightspeed-go/src/osShellModel.ts"
+      - "apps/lightspeed-go/src/osShellModel.test.ts"
+      - "apps/lightspeed-go/dist/**"
+      - ".github/workflows/cgx-unispace-five-space-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  five-space-source-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          show-progress: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: "3.12"
+      - name: Install audited test dependencies
+        run: |
+          python -m pip install --disable-pip-version-check --no-input \
+            --require-hashes --only-binary=:all: \
+            -r tools/merovingian/requirements-ci-linux-py312.lock
+      - name: Compile bounded source and tests
+        run: |
+          python -m py_compile \
+            tools/cgx_unispace_facet_mesh.py \
+            tools/cgx_living_consolidation_review.py \
+            tests/test_cgx_unispace_facet_mesh.py \
+            tools/cgx_unispace_crossspace_review.py \
+            tests/test_cgx_unispace_crossspace_review.py
+      - name: Reconcile historical PR attempts and current source merge ancestry
+        run: |
+          python -m py_compile tools/cgx_unispace_attempt_unification_review.py tests/test_cgx_unispace_attempt_unification_review.py
+          python -m pytest -q tests/test_cgx_unispace_attempt_unification_review.py
+          python -m tools.cgx_unispace_attempt_unification_review --repo . > all-attempts-source-review.json
+      - name: Validate existing nine agent/model selectors over one UniSpace root
+        run: |
+          python -m py_compile tools/cgx_unispace_agent_model_projection.py tests/test_cgx_unispace_agent_model_projection.py
+          python -m pytest -q tests/test_cgx_unispace_agent_model_projection.py
+      - name: Validate one-root source lineage and external engine rights holds
+        run: |
+          python -m py_compile tools/cgx_unispace_unified_lineage.py tests/test_cgx_unispace_unified_lineage.py
+          python -m pytest -q tests/test_cgx_unispace_unified_lineage.py
+      - name: Run facet denial and composition regression
+        run: python -m pytest -q tests/test_cgx_unispace_facet_mesh.py
+      - name: Run existing consolidation and family regression
+        env:
+          PYTHONPATH: "desktop/LightSpeed_Runtime"
+        run: |
+          python -m pytest -q \
+            tests/test_cgx_living_consolidation_review.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_family_topology.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_catalogue_root.py
+      - name: Independent read-only real-source projection
+        run: |
+          python tools/cgx_unispace_facet_mesh.py --repo . \
+            --spaces file_space data_space social_space print_space intelligence_space \
+            > facet-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o=json.loads(Path("facet-source-review.json").read_text(encoding="utf-8"))
+          m=o["mesh"]
+          p=o["projection"]
+          assert m["state"] == "SOURCE_CONTRACT_MESH_OBSERVED"
+          assert m["facet_count"] == 5
+          assert m["unique_contract_count"] == 12
+          assert m["unique_service_count"] == 7
+          assert p["state"] == "SOURCE_PROJECTION_READY_FOR_REVIEW"
+          assert len(p["requested_spaces"]) == 5
+          assert m["new_database_created"] is False
+          assert m["native_execution_authorized"] is False
+          assert p["semantic_state_mutated"] is False
+          assert p["model_inference_executed"] is False
+          print("Five source-qualified workspace facets; zero native promotion")
+          PY
+      - name: Validate source-only 51 open cross-space gates and existing five facets
+        run: |
+          python -m pytest -q tests/test_cgx_unispace_crossspace_review.py
+          python tools/cgx_unispace_crossspace_review.py --repo . \
+            --mesh-json facet-source-review.json --out crossspace-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          o = json.loads(Path("crossspace-source-review.json").read_text(encoding="utf-8"))
+          assert o["state"] == "SOURCE_REVIEW_ONLY_51_TASKS_OPEN"
+          assert o["task_count"] == 51
+          assert o["source_verified_printspace_open"] == 16
+          assert o["proposed_crossspace_open"] == 35
+          assert o["source_mesh_observed"] is True
+          assert not o["native_admitted"] and not o["archive_delete_authorised"]
+          assert not o["owner_acceptance_observed"] and not o["side_effects_performed"]
+          print("Cross-space handoff: 51 OPEN, five source facets, zero native authority")
+          PY
+      - name: Run integrated archive, branch, overlap and hybrid source regressions (70 cases)
+        run: |
+          python -m unittest discover -s tests -p test_cgx_automation_archive_review.py -v
+          python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
+          python -m unittest discover -s tests -p test_cgx_unispace_overlap_review.py -v
+          python -m unittest discover -s tests -p test_cgx_unispace_hybrid_source_review.py -v
+      - name: LOAD original export shard source integrity regressions (19 synthetic cases)
+        run: |
+          python -m unittest discover -s tests -p test_cgx_gpt_export_original_shard_review.py -v
+          python - <<'PY'
+          from pathlib import Path
+          source=Path("cgx/load_minimum/gptExportShardReview.py").read_text(encoding="utf-8")
+          assert "cgx.load_minimum.gptExportManifestIntake" in source
+          assert "SOURCE_R0_VERIFIED_PRIVATE_NOT_NATIVE_ADMITTED" in source
+          print("Original LOAD manifest adapter reused; private source bodies not used in CI")
+          PY
+      - name: Source-backed R0/R1 selective private hydration and policy denial (32 synthetic cases)
+        run: |
+          python -m unittest discover -s tests -p test_cgx_gpt_export_sparse_hydrate.py -v
+          python - <<'PY'
+          from pathlib import Path
+          source=Path("cgx/load_minimum/gptExportSparseHydrate.py").read_text(encoding="utf-8")
+          assert "inspect_originals" in source
+          assert "host_acl_and_signed_lease_verified" in source
+          assert "PRIVATE_HOST_POLICY_DENIED" in source
+          print("Full original R0/R1 parity and private one-record hydration are synthetically tested; no owner data in CI")
+          PY
+      - name: Resolve single-root 51-gate UniSpace hybrid review evidence
+        run: |
+          python tools/cgx_unispace_hybrid_source_review.py \
+            --prs cgx/review/unispace_git_pr_source_snapshot_20261122.json \
+            --overlaps cgx/review/unispace_source_path_overlap_20261122.json \
+            --gates cgx/review/unispace_crossspace_gate_register_v0_1.json \
+            --mesh-json facet-source-review.json \
+            > unispace-hybrid-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          item=json.loads(Path("unispace-hybrid-source-review.json").read_text(encoding="utf-8"))
+          assert item["canonical_root"] == "cgx:root:cognigrex"
+          assert len(item["facets"]) == 5
+          assert item["cross_space_gates_read_back"] == 51
+          assert item["exact_crossspace_mesh_bound"] is True
+          assert item["original_crossspace_review"]["source_mesh_observed"] is True
+          assert item["original_crossspace_review"]["task_count"] == 51
+          assert item["original_crossspace_review"]["native_admitted"] is False
+          assert item["overlap_pairs"] == 5
+          assert item["projection_state"] == "OPEN_SOURCE_REVIEW_NO_NATIVE_PROMOTION"
+          for forbidden in ("native_dbr_performed","merge_performed","publish_performed",
+                            "archive_deleted","new_root_created","new_scheduler_created","model_trained"):
+              assert item[forbidden] is False
+          assert item["historic_automation_run_history_complete"] is False
+          assert item["source_head_mismatches"], "Stale source head observations cannot silently qualify"
+          print("Integrated five facets / exact 51-gate register / 70 source regressions, native authority HELD")
+          PY
+      - name: Validate pinned LOAD/Alexandria and PrintSpace source-only capability fold (22 cases)
+        run: |
+          python -m pytest -q tests/test_cgx_unispace_capability_crosswalk.py
+          python tools/cgx_unispace_capability_crosswalk.py --repo . \
+            --output unispace-capability-crosswalk.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path("unispace-capability-crosswalk.json").read_text(encoding="utf-8"))
+          assert report["canonical_root"] == "cgx:root:cognigrex"
+          assert len(report["source_contracts"]) == 5
+          assert len(report["library"]["actions"]) == 10
+          assert len(report["manufacturing"]["workstreams"]) == 16
+          assert report["original_gate_count"] == 51
+          assert report["manufacturing"]["physical_proof"] == "UNMEASURED"
+          assert all(not report[key] for key in (
+              "native_dbr_performed","machine_actuated","trained","published",
+              "archive_deleted","source_bytes_hydrated"))
+          print("LOAD/PrintSpace source contracts crosswalked; no native or release authority")
+          PY
+      - name: Single-root final source projection (15 regression cases)
+        run: |
+          python -m pytest -q tests/test_cgx_unispace_integrated_source_review.py
+          python tools/cgx_unispace_integrated_source_review.py \
+            --repo . --output unispace-integrated-source-review.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          r=json.loads(Path("unispace-integrated-source-review.json").read_text(encoding="utf-8"))
+          n=r["independent_scope_counts"]
+          assert r["canonical_root"] == "cgx:root:cognigrex"
+          assert n["root_count"] == 1 and n["workspace_facets"] == 5
+          assert n["engineering_gate_groups_open"] == 51
+          assert n["public_route_descriptors"] == 51
+          assert n["public_missing_404_routes"] == 6
+          assert n["LOAD_actions"] == 10 and n["PrintSpace_workstreams"] == 16
+          assert r["state"] == "INTEGRATED_SOURCE_REVIEW_NOT_DEPLOYED"
+          for key in ("native_root_admitted","native_dbr_proved","physical_print_qualified",
+                      "archive_deletion_authorised","public_published","new_scheduler_created"):
+              assert r[key] is False
+          print("One CGX root, 5 facets, 51 distinct engineering gates and public routes, native authority HELD")
+          PY
+      - name: Validate single-root five-facet Interface Studio import candidate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          src=Path("docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json")
+          item=json.loads(src.read_text(encoding="utf-8"))
+          assert set(item)=={"design"}
+          design=item["design"]
+          assert set(design)=={"schema","parent","title","body"}
+          assert design["schema"]=="cgx.unispace.interface/1"
+          assert design["parent"]=="cgx:root:cognigrex"
+          b=design["body"]
+          assert set(b)=={"id","type","title","layout","children"}
+          assert b["id"]=="root" and b["type"]=="group" and b["layout"]=="tabs"
+          expected={
+              "file_space":("FileSpace","files"),
+              "data_space":("DataSpace","records"),
+              "social_space":("SocialSpace","handoffs"),
+              "print_space":("PrintSpace","workspace"),
+              "intelligence_space":("IntelligenceSpace","workspace"),
+          }
+          assert len(b["children"])==len(expected)
+          assert {x["facet"] for x in b["children"]}==set(expected)
+          for n,x in enumerate(b["children"]):
+              assert set(x)=={"id","type","title","dataset","facet","kind","status","query","layout","limit"}
+              assert x["id"]==f"view-{n}" and x["type"]=="collection"
+              assert (x["title"],x["dataset"])==expected[x["facet"]]
+              assert x["layout"]=="cards" and x["limit"]==18
+              assert x["status"]==x["query"]==""
+          assert not any(key in src.read_text(encoding="utf-8").lower() for key in
+              ("password","credential","token","execute","publish","transfer","peer","callback","mint"))
+          print("Review-only GO layout has exactly 5 existing facets, 0 execution/publishing controls")
+          PY
+      - name: Preserve source-only five-facet and 51-task review receipts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-unispace-crossspace-source-review
+          path: |
+            facet-source-review.json
+            crossspace-source-review.json
+            unispace-hybrid-source-review.json
+            unispace-capability-crosswalk.json
+            unispace-integrated-source-review.json
+          if-no-files-found: error
+          retention-days: 30
+      - name: Set up Node for UniSpace shell verification
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: apps/lightspeed-go/package-lock.json
+      - name: Regress passive UOS public gateway (51 route map, six missing links, no peer authority)
+        run: node --test tests/uos_universal_gateway.test.mjs
+      - name: Install immutable LightSpeed GO dependencies
+        working-directory: apps/lightspeed-go
+        run: npm ci
+      - name: Run UniSpace GUI model regressions
+        working-directory: apps/lightspeed-go
+        run: npm test
+      - name: Type-check UniSpace shell and facet navigation
+        working-directory: apps/lightspeed-go
+        run: npm run check
+      - name: Build the existing UniSpace GUI (no deployment)
+        working-directory: apps/lightspeed-go
+        run: npm run build -- --outDir "$RUNNER_TEMP/unispace-dist"
+      - name: Capture source-generated shell bundle for exact parity reconciliation
+        uses: actions/upload-artifact@v4
+        with:
+          name: cgx-reviewed-generated-gui-bundle
+          path: |
+            ${{ runner.temp }}/unispace-dist/index.html
+            ${{ runner.temp }}/unispace-dist/assets/
+            ${{ runner.temp }}/unispace-dist/achilles-mobile.cgx.html
+          if-no-files-found: error
+          retention-days: 1
+      - name: Verify tracked desktop entry and generated assets
+        working-directory: apps/lightspeed-go
+        run: |
+          cmp dist/index.html "$RUNNER_TEMP/unispace-dist/index.html"
+          diff -qr dist/assets "$RUNNER_TEMP/unispace-dist/assets"
+          cmp dist/achilles-mobile.cgx.html "$RUNNER_TEMP/unispace-dist/achilles-mobile.cgx.html"

@@ -1,0 +1,41 @@
+{
+  "schema": "LOAD-ALEXANDRIA-ACTIVATION/0.1",
+  "status": "SOURCE_REVIEW_NOT_ADMITTED",
+  "parent_filespace": "Cognigrex.cgx",
+  "alias": "LOAD.cgx",
+  "canonical_object_id": null,
+  "accepted_parent_object_id": null,
+  "required_native_checks": [
+    "accepted-parent-identity",
+    "existing-LOAD-alias-or-object-id-lookup",
+    "verified-source-and-owner-ACL",
+    "collision-resolution",
+    "RootAuthority",
+    "signed-lease",
+    "atomic-DBR-readback"
+  ],
+  "child_mount_mode_proposed": "EMBED",
+  "hydration": {
+    "h0": "identity",
+    "h1": "typed references",
+    "h2": "source provenance",
+    "h3": "qualified capability descriptors",
+    "h4": "authenticated independent permission required"
+  },
+  "reader": "load_reader.py",
+  "network_fetch": "DENY_UNTIL_HOST_AUTHORIZED",
+  "local_carrier_artifact": "owner-private-review-only",
+  "canonical_mutation": false,
+  "domain_designation": {
+    "file_space_domain_name": "LOAD.cgx",
+    "existing_library": "Library of Alexandria",
+    "role": "DESIGNATION_OF_EXISTING_ALEXANDRIA_FILESPACE_DOMAIN",
+    "parent_authority": "Cognigrex.cgx",
+    "source_corpus_policy": "REUSE_ORIGINAL_CUSTODIAL_SOURCES_AND_HASH_REFERENCES",
+    "private_export_policy": "MANIFEST_AND_PERMISSIONED_REFERENCE_ONLY__NEVER_PUBLIC_BODY_MIRROR",
+    "shorthand_policy": "REFERENTIAL_RESOLUTION_WITH_SELECTIVE_AUTHORISED_HYDRATION",
+    "geometric_key_policy": "TYPED_ADDRESS_AND_VIEW_SELECTOR__NOT_CONTENT_SUBSTITUTE",
+    "existing_object_id_policy": "LOOKUP_AND_REUSE__DO_NOT_MINT_UNTIL_NATIVE_AUTHORITY_VERIFIED",
+    "current_scope": "REVIEW_ONLY__NO_NEW_ROOT_OR_RUNTIME"
+  }
+}

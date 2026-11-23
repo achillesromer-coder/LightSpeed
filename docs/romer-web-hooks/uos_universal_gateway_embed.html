@@ -1,0 +1,185 @@
+<!-- CGX / UniSpace universal public gateway v0.1 | review-only static embed
+     Add this one block to a selected Squarespace Code Block; do not treat its
+     presence as an authenticated peer, a release, or a backend implementation. -->
+<div id="cgx-uos-gateway" data-cgx-gateway="0.1" aria-live="polite"></div>
+<script>
+(function () {
+  "use strict";
+  var mount = document.getElementById("cgx-uos-gateway");
+  if (!mount || mount.getAttribute("data-mounted") === "true") return;
+  mount.setAttribute("data-mounted", "true");
+
+  // Paths are case-insensitive for matching; we never rewrite the actual URL.
+  // Evidence states: observed page, historical link, candidate, or confirmed missing-404.
+  // These are static audit labels, not real-time availability or authentication.
+  var routes = [
+    ["/", "Römer Industries", "portal", "romer", "observed"],
+    ["/home", "Römer Industries", "portal", "romer", "observed"],
+    ["/aus", "Australian capability", "research", "romer", "observed"],
+    ["/team", "People and Grexes", "public-profile", "profilespace", "historical"],
+    ["/inter-sol", "InterSol", "research", "romer", "observed"],
+    ["/emassc", "EMASSC", "research", "emassc", "observed"],
+    ["/green-initiative", "Eco initiatives (legacy route)", "research", "eco", "historical"],
+    ["/green", "Eco programmes", "research", "eco", "observed"],
+    ["/green/future", "EcoX applications and deployment", "research", "eco", "observed"],
+    ["/green/embedded", "Embedded", "research", "eco", "observed"],
+    ["/green/second-cycle", "Second Cycle", "research", "eco", "observed"],
+    ["/operations", "Operations catalogue", "operations", "lightspeed", "historical"],
+    ["/operations/w2", "Luke II planning", "operations", "lightspeed", "historical"],
+    ["/operations/w3", "RFS / EMFF projections", "operations", "emassc", "observed"],
+    ["/operations/w4", "Supply-chain studies", "operations", "romer", "observed"],
+    ["/operations/w7", "Decentralised ledger study", "research", "dataspace", "observed"],
+    ["/lightspeedhome", "LightSpeed command centre", "demonstration", "lightspeed", "observed"],
+    ["/gmat", "GMAT mission tooling", "demonstration", "lightspeed", "observed"],
+    ["/mpl-engine", "MPL engine", "demonstration", "lightspeed", "observed"],
+    ["/raphael", "Raphael public research", "research", "raphael", "observed"],
+    ["/w1-data", "W1 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/w2-data", "W2 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/w3-data", "W3 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/w4-data", "W4 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/w5-data", "W5 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/w6-data", "W6 data (unconnected)", "unconnected", "dataspace", "missing-404"],
+    ["/contact-us", "Contact and collaboration", "contact", "romer", "observed"],
+    ["/take-action", "Collaborate", "contact", "romer", "historical"],
+    ["/ls-go", "LightSpeed GO", "operator-shell", "lightspeed", "historical"],
+    ["/ls-go/status", "LightSpeed GO status", "operator-shell", "lightspeed", "historical"],
+    ["/ls-go/handoff", "LightSpeed GO handoff", "operator-shell", "lightspeed", "historical"],
+    ["/ls-go/review", "LightSpeed GO review", "operator-shell", "lightspeed", "historical"],
+    ["/ls-go/agents", "LightSpeed GO agents", "operator-shell", "lightspeed", "candidate"],
+    ["/uos", "UniSpace OS", "product-gateway", "uos", "candidate"],
+    ["/cgx", "CGX catalogue", "product-gateway", "cognigrex", "candidate"],
+    ["/cgx/load", "LOAD", "product-gateway", "load", "candidate"],
+    ["/cgx/lightspeed", "LightSpeed", "product-gateway", "lightspeed", "candidate"],
+    ["/cgx/fs", "FileSpace", "space-gateway", "filespace", "candidate"],
+    ["/cgx/ds", "DataSpace", "space-gateway", "dataspace", "candidate"],
+    ["/cgx/ps", "PrintSpace", "space-gateway", "printspace", "candidate"],
+    ["/cgx/profile", "ProfileSpace", "space-gateway", "profilespace", "candidate"],
+    ["/cgx/ccc", "CCC", "product-gateway", "ccc", "candidate"],
+    ["/cgx/cyc", "CYC", "product-gateway", "cyc", "candidate"],
+    ["/cgx/doom", "CGX game demonstration", "demonstration", "game", "candidate"],
+    ["/cgx/raphael", "Raphael", "research", "raphael", "candidate"],
+    ["/cgx/eco", "Eco-Grex", "research", "eco", "candidate"],
+    ["/cgx/athene", "Athene", "research", "athene", "candidate"],
+    ["/cgx/neo", "Neo", "operator-shell", "neo", "candidate"],
+    ["/cgx/achilles", "Achilles", "operator-shell", "achilles", "candidate"],
+    ["/cgx/romer", "Römer-Grex", "research", "romer", "candidate"],
+    ["/docs", "Public documentation (rights-review)", "documentation", "cognigrex", "observed"]
+  ];
+  var routeByPath = Object.create(null);
+  routes.forEach(function (r) { routeByPath[r[0]] = r; });
+
+  function safePath(href) {
+    var u;
+    try { u = new URL(href, window.location.href); } catch (_) { return null; }
+    if (u.origin !== window.location.origin) return null;
+    var p = u.pathname || "/";
+    if (p.length > 160 || /[%\\\u0000-\u001f]/.test(p) || p.indexOf("..") >= 0) return null;
+    return p.replace(/\/+$/, "").toLowerCase() || "/";
+  }
+  var path = safePath(window.location.href);
+  var route = path && routeByPath[path];
+  if (!route && path && path.indexOf("/uos/") === 0 &&
+      /^\/uos\/[a-z0-9][a-z0-9_-]{0,39}$/.test(path)) {
+    // Virtual facet projection is not a claim that Squarespace created the page.
+    route = [path, "UniSpace facet (unpublished)", "virtual-facet", path.slice(5), "candidate"];
+  }
+  if (!route) route = [path || "(invalid)", "Unmapped route", "unmapped", "none", "unknown"];
+
+  var caps = Object.freeze(["public.route.read", "public.capability.describe", "public.handoff.prepare"]);
+  var discovered = Object.freeze({
+    schema: "CGX-PUBLIC-DISCOVERY/0.1",
+    authority: "none",
+    origin: window.location.origin,
+    route: route[0],
+    page_title: route[1],
+    page_type: route[2],
+    facet: route[3],
+    route_evidence: route[4],
+    bootstrap: "static-minimal",
+    hydration: "explicit-after-authorisation",
+    ternary_shape: "unresolved",
+    capabilities: caps,
+    role: "visitor",
+    execution_authorized: false,
+    signing_verified: false,
+    peer_identity_verified: false,
+    rights: "public_metadata_only",
+    mutable_state: "none"
+  });
+
+  function node(tag, cls, txt, parent) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (txt !== undefined) n.textContent = txt;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  var heading = node("section", "cgx-uos-head", undefined, mount);
+  node("p", "cgx-uos-overline", "CGX / UniSpace · context gateway", heading);
+  node("h2", "", route[1], heading);
+  node("p", "cgx-uos-muted", "Page URL resolves a public facet only. Local runtime, peer identity, storage access, signing and minting remain independently controlled.", heading);
+  var tags = node("div", "cgx-uos-chips", undefined, heading);
+  [route[2], "facet: " + route[3], "route: " + route[4]].forEach(function (v) { node("span", "", v, tags); });
+
+  var body = node("section", "cgx-uos-body", undefined, mount);
+  node("h3", "", "Minimal entry manifest", body);
+  var definitions = [
+    ["Route", route[0]], ["Authority", "Public discovery only"],
+    ["Hydration", "On demand, after ACL and rights proof"],
+    ["Representation", "CGX/T173 reference reserved; no native geometry claim"],
+    ["Persistence", "Owned by approved local / peer runtime, not this page"],
+    ["Heartbeat", "Not active; no peer liveness or lease inferred"]
+  ];
+  var list = node("dl", "cgx-uos-facts", undefined, body);
+  definitions.forEach(function (pair) {
+    node("dt", "", pair[0], list); node("dd", "", pair[1], list);
+  });
+  var actions = node("div", "cgx-uos-actions", undefined, body);
+  var button = node("button", "", "Copy public discovery handoff", actions);
+  button.type = "button";
+  var status = node("p", "cgx-uos-muted", "No automatic network connection, backend request, browser storage, token transfer or remote execution.", body);
+  button.addEventListener("click", function () {
+    var output = JSON.stringify(discovered, null, 2);
+    if (!navigator.clipboard || !navigator.clipboard.writeText) {
+      status.textContent = "Clipboard unavailable. Handoff remains disabled in this browser.";
+      return;
+    }
+    navigator.clipboard.writeText(output).then(function () {
+      status.textContent = "Public route descriptor copied. This is not an authenticated handshake.";
+    }).catch(function () {
+      status.textContent = "Clipboard permission denied. No changes made.";
+    });
+  });
+  var nav = node("nav", "cgx-uos-nav", undefined, mount);
+  nav.setAttribute("aria-label", "Existing public Römer pages");
+  [
+    ["/", "Home"], ["/green", "Eco"], ["/aus", "Australian capability"],
+    ["/emassc", "EMASSC"], ["/inter-sol", "InterSol"],
+    ["/gmat", "GMAT"], ["/raphael", "Raphael"], ["/contact-us", "Contact"]
+  ].forEach(function (link) {
+    var a = node("a", "", link[1], nav);
+    a.href = link[0];
+  });
+
+  // DOM-only event: for any already-loaded host integration; never a peer proof.
+  try {
+    window.dispatchEvent(new CustomEvent("cgx:public-route-discovered", { detail: discovered }));
+  } catch (_) {}
+})();
+</script>
+<style>
+#cgx-uos-gateway{font:inherit;color:#e9f5f2;background:#081b20;border:1px solid #38646a;border-radius:18px;padding:22px;max-width:100%;box-sizing:border-box}
+#cgx-uos-gateway .cgx-uos-overline{font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#80d2bf}
+#cgx-uos-gateway h2{font-size:clamp(24px,3vw,38px);margin:6px 0 10px;line-height:1.12}
+#cgx-uos-gateway h3{font-size:17px;margin:0 0 12px}
+#cgx-uos-gateway .cgx-uos-muted{color:#bacfd1;font-size:14px;line-height:1.55}
+#cgx-uos-gateway .cgx-uos-chips,#cgx-uos-gateway .cgx-uos-actions,#cgx-uos-gateway .cgx-uos-nav{display:flex;flex-wrap:wrap;gap:8px}
+#cgx-uos-gateway .cgx-uos-chips span{border:1px solid #38646a;border-radius:99px;padding:6px 9px;color:#c6e3de;font-size:12px}
+#cgx-uos-gateway .cgx-uos-body{margin:16px 0;border-top:1px solid #38646a;padding-top:18px}
+#cgx-uos-gateway .cgx-uos-facts{display:grid;grid-template-columns:minmax(90px,1fr) 3fr;gap:8px 12px;font-size:14px;margin:0 0 20px}
+#cgx-uos-gateway dt{color:#80d2bf}#cgx-uos-gateway dd{margin:0;overflow-wrap:anywhere}
+#cgx-uos-gateway button{cursor:pointer;border:1px solid #8bddd0;background:#173b3b;color:#f2fffb;border-radius:10px;padding:11px 14px}
+#cgx-uos-gateway .cgx-uos-nav{border-top:1px solid #38646a;padding-top:14px}
+#cgx-uos-gateway .cgx-uos-nav a{color:#b5f5df;font-size:13px}
+@media(max-width:650px){#cgx-uos-gateway{padding:15px}#cgx-uos-gateway .cgx-uos-facts{grid-template-columns:1fr}}
+</style>
