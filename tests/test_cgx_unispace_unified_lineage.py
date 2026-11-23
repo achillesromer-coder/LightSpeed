@@ -396,3 +396,89 @@ def test_capsule_hash_order_independent_for_nesting():
     b = compile_ternary_shape_capsule(mesh(), row, position=1,
                                     children=["cgx:object:one","cgx:object:two"])
     assert a["capsule_sha256"] == b["capsule_sha256"]
+
+
+def make_capsule_for_graph(name, revision="v1", children=None, position=1):
+    import hashlib
+    from tools.cgx_unispace_unified_lineage import compile_ternary_shape_capsule
+    payload = (name + ":" + revision).encode()
+    return compile_ternary_shape_capsule(
+        mesh(),
+        record(object_id="cgx:source:" + name, revision=revision,
+               source_uri="https://example.org/" + name,
+               rights="cleared_distribution", licence="MIT",
+               sha256=hashlib.sha256(payload).hexdigest()),
+        position=position, children=children or [],
+    )
+
+
+def test_unified_graph_dedup_and_nested_topology():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    leaf = make_capsule_for_graph("leaf")
+    parent = make_capsule_for_graph("parent", children=["cgx:source:leaf"])
+    result = fold_ternary_capsule_graph([parent, leaf, leaf])
+    assert result["canonical_root_id"] == ROOT_ID
+    assert result["selected_object_count"] == 2
+    assert result["revision_count"] == 2
+    assert result["exact_duplicate_capsules_coalesced"] == 1
+    assert [x["object_id"] for x in result["ordered_selected_capsules"]] == [
+        "cgx:source:leaf", "cgx:source:parent"]
+    assert result["source_bytes_copied_into_graph"] is False
+    assert result["mint_authorized"] is False
+
+
+def test_unified_graph_preserves_history_with_explicit_revision_selection():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    a = make_capsule_for_graph("versioned", "v1")
+    b = make_capsule_for_graph("versioned", "v2")
+    with pytest.raises(LineageHold, match="multiple source revisions"):
+        fold_ternary_capsule_graph([a, b])
+    chosen = fold_ternary_capsule_graph(
+        [a, b], selected_revisions={"cgx:source:versioned": "v2"}
+    )
+    assert chosen["revision_count"] == 2
+    assert chosen["selected_object_count"] == 1
+    assert chosen["selected_revisions"]["cgx:source:versioned"] == "v2"
+    assert {x["revision"] for x in chosen["history"]} == {"v1", "v2"}
+
+
+def test_unified_graph_rejects_missing_child_and_cycle():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    parent = make_capsule_for_graph("parent", children=["cgx:source:child"])
+    with pytest.raises(LineageHold, match="unresolved nested"):
+        fold_ternary_capsule_graph([parent])
+    child = make_capsule_for_graph("child", children=["cgx:source:parent"])
+    with pytest.raises(LineageHold, match="cycle"):
+        fold_ternary_capsule_graph([parent, child])
+
+
+def test_unified_graph_rejects_conflicting_same_revision():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    a = make_capsule_for_graph("collision", position=1)
+    b = make_capsule_for_graph("collision", position=2)
+    with pytest.raises(LineageHold, match="conflicting"):
+        fold_ternary_capsule_graph([a, b])
+
+
+def test_unified_graph_integrity_and_order_independence():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    a = make_capsule_for_graph("a")
+    b = make_capsule_for_graph("b")
+    first = fold_ternary_capsule_graph([a, b])
+    second = fold_ternary_capsule_graph([b, a])
+    assert first["manifest_sha256"] == second["manifest_sha256"]
+    altered = copy.deepcopy(a)
+    altered["source_sha256"] = "f" * 64
+    with pytest.raises(LineageHold):
+        fold_ternary_capsule_graph([altered])
+
+
+def test_unified_graph_forbids_unknown_selection_and_unbounded_inputs():
+    from tools.cgx_unispace_unified_lineage import fold_ternary_capsule_graph
+    a = make_capsule_for_graph("a")
+    with pytest.raises(LineageHold, match="absent"):
+        fold_ternary_capsule_graph([a], {"cgx:source:a": "v9"})
+    with pytest.raises(LineageHold):
+        fold_ternary_capsule_graph([a] * 257)
+    with pytest.raises(LineageHold):
+        fold_ternary_capsule_graph([a], {"cgx:root:other": "v1"})
