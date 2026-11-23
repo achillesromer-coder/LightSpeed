@@ -310,6 +310,8 @@
         "Google_Contacts",
         "Microsoft_Outlook_Email",
         "Microsoft_Outlook_Calendar",
+        "Slack",
+        "Circleback",
         "LinkedIn"
       ],
       "boundary": "Provider-specific scope and explicit consequential action gates; no sending or scheduling from metadata."
