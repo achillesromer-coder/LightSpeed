@@ -482,3 +482,67 @@ def test_unified_graph_forbids_unknown_selection_and_unbounded_inputs():
         fold_ternary_capsule_graph([a] * 257)
     with pytest.raises(LineageHold):
         fold_ternary_capsule_graph([a], {"cgx:root:other": "v1"})
+
+
+def test_source_milestone_suppresses_identical_graph():
+    from tools.cgx_unispace_unified_lineage import (
+        fold_ternary_capsule_graph, plan_source_milestone_receipt
+    )
+    graph = fold_ternary_capsule_graph([make_capsule_for_graph("a")])
+    result = plan_source_milestone_receipt(
+        graph, milestone="source_convergence",
+        changed_object_ids=["cgx:source:a"],
+        prior_manifest_sha256=graph["manifest_sha256"],
+    )
+    assert result["candidate"] is None
+    assert result["state"] == "SUPPRESS_DUPLICATE_MILESTONE_CANDIDATE"
+    assert result["prior_source_history_deleted"] is False
+
+
+def test_source_milestone_is_deterministic_unsigned_and_preserves_history():
+    from tools.cgx_unispace_unified_lineage import (
+        fold_ternary_capsule_graph, plan_source_milestone_receipt
+    )
+    graph = fold_ternary_capsule_graph([make_capsule_for_graph("a")])
+    first = plan_source_milestone_receipt(
+        graph, milestone="component_revision",
+        changed_object_ids=["cgx:source:a"], prior_manifest_sha256=None)
+    second = plan_source_milestone_receipt(
+        graph, milestone="component_revision",
+        changed_object_ids=["cgx:source:a"], prior_manifest_sha256=None)
+    assert first == second
+    assert first["candidate"]["historical_revision_count"] == 1
+    assert first["candidate"]["source_history_is_preserved"] is True
+    assert first["native_receipt_signed"] is False
+    assert first["mint_or_publish_authorized"] is False
+
+
+def test_source_milestone_denies_tampered_graph_and_unknown_components():
+    from tools.cgx_unispace_unified_lineage import (
+        fold_ternary_capsule_graph, plan_source_milestone_receipt
+    )
+    graph = fold_ternary_capsule_graph([make_capsule_for_graph("a")])
+    altered = copy.deepcopy(graph)
+    altered["manifest_sha256"] = "f" * 64
+    with pytest.raises(LineageHold):
+        plan_source_milestone_receipt(
+            altered, milestone="source_convergence",
+            changed_object_ids=["cgx:source:a"])
+    altered = copy.deepcopy(graph)
+    altered["native_persistence_verified"] = True
+    with pytest.raises(LineageHold):
+        plan_source_milestone_receipt(
+            altered, milestone="source_convergence",
+            changed_object_ids=["cgx:source:a"])
+    with pytest.raises(LineageHold):
+        plan_source_milestone_receipt(
+            graph, milestone="native_dbr_signed",
+            changed_object_ids=["cgx:source:a"])
+    with pytest.raises(LineageHold):
+        plan_source_milestone_receipt(
+            graph, milestone="source_convergence",
+            changed_object_ids=["cgx:source:missing"])
+    with pytest.raises(LineageHold):
+        plan_source_milestone_receipt(
+            graph, milestone="source_convergence",
+            changed_object_ids=[])
