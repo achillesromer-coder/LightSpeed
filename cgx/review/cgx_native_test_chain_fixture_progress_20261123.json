@@ -1,0 +1,129 @@
+{
+  "schema": "CGX-NATIVE-TEST-CHAIN-FIXTURE-PROGRESS/0.1",
+  "canonical_root": "cgx:root:cognigrex",
+  "recorded_date": "2026-11-23",
+  "scope": "REDACTED_BOUWERBASE_ISOLATED_FIXTURES_AND_PUBLIC_SOURCE_CI_ONLY",
+  "source_refs": {
+    "owner_intent": "cgx/review/cgx_native_admission_owner_intent_20261123.json",
+    "canonical_merge": "cgx/review/cgx_unispace_source_merges_milestone_20261123.json",
+    "native_abi_readonly": "tools/cgx_unispace_native_acceptance_preflight.py",
+    "live_reconciliation_tool": "tools/reconcile_live_runtime.py",
+    "owner_runbook": "docs/architecture/UNISPACE_CGX_NATIVE_OPERATIONAL_LINK_20261118.md",
+    "original_engineer_gates": "cgx/review/unispace_crossspace_gate_register_v0_1.json"
+  },
+  "observation_kind": "REMOTE_HOST_COMMAND_OUTPUT_NOT_INDEPENDENT_CRYPTOGRAPHIC_RECEIPT",
+  "hosted_observation": {
+    "source": "existing LightSpeed GO hosted LOAD/Lite provider status",
+    "native_admitted": false,
+    "canonical_write_authorized": false,
+    "native_execution_authorized": false,
+    "peer_verified": false,
+    "desktop_status": "STALE_AT_2026-10-13",
+    "hosted_filespace_metadata_entries": 0,
+    "hosted_dataspace_metadata_entries": 0
+  },
+  "local_observation": {
+    "source": "read-only desktop diagnostic and existing reconciliation tool plan",
+    "observed_utc": "2026-11-23T06:19:08Z",
+    "branch": "ops/canonical-queue-index-20261115",
+    "locally_dirty_entries": 3,
+    "checkout_identical_to_latest_github_source": false,
+    "deployment_mappings": 757,
+    "changed_installed_mappings": 61,
+    "deployment_blockers": [
+      "REVIEW_BRANCH_NOT_ACCEPTED_MAIN",
+      "MAIN_NOT_ALIGNED_WITH_ORIGIN",
+      "UNCOMMITTED_OR_UNTRACKED_SOURCE",
+      "MANAGED_SERVICES_ACTIVE"
+    ],
+    "active_managed_ports": [
+      4173,
+      4174,
+      8080,
+      8765
+    ],
+    "confirmed_local_http_200_ports": [
+      4173,
+      8080
+    ],
+    "port_8765_http_health_verified": false,
+    "no_restart_or_install_performed": true
+  },
+  "test_stages": [
+    {
+      "id": "T0",
+      "kind": "READ_ONLY",
+      "state": "OBSERVATION_COMPLETE_DEPLOYMENT_HELD",
+      "evidence": "Git/port inventory and native 757/61 plan; 4 blockers",
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T1",
+      "kind": "ISOLATED_FIXTURE",
+      "state": "PASS",
+      "count_passed": 19,
+      "count_failed": 0,
+      "python": "3.11",
+      "local_test_modules": [
+        "desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py",
+        "desktop/LightSpeed_Runtime/tests/test_cgx_persistence_preflight.py"
+      ],
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T2",
+      "kind": "ISOLATED_FIXTURE",
+      "state": "PASS",
+      "count_passed": 13,
+      "count_failed": 0,
+      "python": "3.11",
+      "local_test_modules": [
+        "desktop/LightSpeed_Runtime/tests/test_node_exchange.py",
+        "tests/test_reconcile_live_runtime.py"
+      ],
+      "scope_detail": "Temp-root digest transfer, allowlist denials and simulated installer rollback only",
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T3",
+      "kind": "INDEPENDENT_ISSUER_PEER_AUTH",
+      "state": "HOLD_NO_INDEPENDENT_SIGNED_PROOF",
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T4",
+      "kind": "CLEAN_MAIN_MAINTENANCE_DEPLOY",
+      "state": "HOLD_OWNER_STANDBY_AND_ROLLBACK_REQUIRED",
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T5",
+      "kind": "NATIVE_DB_RESTART_AND_PEER_COLD_RECOVERY",
+      "state": "HOLD_NOT_EXECUTED",
+      "signed_native_receipt": false
+    },
+    {
+      "id": "T6",
+      "kind": "OFFCHAIN_MINT_CANDIDATE",
+      "state": "HOLD_RIGHTS_AND_NATIVE_EVIDENCE_PENDING",
+      "signed_native_receipt": false
+    }
+  ],
+  "evidence_boundary": {
+    "test_count_passed_in_local_fixtures": 32,
+    "test_count_is_native_acceptance": 0,
+    "local_checkout_equivalent_to_latest_source": false,
+    "no_packages_installed": true,
+    "no_source_reset_or_stash": true,
+    "no_live_core_overwrites": true,
+    "no_native_db_mutation": true,
+    "no_signed_owner_lease_verified": true,
+    "no_independent_peer_qualification": true,
+    "no_model_training_claim": true,
+    "no_public_website_release": true,
+    "no_main_merge": true,
+    "no_new_root_or_agent_or_scheduler": true
+  },
+  "next_gate": "T3_INDEPENDENT_SIGNED_OWNER_ISSUER_AND_PEER_AUTH_REQUIRES_CURRENT_HOST_AND_OWNER_SCOPE",
+  "preservation_policy": "Original reviewed source and historical experiment records stay referenced; this fixture progress does not revise owner intent, sign authority or close any original engineering gates."
+}
