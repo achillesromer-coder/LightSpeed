@@ -16,6 +16,8 @@ on:
       - "tests/test_unispace_primary_product_launch_recovery.py"
       - "tools/cgx_agent_quadrant_test_mint.py"
       - "tests/test_cgx_agent_quadrant_test_mint.py"
+      - "cgx/review/cgx_quadrant_test_mint_activation_handoff_20261123.json"
+      - "tests/test_cgx_quadrant_test_mint_activation_handoff.py"
       - "cgx/review/cgx_native_test_chain_fixture_progress_20261123.json"
       - "tests/test_cgx_native_test_chain_fixture_progress.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py"
@@ -86,6 +88,8 @@ on:
       - "tests/test_unispace_primary_product_launch_recovery.py"
       - "tools/cgx_agent_quadrant_test_mint.py"
       - "tests/test_cgx_agent_quadrant_test_mint.py"
+      - "cgx/review/cgx_quadrant_test_mint_activation_handoff_20261123.json"
+      - "tests/test_cgx_quadrant_test_mint_activation_handoff.py"
       - "cgx/review/cgx_native_test_chain_fixture_progress_20261123.json"
       - "tests/test_cgx_native_test_chain_fixture_progress.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py"
@@ -177,6 +181,7 @@ jobs:
       - name: Test nine existing selector profiles inside deterministic quadrant test-mint fixtures
         run: |
           python -m pytest -q tests/test_cgx_agent_quadrant_test_mint.py
+          python -m pytest -q tests/test_cgx_quadrant_test_mint_activation_handoff.py
       - name: Execute ephemeral native checkpoint, peer-transfer and rollback test chain
         env:
           PYTHONPATH: "desktop/LightSpeed_Runtime"
