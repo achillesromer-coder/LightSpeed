@@ -60,6 +60,18 @@ cgx_run_local_work requires confirmed=true, forces heavy=false, and does not gra
 
 For `/help` or `/capabilities`, return the selector's global + selector-specific shortcalls grouped as available, assisted/gated, and missing/unwrapped. Keep the list concise unless the user requests the full registry.
 
+
+## Task composition and specialist source boundaries
+
+Use the existing cgx_get_capabilities interoperability mode to obtain the current
+selector view. Compose selected route, toolkit, skill, surface and role references
+with the exact task_id and view revision. Reuse shared source references rather
+than copying a skill per agent. Floor references describe existing source
+responsibilities and standing gates; they never grant execution permissions.
+Unknown or unavailable specialist source manifests remain held. A composition
+hash or ternary root is evidence of selected metadata, not training, a provider
+lease, an authenticated ACL, minting, or release approval.
+
 ## Unified CGX agent/model projection — 23 November 2026
 
 Resolve the **existing** `cgx:root:cognigrex` and source-qualified agent/model capability lens before dispatch. The canonical role/model layers are `cgx/domain_templates/agent_runtime_contract.json` and `cgx/domain_templates/technology_stack_registry.json`. `tools/cgx_unispace_agent_model_projection.py` checks the original domain owners, nine selector profiles, route source state and shared five-facet mesh; `tools/cgx_unispace_unified_lineage.py` preserves source revisions and exact provenance. These modules are read-only source projections, not a new agent or model runtime.
