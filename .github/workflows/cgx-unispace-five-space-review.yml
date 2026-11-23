@@ -12,6 +12,8 @@ on:
       - "tools/cgx_unispace_native_acceptance_preflight.py"
       - "cgx/review/cgx_native_admission_owner_intent_20261123.json"
       - "tests/test_cgx_native_admission_owner_intent.py"
+      - "cgx/review/cgx_native_test_chain_fixture_progress_20261123.json"
+      - "tests/test_cgx_native_test_chain_fixture_progress.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py"
       - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "tests/test_reconcile_live_runtime.py"
@@ -76,6 +78,8 @@ on:
       - "tools/cgx_unispace_native_acceptance_preflight.py"
       - "cgx/review/cgx_native_admission_owner_intent_20261123.json"
       - "tests/test_cgx_native_admission_owner_intent.py"
+      - "cgx/review/cgx_native_test_chain_fixture_progress_20261123.json"
+      - "tests/test_cgx_native_test_chain_fixture_progress.py"
       - "desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py"
       - "desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
       - "tests/test_reconcile_live_runtime.py"
@@ -167,7 +171,8 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py \
             desktop/LightSpeed_Runtime/tests/test_node_exchange.py \
             tests/test_reconcile_live_runtime.py \
-            tests/test_cgx_native_admission_owner_intent.py
+            tests/test_cgx_native_admission_owner_intent.py \
+            tests/test_cgx_native_test_chain_fixture_progress.py
       - name: Verify hosted session cannot promote native ACL DBR or production admission
         run: |
           python -m py_compile tools/cgx_unispace_native_acceptance_preflight.py tests/test_cgx_unispace_native_acceptance_preflight.py
