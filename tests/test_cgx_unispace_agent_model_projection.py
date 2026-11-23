@@ -165,3 +165,33 @@ def test_untrusted_read_only_source_is_rejected(monkeypatch):
     monkeypatch.setattr(model, "_source", substituted)
     with pytest.raises(model.AgentModelHold, match="model/agent/safety"):
         model.build(ROOT)
+
+
+def test_nine_installed_skill_sources_reference_single_projection():
+    marker = "## Unified CGX agent/model projection — 23 November 2026"
+    paths = ["plugins/source/core-skills/cgx-capability-router/SKILL.md"]
+    paths.extend(
+        f"plugins/packages/{name}/skills/cgx-capability-router/SKILL.md"
+        for name in model.SELECTORS
+    )
+    for rel in paths:
+        raw = (ROOT / rel).read_text("utf-8")
+        assert raw.count(marker) == 1, rel
+        assert "tools/cgx_unispace_agent_model_projection.py" in raw, rel
+        assert "native" in raw.lower() and "rights" in raw.lower(), rel
+
+
+def test_runtime_and_model_contract_cross_reference_must_match(monkeypatch):
+    original = model._source
+
+    def substitute(repo, rel, tracked):
+        obj, proof = original(repo, rel, tracked)
+        if rel == model.MAIN_CONTRACTS["agent_runtime"]:
+            obj["unified_facet_projection"]["source_projection"] = (
+                "tools/parallel_unapproved_model_runtime.py"
+            )
+        return obj, proof
+
+    monkeypatch.setattr(model, "_source", substitute)
+    with pytest.raises(model.AgentModelHold, match="propagation inconsistent"):
+        model.build(ROOT)
