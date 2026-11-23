@@ -10,6 +10,7 @@ state, deploys, mints, starts agents or operates devices.
 from __future__ import annotations
 
 import argparse
+from datetime import UTC, datetime, timedelta
 import hashlib
 import json
 import re
@@ -21,6 +22,9 @@ SCHEMA = "CGX-UNISPACE-NATIVE-ACCEPTANCE-PREFLIGHT/0.1"
 ROOT = "cgx:root:cognigrex"
 GATE_SCHEMA = "CGX-UNISPACE-CROSSSPACE-GATE-REGISTRY/0.1"
 HOSTED_SCHEMA = "cgx.lightspeed-go.handshake/1"
+RUNTIME_SCHEMA = "LIGHTSPEED-LIVE-RUNTIME-RECONCILIATION/0.1"
+ALLOWED_RUNTIME_PORTS = {4173, 4174, 8080, 8765}
+MAX_RUNTIME_REPORT_AGE = timedelta(minutes=15)
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
 GATE_ID = re.compile(r"^[A-Z]+-[0-9]{2}$")
 MAX_GATES = 64
@@ -112,10 +116,98 @@ def _hosted_claim(hosted: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def assess(gates: dict[str, Any], hosted: dict[str, Any]) -> dict[str, Any]:
+
+def _read_only_host_plan(
+    plan: dict[str, Any], *, now: datetime | None = None,
+) -> dict[str, Any]:
+    """Validate the original local plan, not caller claims of native authority.
+
+    A fresh deployment *plan* is an unsignable observational witness only. It
+    cannot provide owner session, current lease, trusted issuer or DBR evidence.
+    Avoid emitting local host paths, private branch SHA or changed filenames.
+    """
+    if (not isinstance(plan, dict) or plan.get("schema") != RUNTIME_SCHEMA
+            or plan.get("action") != "plan"):
+        raise NativeAcceptanceHold("unqualified existing native-host plan")
+    stamp = plan.get("generated_utc")
+    try:
+        observed = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise NativeAcceptanceHold("local plan timestamp missing or invalid") from exc
+    clock = now or datetime.now(UTC)
+    if observed.tzinfo is None or clock.tzinfo is None:
+        raise NativeAcceptanceHold("native plan timestamp must be timezone-aware")
+    age = clock.astimezone(UTC) - observed.astimezone(UTC)
+    fresh = timedelta(minutes=-1) <= age <= MAX_RUNTIME_REPORT_AGE
+    git = plan.get("git")
+    readiness = plan.get("deployment_readiness")
+    ports = plan.get("open_service_ports")
+    if (not isinstance(git, dict) or not isinstance(readiness, dict)
+            or not isinstance(ports, list)
+            or any(type(p) is not int or p not in ALLOWED_RUNTIME_PORTS for p in ports)
+            or len(ports) != len(set(ports))
+            or type(git.get("clean")) is not bool
+            or not isinstance(git.get("branch"), str)
+            or not _str(git.get("head")) or not _str(git.get("origin_main"))
+            or not isinstance(readiness.get("blockers"), list)
+            or not isinstance(readiness.get("status"), str)):
+        raise NativeAcceptanceHold("invalid native host plan fields")
+    if (not re.fullmatch(r"[0-9a-f]{40}", git["head"])
+            or not re.fullmatch(r"[0-9a-f]{40}", git["origin_main"])):
+        raise NativeAcceptanceHold("unqualified native host Git provenance")
+    expected = []
+    if git["branch"] != "main":
+        expected.append("REVIEW_BRANCH_NOT_ACCEPTED_MAIN")
+    if git["head"] != git["origin_main"]:
+        expected.append("MAIN_NOT_ALIGNED_WITH_ORIGIN")
+    if git["clean"] is not True:
+        expected.append("UNCOMMITTED_OR_UNTRACKED_SOURCE")
+    if ports:
+        expected.append("MANAGED_SERVICES_ACTIVE")
+    if readiness["blockers"] != expected:
+        raise NativeAcceptanceHold("native host readiness evidence contradicts its own fields")
+    if readiness["status"] != (
+        "HOLD" if expected else "ELIGIBLE_FOR_OWNER_CONFIRMED_APPLY"
+    ):
+        raise NativeAcceptanceHold("native host readiness status not reproducible")
+    safety = (
+        "owner_approval_recorded", "services_were_stopped", "backup_verified",
+        "runtime_installed", "native_mint_authorized",
+        "data_space_network_mint_authorized",
+    )
+    if any(readiness.get(field) is not False for field in safety):
+        raise NativeAcceptanceHold("plan asserts effectful operation or native mint")
+    counts = (plan.get("tracked_mapping_count"),plan.get("changed_mapping_count"))
+    if (any(type(x) is not int or not 0 <= x <= 100_000 for x in counts)
+            or counts[1] > counts[0]):
+        raise NativeAcceptanceHold("unbounded or inconsistent source mapping counts")
+    return {
+        "kind": "UNSIGNED_READ_ONLY_LOCAL_PLAN",
+        "fresh_within_15_minutes": fresh,
+        "local_checkout_clean": git["clean"],
+        "local_checkout_on_main": git["branch"] == "main",
+        "local_checkout_matches_origin_main": git["head"] == git["origin_main"],
+        "tracked_mapping_count": counts[0],
+        "changed_mapping_count": counts[1],
+        "active_managed_ports_count": len(ports),
+        "deployment_blockers": expected + ([] if fresh else ["LOCAL_PLAN_STALE"]),
+        "release_lease_verified": False,
+        "authenticated_native_issuer_verified": False,
+        "signed_dbr_readback_verified": False,
+        "independent_peer_verified": False,
+        "automatic_install_permitted": False,
+    }
+
+
+def assess(
+    gates: dict[str, Any], hosted: dict[str, Any],
+    *, runtime_plan: dict[str, Any] | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
     """Always returns a *review* report, never an authority promotion."""
     keyed = _gate_set(gates)
     view = _hosted_claim(hosted)
+    runtime = _read_only_host_plan(runtime_plan, now=now) if runtime_plan is not None else None
     zero_dependency = sorted(k for k,v in keyed.items() if not v["proposed_dependencies"])
     priority = [key for key in ACTIONABLE_PRIORITY if key in keyed]
     ordered = []
@@ -135,6 +227,7 @@ def assess(gates: dict[str, Any], hosted: dict[str, Any]) -> dict[str, Any]:
         "state": "NATIVE_AND_PUBLIC_RELEASE_HELD",
         "original_gate_count": len(keyed),
         "source_observation": view,
+        "native_host_read_only_plan": runtime,
         "zero_dependency_review_gates": zero_dependency,
         "priority_sequence": ordered,
         "admission_requirements": [
@@ -167,15 +260,24 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gate-register", type=Path, required=True)
     parser.add_argument("--hosted-handshake", type=Path, required=True)
+    parser.add_argument("--runtime-plan", type=Path)
     args = parser.parse_args()
-    for path in (args.gate_register, args.hosted_handshake):
+    for path in (args.gate_register, args.hosted_handshake, args.runtime_plan):
+        if path is None:
+            continue
         if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_INPUT:
             raise NativeAcceptanceHold("missing/oversize hosted review source")
     gates = json.loads(args.gate_register.read_text("utf-8"))
     raw = json.loads(args.hosted_handshake.read_text("utf-8"))
     if isinstance(raw, dict) and isinstance(raw.get("structuredContent"), dict):
         raw = raw["structuredContent"]
-    print(json.dumps(assess(gates, raw), indent=2, sort_keys=True))
+    runtime = (json.loads(args.runtime_plan.read_text("utf-8"))
+               if args.runtime_plan else None)
+    if isinstance(runtime, dict) and isinstance(runtime.get("result"), dict):
+        if runtime.get("ok") is not True:
+            raise NativeAcceptanceHold("unverified host plan result")
+        runtime = runtime["result"]
+    print(json.dumps(assess(gates, raw, runtime_plan=runtime), indent=2, sort_keys=True))
 
 
 if __name__ == "__main__":
