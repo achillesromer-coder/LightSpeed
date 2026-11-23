@@ -444,3 +444,110 @@ def validate_ternary_shape_capsule(capsule: dict[str, Any]) -> dict[str, Any]:
             "canonical_root_id": ROOT_ID,
             "shape_is_research_only": True, "native_admitted": False,
             "owner_signer_verified": False, "mint_authorized": False}
+
+
+def fold_ternary_capsule_graph(capsules: list[dict[str, Any]],
+                              selected_revisions: dict[str, str] | None = None
+                              ) -> dict[str, Any]:
+    """Compose ONE canonical-hash review graph from existing shape capsules.
+
+    References are deduplicated and the full revision index is retained.
+    Ambiguous revision selection, conflicting bytes, missing child references,
+    cyclic nesting and privilege-bearing inputs fail closed. No source bytes
+    are copied into the graph projection, no DB/peer/signer is created.
+    """
+    if not isinstance(capsules, list) or len(capsules) > 256:
+        raise LineageHold("unbounded unified capsule graph")
+    if selected_revisions is None:
+        selected_revisions = {}
+    if (not isinstance(selected_revisions, dict)
+            or len(selected_revisions) > 256
+            or any(not isinstance(obj, str) or not ID.fullmatch(obj)
+                   or not isinstance(rev, str) or not REV.fullmatch(rev)
+                   for obj, rev in selected_revisions.items())):
+        raise LineageHold("invalid explicit revision selector")
+    keyed: dict[tuple[str, str], dict[str, Any]] = {}
+    exact_duplicates = 0
+    for capsule in capsules:
+        validate_ternary_shape_capsule(capsule)
+        key = (capsule["object_id"], capsule["revision"])
+        prior = keyed.get(key)
+        if prior is not None:
+            if prior["capsule_sha256"] != capsule["capsule_sha256"]:
+                raise LineageHold("conflicting same-identity capsule revision")
+            exact_duplicates += 1
+        else:
+            keyed[key] = capsule
+    versions: dict[str, list[str]] = {}
+    for obj, rev in keyed:
+        versions.setdefault(obj, []).append(rev)
+    for obj, rev in selected_revisions.items():
+        if (obj not in versions or rev not in versions[obj]):
+            raise LineageHold("selected revision absent from original lineage")
+    selected: dict[str, str] = {}
+    for obj, available in sorted(versions.items()):
+        if obj in selected_revisions:
+            selected[obj] = selected_revisions[obj]
+        elif len(available) == 1:
+            selected[obj] = available[0]
+        else:
+            raise LineageHold("unresolved multiple source revisions")
+    adjacency: dict[str, list[str]] = {}
+    for obj, rev in selected.items():
+        capsule = keyed[obj, rev]
+        for child in capsule["child_object_refs"]:
+            if child not in selected:
+                raise LineageHold("unresolved nested child identity")
+        adjacency[obj] = capsule["child_object_refs"]
+    order: list[str] = []
+    colour: dict[str, int] = {}
+    def visit(obj: str) -> None:
+        state = colour.get(obj, 0)
+        if state == 1:
+            raise LineageHold("nested capsule dependency cycle")
+        if state == 2:
+            return
+        colour[obj] = 1
+        for child in adjacency[obj]:
+            visit(child)
+        colour[obj] = 2
+        order.append(obj)
+    for obj in sorted(selected):
+        visit(obj)
+    history = [
+        {"object_id": obj, "revision": rev,
+         "capsule_sha256": keyed[obj, rev]["capsule_sha256"],
+         "transport": keyed[obj, rev]["transport"],
+         "source_sha256": keyed[obj, rev]["source_sha256"]}
+        for obj, rev in sorted(keyed)
+    ]
+    root_manifest = {
+        "schema": "CGX-UNISPACE-UNIFIED-CAPSULE-GRAPH/0.1",
+        "canonical_root_id": ROOT_ID,
+        "selected_revisions": dict(sorted(selected.items())),
+        "history": history,
+        "ordered_selected_capsules": [
+            {"object_id": obj, "revision": selected[obj],
+             "capsule_sha256": keyed[obj, selected[obj]]["capsule_sha256"],
+             "child_object_refs": adjacency[obj]}
+            for obj in order
+        ],
+    }
+    manifest_digest = hashlib.sha256(
+        json.dumps(root_manifest, sort_keys=True, separators=(",", ":"),
+                   ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+    return {
+        **root_manifest,
+        "revision_count": len(keyed),
+        "selected_object_count": len(selected),
+        "exact_duplicate_capsules_coalesced": exact_duplicates,
+        "manifest_sha256": manifest_digest,
+        "is_self_contained_source_bundle": False,
+        "source_bytes_copied_into_graph": False,
+        "native_persistence_verified": False,
+        "independent_profile_lease_verified": False,
+        "third_party_engine_installed": False,
+        "public_deployment_verified": False,
+        "mint_authorized": False,
+    }
