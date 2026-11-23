@@ -1,0 +1,278 @@
+{
+  "schema": "CGX-GIT-CGX-CROSS-BRANCH-CONVERGENCE-REVIEW/0.1",
+  "observed_date": "2026-11-01",
+  "evidence_class": "AUTHENTICATED_GITHUB_PR_HEAD_FILE_LIST_AND_COMPARE_READBACK; SOURCE_REVIEW_ONLY",
+  "admission_stage": "SOURCE_MAPPED_NOT_NATIVE_ADMITTED",
+  "canonical_parent_candidate": "cgx:root:cognigrex",
+  "canonical_authority": "UNVERIFIED_CURRENT_S97_ROOTAUTHORITY_DBR",
+  "source_and_rights_policy": "No original R0 bytes or protected content are copied; retain all historical Git refs, provider source identities, licence and ACL gates.",
+  "public_git_cgx_role": "PUBLIC_SAFE_REVIEW_AND_PROVIDER_ADAPTER_ONLY; NEVER_SECOND_ROOT_OR_NATIVE_DBR",
+  "scope": "Single parent source-preserving deduplicated cross-branch map for Git.cgx, Drive.cgx, LOAD, FileSpace, Resolve, Frontier, CCC and DBR. No automatic fold/merge.",
+  "repository": "achillesromer-coder/LightSpeed",
+  "observed_open_pr_count": 60,
+  "observed_open_pr_numbers": [
+    24,
+    25,
+    28,
+    29,
+    30,
+    34,
+    35,
+    47,
+    53,
+    55,
+    88,
+    143,
+    144,
+    151,
+    152,
+    153,
+    156,
+    163,
+    164,
+    167,
+    171,
+    172,
+    173,
+    174,
+    175,
+    176,
+    177,
+    178,
+    179,
+    180,
+    181,
+    182,
+    183,
+    184,
+    185,
+    186,
+    187,
+    188,
+    189,
+    190,
+    191,
+    192,
+    193,
+    194,
+    195,
+    196,
+    197,
+    198,
+    199,
+    202,
+    205,
+    206,
+    207,
+    208,
+    210,
+    211,
+    213,
+    214,
+    215,
+    216
+  ],
+  "scoped_convergence": [
+    {
+      "component": "Cognigrex parent/identity/DBR",
+      "primary": "CURRENT_NATIVE_ROOT_NOT_READ_BACK",
+      "review_prs": [
+        183,
+        205,
+        206,
+        213,
+        214
+      ],
+      "rule": "Source/CI/SQLite candidate rows are not signed RootAuthority, accepted Object_ID or DBR."
+    },
+    {
+      "component": "LOAD/Alexandria/CCC",
+      "primary": 205,
+      "adapter": 211,
+      "consumer": 214,
+      "rule": "131 source-only references; keep original revisions and rights; reuse existing accepted LOAD alias only after native proof."
+    },
+    {
+      "component": "Cross-family relation grammar",
+      "primary": 205,
+      "secondary": 207,
+      "rule": "Typed /0.1 to /0.2 crosswalk; no lexical SAME_AS; preserve Eco MODIFIES double declaration and historical S91 local ID collisions."
+    },
+    {
+      "component": "Native FileSpace/DataSpace transfer",
+      "primary": "issue:161",
+      "review_prs": [
+        173,
+        175,
+        185,
+        186,
+        187
+      ],
+      "rule": "No peer acceptance without two-node signed receiver readback, replay/revocation/lease negative tests."
+    },
+    {
+      "component": "Git.cgx / Drive.cgx",
+      "primary": "PROVIDER_ADAPTER_CANDIDATES",
+      "review_prs": [
+        183,
+        184,
+        186
+      ],
+      "rule": "No new root, store, privileged route, or copying private GPT originals to public static sources."
+    },
+    {
+      "component": "UniSpace owner-private oversight",
+      "primary": 214,
+      "prerequisite": 213,
+      "related": [
+        172,
+        182,
+        184,
+        188,
+        190
+      ],
+      "rule": "Owner-session GET/read-only projection; no native writes, no public asset release."
+    },
+    {
+      "component": "Setup and managed host boot",
+      "primary": 206,
+      "stacked": 215,
+      "related": [
+        208,
+        213
+      ],
+      "rule": "One existing wizard/runtime; no new installer/authority; host boot/readback absent."
+    },
+    {
+      "component": "Achilles offline-held validation",
+      "primary": 216,
+      "stacked_on": 214,
+      "rule": "Source-only local test packet; offline device and unsigned receipts do not count as delivery or execution."
+    },
+    {
+      "component": "Scientific and private-public gates",
+      "primary": "issues:158,209",
+      "review_prs": [
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        210
+      ],
+      "rule": "Private static assets and scientific metric provenance fail closed; no publication."
+    },
+    {
+      "component": "Superseded exact resolver implementation",
+      "primary": 183,
+      "predecessor": 177,
+      "stacked_consumer": 184,
+      "rule": "Review exact ID resolver against current main; preserve #177 history; do not merge duplicate implementation blindly."
+    }
+  ],
+  "verified_pr_heads": [
+    {
+      "pr": 205,
+      "branch": "review/load-alexandria-minimal-20261028",
+      "sha": "17ef1891fe2e4129ea7f404c7d5d2c9660bfe9d7",
+      "draft": true
+    },
+    {
+      "pr": 206,
+      "branch": "review/cgx-ls-unified-bootstrap-20261028",
+      "sha": "08b0a7140538f28c1e569972c4d0cfa49e59482e",
+      "draft": true
+    },
+    {
+      "pr": 213,
+      "branch": "review/cgx-achilles-root-preflight-20261031",
+      "sha": "c4ca0cc798a03921badaf9f62fbe0729c63371c3",
+      "draft": true
+    },
+    {
+      "pr": 214,
+      "branch": "review/cgx-ls-family-ingestion-20261031",
+      "sha": "65dc890464e6e00aa8e9095f5210c478fdbcd9f1",
+      "draft": true
+    },
+    {
+      "pr": 215,
+      "branch": "review/cgx-windows-boot-mint-gates-20261031",
+      "sha": "85ecfed5e7769e7500e192b69745449ed0c2f23d",
+      "draft": true
+    },
+    {
+      "pr": 216,
+      "branch": "review/cgx-achilles-bouwerbase-stage35-20261101",
+      "sha": "b5ca7c2b96fb6e480d68eeab6fd433efae98d8e3",
+      "draft": true
+    }
+  ],
+  "observed_dependency_drift": [
+    {
+      "stacked_pr": 215,
+      "base_pr": 206,
+      "recorded_base_sha": "24301e840d93695a302aa996363234c53101319b",
+      "current_base_sha": "08b0a7140538f28c1e569972c4d0cfa49e59482e",
+      "comparison": "ahead 50 commits, 5 changed paths",
+      "paths": [
+        "cgx/bootstrap/cgxHandshakeReview.mjs",
+        "cgx/bootstrap/cgxHandshakeReview.test.mjs",
+        "cgx/bootstrap/open_threads_execution_register.json",
+        "scripts/run_cgx_agent_runtime.py",
+        "scripts/validate_cgx_execution_lease.py"
+      ],
+      "action": "Re-evaluate lease ABI and negatives before rebasing/merging; do not treat stacked #215 CI as current #206 integration proof."
+    },
+    {
+      "stacked_pr": 216,
+      "base_pr": 214,
+      "recorded_base_sha": "124262b61fdbb5e181f1c21d064182cd21f74adb",
+      "current_base_sha": "65dc890464e6e00aa8e9095f5210c478fdbcd9f1",
+      "comparison": "ahead 4 commits, 3 changed paths",
+      "paths": [
+        "apps/lightspeed-go/src/cgxFamilyOversight.test.ts",
+        "apps/lightspeed-go/src/cgxFamilyOversight.ts",
+        "apps/lightspeed-go/src/main.ts"
+      ],
+      "action": "Re-evaluate owner-private panel and logout negatives before rebasing/merging; no host claim."
+    },
+    {
+      "pr": 214,
+      "ancestor_pr": 213,
+      "comparison": "#213 head to #214 head: ahead 28 commits, behind 0; 12 paths",
+      "action": "Keep #213 read-only S92 owner preflight as separate prerequisite; #214 does not grant lease/DBR."
+    }
+  ],
+  "source_identity_frontiers": [
+    "S97 current native root carrier exact bytes/version and signed RootAuthority/DBR missing.",
+    "Original GPT 000-011 and true unabsorbed CGX MANUAL INTAKE bytes not independently accessible; export manifest 434547139 bytes is metadata only.",
+    "S91 local Object_ID reused across distinct seed and first-file carrier bytes; do not deduplicate by label.",
+    "S92 verified historical carrier/807 manifests are R0, not active namespace/DBR.",
+    "LifeSpace and LightSpeed remain distinct pending source proof.",
+    "Historical ERC/CCC money/mint-pack is distinct from CGX Object_ID mint; financial execution denied.",
+    "Romer/Eco/EMASSC family owner, principal_agent and execution delegate are different roles, not implicit authority transfer."
+  ],
+  "blocking_issues": [
+    51,
+    158,
+    161,
+    209
+  ],
+  "next_independent_steps": [
+    "On #205 source-only review, run alias/collision negatives against exact accepted S97 root if authenticated; otherwise preserve Frontier.",
+    "On #215 re-evaluate five-path drift against current #206 and do not promote without fresh tests.",
+    "On #216 re-evaluate three-path drift against current #214 and do not promote without fresh tests.",
+    "On authenticated host only, read back current S97 parent/child/LOAD namespace, lease, revocation and signed DBR; no source-only substitute."
+  ],
+  "prohibited_effects": [
+    "NO_CANONICAL_WRITE",
+    "NO_NATIVE_MINT",
+    "NO_HOST_EXECUTION",
+    "NO_PUBLIC_RELEASE",
+    "NO_FINANCIAL_TOKEN",
+    "NO_PERMISSION_CHANGE",
+    "NO_PRODUCTION_MERGE"
+  ]
+}
