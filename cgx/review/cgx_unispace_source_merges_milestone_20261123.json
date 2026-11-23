@@ -1,0 +1,153 @@
+{
+  "schema": "CGX-UNISPACE-CANONICAL-MERGE-SOURCE-MILESTONE/0.1",
+  "root": "cgx:root:cognigrex",
+  "carrier": "Cognigrex.cgx",
+  "provenance_kind": "PUBLIC_GITHUB_SOURCE_MERGE_READBACK_NOT_NATIVE_DBR",
+  "observation_date": "2026-11-23",
+  "repository": "achillesromer-coder/LightSpeed",
+  "source_history": {
+    "snapshot": "cgx/review/unispace_git_pr_source_snapshot_20261122.json",
+    "observed_pr_count": 74,
+    "overlap": "cgx/review/unispace_source_path_overlap_20261122.json",
+    "overlap_observed_pr_count": 7,
+    "crossspace_gates": "cgx/review/unispace_crossspace_gate_register_v0_1.json",
+    "task_groups_open_in_original_register": 51,
+    "current_overlay": "cgx/review/unispace_all_attempt_convergence_overlay_20261123.json",
+    "closed_previous_attempts_preserved": [
+      231,
+      235
+    ]
+  },
+  "confirmed_source_merges": [
+    {
+      "pr": 232,
+      "head_sha": "02338de2f8df7b05972883cc34b7faddd11beb1b",
+      "merge_sha": "142fed8a8dea2d226a6f9b3c97efe34f680c46ed",
+      "merged_at": "2026-11-23T00:35:57Z",
+      "target_branch": "review/cgx-living-consolidation-20261118",
+      "target_pr": 230
+    },
+    {
+      "pr": 230,
+      "head_sha": "142fed8a8dea2d226a6f9b3c97efe34f680c46ed",
+      "merge_sha": "0595f79a2344c3c93f7c573691bf80047c1de2e9",
+      "merged_at": "2026-11-23T00:37:05Z",
+      "target_branch": "ops/canonical-queue-index-20261115",
+      "target_pr": 228
+    },
+    {
+      "pr": 229,
+      "head_sha": "dc312003b7e95dfd6b8ad6b975a318e208cda003",
+      "merge_sha": "a6a21203423c8a16f98e374704a7edab7d8ea8e2",
+      "merged_at": "2026-11-23T00:37:07Z",
+      "target_branch": "ops/canonical-queue-index-20261115",
+      "target_pr": 228
+    }
+  ],
+  "confirmed_source_equivalent_closed": [
+    {
+      "pr": 233,
+      "head_sha": "94960c0730635c75a46bdaa161900b2d1459bf03",
+      "disposition": "CLOSED_NOT_MERGED_SOURCE_EQUIVALENT_ALL_CHANGED_FILES",
+      "compared_consolidated_sha": "0595f79a2344c3c93f7c573691bf80047c1de2e9",
+      "files": [
+        {
+          "path": ".github/workflows/uos-public-gateway-validation.yml",
+          "blob": "566886ca6ed7b0651750d9be83f408113b225d95"
+        },
+        {
+          "path": "docs/romer-web-hooks/UOS_UNIVERSAL_ENDPOINT_ARCHITECTURE_20261119.md",
+          "blob": "03605df7f8d240b19a2dbf190e63d3f463baf157"
+        },
+        {
+          "path": "docs/romer-web-hooks/uos_universal_gateway_embed.html",
+          "blob": "06156cfd290a7af3a2b767e3ddcfca16ef93a234"
+        },
+        {
+          "path": "tests/uos_universal_gateway.test.mjs",
+          "blob": "e33534a26334c119b0ae558e0fdea458b5872b01"
+        }
+      ]
+    }
+  ],
+  "currently_consolidated_parent": {
+    "pr": 228,
+    "head_sha": "0595f79a2344c3c93f7c573691bf80047c1de2e9",
+    "base": "main",
+    "state": "OPEN_DRAFT_REVIEW"
+  },
+  "exact_head_ci": {
+    "head_sha": "0595f79a2344c3c93f7c573691bf80047c1de2e9",
+    "checked_workflow_count": 9,
+    "checks": [
+      {
+        "name": "LS GO Sites Side Edit Validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "CGX UOS Public Gateway Validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "CGX assurance and custodial validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "LightSpeed Surface Validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "CGX Component Atlas Validation",
+        "conclusion": "success"
+      },
+      {
+        "name": "CGX Plugin Suite",
+        "conclusion": "success"
+      },
+      {
+        "name": "CGX Living Convergence Source Review",
+        "conclusion": "success"
+      },
+      {
+        "name": "UniSpace product carrier",
+        "conclusion": "success"
+      },
+      {
+        "name": "Merovingian Project Routing",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "open_distinct_frontiers": [
+    {
+      "pr": 205,
+      "why": "LOAD/ALEXANDRIA DISTINCT_SOURCE_DIFF_AND_RIGHTS",
+      "disposition": "HOLD_UNTIL_SOURCE_DIFF_NATIVE_HANDSHAKE"
+    },
+    {
+      "pr": 236,
+      "why": "PRINTSPACE DISTINCT_MANUFACTURING_SOURCE_AND_PHYSICAL_ACCEPTANCE",
+      "disposition": "HOLD_UNTIL_SOFTWARE_RIGHTS_NATIVE_AND_BENCH_TESTS"
+    },
+    {
+      "pr": 228,
+      "why": "MAIN_PRODUCTION_PROMOTION_NOT_APPROVED_BY_SOURCE_CI_ALONE",
+      "disposition": "HOLD_AUTHENTICATED_HOST_ROLLBACK_ACL_DBR_AND_PUBLIC_GATES"
+    }
+  ],
+  "agent_and_model_handoff": "One L09 agent identity and L10 model capability projection in tools/cgx_unispace_agent_model_projection.py; existing nine generated selectors; no model weights trained or new independent agents",
+  "flags": {
+    "source_only": true,
+    "original_history_preserved": true,
+    "source_merge_committed": true,
+    "production_main_changed_by_these_merges": false,
+    "public_production_deployed": false,
+    "native_dbr_signer_qualified": false,
+    "independent_peer_recovery_proved": false,
+    "model_training_performed": false,
+    "third_party_rights_all_cleared": false,
+    "new_root_created": false,
+    "new_scheduler_created": false,
+    "archive_deleted": false
+  }
+}
