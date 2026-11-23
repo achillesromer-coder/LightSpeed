@@ -164,3 +164,28 @@ merge. Keep existing `D:\LightSpeed\Core` live code intact; do not
 install under active service ports or silently promote proposed research
 as native, signed CGX functionality. The reusable manifest and tests remain
 the owner-scoped release candidate.
+
+## 23 November 2026 · current native-host acceptance checkpoint
+
+**Read-only verification:** The hosted `LOAD.Lite` and `LOAD` handshakes both identify the same Cognigrex root but report `nativeAdmitted=false`, `executionAuthorized=false`, `canonicalWrite=false`, and `peer=unverified`. The hosted FileSpace and DataSpace metadata catalogues returned zero entries. Their displayed desktop status is dated **13 October 2026**, so it is not a current native-host attestation.
+
+A **current live desktop read-only diagnostic** reached the existing checkout and the existing runtime host. The checkout remained on the `ops/canonical-queue-index-20261115` review branch, was not synchronized with the latest GitHub consolidated source, and contained **three outstanding working-tree entries**. An invocation of the **existing** `tools/reconcile_live_runtime.py plan` returned **757 tracked deployment mappings, 61 changed installed mappings**, and four exact blockers:
+
+- `REVIEW_BRANCH_NOT_ACCEPTED_MAIN`
+- `MAIN_NOT_ALIGNED_WITH_ORIGIN`
+- `UNCOMMITTED_OR_UNTRACKED_SOURCE`
+- `MANAGED_SERVICES_ACTIVE`
+
+The host had listeners on its managed ports; local HTTP responded **200** on the ordinary web/supervisor interfaces at ports **4173 and 8080**. The listener at **8765** did *not* provide a confirmed HTTP response in this check; no native API readiness or signature result can be inferred. No services were stopped, no restart was performed and no installed file was overwritten. This is a bounded local observation, **not** a signed issuer/DBR receipt or a permanent claim about machine state.
+
+**Source implementation:** The existing single-root source branch now includes `tools/cgx_unispace_native_acceptance_preflight.py` and `tests/test_cgx_unispace_native_acceptance_preflight.py`. The preflight can combine a hosted handshake with the output of the **existing read-only local deployment plan**. It checks the plan schema, age, internal consistency of branch/cleanliness/port blockers, counted mappings, and the absence of effectful claims. It outputs **only a redacted source-review assessment**: it does not expose local absolute paths, private unpushed SHA values, credentials or source bytes; no caller-provided eligibility flag can constitute independent signer/host/peer authority.
+
+**Sequential acceptance after host/operator availability:**
+1. Preserve the dirty local work; inspect and reconcile it privately against the current reviewed source. Never force-reset, discard or overwrite unrelated files. Re-run `reconcile_live_runtime.py plan` with no `--confirmed` or `apply`.
+2. Confirm owner/key issuer, signer verification, scoped lease, revocation and nonce history *at the authenticated native host*. Do not treat hosted-site authentication as a substitute.
+3. Within the valid scoped owner lease, exercise benign **FileSpace R0 hash/size readback and ACL/revocation negative tests** against explicitly permitted source data. Do not upload private payload bytes or credentials to the public repository or model prompt.
+4. Obtain DataSpace **signed DBR append with atomic readback after an authorised cold restart**. Retain the exact signed source/target receipt and independent verifier result; no automatic restart outside owner standby.
+5. Establish independent second-node peer identity, receiver content hash/size readback and cold recovery. A mounted drive or existing Python process is not an independent compute node.
+6. Only after original rights, public/private denial, current clean-main install window, backup/rollback and release review are independently qualified can PR #228 be considered for main promotion and native/site release.
+
+All 51 engineering groups remain in their original `OPEN_REVIEW_ONLY` register until each receives independent evidence and an authorised state transition. This checkpoint is **not** a second queue, DB, authority registry or native scheduler.
