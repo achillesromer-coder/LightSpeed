@@ -186,3 +186,61 @@ def fold_unispace_lineage(mesh: dict[str, Any], records: list[dict[str, Any]],
         "mint_authorized": False, "deployment_authorized": False,
         "publication_authorized": False, "canonical_store_written": False,
     }
+
+
+def fold_engine_reference_catalogue(mesh: dict[str, Any],
+                                   registry: dict[str, Any]) -> dict[str, Any]:
+    """Bind referenced external engines to the EXISTING single-root facet graph.
+
+    Project labels and upstream licence pointers only. Reject attempts to
+    smuggle bundled engines, training rights, downloaded code or installed
+    capacities into a supposedly reference-only registry.
+    """
+    if (not isinstance(registry, dict)
+            or registry.get("schema") !=
+            "CGX-UNISPACE-EXTERNAL-ENGINE-REFERENCE-CANDIDATES/0.1"
+            or registry.get("canonical_root") != ROOT_ID
+            or not isinstance(registry.get("sources"), list)
+            or len(registry["sources"]) > 64):
+        raise LineageHold("unqualified engine reference registry")
+    policy = registry.get("policy")
+    if (not isinstance(policy, dict)
+            or policy.get("source_code_embedded") is not False
+            or policy.get("model_weights_trained") is not False
+            or policy.get("source_commit_pin_required_before_reuse") is not True):
+        raise LineageHold("engine reference rights policy not preserved")
+    records: list[dict[str, Any]] = []
+    for source in registry["sources"]:
+        if not isinstance(source, dict):
+            raise LineageHold("invalid external engine reference")
+        name = source.get("name")
+        if not isinstance(name, str) or not 1 <= len(name) <= 80:
+            raise LineageHold("invalid external engine name")
+        slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+        if not slug or len(slug) > 80:
+            raise LineageHold("invalid external engine alias")
+        if (source.get("reference_only") is not True
+                or source.get("rights_qualified_for_training") is not False
+                or source.get("installation_verified") is not False
+                or source.get("integration_verified") is not False
+                or source.get("source_hash") is not None
+                or source.get("revision") != "VERSION_PIN_PENDING"):
+            raise LineageHold("external reference claims unsupported authority")
+        records.append({
+            "object_id": "cgx:source:external-engine:" + slug,
+            "revision": "VERSION_PIN_PENDING",
+            "kind": "external_engine_reference",
+            "source_uri": source.get("source"),
+            "sha256": None,
+            "facets": source.get("candidate_facets"),
+            "rights": "verified_metadata_only",
+            "licence": source.get("declared_project_license"),
+            "training": "not_assessed",
+            "t173_position": None,
+            "supersedes": None,
+            "profile_scope": None,
+        })
+    result = fold_unispace_lineage(mesh, records)
+    result["engine_reference_catalogue"] = "REFERENCE_ONLY_NO_SOURCE_BYTES"
+    result["source_revision_pins_qualified"] = False
+    return result
