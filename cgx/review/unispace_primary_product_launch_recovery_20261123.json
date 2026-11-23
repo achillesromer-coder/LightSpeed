@@ -1,0 +1,540 @@
+{
+  "schema": "CGX-UNISPACE-PRIMARY-PRODUCT-LAUNCH-RECOVERY/0.1",
+  "recorded_date": "2026-11-23",
+  "time_zone": "Australia/Brisbane",
+  "root": "cgx:root:cognigrex",
+  "product": "UniSpace / UOS",
+  "owner": "Romer Industries Pty Ltd",
+  "scope": "SOURCE_LINKED_EXECUTION_SPEC_NOT_RUNTIME_INSTALL_OR_RELEASE_APPROVAL",
+  "deadline": {
+    "reported_delay_days": 9,
+    "exact_original_deadline_independently_verified": false,
+    "execution_basis": "milestone_gated_recovery_no_unverified_ship_date"
+  },
+  "source_observations": {
+    "canonical_pr": 228,
+    "merged_convergence_prs": [
+      232,
+      230,
+      229
+    ],
+    "closed_equivalent_pr": 233,
+    "currently_open_distinct_prs": [
+      205,
+      236
+    ],
+    "observed_heads": {
+      "205": "e5d78107c04a2e396f6bd3aaa5ab9592a6ce7796",
+      "228": "a9a897f224a38df203d276b97d36b48cfc933b46",
+      "236": "399b0c8721225bc82c0fa275d46e3b175fd5b9eb"
+    },
+    "workflows_on_observed_heads": {
+      "205": {
+        "success": 3,
+        "total": 3
+      },
+      "228": {
+        "success": 10,
+        "total": 10
+      },
+      "236": {
+        "success": 3,
+        "total": 3
+      }
+    },
+    "hosted_status": "HOSTED_AUTHENTICATED_NATIVE_HELD_PEER_UNVERIFIED",
+    "native_bridge": "LISTENER_8765_PUBLIC_CGX_ENDPOINTS_HTTP404_LOCAL_OBSERVATION",
+    "host_deployment_plan": {
+      "tracked_mappings": 757,
+      "changed_installed": 61,
+      "local_dirty_files": 3,
+      "blockers": [
+        "REVIEW_BRANCH_NOT_ACCEPTED_MAIN",
+        "MAIN_NOT_ALIGNED_WITH_ORIGIN",
+        "UNCOMMITTED_OR_UNTRACKED_SOURCE",
+        "MANAGED_SERVICES_ACTIVE"
+      ]
+    },
+    "github_local_test_ledger": {
+      "exact_source_sha": "80724d452bee9ad8502bd88fe77447aecdaf48e0",
+      "windows_py311_passed": 77,
+      "windows_failed": 0,
+      "independent_native_crypto_signature": false
+    },
+    "existing_public_reference": {
+      "manifest": "UniSpace/product.json",
+      "carrier": "UniSpace/CGX.cgx",
+      "state": "S91_REFERENCE_PRE_ALPHA",
+      "application": "apps/lightspeed-go",
+      "offline": "UniSpace/unispace.cgx.html",
+      "verified_live_host_access": false
+    },
+    "open_gate_register": "cgx/review/unispace_crossspace_gate_register_v0_1.json",
+    "open_gate_group_count": 51,
+    "protected_printspace_rc": "PRIVATE_RC2_SOURCE_ONLY"
+  },
+  "architecture": {
+    "canonical_facets": [
+      "file_space",
+      "data_space",
+      "social_space",
+      "print_space",
+      "intelligence_space"
+    ],
+    "ui_selectors": [
+      "classic",
+      "top_down",
+      "spatial",
+      "immersive",
+      "hud",
+      "profile",
+      "system"
+    ],
+    "embedded_subordinate_capabilities": [
+      "LOAD",
+      "LOAD.Lite",
+      "CCC",
+      "CYC",
+      "Grex_family",
+      "Raphael_T173",
+      "SAI_opt_in"
+    ],
+    "non_mintable_sentinel": "T174",
+    "separate_roots_created": false,
+    "separate_schedulers_created": false,
+    "note": "UI selector counts and terms are product taxonomy, not assertions every mode is deployed, independently validated or active."
+  },
+  "primary_release_definition": {
+    "edition": "UniSpace primary local-first private-to-public-safe software",
+    "required_workflows": [
+      "OPEN_OFFLINE_S91_REFERENCE_AND_VERIFY_SHA256",
+      "IMPORT_OR_SELECT_OWNER_FILE_R0_HASH_WITH_EXPLICIT_RIGHTS",
+      "REVERSIBLE_R1_PARSE_AND_LOSS_LOG_R2_TYPED_SEARCH_R3_SOURCE_SCOPED_VIEW",
+      "ONE_UI_PROFILE_CLASSIC_SPATIAL_VIEWS_WITH_NO_DUPLICATE_STORE",
+      "INSPECT_EXISTING_REGISTERED_AGENTS_AND_AVAILABLE_NON_EFFECTFUL_CAPABILITY",
+      "BOUNDED_NATIVE_METADATA_CHECKPOINT_WITH_OWNER_AUTH_AND_EXACT_READBACK_AFTER_DEPLOY",
+      "EXPORT_SIGNED_WHERE_AVAILABLE_OR_LABEL_UNSIGNED_SOURCE_PROOF",
+      "RECOVER_FROM_RESTART_AND_ROLLBACK_WITH_PRIVATE_DATA_EXCLUDED_FROM_PUBLIC_PACKAGE"
+    ],
+    "non_required_for_first_public_safe_preview": [
+      "PHYSICAL_4D_PRINTING",
+      "WORLD_REGISTERED_AR",
+      "HEADSET_VR",
+      "AUTONOMOUS_DISTRIBUTED_AGI",
+      "T173_COMPLETE_VERIFIED_PHYSICAL_GEOMETRIES",
+      "SOCIALSPACE_LIVE_MATCHING",
+      "PAID_CHAIN_MARKETPLACE"
+    ],
+    "must_not_claim_early": [
+      "NATIVE_MINTED",
+      "ONCHAIN_MINTED",
+      "TWO_NODE_DB_REPLICATION_ACCEPTED",
+      "ALL_MODELS_TRAINED",
+      "ALL_RESEARCH_EMPIRICALLY_VERIFIED"
+    ]
+  },
+  "facets": [
+    {
+      "id": "file_space",
+      "display": "FileSpace",
+      "status": "SOURCE_VIEWER_PRESENT_NATIVE_RIGHTS_HYDRATION_HOLD",
+      "owner_lane": "CGX Cognigrex Family",
+      "source": "UniSpace/FileSpace.html",
+      "integration": [
+        "immutable_R0_hash",
+        "reversible_R1_R2",
+        "rights_and_acl",
+        "selective_hydration",
+        "export_byte_roundtrip"
+      ],
+      "acceptance": [
+        "owner_scoped_original_source_readback",
+        "deny_other_principal",
+        "revocation_and_restore",
+        "input_size_and_loss_log"
+      ]
+    },
+    {
+      "id": "data_space",
+      "display": "DataSpace",
+      "status": "HOSTED_SOURCE_INTERFACE_SIGNED_PEER_DBR_HOLD",
+      "owner_lane": "CGX Neo LightSpeed",
+      "source": "cgx/domain_templates/node_exchange_contract.json",
+      "integration": [
+        "typed_relations",
+        "DBR_atomic_append",
+        "owner_signature_nonce_revocation",
+        "two_distinct_nodes",
+        "cold_restore"
+      ],
+      "acceptance": [
+        "signed_lease",
+        "atomic_readback",
+        "restart_readback",
+        "independent_peer_signature",
+        "failed_write_rollback"
+      ]
+    },
+    {
+      "id": "social_space",
+      "display": "SocialSpace",
+      "status": "OPT_IN_CONTRACT_ONLY_LIVE_TWO_PRINCIPAL_TEST_HOLD",
+      "owner_lane": "CGX UniSpace Product",
+      "source": "Drive:UniSpace SocialSpace Integration Handoff 2026-11-01",
+      "integration": [
+        "same_existing_ProfileRef",
+        "explicit_two_principal_opt_in",
+        "AI_free_or_no_AI_contact_enforced_server_side",
+        "revocable_discovery",
+        "consent_minimization"
+      ],
+      "acceptance": [
+        "two_real_auth_principals",
+        "mutual_consent_positive_and_negative",
+        "revoke_cross_owner_readback",
+        "no_auto_contact"
+      ],
+      "release": "OPTIONAL_LATER_THAN_PRIMARY"
+    },
+    {
+      "id": "print_space",
+      "display": "PrintSpace",
+      "status": "PRIVATE_SOFTWARE_RC2_HARDWARE_UNVERIFIED",
+      "owner_lane": "CGX Athene Eco",
+      "source": "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+      "integration": [
+        "Raphael_geometry_provenance",
+        "material_and_interface_research",
+        "software_simulation",
+        "safe_export",
+        "guard_physical_actuation"
+      ],
+      "acceptance": [
+        "rights_security_accessibility",
+        "native_parser_roundtrip",
+        "independent_material_coupons",
+        "physical_safety_interlocks"
+      ],
+      "release": "SOFTWARE_PREVIEW_ONLY_UNTIL_PHYSICAL_EVIDENCE"
+    },
+    {
+      "id": "intelligence_space",
+      "display": "IntelligenceSpace",
+      "status": "NINE_EXISTING_SELECTOR_SOURCES_NATIVE_MODEL_PROOF_HELD",
+      "owner_lane": "CGX Achilles Römer",
+      "source": "tools/cgx_unispace_agent_model_projection.py",
+      "integration": [
+        "agent_identity_not_model_identity",
+        "nine_selector_capability_routes",
+        "provider_version_evidence",
+        "resource_limits",
+        "R0_source_citations",
+        "T173_candidate_only"
+      ],
+      "acceptance": [
+        "real_model_available_and_readback",
+        "current_owner_lease_for_effects",
+        "no_self_approval",
+        "measured_benchmark_vs_baseline",
+        "no_secret_leak"
+      ],
+      "release": "PRIVATE_ASSISTED_MODE_BEFORE_AUTONOMOUS_AGENT_CLAIMS"
+    }
+  ],
+  "ui_and_support": {
+    "ProfileSpace": {
+      "kind": "UI_SELECTOR",
+      "owner": "UniSpace",
+      "required": [
+        "host_owner_auth",
+        "scope_switch",
+        "revocation",
+        "logout",
+        "source_redaction"
+      ],
+      "not_a_new_db": true
+    },
+    "SystemSpace": {
+      "kind": "UI_SELECTOR",
+      "owner": "UniSpace",
+      "required": [
+        "live_vs_source_state",
+        "audit_receipts",
+        "rollback_and_errors",
+        "no_phantom_peer"
+      ],
+      "not_a_new_db": true
+    },
+    "LOAD_and_CCC": {
+      "kind": "SUBORDINATE_ADAPTERS",
+      "required": [
+        "accepted_parent_Object_ID",
+        "existing_alias_resolution",
+        "R0_owner_rights",
+        "native_ABI_before_execution"
+      ],
+      "not_another_root": true
+    },
+    "Grexes": {
+      "kind": "SCOPED_SPECIALISTS",
+      "required": [
+        "domain_ownership",
+        "exact_source_pins",
+        "agent_vs_model_provenance",
+        "no_automated_licensing_or_funding"
+      ]
+    },
+    "Site": {
+      "kind": "PUBLIC_SAFE_PORTAL",
+      "proposed_routes": [
+        "/cgx",
+        "/cgx/fs",
+        "/cgx/ds",
+        "/cgx/ps",
+        "/cgx/doom",
+        "/uos"
+      ],
+      "required": [
+        "verified_actual_browser_routes",
+        "clear_product_download_hash",
+        "privacy_terms_accessibility",
+        "no_private_embeds",
+        "failure_404_denial"
+      ],
+      "public_site_verified": false
+    }
+  },
+  "batch_execution": [
+    {
+      "id": "B00",
+      "lane": "CGX Achilles Römer",
+      "name": "Release source-lock and freeze owner-approved P0 scope",
+      "class": "SOURCE_ONLY",
+      "depends_on": [],
+      "done_when": "current exact heads and provenance, source licences and founder claim register checked; no stale PR assertions",
+      "source_commands": [
+        "git status --short",
+        "git rev-parse HEAD",
+        "git diff --check"
+      ],
+      "gate": "PRODUCT_RELEASE_SCOPE_OWNER_REVIEW"
+    },
+    {
+      "id": "B01",
+      "lane": "CGX Cognigrex Family",
+      "name": "Reconcile LOAD #205 and PrintSpace #236 as reviewed facets",
+      "class": "SOURCE_ONLY",
+      "depends_on": [
+        "B00"
+      ],
+      "done_when": "original blob identities, rights and non-overlapping diffs reconciled; no duplicate source or root",
+      "source_commands": [
+        "git diff --name-status <review-base> <candidate-head>",
+        "python -m pytest -q tests/test_cgx_unispace_unified_lineage.py"
+      ],
+      "gate": "SOURCE_RIGHTS_PEER_REVIEW"
+    },
+    {
+      "id": "B02",
+      "lane": "CGX UniSpace Product",
+      "name": "Rebuild existing single product shell and offline package",
+      "class": "ISOLATED_BUILD",
+      "depends_on": [
+        "B00"
+      ],
+      "done_when": "tsc/vitest/Vite and offline S91 SHA/ZIP pass; no external/private URLs embedded",
+      "source_commands": [
+        "npm --prefix apps/lightspeed-go ci",
+        "npm --prefix apps/lightspeed-go run check",
+        "npm --prefix apps/lightspeed-go run test",
+        "npm --prefix apps/lightspeed-go run build",
+        "python tools/verify_unispace_product.py",
+        "python tools/build_unispace_site.py <isolated-output-dir>"
+      ],
+      "gate": "WEB_UAT_ACCESSIBILITY_RIGHTS"
+    },
+    {
+      "id": "B03",
+      "lane": "CGX Neo LightSpeed",
+      "name": "Host signer and clean source deployment preflight",
+      "class": "NATIVE_HOLD_UNTIL_PROOF",
+      "depends_on": [
+        "B00",
+        "B01",
+        "B02"
+      ],
+      "done_when": "separate signer and Achilles reviewer, ACTIVE scoped lease, clean main and backup/stopped-services owner standby",
+      "source_commands": [
+        "python tools/reconcile_live_runtime.py plan"
+      ],
+      "gate": "SIGNED_LEASE_ACL_BACKUP_STANDBY"
+    },
+    {
+      "id": "B04",
+      "lane": "CGX Neo LightSpeed",
+      "name": "Owner-supervised deploy and native FileSpace-DataSpace roundtrip",
+      "class": "LIVE_MUTATION_HOLD",
+      "depends_on": [
+        "B03"
+      ],
+      "done_when": "exact deployed head+API, original R0 hash, durable signed DBR, revocation, cold restart, independent peer and rollback witnessed",
+      "source_commands": [
+        "python -m pytest -q desktop/LightSpeed_Runtime/tests/test_node_exchange.py"
+      ],
+      "gate": "INDEPENDENT_TWO_NODE_DB_READBACK"
+    },
+    {
+      "id": "B05",
+      "lane": "CGX Achilles Römer",
+      "name": "Mint admission, signing and rights crosswalk",
+      "class": "OFFCHAIN_DRY_RUN_ONLY",
+      "depends_on": [
+        "B04"
+      ],
+      "done_when": "every proposed Object_ID existing/alias lookup, rights+owner, issuer, native DBR and idempotent mint receipt independently reviewed",
+      "source_commands": [
+        "python -m pytest -q tests/test_cgx_native_admission_owner_intent.py"
+      ],
+      "gate": "NO_CHAIN_MINT_UNTIL_SEPARATE_SIGNED_RELEASE"
+    },
+    {
+      "id": "B06",
+      "lane": "CGX UniSpace Product",
+      "name": "Public-safe release package, site and support readiness",
+      "class": "EXTERNAL_PUBLISH_HOLD",
+      "depends_on": [
+        "B02",
+        "B05"
+      ],
+      "done_when": "actual browser verified /cgx routes, download+SHA, README, changelog, release notes, accessibility, support/contact and separate public approval",
+      "source_commands": [
+        "python tools/verify_unispace_product.py"
+      ],
+      "gate": "RIGHTS_CSP_158_UAT_ROLLBACK_PUBLIC_APPROVAL"
+    },
+    {
+      "id": "B07",
+      "lane": "CGX Achilles Römer",
+      "name": "Nonconfidential outreach launch and pilot pipeline",
+      "class": "CONTACT_HOLD_FOR_FOUNDER_SEND",
+      "depends_on": [
+        "B06"
+      ],
+      "done_when": "founder-approved safe claims, tracked target list, intro, fact sheet, nonconfidential demo, disclosure controls, response receipt",
+      "source_commands": [],
+      "gate": "PUBLIC_STATEMENTS_IP_AND_CONTACT_APPROVAL"
+    }
+  ],
+  "release_tiers": [
+    {
+      "id": "R0",
+      "name": "Existing owner-authorised S91 reference",
+      "scope": "REFERENCE_ASSET_NOT_FUNCTIONAL_UOS",
+      "now": "SOURCE_AVAILABLE"
+    },
+    {
+      "id": "R1",
+      "name": "Private owner usable UniSpace",
+      "scope": "LOCAL_FILESPACE_LOAD_AGENT_UI_AND_TESTED_OWNER_CHECKPOINT",
+      "now": "BLOCKED_NATIVE_DEPLOYMENT"
+    },
+    {
+      "id": "R2",
+      "name": "Public-safe bounded software preview",
+      "scope": "DOCUMENTED_OFFLINE_DEMO_NO_PRIVATE_DATA_OR_NATIVE_PEER_CLAIMS",
+      "now": "BLOCKED_LIVE_UAT_RIGHTS_PUBLIC_SIGNOFF"
+    },
+    {
+      "id": "R3",
+      "name": "Native minted distributed UniSpace",
+      "scope": "SIGNED_OBJECT_ADMISSION_NATIVE_DBR_TWO_NODE_COLD_RECOVERY_AND_CHAIN_MINT_IF_SPECIFICALLY_PERMITTED",
+      "now": "BLOCKED_SIGNER_PEER_CHAIN"
+    }
+  ],
+  "mint_sequence": [
+    "PROPOSE_CANDIDATE_R0_HASH_VERSION_RIGHTS",
+    "EXISTING_OBJECT_ID_AND_ALIAS_COLLISION_CHECK",
+    "PEER_SEPARATED_ACL_AND_OWNER_ASSURANCE",
+    "BOUNDED_OFFCHAIN_SIMULATED_MINT_WITH_IDEMPOTENCY",
+    "AUTHENTIC_NATIVE_ISSUER_AND_SIGNED_DBR_WITH_RESTART_READBACK",
+    "SEPARATE_CHAIN_NETWORK_WALLET_GAS_RIGHTS_RELEASE_REVIEW",
+    "ONCHAIN_MINT_ONLY_WITH_EXPLICIT_CHAIN_APPROVAL_AND_INDEPENDENT_TX_RECEIPT"
+  ],
+  "outreach": {
+    "initial_allowed_phase": "INTERNAL_NONCONFIDENTIAL_PREPARATION",
+    "channels": [
+      {
+        "name": "AU industry and agency scoping",
+        "targets": [
+          "National AI Centre",
+          "CSIRO/Data61",
+          "Industry Growth Program Advisory Service",
+          "Queensland innovation programs"
+        ],
+        "minimum_proof": "nonconfidential_brief_architecture_source_demonstration_and_real_limitations",
+        "claim": "technology scoping and potential partnerships; not claimed procurement-ready"
+      },
+      {
+        "name": "Technical public community",
+        "targets": [
+          "GitHub Discussions",
+          "Show HN"
+        ],
+        "minimum_proof": "working_public_demo_README_licence_private_public_audit_support",
+        "claim": "product preview with limitations; founder-controlled post"
+      },
+      {
+        "name": "Public-sector adoption",
+        "targets": [
+          "DTA",
+          "Australian Space Agency (separate regulated sector)"
+        ],
+        "minimum_proof": "independent_assurance_security_native_release_and_domain_specific_regulatory_qualification",
+        "claim": "only bounded evaluated pilots"
+      },
+      {
+        "name": "Direct user pilots",
+        "targets": [
+          "approved developer or engineer collaborators"
+        ],
+        "minimum_proof": "reproducible software install_owner-consent_ip_confidentiality_support_and_rollback",
+        "claim": "private preview/UAT before general sales"
+      }
+    ],
+    "preparation_artifacts": [
+      "one_page_nonconfidential_overview",
+      "product_demo_script",
+      "reproducible_demo_video_or_offline_bundle",
+      "architecture_diagram_with_status",
+      "independent_proof_matrix",
+      "rights_and_patent_disclosure_check",
+      "FAQ_docs_support_sla",
+      "pilot_interest_tracker"
+    ],
+    "internal_planning_targets_not_forecasts": {
+      "qualified_contacts_first_wave": 12,
+      "conversations_target": 4,
+      "permissioned_pilot_candidates": 2,
+      "public_communications_without_approval": 0
+    },
+    "never_claim": [
+      "Government approval",
+      "commercial contract",
+      "physical PrintSpace qualified",
+      "AGI achieved",
+      "independent native peer minted without signed proof"
+    ]
+  },
+  "invariants": {
+    "new_canonical_root": false,
+    "new_database": false,
+    "new_scheduler": false,
+    "private_bytes_published": false,
+    "all_51_gates_closed": false,
+    "native_mint_finished": false,
+    "onchain_mint_finished": false,
+    "public_launch_finished": false,
+    "physical_PrintSpace_qualified": false
+  },
+  "next_action": "QUALIFY_B03_CURRENT_NATIVE_HOST_SIGNER_INDEPENDENT_REVIEW_WHILE_B02_EXISTING_PRODUCT_SHELL_BUILD_QA_PROCEEDS_IN_PARALLEL"
+}
