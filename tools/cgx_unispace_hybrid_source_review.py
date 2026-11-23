@@ -15,6 +15,7 @@ if __package__ in (None, ""):
 from tools.cgx_automation_archive_review import review as review_archive
 from tools.cgx_unispace_branch_convergence import review_git_snapshot, ROOT
 from tools.cgx_unispace_overlap_review import review_overlap
+from tools.cgx_unispace_crossspace_review import source_review as original_crossspace_source_review, EXPECTED_SHA256 as GATE_BYTES_SHA256
 
 SCHEMA = "CGX-UNISPACE-HYBRID-SOURCE-PROJECTION/0.1"
 SPACES = ("FileSpace","DataSpace","SocialSpace","PrintSpace","IntelligenceSpace")
@@ -28,10 +29,22 @@ DOMAINS = (
 class HybridHold(ValueError):
     """Multiple source reviews cannot be joined under one qualified identity."""
 
-def compose(snapshot, footprints, gates=None, observations=None):
+def compose(snapshot, footprints, gates=None, observations=None,
+            source_mesh=None, source_register_sha256=None):
     ancestry = review_git_snapshot(snapshot, gates)
     overlaps = review_overlap(footprints)
     archive = review_archive(observations) if observations is not None else None
+    crossspace = None
+    if source_mesh is not None:
+        if gates is None or source_register_sha256 != GATE_BYTES_SHA256:
+            raise HybridHold("exact original 51-gate bytes required for a qualified facet-mesh join")
+        crossspace = original_crossspace_source_review(
+            gates, source_register_sha256, source_mesh)
+        if (crossspace.get("task_count") != 51
+                or crossspace.get("source_mesh_observed") is not True
+                or crossspace.get("source_contracts_present_not_native") is not True
+                or crossspace.get("native_admitted") is not False):
+            raise HybridHold("cross-space source mesh not independently qualified")
     if ancestry["canonical_root"] != ROOT or overlaps["canonical_root"] != ROOT or (
         archive is not None and archive["canonical_root"] != ROOT
     ):
@@ -58,6 +71,8 @@ def compose(snapshot, footprints, gates=None, observations=None):
     ]
     if not ancestry["source_gate_reviewed"]:
         blockers.append({"id":"CROSSSPACE_REGISTER","state":"HOLD_ORIGINAL_REGISTER_NOT_SUPPLIED"})
+    if crossspace is None:
+        blockers.append({"id":"SOURCE_FACET_MESH","state":"HOLD_ORIGINAL_FIVE_SPACE_MESH_NOT_BOUND"})
     if archive is None:
         blockers.append({"id":"AUTOMATION_HISTORY","state":"HOLD_PRIVATE_PROVIDER_RECORDS_NOT_SUPPLIED"})
     if stale:
@@ -80,6 +95,8 @@ def compose(snapshot, footprints, gates=None, observations=None):
         "overlap_pairs":overlaps["overlap_pair_count"],
         "unique_overlapping_paths":overlaps["unique_overlapping_paths"],
         "cross_space_gates_read_back":ancestry["gate_count"],
+        "exact_crossspace_mesh_bound": crossspace is not None,
+        "original_crossspace_review": crossspace,
         "historic_prs_in_comparison":sorted(historical),
         "source_head_mismatches":sorted(stale, key=lambda x:x["pr"]),
         "pending_conditions":blockers,
@@ -113,15 +130,21 @@ def main():
     cli.add_argument("--prs", type=Path,required=True)
     cli.add_argument("--overlaps",type=Path,required=True)
     cli.add_argument("--gates",type=Path)
+    cli.add_argument("--mesh-json",type=Path)
     cli.add_argument("--observations",type=Path)
     args=cli.parse_args()
-    files=[x for x in (args.prs,args.overlaps,args.gates,args.observations) if x]
+    files=[x for x in (args.prs,args.overlaps,args.gates,args.mesh_json,args.observations) if x]
     if any(p.stat().st_size>500000 for p in files):
         raise HybridHold("unbounded input")
     def load(p):
         return json.loads(p.read_text(encoding="utf-8")) if p else None
+    reg_bytes = args.gates.read_bytes() if args.gates else None
     print(json.dumps(compose(load(args.prs),load(args.overlaps),
-                             load(args.gates),load(args.observations)),indent=2,sort_keys=True))
+                             load(args.gates),load(args.observations),
+                             source_mesh=load(args.mesh_json),
+                             source_register_sha256=hashlib.sha256(reg_bytes).hexdigest()
+                             if reg_bytes is not None else None),
+                     indent=2,sort_keys=True))
 
 if __name__ == "__main__":
     main()

@@ -71,3 +71,13 @@ responsibilities and standing gates; they never grant execution permissions.
 Unknown or unavailable specialist source manifests remain held. A composition
 hash or ternary root is evidence of selected metadata, not training, a provider
 lease, an authenticated ACL, minting, or release approval.
+
+## Unified CGX agent/model projection — 23 November 2026
+
+Resolve the **existing** `cgx:root:cognigrex` and source-qualified agent/model capability lens before dispatch. The canonical role/model layers are `cgx/domain_templates/agent_runtime_contract.json` and `cgx/domain_templates/technology_stack_registry.json`. `tools/cgx_unispace_agent_model_projection.py` checks the original domain owners, nine selector profiles, route source state and shared five-facet mesh; `tools/cgx_unispace_unified_lineage.py` preserves source revisions and exact provenance. These modules are read-only source projections, not a new agent or model runtime.
+
+- Achilles, Neo and Athene retain their domain-owned principal roles; Raphael and other names remain registered **selectors/specialisms** until separately admitted. Model providers/weights are replaceable execution capabilities, never substitutes for persistent agent identity or proof.
+- CCC and LOAD select original source, tool and route references once; model class support is *declared* until connected provider, version, scope, memory policy and receipt are verified. Reference lineage is not training or licence permission.
+- The T173/ternary shape capsule is a reversible, source-qualified **digital** representation, not an admitted physical 3D mesh, lossless compression claim, model training achievement, native execution or mint.
+- Generated classic/spatial/immersive views are selectable **facets of one UniSpace object graph**. An untrusted UI/profile hint never grants FileSpace hydration, DataSpace write, model/tool invocation, signed DBR, device command, publication or new agent creation.
+- Use the existing authenticated host/lease/ACL/assurance/DBR/receiver-readback route for consequential actions. Preserve original engine versions, licences, provenance, rollback and historical milestone receipts; report unmet gates as HOLD.

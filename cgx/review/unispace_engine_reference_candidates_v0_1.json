@@ -1,0 +1,132 @@
+{
+  "schema": "CGX-UNISPACE-EXTERNAL-ENGINE-REFERENCE-CANDIDATES/0.1",
+  "canonical_root": "cgx:root:cognigrex",
+  "purpose": "Metadata-only CCC/Alexandria lineage candidates; NOT ingested tools, training data or CGX-native engine claims",
+  "generated_at": "2026-11-23",
+  "policy": {
+    "source_code_embedded": false,
+    "model_weights_trained": false,
+    "licence_notice_preserved_on_future_distribution": true,
+    "source_commit_pin_required_before_reuse": true,
+    "source_asset_and_dependency_licence_independent_review": true,
+    "GPL_distribution_review_required": true,
+    "research_and_inspiration_never_automatic_derivative_rights": true,
+    "CCC_reference_does_not_install_capability": true
+  },
+  "sources": [
+    {
+      "name": "Godot",
+      "source": "https://godotengine.org/license/",
+      "declared_project_license": "MIT",
+      "category": "engine",
+      "proposed_cgx_role": "game worlds and scene flow",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    },
+    {
+      "name": "Bevy",
+      "source": "https://github.com/bevyengine/bevy",
+      "declared_project_license": "MIT OR Apache-2.0",
+      "category": "engine",
+      "proposed_cgx_role": "data-driven entity/component scheduling",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    },
+    {
+      "name": "Three.js",
+      "source": "https://threejs.org/license/",
+      "declared_project_license": "MIT",
+      "category": "render library",
+      "proposed_cgx_role": "web geometric scene and WebXR references",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    },
+    {
+      "name": "Babylon.js",
+      "source": "https://github.com/BabylonJS/Babylon.js/blob/master/license.md",
+      "declared_project_license": "Apache-2.0",
+      "category": "render library",
+      "proposed_cgx_role": "immersive web scene and inspector references",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    },
+    {
+      "name": "Open 3D Engine",
+      "source": "https://o3df.org/about/faq/",
+      "declared_project_license": "Apache-2.0",
+      "category": "engine",
+      "proposed_cgx_role": "high-fidelity environment and asset pipeline references",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    },
+    {
+      "name": "Blender",
+      "source": "https://www.blender.org/about/license/",
+      "declared_project_license": "GPL-2.0-or-later",
+      "category": "authoring tool",
+      "proposed_cgx_role": "geometry authoring workflows; distribution copyleft requires separate review",
+      "revision": "VERSION_PIN_PENDING",
+      "source_hash": null,
+      "reference_only": true,
+      "rights_qualified_for_training": false,
+      "installation_verified": false,
+      "integration_verified": false,
+      "original_history_preserved_at_upstream": true,
+      "candidate_facets": [
+        "intelligence_space",
+        "print_space"
+      ],
+      "review_state": "METADATA_ONLY_FUTURE_SOURCE_RIGHTS_CHECK"
+    }
+  ]
+}

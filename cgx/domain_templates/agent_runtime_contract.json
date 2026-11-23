@@ -143,5 +143,30 @@
     "rule": "compile a bounded corpus packet first; unresolved source/measurement/dependency inputs HOLD rather than being generated",
     "result_rule": "result values enter semantic state only from receipted execution and remain derived/empirical according to the executor method",
     "activation_rule": "prepared code does not imply agent/provider/local connection activation"
+  },
+  "unified_facet_projection": {
+    "schema": "CGX-UNISPACE-AGENT-MODEL-SOURCE-PROJECTION/0.1",
+    "existing_root": "cgx:root:cognigrex",
+    "existing_mesh": "tools/cgx_unispace_facet_mesh.py",
+    "source_projection": "tools/cgx_unispace_agent_model_projection.py",
+    "source_lineage": "tools/cgx_unispace_unified_lineage.py",
+    "source_capabilities": "cgx/domain_templates/plugin_capability_routes.json",
+    "source_selector_shortcalls": "plugins/source/selector_shortcalls.json",
+    "source_plugin_profiles": "plugins/packages/<existing-selector>/references/capabilities.json",
+    "existing_principal_agents": [
+      "Achilles",
+      "Neo",
+      "Athene"
+    ],
+    "model_classes_are_selection_candidates_only": true,
+    "model_provider_identity_distinct_from_agent_identity": true,
+    "profile_claim_requires_independent_host_acl_lease": true,
+    "source_hydration_requires_rights_and_signed_dbr": true,
+    "source_graph_revisions_preserved": true,
+    "no_model_weights_modified": true,
+    "no_agent_spawned": true,
+    "no_new_capability_registry": true,
+    "no_new_root_or_scheduler": true,
+    "implementation_status": "SOURCE_ONLY_NOT_NATIVE_ADMITTED"
   }
 }

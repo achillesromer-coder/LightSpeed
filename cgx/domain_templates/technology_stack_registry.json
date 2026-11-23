@@ -302,5 +302,29 @@
       "behaviour": "read-only/recovery mode; no canonical promotion"
     }
   ],
-  "location": "Cognigrex.cgx:/stack"
+  "location": "Cognigrex.cgx:/stack",
+  "unispace_agent_model_projection": {
+    "root": "cgx:root:cognigrex",
+    "identity_layer": "L09",
+    "model_capability_layer": "L10",
+    "semantic_layer": "L04",
+    "safety_layer": "L13",
+    "interface_layer": "L14",
+    "existing_implementation": "tools/cgx_unispace_agent_model_projection.py",
+    "composition": "agents, models, deterministic solvers and interfaces are distinct capabilities/facets over one semantic object lineage",
+    "model_selector_policy": "Choose only verified connected capabilities at current execution time; provider strength or confidence never grants native authority",
+    "shared_views": [
+      "classic",
+      "top_down",
+      "immersive",
+      "ar_hud",
+      "simulation",
+      "graph"
+    ],
+    "original_source_and_model_versions_required": true,
+    "no_training_or_weight_update_in_source_projection": true,
+    "profile_space_requires_independent_signed_host_hydration": true,
+    "effective_authority": "NO_EXECUTION_UNTIL_NATIVE_LEASE_AND_DBR",
+    "mode": "REFERENCE_ONLY_SOURCE_REVIEW"
+  }
 }

@@ -1,0 +1,267 @@
+{
+  "automation_mode": {
+    "archive_move_allowed": false,
+    "exactly_five_existing_coordinators": true,
+    "native_mutation_allowed": false,
+    "new_scheduler_allowed": false,
+    "next_product": "FileSpace",
+    "next_product_auto_activation_allowed": false,
+    "owner_acceptance_for_next_phase": false,
+    "public_launch_allowed": false,
+    "read_only_review_allowed": true,
+    "remote_desktop_emergency_floor_pct": 24,
+    "remote_desktop_normal_reserve_pct": 25,
+    "review_loop": "read exact source > reconcile no competing versions > run bounded tests > preserve evidence > report holds > await owner acceptance",
+    "roles": [
+      "Achilles R\u00f6mer",
+      "Neo LightSpeed",
+      "Athene Eco",
+      "Cognigrex Family",
+      "UniSpace Product"
+    ],
+    "status": "HANDOFF_SPECIFICATION_NOT_HOST_EXECUTION"
+  },
+  "canonical_pr": 236,
+  "canonical_repo": "achillesromer-coder/LightSpeed",
+  "conclusions": {
+    "data_space_launch_authorised": false,
+    "file_space_handoff_authorised": false,
+    "grex_outreach_authorised": false,
+    "physical_product_qualified": false,
+    "private_software_rc_verified": true,
+    "software_final_release_approved": false,
+    "unispace_launch_authorised": false
+  },
+  "counts": {
+    "automation_lanes_active_expected": 5,
+    "native": 4,
+    "physical": 5,
+    "pre_dbr_archive_review_candidates": 3,
+    "software": 7,
+    "total_open": 16
+  },
+  "external_reference_not_added_to_open_count": {
+    "canonical_pr_draft": true,
+    "open_github_issues_matching_printspace_search": 4,
+    "open_pr_inline_review_threads": 0,
+    "other_issues_may_overlap": "NOT_A_GLOBAL_ISSUE_AUDIT"
+  },
+  "observed_source_head_baseline": "7298fa23f9992e67edffb01ce91edf59367d43c7",
+  "open_workstreams": [
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "Achilles R\u00f6mer",
+      "hold_code": "OWNER_APPROVAL_PENDING",
+      "id": "SW-01",
+      "independently_verified": false,
+      "name": "Owner acceptance of private rc.2",
+      "required_evidence": "Signed or recorded owner acceptance of the private evaluation scope and immutable rc.2 SHA256",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "Cognigrex Family",
+      "hold_code": "LEGAL_PROVENANCE_PENDING",
+      "id": "SW-02",
+      "independently_verified": false,
+      "name": "Source rights, licences, trademarks and open/paid recipe permissions",
+      "required_evidence": "Source-specific ownership/licence register for bundled and monetised objects; permitted free and paid distribution scope",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "Neo LightSpeed",
+      "hold_code": "SECURITY_REVIEW_PENDING",
+      "id": "SW-03",
+      "independently_verified": false,
+      "name": "Independent security and privacy threat review",
+      "required_evidence": "Credential and privacy assessment, malicious-content tests, SAST/dependency assessment and explicit owner review",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "UniSpace Product",
+      "hold_code": "UAT_PENDING",
+      "id": "SW-04",
+      "independently_verified": false,
+      "name": "Accessibility and cross-device user acceptance",
+      "required_evidence": "Browser/device accessibility and keyboard/mobile evidence, real user sign-off and known limitation list",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "UniSpace Product",
+      "hold_code": "SIGNING_DISTRIBUTION_PENDING",
+      "id": "SW-05",
+      "independently_verified": false,
+      "name": "Publisher signing and distribution channel",
+      "required_evidence": "Owner-approved signing keys, publisher identity, final domain/download path and immutable release record",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "Achilles R\u00f6mer",
+      "hold_code": "OPERATIONS_PLAN_PENDING",
+      "id": "SW-06",
+      "independently_verified": false,
+      "name": "Deployment rollback, support and commercial operating plan",
+      "required_evidence": "Tested rollout and rollback procedure, support owner, pricing/terms and customer disclosure approval",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "software",
+      "coordinator": "Neo LightSpeed",
+      "hold_code": "BRANCH_RECONCILIATION_PENDING",
+      "id": "SW-07",
+      "independently_verified": false,
+      "name": "Merge and source ancestry reconciliation",
+      "required_evidence": "PR #236 exact source review, CI, branch ancestry and preserved PR #232 contract dependencies; owner merge decision",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "native",
+      "coordinator": "Cognigrex Family",
+      "hold_code": "NATIVE_ADMISSION_PENDING",
+      "id": "NATIVE-01",
+      "independently_verified": false,
+      "name": "Native Object_ID, ACL, owner rights and DBR readback",
+      "required_evidence": "Authenticated source byte readback, accepted semantic identity, parent child ACL, independent owner DBR receipt",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "native",
+      "coordinator": "Neo LightSpeed",
+      "hold_code": "AUTHENTICATED_PERSISTENCE_PENDING",
+      "id": "NATIVE-02",
+      "independently_verified": false,
+      "name": "Production trust roots and one-use challenge ledger",
+      "required_evidence": "Owner-approved key roots, revocation, globally atomic persistent nonce ledger, backup/recovery and authenticated host time",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "native",
+      "coordinator": "UniSpace Product",
+      "hold_code": "NATIVE_FILESPACE_PENDING",
+      "id": "NATIVE-03",
+      "independently_verified": false,
+      "name": "FileSpace and LOAD native hydration interoperability",
+      "required_evidence": "Lease-bound native FileSpace resolver, source-body privacy isolation and independently replayed rights/rollback proof",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "native",
+      "coordinator": "Cognigrex Family",
+      "hold_code": "NATIVE_DATASPACE_PENDING",
+      "id": "NATIVE-04",
+      "independently_verified": false,
+      "name": "DataSpace and five-facet UniSpace convergence",
+      "required_evidence": "Independent DataSpace ledger/storage evidence and reconciliation with draft PR #232 five-facet parent topology",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "physical",
+      "coordinator": "Achilles R\u00f6mer",
+      "hold_code": "REAL_MACHINE_UNQUALIFIED",
+      "id": "PHYS-01",
+      "independently_verified": false,
+      "name": "PrintCeptor PC01 CAD, true geometry and C0",
+      "required_evidence": "Source-verified machine CAD, calibrated kinematics, tool reach and emergency stop/C0 safety acceptance",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "physical",
+      "coordinator": "Athene Eco",
+      "hold_code": "MATERIAL_EVIDENCE_MISSING",
+      "id": "PHYS-02",
+      "independently_verified": false,
+      "name": "Material lots and A\u2192B/B\u2192A directional coupons",
+      "required_evidence": "Traceable lots, interface chemistry, deposition order, measured bonded coupons and independent error bounds",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "physical",
+      "coordinator": "Athene Eco",
+      "hold_code": "4D_ACTIVATION_UNMEASURED",
+      "id": "PHYS-03",
+      "independently_verified": false,
+      "name": "Atmospheres, encapsulation and 4D activation",
+      "required_evidence": "Purge/pressure/temperature exposure, encapsulation verification and stimulus-response cycling data",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "physical",
+      "coordinator": "Neo LightSpeed",
+      "hold_code": "ELECTRONICS_UNQUALIFIED",
+      "id": "PHYS-04",
+      "independently_verified": false,
+      "name": "Electronic function and diode-to-phone compliance",
+      "required_evidence": "Measured diode properties, PCB/IC provenance, EMC/RF, battery, thermal and functional safety evidence",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    },
+    {
+      "automated_action": "READ_CHECK_REPORT_ONLY",
+      "category": "physical",
+      "coordinator": "Athene Eco",
+      "hold_code": "IN_SITU_UNQUALIFIED",
+      "id": "PHYS-05",
+      "independently_verified": false,
+      "name": "Terrestrial-to-in-situ scale qualification",
+      "required_evidence": "Scale-transfer uncertainty, vacuum/low-gravity and environmental witness qualification; independent validation",
+      "status": "OPEN_VERIFICATION_OR_APPROVAL"
+    }
+  ],
+  "private_candidate": {
+    "bytes": 63404,
+    "native_admitted": false,
+    "owner_accepted": false,
+    "physical_machine_authorised": false,
+    "public_approved": false,
+    "scope": "OWNER_PRIVATE_EVALUATION_ONLY",
+    "sha256": "2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2",
+    "state": "VERIFIED_PRIVATE_DIGITAL_RC_ONLY",
+    "validated_regression_stages": 27,
+    "version": "0.1.0-rc.2"
+  },
+  "proof_ceiling": "PRIVATE_DIGITAL_SOFTWARE_EVALUATION_ONLY_NO_PHYSICAL_CLAIMS",
+  "release_sequence": [
+    "PrintSpace",
+    "FileSpace",
+    "DataSpace",
+    "UniSpace",
+    "Grex operations and outreach"
+  ],
+  "safety": {
+    "no_archive_execution": true,
+    "no_legacy_delete": true,
+    "no_new_root": true,
+    "no_new_scheduler": true,
+    "no_owner_dbr_mutation": true,
+    "no_physical_operation": true,
+    "no_publication": true
+  },
+  "schema": "CGX-PRINTSPACE-PRODUCTISATION-HANDOFF/0.1",
+  "scope": "CURATED_PRINTSPACE_RELEASE_GATES_NOT_COMPLETE_PROJECT_DISCOVERY",
+  "source_refs": {
+    "five_facet_dependency": "https://github.com/achillesromer-coder/LightSpeed/pull/232",
+    "pc01_witness": "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json",
+    "pre_dbr": "cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json",
+    "release_builder": "scripts/package_printspace_software.py",
+    "release_gate": "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md"
+  },
+  "version": "2026-11-22.1"
+}
