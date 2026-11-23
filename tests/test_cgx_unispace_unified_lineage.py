@@ -167,3 +167,69 @@ def test_empty_references_do_not_create_engines():
     output = fold_unispace_lineage(mesh(), [])
     assert output["source_revision_count"] == 0
     assert not output["training_executed"]
+
+
+def test_real_engine_reference_registry_unifies_safely():
+    import json
+    from pathlib import Path
+    from tools.cgx_unispace_facet_mesh import build_unispace_facet_mesh
+    from tools.cgx_unispace_unified_lineage import fold_engine_reference_catalogue
+    root = Path(__file__).resolve().parents[1]
+    actual_mesh = build_unispace_facet_mesh(root)
+    catalogue = json.loads(
+        (root / "cgx/review/unispace_engine_reference_candidates_v0_1.json")
+        .read_text(encoding="utf-8")
+    )
+    result = fold_engine_reference_catalogue(actual_mesh, catalogue)
+    assert result["source_revision_count"] == 6
+    assert result["canonical_root_id"] == ROOT_ID
+    assert result["source_revision_pins_qualified"] is False
+    assert all(row["sha256"] is None and
+               row["training"] == "not_assessed" and
+               row["hydration_authorized"] is False
+               for row in result["records"])
+    assert result["model_weights_modified"] is False
+    assert result["publication_authorized"] is False
+
+
+def test_engine_references_reject_false_integration_training_and_duplicates():
+    from tools.cgx_unispace_unified_lineage import fold_engine_reference_catalogue
+    candidate = {
+        "schema": "CGX-UNISPACE-EXTERNAL-ENGINE-REFERENCE-CANDIDATES/0.1",
+        "canonical_root": ROOT_ID,
+        "policy": {
+            "source_code_embedded": False,
+            "model_weights_trained": False,
+            "source_commit_pin_required_before_reuse": True,
+        },
+        "sources": [{
+            "name": "Example Engine",
+            "source": "https://example.org/license",
+            "declared_project_license": "MIT",
+            "reference_only": True,
+            "rights_qualified_for_training": False,
+            "installation_verified": False,
+            "integration_verified": False,
+            "source_hash": None,
+            "revision": "VERSION_PIN_PENDING",
+            "candidate_facets": ["intelligence_space"],
+        }]
+    }
+    first = fold_engine_reference_catalogue(mesh(), candidate)
+    assert first["source_revision_count"] == 1
+    for field, value in (
+        ("rights_qualified_for_training", True),
+        ("installation_verified", True),
+        ("integration_verified", True),
+        ("reference_only", False),
+        ("source_hash", "a" * 64),
+    ):
+        altered = copy.deepcopy(candidate)
+        altered["sources"][0][field] = value
+        with pytest.raises(LineageHold):
+            fold_engine_reference_catalogue(mesh(), altered)
+    altered = copy.deepcopy(candidate)
+    altered["sources"].append(copy.deepcopy(altered["sources"][0]))
+    duplicate = fold_engine_reference_catalogue(mesh(), altered)
+    assert duplicate["source_revision_count"] == 1
+    assert duplicate["exact_duplicate_references_coalesced"] == 1
