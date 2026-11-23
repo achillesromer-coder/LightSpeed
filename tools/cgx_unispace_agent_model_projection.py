@@ -99,6 +99,23 @@ def build(repo: Path, *, tracked: set[str] | None = None) -> dict[str, Any]:
             or "prompt-is-not-canon" not in runtime.get("invariants", [])
             or runtime.get("execution_lease", {}).get("default_on_missing") != "NO_EXECUTION"):
         raise AgentModelHold("canonical source/agent identity or authority contract mismatch")
+    agent_view = runtime.get("unified_facet_projection")
+    stack_view = tech.get("unispace_agent_model_projection")
+    expected_bridge = "tools/cgx_unispace_agent_model_projection.py"
+    if (not isinstance(agent_view, dict)
+            or agent_view.get("existing_root") != ROOT_ID
+            or agent_view.get("source_projection") != expected_bridge
+            or agent_view.get("model_classes_are_selection_candidates_only") is not True
+            or agent_view.get("no_model_weights_modified") is not True
+            or agent_view.get("no_agent_spawned") is not True
+            or agent_view.get("implementation_status") != "SOURCE_ONLY_NOT_NATIVE_ADMITTED"
+            or not isinstance(stack_view, dict)
+            or stack_view.get("root") != ROOT_ID
+            or stack_view.get("existing_implementation") != expected_bridge
+            or stack_view.get("identity_layer") != "L09"
+            or stack_view.get("model_capability_layer") != "L10"
+            or stack_view.get("mode") != "REFERENCE_ONLY_SOURCE_REVIEW"):
+        raise AgentModelHold("agent/model source contract propagation inconsistent")
     model_binding = runtime.get("model_binding")
     allowed = model_binding.get("allowed") if isinstance(model_binding, dict) else None
     if not isinstance(allowed, list) or set(allowed) != MODEL_CLASSES or len(allowed) != len(MODEL_CLASSES):
