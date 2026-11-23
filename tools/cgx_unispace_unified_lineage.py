@@ -18,7 +18,7 @@ ID = re.compile(r"^cgx:(?:source|object):[a-z0-9][a-z0-9_.:/-]{0,119}$")
 REV = re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.:/+-]{0,95}$")
 SHA = re.compile(r"^[0-9a-f]{64}$")
 LICENSE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9+(). -]{0,79}$")
-SOURCE = re.compile(r"^(?:https://[^\s<>\\]{1,350}|(?:cgx|git):[a-zA-Z0-9_./:#-]{1,350})$")
+SOURCE = re.compile(r"^(?:https://[A-Za-z0-9.-]+(?::[0-9]{2,5})?(?:/[A-Za-z0-9_./~%+-]{0,300})?|(?:cgx|git):[a-zA-Z0-9_./:#-]{1,350})$")
 VIEWS = {"classic", "top_down", "immersive", "ar_hud", "simulation", "graph"}
 KINDS = {"internal_component", "external_engine_reference", "render_reference",
          "research_reference", "training_candidate", "original_asset_reference"}
@@ -108,8 +108,8 @@ def fold_unispace_lineage(mesh: dict[str, Any], records: list[dict[str, Any]],
             raise LineageHold("distribution requires verified source digest and licence")
         facets = raw["facets"]
         if (not isinstance(facets, list) or not 1 <= len(facets) <= 5
-                or len(set(facets)) != len(facets)
-                or any(x not in FACETS for x in facets)):
+                or any(not isinstance(x, str) or x not in FACETS for x in facets)
+                or len(set(facets)) != len(facets)):
             raise LineageHold("unknown or duplicate facet")
         shape = raw["t173_position"]
         if shape is not None:
@@ -399,16 +399,17 @@ def validate_ternary_shape_capsule(capsule: dict[str, Any]) -> dict[str, Any]:
             or not SHA.fullmatch(capsule["source_lineage_receipt_sha256"])
             or not isinstance(capsule["facets"], list)
             or len(capsule["facets"]) == 0
+            or any(not isinstance(f, str) or f not in FACETS
+                   for f in capsule["facets"])
             or len(set(capsule["facets"])) != len(capsule["facets"])
-            or any(f not in FACETS for f in capsule["facets"])
             or not isinstance(capsule["child_object_refs"], list)
             or len(capsule["child_object_refs"]) > 64
-            or len(set(capsule["child_object_refs"]))
-               != len(capsule["child_object_refs"])
-            or capsule["child_object_refs"] != sorted(capsule["child_object_refs"])
             or any(not isinstance(c, str) or not ID.fullmatch(c)
                    or c == capsule["object_id"]
                    for c in capsule["child_object_refs"])
+            or len(set(capsule["child_object_refs"]))
+               != len(capsule["child_object_refs"])
+            or capsule["child_object_refs"] != sorted(capsule["child_object_refs"])
             or capsule["rights"] not in RIGHTS
             or not isinstance(capsule["licence"], str)
             or not LICENSE.fullmatch(capsule["licence"])):
