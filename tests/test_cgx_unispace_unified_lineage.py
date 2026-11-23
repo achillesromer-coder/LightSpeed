@@ -546,3 +546,34 @@ def test_source_milestone_denies_tampered_graph_and_unknown_components():
         plan_source_milestone_receipt(
             graph, milestone="source_convergence",
             changed_object_ids=[])
+
+
+def test_untrusted_source_uri_and_unhashable_facets_fail_closed():
+    from tools.cgx_unispace_unified_lineage import (
+        compile_ternary_shape_capsule, validate_ternary_shape_capsule,
+    )
+    import hashlib
+    for uri in (
+        "https://user:pass@example.org/data",
+        "https://example.org/repo?token=secret",
+        "https://example.org/repo#fragment",
+    ):
+        with pytest.raises(LineageHold):
+            fold_unispace_lineage(mesh(), [record(source_uri=uri)])
+    with pytest.raises(LineageHold):
+        fold_unispace_lineage(mesh(), [
+            record(facets=["file_space", {"unexpected": "nested"}])
+        ])
+    owned = record(
+        sha256=hashlib.sha256(b"abc").hexdigest(),
+        rights="cleared_distribution"
+    )
+    capsule = compile_ternary_shape_capsule(mesh(), owned, position=1)
+    changed = copy.deepcopy(capsule)
+    changed["facets"] = [{"unexpected": "unhashable"}]
+    with pytest.raises(LineageHold):
+        validate_ternary_shape_capsule(changed)
+    changed = copy.deepcopy(capsule)
+    changed["child_object_refs"] = [{"unexpected": "unhashable"}]
+    with pytest.raises(LineageHold):
+        validate_ternary_shape_capsule(changed)
