@@ -68,6 +68,8 @@ def validate(p):
     assert batches[4]["class"] == "LIVE_MUTATION_HOLD"
     assert batches[5]["class"] == "OFFCHAIN_DRY_RUN_ONLY"
     assert batches[6]["class"] == "EXTERNAL_PUBLISH_HOLD"
+    assert batches[6]["depends_on"] == ["B00", "B02"]
+    assert "B05" not in batches[6]["depends_on"]  # Preview does not require native/on-chain mint.
     tiers = p["release_tiers"]
     assert [x["id"] for x in tiers] == ["R0", "R1", "R2", "R3"]
     assert tiers[-1]["now"].startswith("BLOCKED")
