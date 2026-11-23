@@ -233,3 +233,166 @@ def test_engine_references_reject_false_integration_training_and_duplicates():
     duplicate = fold_engine_reference_catalogue(mesh(), altered)
     assert duplicate["source_revision_count"] == 1
     assert duplicate["exact_duplicate_references_coalesced"] == 1
+
+
+def test_ternary_bytes_all_values_reversible():
+    from tools.cgx_unispace_unified_lineage import bytes_to_ternary, ternary_to_bytes
+    data = bytes(range(256))
+    encoded = bytes_to_ternary(data)
+    assert len(encoded) == len(data) * 6
+    assert set(encoded).issubset({"0", "1", "2"})
+    assert ternary_to_bytes(encoded) == data
+    assert bytes_to_ternary(b"") == ""
+    assert ternary_to_bytes("") == b""
+
+
+def test_ternary_bytes_strict_negative_inputs():
+    from tools.cgx_unispace_unified_lineage import (
+        MAX_CAPSULE_BYTES, bytes_to_ternary, ternary_to_bytes,
+    )
+    with pytest.raises(LineageHold):
+        bytes_to_ternary(bytearray(b"x"))
+    with pytest.raises(LineageHold):
+        bytes_to_ternary(b"x" * (MAX_CAPSULE_BYTES + 1))
+    for value in ("00000", "1000000", "aaa000", "222222", "1001100"):
+        with pytest.raises(LineageHold):
+            ternary_to_bytes(value)
+
+
+def test_capsule_reference_is_only_source_lineage():
+    from tools.cgx_unispace_unified_lineage import (
+        compile_ternary_shape_capsule, validate_ternary_shape_capsule
+    )
+    import hashlib
+    payload = b"canonical-owned-source-content"
+    row = record(
+        kind="internal_component", rights="cleared_distribution",
+        sha256=hashlib.sha256(payload).hexdigest(), t173_position=173,
+    )
+    capsule = compile_ternary_shape_capsule(mesh(), row, position=173)
+    assert capsule["canonical_root_id"] == ROOT_ID
+    assert capsule["transport"] == "REFERENCE_HASH_ONLY"
+    assert capsule["payload_ternary"] is None
+    assert capsule["shape"]["ternary_index"] == "20102"
+    verified = validate_ternary_shape_capsule(capsule)
+    assert verified["integrity"] == "HASH_VERIFIED"
+    assert verified["owner_signer_verified"] is False
+    assert verified["shape_is_research_only"] is True
+
+
+def test_capsule_embeds_only_hash_matched_approved_bytes():
+    from tools.cgx_unispace_unified_lineage import (
+        compile_ternary_shape_capsule, validate_ternary_shape_capsule, ternary_to_bytes
+    )
+    import hashlib
+    payload = bytes([0, 1, 2, 254, 255])
+    row = record(
+        rights="cleared_distribution",
+        sha256=hashlib.sha256(payload).hexdigest(),
+    )
+    capsule = compile_ternary_shape_capsule(
+        mesh(), row, position=27, payload=payload,
+        source_owned_and_embed_approved=True,
+    )
+    assert capsule["payload_binary_bytes"] == len(payload)
+    assert ternary_to_bytes(capsule["payload_ternary"]) == payload
+    assert validate_ternary_shape_capsule(capsule)[
+        "source_digest_matches_embedded_payload"] is True
+
+
+def test_capsule_prevents_unapproved_embedding():
+    from tools.cgx_unispace_unified_lineage import compile_ternary_shape_capsule
+    import hashlib
+    payload = b"provenance-test"
+    digest = hashlib.sha256(payload).hexdigest()
+    row = record(rights="cleared_distribution", sha256=digest)
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1,
+                                      payload=payload)
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1,
+                                      source_owned_and_embed_approved=True)
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), record(
+            sha256=digest, rights="verified_metadata_only"),
+            position=1, payload=payload, source_owned_and_embed_approved=True)
+
+
+def test_capsule_denies_wrong_payload_and_research_shape():
+    from tools.cgx_unispace_unified_lineage import compile_ternary_shape_capsule
+    import hashlib
+    row = record(rights="cleared_distribution",
+                 sha256=hashlib.sha256(b"real").hexdigest())
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1,
+                                      payload=b"fake",
+                                      source_owned_and_embed_approved=True)
+    for invalid in (0, 174, 243):
+        with pytest.raises(LineageHold):
+            compile_ternary_shape_capsule(mesh(), row, position=invalid)
+
+
+def test_capsule_sorted_nested_refs_and_self_reference_hold():
+    from tools.cgx_unispace_unified_lineage import (
+        compile_ternary_shape_capsule, validate_ternary_shape_capsule
+    )
+    import hashlib
+    row = record(rights="cleared_distribution",
+                 sha256=hashlib.sha256(b"x").hexdigest())
+    capsule = compile_ternary_shape_capsule(mesh(), row, position=1,
+                 children=["cgx:object:b", "cgx:object:a"])
+    assert capsule["child_object_refs"] == ["cgx:object:a", "cgx:object:b"]
+    assert validate_ternary_shape_capsule(capsule)["integrity"] == "HASH_VERIFIED"
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1,
+                                     children=[row["object_id"]])
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1,
+                                     children=["cgx:object:a"] * 2)
+
+
+def test_capsule_detects_tampering_and_fake_execution_flags():
+    from tools.cgx_unispace_unified_lineage import (
+        compile_ternary_shape_capsule, validate_ternary_shape_capsule
+    )
+    import hashlib
+    payload = b"public-owned"
+    row = record(rights="cleared_distribution",
+                 sha256=hashlib.sha256(payload).hexdigest())
+    capsule = compile_ternary_shape_capsule(mesh(), row, position=4,
+                payload=payload, source_owned_and_embed_approved=True)
+    for field, value in (
+        ("mint_authorized", True),
+        ("native_mesh_verified", True),
+        ("network_published", True),
+        ("source_sha256", "f" * 64),
+        ("capsule_sha256", "a" * 64),
+        ("payload_binary_bytes", len(payload) + 1),
+    ):
+        altered = copy.deepcopy(capsule)
+        altered[field] = value
+        with pytest.raises(LineageHold):
+            validate_ternary_shape_capsule(altered)
+    altered = copy.deepcopy(capsule)
+    altered["payload_ternary"] = "222222" + altered["payload_ternary"][6:]
+    with pytest.raises(LineageHold):
+        validate_ternary_shape_capsule(altered)
+
+
+def test_capsule_denies_unqualified_private_source_even_reference_only():
+    from tools.cgx_unispace_unified_lineage import compile_ternary_shape_capsule
+    row = record(rights="restricted", profile_scope="owner", sha256="f" * 64)
+    with pytest.raises(LineageHold):
+        compile_ternary_shape_capsule(mesh(), row, position=1)
+
+
+def test_capsule_hash_order_independent_for_nesting():
+    from tools.cgx_unispace_unified_lineage import compile_ternary_shape_capsule
+    import hashlib
+    row = record(rights="cleared_distribution",
+                 sha256=hashlib.sha256(b"x").hexdigest())
+    a = compile_ternary_shape_capsule(mesh(), row, position=1,
+                                    children=["cgx:object:two","cgx:object:one"])
+    b = compile_ternary_shape_capsule(mesh(), row, position=1,
+                                    children=["cgx:object:one","cgx:object:two"])
+    assert a["capsule_sha256"] == b["capsule_sha256"]
