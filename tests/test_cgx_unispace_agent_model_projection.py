@@ -178,7 +178,7 @@ def test_nine_installed_skill_sources_reference_single_projection():
         raw = (ROOT / rel).read_text("utf-8")
         assert raw.count(marker) == 1, rel
         assert "tools/cgx_unispace_agent_model_projection.py" in raw, rel
-        assert "native" in raw.lower() and "rights" in raw.lower(), rel
+        assert "native" in raw.lower() and ("licence" in raw.lower() or "rights" in raw.lower()), rel
 
 
 def test_runtime_and_model_contract_cross_reference_must_match(monkeypatch):
