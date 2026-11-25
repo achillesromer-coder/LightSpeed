@@ -290,5 +290,41 @@
       "dispatchPerformed": false,
       "executionAuthorized": false
     }
+  },
+  "mobileRouting": {
+    "status": "SOURCE_ONLY_REVIEW",
+    "module": "cgx/domain_templates/unispace_mobile_routes.cjs",
+    "blob": "786804431d6a66e32d3ed320cb12729462eed8aa",
+    "reviewCommit": "47e4f43186b8f4556d9164688e3ff343ec41bf5a",
+    "routes": {
+      "https": 9,
+      "internalCandidates": 12
+    },
+    "icons": "semantic icon keys; native app artwork requires device-side resolution",
+    "selection": "explicit foreground user action; OS app-link or browser fallback; no claim of installed application",
+    "nativeBridge": {
+      "installedAppDiscovery": false,
+      "launchVerified": false,
+      "shareVerified": false,
+      "authority": false
+    },
+    "security": [
+      "fixed HTTPS allowlist",
+      "no arbitrary intent URI",
+      "no automatic launches",
+      "noopener noreferrer",
+      "no private data or credentials in route",
+      "unregistered internal views held"
+    ],
+    "testEvidence": {
+      "assertions": 17,
+      "environment": "isolated Node.js source test; device and UI not tested"
+    },
+    "next": [
+      "bind to existing GUIOS view registry",
+      "qualify user-selected Android package and icon lookup through scoped native host",
+      "verify supported app links, browser fallback, native share and return navigation on owner device",
+      "retain existing authority and release gates"
+    ]
   }
 }
