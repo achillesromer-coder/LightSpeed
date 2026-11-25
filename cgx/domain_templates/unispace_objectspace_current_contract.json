@@ -418,7 +418,19 @@
       "nativeDeviceAcceptance": false,
       "currentPackageIntegration": false
     },
-    "next": "Reconcile concurrent work, integrate into existing build and repeat complete regression before promotion."
+    "next": "Reconcile concurrent work, integrate into existing build and repeat complete regression before promotion.",
+    "privateCurrentAcceptance": {
+      "status": "LOCAL_TESTED_PRIVATE_REVIEW",
+      "presentationModule": "CGX_Presentation.js",
+      "viewportChecks": [
+        1440,
+        390
+      ],
+      "sourceInspector": "CGX_File_Resolve.js",
+      "sharedRoot": true,
+      "nativeDeviceBenchmark": false,
+      "publicRelease": false
+    }
   },
   "manualIntake": {
     "status": "PRIVATE_R0_CAPTURE_REVIEW_ONLY",
@@ -446,6 +458,28 @@
       "no unresolved dependency or concurrent edit"
     ],
     "driveOriginals": "READ_ONLY",
-    "next": "Expand qualified parser coverage and bounded intake through existing LOAD; preserve originals until retirement gates pass."
+    "next": "Expand qualified parser coverage and bounded intake through existing LOAD; preserve originals until retirement gates pass.",
+    "privateReviewAdapter": {
+      "status": "LOCAL_EXECUTABLE_REVIEW_TESTED_NOT_NATIVE_ADMISSION",
+      "scope": "Owner-controlled existing Current source package",
+      "captureModule": "CGX_File_Intake.py",
+      "presentationModule": "CGX_File_Resolve.js",
+      "sourceRederivation": true,
+      "check": "Recompute bounded inert projection and compare its complete typed summary and all section bytes to the preserved source; reject internally consistent fabricated projections.",
+      "browser": "Digest verification on selected section hydration; browser alone does not certify derivation.",
+      "supportedReview": [
+        "exact source bytes",
+        "inert text",
+        "OOXML worksheet cells and stored formulas",
+        "bounded raster preview"
+      ],
+      "limits": [
+        "No formula evaluation or full workbook semantic interpretation",
+        "No source-rights, provider-native revision or independent native DBR assertion",
+        "No source deletion"
+      ],
+      "nativeAdmission": false,
+      "sourceDeleted": false
+    }
   }
 }
