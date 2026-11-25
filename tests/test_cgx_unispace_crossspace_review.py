@@ -225,3 +225,59 @@ def test_science_crosswalk_cannot_promote_historical_physical_gates():
     assert science['physicalQualification']['visualPresetIsNotMeteorology'] is True
     assert science['physicalQualification']['physicalActuationAuthorised'] is False
     assert all(value is False for value in contract['release'].values())
+
+
+def test_executable_current_crosscheck_real_source_and_no_authority():
+    r = m.validate_current_contract(ROOT, fixture())
+    assert r['state'] == 'CURRENT_CONTRACT_SOURCE_CROSSCHECK_ONLY'
+    assert r['current_rdc_floors'] == [21, 20]
+    assert r['historical_rdc_floors'] == [25, 24]
+    assert r['physical_gate_ids'] == ['PHYS-01', 'PHYS-02', 'PHYS-03', 'PHYS-04', 'PHYS-05']
+    assert not r['native_admitted'] and not r['physical_actuation_authorised']
+    assert not r['dispatch_performed']
+    run = subprocess.run([sys.executable, str(SCRIPT), '--repo', str(ROOT),
+                          '--check-current-contract'], capture_output=True, text=True, timeout=20)
+    assert run.returncode == 0, run.stderr + run.stdout
+    assert json.loads(run.stdout)['current_contract_crosscheck'] == r
+
+
+@pytest.mark.parametrize('fault', ['quota', 'visual', 'sentinel', 'actuation', 'rights',
+                                  'history_bytes', 'gate_ids', 'release', 'missing'])
+def test_executable_current_crosscheck_rejects_drift(tmp_path, fault):
+    rel = 'cgx/domain_templates/unispace_objectspace_current_contract.json'
+    hist = 'cgx/manufacturing/printspace_product_handoff_v0_1.json'
+    for name in (rel, hist, 'cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json', str(m.REGISTRY)):
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((ROOT / name).read_bytes())
+    path = tmp_path / rel
+    contract = json.loads(path.read_bytes())
+    science = contract['crossGrex']['scientificAdmission']
+    if fault == 'quota':
+        contract['executionPolicy']['normalRdcRemainingFloorPct'] = 20
+    elif fault == 'visual':
+        science['classification']['visualPreset'] = 'empirical'
+    elif fault == 'sentinel':
+        science['codec']['t174'] = 'MINTABLE'
+    elif fault == 'actuation':
+        science['physicalQualification']['physicalActuationAuthorised'] = True
+    elif fault == 'rights':
+        science['sourceOccurrenceAclRequired'] = False
+    elif fault == 'history_bytes':
+        target = tmp_path / hist
+        target.write_bytes(target.read_bytes() + bytes([10]))
+    elif fault == 'gate_ids':
+        science['gateRegister']['printspaceGateIds'].pop()
+    elif fault == 'release':
+        contract['release']['nativeMint'] = True
+    elif fault == 'missing':
+        del contract['executionPolicy']
+    path.write_text(json.dumps(contract), encoding='utf-8')
+    with pytest.raises(m.CrossSpaceHold):
+        m.validate_current_contract(tmp_path, fixture())
+    run = subprocess.run([sys.executable, str(SCRIPT), '--repo', str(tmp_path),
+                          '--check-current-contract'], capture_output=True, text=True, timeout=20)
+    assert run.returncode == 2, run.stderr + run.stdout
+    r = json.loads(run.stdout)
+    assert r['state'] == 'HOLD'
+    assert r['native_admitted'] is False and r['side_effects_performed'] is False
