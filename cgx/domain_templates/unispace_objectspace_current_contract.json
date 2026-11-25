@@ -133,7 +133,45 @@
     "romerSolar": "existing separate simulation/workbench source; integrate by verified source reference, not rewrite",
     "solarScientificStatus": "simulate/reference unless independent physical evidence validates",
     "AI": "three independently configurable model instances; native distributed model backends unverified",
-    "externalGames": "unaffiliated portal link unless licensed official adapter"
+    "externalGames": "unaffiliated portal link unless licensed official adapter",
+    "solarEventEngine": {
+      "path": "cgx/domain_templates/unispace_solar_event_engine.mjs",
+      "blob": "d42ba450490152388b328e59648b8ea2e0fd28fc",
+      "reviewCommit": "1a32c511177cd32328ca1b39ebaeadb82f27c8f5",
+      "admission": "SOURCE_ONLY_REVIEW",
+      "functions": [
+        "photon",
+        "passage",
+        "fluxScenario",
+        "refine",
+        "selfTest"
+      ],
+      "testEvidence": {
+        "passed": 17,
+        "total": 17,
+        "environment": "isolated JavaScript execution before commit; browser/native not verified"
+      },
+      "frame": "synthetic-heliocentric-ecliptic-inertial",
+      "epistemic": "simulated",
+      "source": "captured_local",
+      "hydration": "H0",
+      "geometry": "illustrative",
+      "completeness": "partial",
+      "access": [
+        "view",
+        "inspect",
+        "derive"
+      ],
+      "plasmaValidity": "launch shell to conservative 80 AU cutoff; no forecast or inferred plasma flux",
+      "outerSolarSystem": "vacuum photon and gravity reference only; no CME extrapolation to Oort cloud",
+      "next": [
+        "transform DONKI frame using epoch ephemerides",
+        "validate with NOAA and spacecraft observations",
+        "replace circular phase with SPICE",
+        "integrate existing GUIOS object action adapter and isolated snapshots",
+        "native authority and rights gates remain held"
+      ]
+    }
   },
   "release": {
     "sourceRightsVerified": false,
