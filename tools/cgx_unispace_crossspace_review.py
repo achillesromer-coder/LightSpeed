@@ -208,13 +208,15 @@ def validate_current_contract(repo: Path, registry: dict) -> dict:
         "cgx/domain_templates/unispace_objectspace_current_contract.json",
         "cgx/manufacturing/printspace_product_handoff_v0_1.json",
         "cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json",
-        str(REGISTRY),
+        REGISTRY.as_posix(),
     )
     def read(relative: str) -> tuple[dict, str]:
         path = repo / relative
         _hold_if(path.is_symlink() or not path.is_file() or path.stat().st_size > 262144,
                  "current contract source unavailable or unsafe")
         raw = path.read_bytes()
+        _hold_if(relative == REGISTRY.as_posix() and hashlib.sha256(raw).hexdigest() != EXPECTED_SHA256,
+                 "historical cross-space registry bytes changed")
         obj = json.loads(raw)
         _hold_if(not isinstance(obj, dict), "current contract source must be an object")
         # Git blob identity only, not a signature or rights proof.
@@ -245,6 +247,8 @@ def validate_current_contract(repo: Path, registry: dict) -> dict:
                  compat["nativeEnforcementVerified"] is not False, "current execution policy mismatch")
         _hold_if(historic["register"] != paths[1] or historic["archiveRegister"] != paths[2] or
                  historic["registerBlob"] != handoff_blob or historic["archiveRegisterBlob"] != archive_blob or
+                 handoff_blob != "060ec29e90913dc593f2498c3319d3725ca07792" or
+                 archive_blob != "20e2a5267feb4199ce274ed0fca1d50fbb368c24" or
                  historic["pr"] != 236 or not REF_RE.fullmatch(historic["commit"]),
                  "historical evidence blob mismatch")
         _hold_if((historic["normalRdcRemainingFloorPct"], historic["emergencyRdcRemainingFloorPct"]) != (25, 24) or
@@ -266,7 +270,9 @@ def validate_current_contract(repo: Path, registry: dict) -> dict:
                  "materialDirectionRequiresIndependentCoupons", "environmentalScaleTransferRequiresIndependentEvidence")) or
                  physical["physicalActuationAuthorised"] is not False or science["nativeAdmission"] is not False or
                  science["gateClosureClaimed"] is not False or science["sourceOccurrenceAclRequired"] is not True or
-                 not isinstance(contract["release"], dict) or not contract["release"] or
+                 not isinstance(contract["release"], dict) or set(contract["release"]) != {
+                     "sourceRightsVerified", "issuerAuthenticated", "signedDBR", "independentTwoNodeReadback",
+                     "publicBundlePrivacyApproved", "ownerPublicLaunchApproved", "nativeMint", "siteDeployment"} or
                  any(v is not False for v in contract["release"].values()), "scientific or release authority escalated")
     except (KeyError, TypeError, AttributeError) as exc:
         raise CrossSpaceHold("current contract fields missing or malformed") from exc
