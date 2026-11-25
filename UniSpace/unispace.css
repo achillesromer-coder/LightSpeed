@@ -3,3 +3,27 @@
 @media(max-width:820px){.hero,#verify{grid-template-columns:1fr}.sets{grid-template-columns:1fr 1fr}.hero figure{max-width:520px;width:100%;justify-self:center}.sets button{border:1px solid var(--line)}footer{flex-wrap:wrap}}
 @media(max-width:480px){.sets{grid-template-columns:1fr}header{min-height:64px}nav{gap:14px}#sets,#verify{padding-block:32px}}
 .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:22px;margin:32px 0}.gallery img{width:100%;height:auto;display:block}.gallery small{overflow-wrap:anywhere}#open,#workspace{padding-block:32px}#workspace button{padding:10px;cursor:pointer}#workspace pre{background:#eef2ee;padding:14px}
+
+.filespace main {max-width: 76rem; padding-block: 1.5rem}
+.filespace #open, .filespace #workspace {
+  background: white; border: 1px solid var(--line); border-radius: 14px;
+  padding: clamp(1rem, 3vw, 2.25rem); margin-bottom: 1.25rem;
+  box-shadow: 0 3px 12px rgb(23 43 44 / 5%);
+}
+.filespace h1 {margin: .25em 0; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.12}
+.filespace details {margin-block: .5rem 1rem}
+.filespace summary {width: fit-content; cursor: pointer; min-height: 44px; padding-block: .6rem; color: var(--accent); font-weight: 600}
+.filespace :is(button, input, select) {font: inherit; max-width: 100%; min-height: 44px}
+.filespace :is(button, select, input[type=search], input[type=text], #trits) {
+  border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--ink); padding: .55rem .8rem;
+}
+.filespace input::file-selector-button {padding: .65rem .9rem; margin-right: .65rem; border-radius: 8px; background: var(--ink); border: 0; color: white; cursor: pointer}
+.filespace #preview {background: var(--accent); color: white}
+.filespace #quadrants {display: flex; flex-wrap: wrap; gap: .4rem; border: 0}
+.filespace #quadrants [aria-pressed=true] {background: var(--ink); color: white}
+.filespace :focus-visible {outline: 3px solid var(--accent); outline-offset: 3px}
+.filespace button:disabled {opacity: .55; cursor: default}
+.filespace :is(#coordinate, #identity) {overflow-wrap: anywhere}
+@media (prefers-reduced-motion: no-preference) {
+  .filespace button {transition: background-color 120ms ease, border-color 120ms ease}
+}

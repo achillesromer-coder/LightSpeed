@@ -170,6 +170,24 @@ function save(blob,name) {
   const url=URL.createObjectURL(blob), link=document.createElement('a');
   link.href=url;link.download=name;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
+function previewBytes(data) {
+  const sample = data.subarray(0, 8192);
+  try {
+    const decoded = new TextDecoder('utf-8', {fatal: true}).decode(sample, {stream: sample.length < data.length});
+    if (!/[\x00-\x08\x0b\x0e-\x1f\x7f]/.test(decoded)) {
+      return {body: decoded, label: 'Verified text preview · first 8 KiB maximum.'};
+    }
+  } catch (error) {
+    if (!(error instanceof TypeError)) throw error;
+  }
+  const bytes = data.subarray(0, 256);
+  const lines = [];
+  for (let offset = 0; offset < bytes.length; offset += 16) {
+    const hex = Array.from(bytes.subarray(offset, offset + 16), b => b.toString(16).padStart(2, '0'));
+    lines.push(offset.toString(16).padStart(4, '0') + '  ' + hex.join(' '));
+  }
+  return {body: lines.join('\n'), label: 'Verified byte preview · first 256 bytes maximum.'};
+}
 for(const op of ['preview','export','series']) ui(op).onclick=async()=>{
   const state=session, rows=op==='series'?[...visible]:[visible[ui('members').selectedIndex]];
   try {
@@ -179,7 +197,12 @@ for(const op of ['preview','export','series']) ui(op).onclick=async()=>{
     for(const row of rows){
       const data=await checked(state,row);
       if(state!==session)return;
-      if(op==='preview')ui('excerpt').textContent=text.decode(data.subarray(0,8192));
+      if(op==='preview'){
+        if (visible[ui('members').selectedIndex] !== row) return;
+        const preview = previewBytes(data);
+        ui('excerpt').textContent = preview.body;
+        ui('action').textContent = preview.label;
+      }
       else if(op==='export')save(new Blob([data],{type:'application/octet-stream'}),row.path.split('/').pop());
       else{
         let binary='';for(const byte of data)binary+=String.fromCharCode(byte);
@@ -188,6 +211,6 @@ for(const op of ['preview','export','series']) ui(op).onclick=async()=>{
     }
     if(op==='series')save(new Blob([JSON.stringify({format:'unispace-filespace-series-v1',carrier_sha256:state.digest,
       object_id:state.boot.object_id,state_id:state.boot.state_id,content_root:state.boot.content_root,files})],{type:'application/json'}),'UniSpace-series.json');
-    ui('action').textContent=op==='preview'?'Verified preview · first 8 KiB maximum.':'Verified export prepared.';
+    if(op!=='preview')ui('action').textContent='Verified export prepared.';
   }catch(e){if(state===session)ui('action').textContent=e.message;}
 };
