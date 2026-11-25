@@ -269,6 +269,26 @@
     },
     "coordinatorPolicy": "Reuse five existing hourly lanes. No additional scheduler. Never infer execution or native admission from a handoff or source commit.",
     "hostPolicy": "No restart unless owner is in standby; preserve existing stop markers, local agents, hardlinks and junctions.",
-    "nativeAuthority": "Unchanged; verified host ACL, signed lease, canonical DBR and independent peer readback required."
+    "nativeAuthority": "Unchanged; verified host ACL, signed lease, canonical DBR and independent peer readback required.",
+    "previewPlanner": {
+      "module": "CGX_Product_Contract.js",
+      "function": "planBatch",
+      "scope": "PRIVATE_CURRENT_REVIEW_ONLY",
+      "checks": 12,
+      "status": "LOCAL_TESTED_NOT_NATIVE_ENFORCEMENT",
+      "rules": [
+        "deterministic dependency ordering",
+        "same-revision receipt deduplication",
+        "missing or cyclic dependency hold",
+        "source qualification hold",
+        "fresh quota and conservative rounding",
+        "concurrent call reserve",
+        "20 percent RAM floor for RDC",
+        "dirty checkout and host-only gates",
+        "native route always held"
+      ],
+      "dispatchPerformed": false,
+      "executionAuthorized": false
+    }
   }
 }
