@@ -202,11 +202,86 @@ def source_review(registry: dict, registry_sha256: str,
     }
 
 
+def validate_current_contract(repo: Path, registry: dict) -> dict:
+    """Read current and historical source contracts; never grant execution authority."""
+    paths = (
+        "cgx/domain_templates/unispace_objectspace_current_contract.json",
+        "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+        "cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json",
+        str(REGISTRY),
+    )
+    def read(relative: str) -> tuple[dict, str]:
+        path = repo / relative
+        _hold_if(path.is_symlink() or not path.is_file() or path.stat().st_size > 262144,
+                 "current contract source unavailable or unsafe")
+        raw = path.read_bytes()
+        obj = json.loads(raw)
+        _hold_if(not isinstance(obj, dict), "current contract source must be an object")
+        # Git blob identity only, not a signature or rights proof.
+        blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + bytes([0]) + raw).hexdigest()
+        return obj, blob
+
+    contract, contract_blob = read(paths[0])
+    handoff, handoff_blob = read(paths[1])
+    archive, archive_blob = read(paths[2])
+    recorded, registry_blob = read(paths[3])
+    _hold_if(recorded != validate_registry(registry), "registry readback mismatch")
+    try:
+        policy = contract["executionPolicy"]
+        compat = policy["historicalReviewCompatibility"]
+        historic = compat["historicalReviewRef"]
+        science = contract["crossGrex"]["scientificAdmission"]
+        gate = science["gateRegister"]
+        physical = science["physicalQualification"]
+        ids = [row["id"] for row in handoff["open_workstreams"] if row["category"] == "physical"]
+        expected = [row["id"] for row in registry["task_groups"] if row["space"] == "PrintSpace" and row["id"].startswith("PHYS-")]
+        _hold_if(contract["parent"] != ROOT or contract["product"] != "UniSpace" or
+                 science["existingRoot"] != ROOT, "current product/root mismatch")
+        _hold_if((policy["normalRdcRemainingFloorPct"], policy["emergencyRdcRemainingFloorPct"]) != (21, 20) or
+                 compat["effectivePolicyRef"] != "#/executionPolicy" or
+                 compat["preserveHistoricalBytes"] is not True or
+                 compat["requireFreshQuota"] is not True or compat["unknownQuota"] != "HOLD" or
+                 compat["normalEmergencySeparation"] is not True or
+                 compat["nativeEnforcementVerified"] is not False, "current execution policy mismatch")
+        _hold_if(historic["register"] != paths[1] or historic["archiveRegister"] != paths[2] or
+                 historic["registerBlob"] != handoff_blob or historic["archiveRegisterBlob"] != archive_blob or
+                 historic["pr"] != 236 or not REF_RE.fullmatch(historic["commit"]),
+                 "historical evidence blob mismatch")
+        _hold_if((historic["normalRdcRemainingFloorPct"], historic["emergencyRdcRemainingFloorPct"]) != (25, 24) or
+                 (handoff["automation_mode"]["remote_desktop_normal_reserve_pct"],
+                  handoff["automation_mode"]["remote_desktop_emergency_floor_pct"]) != (25, 24) or
+                 (archive["invariant_policy"]["protected_remote_desktop_reserve_pct"],
+                  archive["invariant_policy"]["emergency_remote_desktop_floor_pct"]) != (25, 24),
+                 "historical reserve evidence changed")
+        _hold_if(gate["path"] != paths[3] or gate["blob"] != registry_blob or
+                 gate["printspaceGateIds"] != expected or ids != expected or len(ids) != 5,
+                 "physical gate crosswalk mismatch")
+        _hold_if(science["classification"] != {"visualPreset": "VISUAL_PRESET_ONLY", "synthetic": "simulated",
+                 "deduction": "inferred", "hypothesis": "inferred", "fiction": "fictional", "measurement": "empirical"} or
+                 science["codec"]["t173"] != "CANDIDATE_REVERSIBLE_CODEC_NOT_PHYSICS_PROOF" or
+                 science["codec"]["t174"] != "RESERVED_NONMINTABLE" or
+                 science["codec"]["binaryFallback"] is not True, "scientific classification drift")
+        _hold_if(any(physical[k] is not True for k in (
+                 "meshPassIsNotMachineAuthority", "simulationPassIsNotMeasurement", "visualPresetIsNotMeteorology",
+                 "materialDirectionRequiresIndependentCoupons", "environmentalScaleTransferRequiresIndependentEvidence")) or
+                 physical["physicalActuationAuthorised"] is not False or science["nativeAdmission"] is not False or
+                 science["gateClosureClaimed"] is not False or science["sourceOccurrenceAclRequired"] is not True or
+                 not isinstance(contract["release"], dict) or not contract["release"] or
+                 any(v is not False for v in contract["release"].values()), "scientific or release authority escalated")
+    except (KeyError, TypeError, AttributeError) as exc:
+        raise CrossSpaceHold("current contract fields missing or malformed") from exc
+    return {"state": "CURRENT_CONTRACT_SOURCE_CROSSCHECK_ONLY", "contract_git_blob": contract_blob,
+            "historical_handoff_git_blob": handoff_blob, "historical_archive_git_blob": archive_blob,
+            "physical_gate_ids": expected, "current_rdc_floors": [21, 20], "historical_rdc_floors": [25, 24],
+            "native_admitted": False, "physical_actuation_authorised": False, "dispatch_performed": False}
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--repo", type=Path, default=Path(__file__).resolve().parents[1])
     p.add_argument("--mesh-json", type=Path)
     p.add_argument("--out", type=Path)
+    p.add_argument("--check-current-contract", action="store_true")
     args = p.parse_args()
     file = args.repo / REGISTRY
     try:
@@ -222,6 +297,8 @@ def main() -> int:
                      "mesh JSON unavailable or unsafe")
             mesh = json.loads(args.mesh_json.read_bytes())
         out = source_review(registry, sha, mesh)
+        if args.check_current_contract:
+            out["current_contract_crosscheck"] = validate_current_contract(args.repo, registry)
     except (OSError, json.JSONDecodeError, CrossSpaceHold, RecursionError) as e:
         print(json.dumps({"schema": RECEIPT_SCHEMA, "state": "HOLD",
                           "hold_code": type(e).__name__,
