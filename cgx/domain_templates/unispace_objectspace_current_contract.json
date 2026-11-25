@@ -150,5 +150,44 @@
     "noCredentialsIncluded": true,
     "noAuthorityInheritedFromSharedRoot": true,
     "noUnconsentedDataExport": true
+  },
+  "productIdentity": {
+    "product": "UniSpace",
+    "product_id": "cgx:product:unispace",
+    "product_type": "GUIOS",
+    "product_type_expansion": "Generated Universatile Intelligent Operating System",
+    "canonical_parent": "cgx:root:cognigrex",
+    "UI_is_not_separate_product": true
+  },
+  "currentSourcePolicy": {
+    "editable_source_path": "cgx/domain_templates/unispace_objectspace_current_contract.json",
+    "private_worktree": "/CGX/Convergence/Current/",
+    "no_parallel_ui_product": true,
+    "commit_reasons_must_be_retained": true,
+    "public_immutable_credentials_included": false
+  },
+  "acceptanceSeparation": {
+    "offline_experience": "LOCAL_TEST_ONLY",
+    "three_model_slots": "DISTINCT_CONFIG_SHARED_SYMBOLIC_ENGINE",
+    "neural_model_training": "NOT_VERIFIED",
+    "native_LOAD_Lite": "HOLD",
+    "original_R0_and_rights": "HOLD",
+    "independent_native_DBR": "HOLD",
+    "CCC_contract_enforcement": "HOLD",
+    "public_bundle_privacy": "HOLD",
+    "public_release": "HOLD"
+  },
+  "releasePhases": [
+    "private-local-demonstration",
+    "independent-source-carrier-and-peer-pilot",
+    "public-safe-verified-preview",
+    "signed-authority-approved-native-operation"
+  ],
+  "signoff": {
+    "review_contract_only": true,
+    "mint": false,
+    "signedDBR": false,
+    "deploy": false,
+    "owner_release_approved": false
   }
 }
