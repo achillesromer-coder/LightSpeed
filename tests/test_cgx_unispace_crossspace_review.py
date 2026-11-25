@@ -189,3 +189,39 @@ def test_cli_drift_holds_and_writes_no_approval(tmp_path):
     assert r['state'] == 'HOLD'
     assert r['native_admitted'] is False
     assert r['side_effects_performed'] is False
+
+
+def test_current_execution_policy_does_not_rewrite_historical_review():
+    contract = json.loads((ROOT / 'cgx/domain_templates/unispace_objectspace_current_contract.json').read_text(encoding='utf-8'))
+    policy = contract['executionPolicy']
+    historical = policy['historicalReviewCompatibility']
+    assert (policy['normalRdcRemainingFloorPct'], policy['emergencyRdcRemainingFloorPct']) == (21, 20)
+    assert historical['effectivePolicyRef'] == '#/executionPolicy'
+    assert historical['historicalReviewRef']['normalRdcRemainingFloorPct'] == 25
+    assert historical['historicalReviewRef']['emergencyRdcRemainingFloorPct'] == 24
+    assert historical['preserveHistoricalBytes'] is True
+    assert historical['requireFreshQuota'] is True
+    assert historical['unknownQuota'] == 'HOLD'
+    assert historical['normalEmergencySeparation'] is True
+    assert historical['nativeEnforcementVerified'] is False
+
+
+def test_science_crosswalk_cannot_promote_historical_physical_gates():
+    contract = json.loads((ROOT / 'cgx/domain_templates/unispace_objectspace_current_contract.json').read_text(encoding='utf-8'))
+    science = contract['crossGrex']['scientificAdmission']
+    physical_ids = [row['id'] for row in fixture()['task_groups'] if row['space'] == 'PrintSpace' and row['id'].startswith('PHYS-')]
+    assert science['existingRoot'] == contract['parent'] == m.ROOT
+    assert science['gateRegister']['printspaceGateIds'] == physical_ids
+    assert len(physical_ids) == 5
+    assert science['classification']['visualPreset'] == 'VISUAL_PRESET_ONLY'
+    assert science['classification']['synthetic'] != science['classification']['measurement']
+    assert science['codec']['t173'] == 'CANDIDATE_REVERSIBLE_CODEC_NOT_PHYSICS_PROOF'
+    assert science['codec']['t174'] == 'RESERVED_NONMINTABLE'
+    assert science['sourceOccurrenceAclRequired'] is True
+    assert science['gateClosureClaimed'] is False
+    assert science['nativeAdmission'] is False
+    assert science['physicalQualification']['meshPassIsNotMachineAuthority'] is True
+    assert science['physicalQualification']['simulationPassIsNotMeasurement'] is True
+    assert science['physicalQualification']['visualPresetIsNotMeteorology'] is True
+    assert science['physicalQualification']['physicalActuationAuthorised'] is False
+    assert all(value is False for value in contract['release'].values())
