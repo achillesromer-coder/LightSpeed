@@ -14,6 +14,9 @@ def sha(data): return hashlib.sha256(data).hexdigest()
 def enc(value): return (json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True)+'\n').encode()
 def redirected(st): return stat.S_ISLNK(st.st_mode) or bool(getattr(st,'st_file_attributes',0)&0x400)
 def stamp(st): return (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime_ns,st.st_nlink)
+# Windows path stat and handle fstat may expose different creation/change times.
+# Compare shared identity fields across interfaces, and full stamps within each.
+def identity(st): return (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_nlink)
 
 def read_source(root,relative):
     r=PurePosixPath(relative)
@@ -27,9 +30,10 @@ def read_source(root,relative):
     before=p.stat()
     if not stat.S_ISREG(before.st_mode) or not 0<before.st_size<=MAX_FILE: raise ValueError('SOURCE_SIZE_OR_KIND_HOLD')
     with p.open('rb') as f:
-        if stamp(os.fstat(f.fileno()))!=stamp(before): raise ValueError('SOURCE_CHANGED_HOLD')
+        opened=os.fstat(f.fileno())
+        if identity(opened)!=identity(before): raise ValueError('SOURCE_CHANGED_HOLD')
         raw=f.read(MAX_FILE+1)
-        if stamp(os.fstat(f.fileno()))!=stamp(before): raise ValueError('SOURCE_CHANGED_HOLD')
+        if stamp(os.fstat(f.fileno()))!=stamp(opened): raise ValueError('SOURCE_CHANGED_HOLD')
     if len(raw)!=before.st_size or stamp(p.stat())!=stamp(before): raise ValueError('SOURCE_CHANGED_HOLD')
     return p,before,raw
 
