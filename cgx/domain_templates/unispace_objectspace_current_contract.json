@@ -264,13 +264,8 @@
     },
     "currentWorktree": {
       "policy": "edit existing path in place, no parallel product, root, store, scheduler, deployment or mint",
-      "remoteCheckout": "D:\\LightSpeed\\Repositories\\LightSpeed_Canonical",
-      "observedHead": "45c476a82f8b6b4fca0104b76243b415158dc102",
-      "observedAhead": 2,
-      "observedBehind": 185,
-      "observedDirty": true,
-      "disposition": "DO_NOT_PULL_RESET_OR_OVERWRITE; reconcile local commits and uncommitted changes first",
-      "observationTime": "2026-11-25T14:14:00+10:00"
+      "disposition": "REQUIRE_PRIVATE_DIRTY_CHECKOUT_RECONCILIATION_BEFORE_PULL_RESET_OR_OVERWRITE",
+      "observation": "Private host details retained only in owner-controlled handoff; no source admission inferred."
     },
     "coordinatorPolicy": "Reuse five existing hourly lanes. No additional scheduler. Never infer execution or native admission from a handoff or source commit.",
     "hostPolicy": "No restart unless owner is in standby; preserve existing stop markers, local agents, hardlinks and junctions.",
