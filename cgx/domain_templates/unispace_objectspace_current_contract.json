@@ -1,0 +1,154 @@
+{
+  "schema": "cgx.unispace.objectspace.contract/1",
+  "status": "SOURCE_ONLY_REVIEW_NO_NATIVE_ADMISSION",
+  "parent": "cgx:root:cognigrex",
+  "product": "UniSpace",
+  "interface": "GUIOS.CGX.ai",
+  "repositoryCanonicalPath": "cgx/domain_templates/unispace_objectspace_current_contract.json",
+  "changePolicy": {
+    "canonicalPathStable": true,
+    "editInPlace": true,
+    "reasonLogAppendOnly": true,
+    "artifactDigestPerEdit": true,
+    "reviewBranch": "ops/canonical-queue-index-20261115",
+    "noDuplicateRoot": true
+  },
+  "compatibility": {
+    "reused": [
+      "LOAD.Lite",
+      "LOAD/Alexandria",
+      "FileSpace R0-R3",
+      "DataSpace authenticated exchange",
+      "Frontier Overlay Resolve",
+      "CCC rights and capability index",
+      "GUIOS CGX.ai",
+      "CGX object/3D renderer adapters",
+      "LightSpeed generated interface compiler",
+      "LightSpeed spatial homebase",
+      "fiction/empirical semantic mirror",
+      "RomerGrex solar and interplanetary workbench"
+    ],
+    "noImpliedDeployment": true
+  },
+  "objectContract": {
+    "independentAxes": {
+      "source": [
+        "unresolved",
+        "reference_only",
+        "captured_local",
+        "independently_qualified"
+      ],
+      "hydration": [
+        "H0",
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "geometry": [
+        "none",
+        "illustrative",
+        "source_bound",
+        "verified"
+      ],
+      "completeness": [
+        "missing",
+        "partial",
+        "full"
+      ],
+      "access": [
+        "view",
+        "inspect",
+        "pass",
+        "comment",
+        "edit",
+        "derive",
+        "build",
+        "share",
+        "publish",
+        "mint",
+        "execute"
+      ],
+      "epistemic": [
+        "empirical",
+        "inferred",
+        "simulated",
+        "fictional",
+        "hybrid"
+      ]
+    },
+    "derivative": {
+      "newLocalId": true,
+      "originalUntouched": true,
+      "creativeHistorySticky": true,
+      "sourceReferencesRetained": true,
+      "ownerPrivateUntilApproved": true
+    },
+    "unavailableAssets": {
+      "previewWithoutByteTransfer": true,
+      "frontierDistinctIdentity": true,
+      "cannotBuildWithoutLicence": true
+    },
+    "assemblies": {
+      "componentRightsIndependent": true,
+      "partialSupported": true,
+      "assemblyMintOptional": true
+    },
+    "dynamicUI": {
+      "controlsFromObjectAndEntitlement": true,
+      "firstPersonSpaceAndContext": true,
+      "presentationNotSourceAuthority": true
+    },
+    "provenance": {
+      "contributionModes": [
+        "manual",
+        "AI-assisted",
+        "AI-generated",
+        "render-only",
+        "external-reference"
+      ],
+      "aiContributionPercentageInvented": false
+    },
+    "nativeAdmission": false
+  },
+  "portability": {
+    "classicBytePreservingCompanion": true,
+    "readerWriterDeclensions": [
+      ".cgx.html",
+      ".html.cgx",
+      ".cgx.ai",
+      ".ai.cgx",
+      ".cgx.pdf",
+      ".pdf.cgx",
+      ".cgx.minecraft"
+    ],
+    "suffixDoesNotProveConversion": true,
+    "portableSnapshot": {
+      "privateStateSensitive": true,
+      "renderAndComputeState": true,
+      "sourceReferences": true,
+      "integrityDigestOnly": true
+    }
+  },
+  "crossGrex": {
+    "romerSolar": "existing separate simulation/workbench source; integrate by verified source reference, not rewrite",
+    "solarScientificStatus": "simulate/reference unless independent physical evidence validates",
+    "AI": "three independently configurable model instances; native distributed model backends unverified",
+    "externalGames": "unaffiliated portal link unless licensed official adapter"
+  },
+  "release": {
+    "sourceRightsVerified": false,
+    "issuerAuthenticated": false,
+    "signedDBR": false,
+    "independentTwoNodeReadback": false,
+    "publicBundlePrivacyApproved": false,
+    "ownerPublicLaunchApproved": false,
+    "nativeMint": false,
+    "siteDeployment": false
+  },
+  "safety": {
+    "noPrivateSourceBytesIncluded": true,
+    "noCredentialsIncluded": true,
+    "noAuthorityInheritedFromSharedRoot": true,
+    "noUnconsentedDataExport": true
+  }
+}
