@@ -400,5 +400,52 @@
       "verify supported app links, browser fallback, native share and return navigation on owner device",
       "retain existing authority and release gates"
     ]
+  },
+  "interactionProjection": {
+    "status": "REVIEW_SOURCE_ONLY",
+    "module": "cgx/load_minimum/unispaceInteractionShell.cjs",
+    "sourceCommit": "1aafd3f544b9f5336d5e4d4273e9c879f048073a",
+    "reuse": "Existing application, toolkit and workspace controls; no competing engine or authority",
+    "verification": {
+      "viewportWidths": [
+        360,
+        390,
+        424,
+        768,
+        1440
+      ],
+      "browserReviewCandidatePassed": true,
+      "nativeDeviceAcceptance": false,
+      "currentPackageIntegration": false
+    },
+    "next": "Reconcile concurrent work, integrate into existing build and repeat complete regression before promotion."
+  },
+  "manualIntake": {
+    "status": "PRIVATE_R0_CAPTURE_REVIEW_ONLY",
+    "module": "cgx/load_minimum/manual_intake_review.py",
+    "sourceCommit": "b8e458450ae4b8f50e89646c47e2da255f93f6b3",
+    "carrier": "Existing CGXBYTE17",
+    "separation": [
+      "exact source bytes",
+      "occurrence-specific provenance",
+      "structural data projection",
+      "semantic review candidate"
+    ],
+    "verification": {
+      "independentExactInverseReadback": true,
+      "nativeAdmission": false,
+      "canonicalDataSpaceAdmission": false,
+      "sourceDeletion": false
+    },
+    "retirementGate": [
+      "complete source and occurrence inventory",
+      "rights and ACL qualification",
+      "metadata and alternate-stream preservation where applicable",
+      "canonical data and semantic admission",
+      "independent exact recovery and replay",
+      "no unresolved dependency or concurrent edit"
+    ],
+    "driveOriginals": "READ_ONLY",
+    "next": "Expand qualified parser coverage and bounded intake through existing LOAD; preserve originals until retirement gates pass."
   }
 }
