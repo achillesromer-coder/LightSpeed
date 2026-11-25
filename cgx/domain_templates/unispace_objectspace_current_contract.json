@@ -227,5 +227,53 @@
     "signedDBR": false,
     "deploy": false,
     "owner_release_approved": false
+  },
+  "executionPolicy": {
+    "status": "REVIEW_POLICY_NOT_RUNTIME_ENFORCEMENT",
+    "updated": "2026-11-25",
+    "normalRdcRemainingFloorPct": 21,
+    "emergencyRdcRemainingFloorPct": 20,
+    "emergencyUse": "Explicit emergency only; no normal work consumes reserve; stop at 20",
+    "quotaCheck": "Read current quota before any bounded batch; reserve worst-case calls and concurrent lane headroom; if unknown stop RDC",
+    "routing": [
+      "verified existing native/hosted execution where scope and leases permit",
+      "direct Git or existing service connector",
+      "bounded RDC only for genuinely host-only operations"
+    ],
+    "batch": {
+      "strategy": "dependency-ordered dynamic batches on existing execution routes",
+      "preflight": [
+        "exact current object/digest",
+        "scope and authority",
+        "dependency closure",
+        "resource headroom",
+        "concurrency and dirty-state check"
+      ],
+      "execution": [
+        "idempotent operations",
+        "bounded call budget",
+        "fail closed at first violated gate",
+        "retain per-operation result and reason"
+      ],
+      "reconciliation": [
+        "read back exact result",
+        "regress changed dependencies",
+        "fold only independently qualified changes",
+        "append reason and receipt to existing log"
+      ]
+    },
+    "currentWorktree": {
+      "policy": "edit existing path in place, no parallel product, root, store, scheduler, deployment or mint",
+      "remoteCheckout": "D:\\LightSpeed\\Repositories\\LightSpeed_Canonical",
+      "observedHead": "45c476a82f8b6b4fca0104b76243b415158dc102",
+      "observedAhead": 2,
+      "observedBehind": 185,
+      "observedDirty": true,
+      "disposition": "DO_NOT_PULL_RESET_OR_OVERWRITE; reconcile local commits and uncommitted changes first",
+      "observationTime": "2026-11-25T14:14:00+10:00"
+    },
+    "coordinatorPolicy": "Reuse five existing hourly lanes. No additional scheduler. Never infer execution or native admission from a handoff or source commit.",
+    "hostPolicy": "No restart unless owner is in standby; preserve existing stop markers, local agents, hardlinks and junctions.",
+    "nativeAuthority": "Unchanged; verified host ACL, signed lease, canonical DBR and independent peer readback required."
   }
 }
