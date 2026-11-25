@@ -79,6 +79,44 @@ def test_mappings_are_bounded_to_approved_tracked_surfaces(tmp_path: Path, modul
     assert not any("test_ui.py" in item for item in targets)
 
 
+def test_deployment_readiness_is_read_only_and_fail_closed(module) -> None:
+    accepted = {
+        "branch": "main",
+        "head": "a" * 40,
+        "origin_main": "a" * 40,
+        "clean": True,
+    }
+    pending = module.deployment_readiness(
+        {**accepted, "branch": "ops/review", "clean": False}, [4173, 8765]
+    )
+    assert pending["status"] == "HOLD"
+    assert pending["blockers"] == [
+        "REVIEW_BRANCH_NOT_ACCEPTED_MAIN",
+        "UNCOMMITTED_OR_UNTRACKED_SOURCE",
+        "MANAGED_SERVICES_ACTIVE",
+    ]
+    assert not pending["runtime_installed"]
+    assert not pending["native_mint_authorized"]
+    ready = module.deployment_readiness(accepted, [])
+    assert ready["status"] == "ELIGIBLE_FOR_OWNER_CONFIRMED_APPLY"
+    assert ready["blockers"] == []
+    assert ready["owner_approval_recorded"] is False
+    assert ready["backup_verified"] is False
+    assert ready["runtime_installed"] is False
+
+
+def test_deployment_readiness_rejects_unaligned_main(module) -> None:
+    state = {
+        "branch": "main",
+        "head": "a" * 40,
+        "origin_main": "b" * 40,
+        "clean": True,
+    }
+    result = module.deployment_readiness(state, [])
+    assert result["status"] == "HOLD"
+    assert result["blockers"] == ["MAIN_NOT_ALIGNED_WITH_ORIGIN"]
+
+
 def test_apply_requires_confirmation(tmp_path: Path, module) -> None:
     repo = init_repo(tmp_path)
     with pytest.raises(RuntimeError, match="confirmed"):
@@ -171,3 +209,39 @@ def test_receipt_writer_is_exclusive_and_readback_verified(tmp_path: Path, modul
     assert json.loads(path.read_text(encoding="utf-8")) == {"ok": True}
     with pytest.raises(FileExistsError):
         module.write_json_exclusive(path, {"ok": False})
+
+
+def test_installed_cgx_catalogue_snapshot_can_resolve_without_git_checkout(
+    tmp_path: Path, monkeypatch, module,
+) -> None:
+    """Only source-authorised metadata, not DB/credentials, is packaged."""
+    repo = Path(__file__).resolve().parents[1]
+    runtime = tmp_path / "installed"
+    mappings = module.build_mappings(repo, runtime)
+    catalogues = [x for x in mappings if x.target_relative.startswith("Core/cgx_catalogue/")]
+    assert len(catalogues) == 25
+    assert all("credentials" not in x.target_relative.lower() and
+               "/data/" not in x.target_relative.lower()
+               for x in catalogues)
+    import shutil
+    for item in catalogues:
+        item.target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(item.source, item.target)
+    sys.path.insert(0, str(repo / "desktop" / "LightSpeed_Runtime"))
+    from lightspeed_runtime.cgx_catalogue_root import resolve_cgx_catalogue_root
+    from lightspeed_runtime import cgx_capability_registry as registry
+
+    installed_module = runtime / "Core" / "lightspeed_runtime" / "cgx_capability_registry.py"
+    installed_module.parent.mkdir(parents=True, exist_ok=True)
+    root = resolve_cgx_catalogue_root(installed_module)
+    assert root == runtime / "Core" / "cgx_catalogue"
+    monkeypatch.setattr(registry, "REPO_ROOT", root)
+    monkeypatch.setattr(registry, "DEFAULT_ROUTES_PATH",
+                        root / "cgx/domain_templates/plugin_capability_routes.json")
+    monkeypatch.setattr(registry, "DEFAULT_SHORTCALLS_PATH",
+                        root / "plugins/source/selector_shortcalls.json")
+    view, _values = registry._capability_review_snapshot("LightSpeed")
+    assert view["selector"] == "lightspeed"
+    assert "role:neo" in view["references"]
+    assert "route:cgx.plan_query" in view["references"]
+    assert view["native_admitted"] is False

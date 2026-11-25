@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fafaf7">
+<title>UniSpace — CGX.cgx</title>
+<meta name="description" content="Explore the UniSpace S91 product reference. Download one verifiable CGX carrier containing specifications, runtime source and scientific review tools.">
+<link rel="stylesheet" href="unispace.css">
+</head>
+<body>
+<header><a class="brand" href="#top" aria-label="UniSpace home"><span class="mark" aria-hidden="true">◌</span> UniSpace</a><nav aria-label="Page"><a href="#sets">Contents</a><a href="#verify">Verify file</a></nav></header>
+<main id="top">
+<section class="hero">
+ <div class="intro"><p class="edition">Cognigrex &nbsp;/&nbsp; S91 reference edition</p><h1>UniSpace<span>.</span></h1>
+ <p class="lede">A workspace you can carry.</p><p class="description">Trace a result from its source to its tests. UniSpace brings specifications, runtime code and evidence records together in one portable CGX file.</p>
+ <!-- kit-download -->
+ <a class="button" href="CGX.cgx" download="CGX.cgx">Download CGX.cgx <span aria-hidden="true">↓</span></a>
+ <p><a href="FileSpace.html">Open the FileSpace tutorial →</a></p>
+ <p><a href="unispace.cgx.html">Open the offline CGX interface</a></p>
+ <p class="meta">3,609,020 bytes &nbsp;·&nbsp; Pre-alpha reference</p></div>
+ <figure><canvas id="atlas" aria-label="A spiral plot of the 432 tracked files. The contents section lists the groups and counts."></canvas><figcaption><span>Carrier atlas</span><span id="plot-label">432 tracked files</span></figcaption></figure>
+</section>
+<section id="sets"><p class="edition">Inside the carrier</p><h2>Explore the sets</h2>
+ <p class="section-lede">Select a group to locate its files in the atlas. Each point represents one tracked file in S91.</p>
+ <div class="sets">
+ <button type="button" data-set="0" aria-pressed="false"><small>92 files</small><strong>Specifications</strong><span>Read the contracts for dependency resolution, provenance and the Alexandria resolver.</span></button>
+ <button type="button" data-set="1" aria-pressed="false"><small>162 files</small><strong>Tests</strong><span>Inspect the checks that accompany the reference implementation and reproduce its expected behaviour.</span></button>
+ <button type="button" data-set="2" aria-pressed="false"><small>51 files</small><strong>Runtime</strong><span>Explore the Python tools, host entry points and WebAssembly runners supplied as source.</span></button>
+ <button type="button" data-set="3" aria-pressed="false"><small>127 files</small><strong>Records &amp; guides</strong><span>Follow the registries, documentation, platform references and release material behind the snapshot.</span></button>
+ </div><p id="selection" aria-live="polite">Showing all 432 files.</p>
+</section>
+<section id="verify"><div><p class="edition">Offline inspection</p><h2>Verify your copy</h2><p class="section-lede">Choose your downloaded carrier to compare its bytes with the published reference. Your browser performs the check locally.</p></div>
+ <div class="check"><label for="file">Select a CGX file</label><input type="file" id="file" accept=".cgx"><p role="status" id="result"></p><small>Reference SHA-256</small><code>1138da5af4e1c66eb60120dd050e2037fc8d7799a9ccebb01ad48089b234785f</code></div>
+</section>
+<footer><div><b>UniSpace</b><p>Built on the LightSpeed toolkit.</p></div><p>S91 is an inspectable product reference. Installed services, local models and multi-device operation have separate setup and acceptance steps. Licence and third-party notices are inside the carrier.</p><a href="product.json">Product manifest ↗</a></footer>
+</main>
+<script src="unispace.js"></script></body></html>

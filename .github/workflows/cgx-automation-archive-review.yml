@@ -1,0 +1,58 @@
+name: CGX Living Convergence Source Review
+
+on:
+  push:
+    branches:
+      - review/cgx-living-consolidation-20261118
+    paths:
+      - tools/cgx_automation_archive_review.py
+      - tests/test_cgx_automation_archive_review.py
+      - tools/cgx_unispace_branch_convergence.py
+      - tests/test_cgx_unispace_branch_convergence.py
+      - cgx/review/unispace_git_pr_source_snapshot_20261122.json
+      - tools/cgx_unispace_overlap_review.py
+      - tests/test_cgx_unispace_overlap_review.py
+      - cgx/review/unispace_source_path_overlap_20261122.json
+      - tools/cgx_unispace_hybrid_source_review.py
+      - tests/test_cgx_unispace_hybrid_source_review.py
+      - docs/architecture/CGX_UNISPACE_BATCH_CONVERGENCE_20261122.md
+      - .github/workflows/cgx-automation-archive-review.yml
+  pull_request:
+    paths:
+      - tools/cgx_automation_archive_review.py
+      - tests/test_cgx_automation_archive_review.py
+      - tools/cgx_unispace_branch_convergence.py
+      - tests/test_cgx_unispace_branch_convergence.py
+      - cgx/review/unispace_git_pr_source_snapshot_20261122.json
+      - tools/cgx_unispace_overlap_review.py
+      - tests/test_cgx_unispace_overlap_review.py
+      - cgx/review/unispace_source_path_overlap_20261122.json
+      - tools/cgx_unispace_hybrid_source_review.py
+      - tests/test_cgx_unispace_hybrid_source_review.py
+      - docs/architecture/CGX_UNISPACE_BATCH_CONVERGENCE_20261122.md
+      - .github/workflows/cgx-automation-archive-review.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fail-closed-source-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Archive provenance and bounded historical ingestion (17 cases)
+        run: python -m unittest discover -s tests -p test_cgx_automation_archive_review.py -v
+      - name: UniSpace PR convergence and cross-space gate validation (22 cases)
+        run: python -m unittest discover -s tests -p test_cgx_unispace_branch_convergence.py -v
+      - name: PR source path overlap and false equivalence checks (15 cases)
+        run: python -m unittest discover -s tests -p test_cgx_unispace_overlap_review.py -v
+      - name: One-root hybrid source review (11 cases)
+        run: python -m unittest discover -s tests -p test_cgx_unispace_hybrid_source_review.py -v
+      - name: Generate deterministic non-authoritative review plan
+        run: python tools/cgx_unispace_branch_convergence.py --snapshot cgx/review/unispace_git_pr_source_snapshot_20261122.json > /tmp/cgx-source-review-plan.json
+

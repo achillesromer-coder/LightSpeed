@@ -9,8 +9,9 @@ import re
 import unicodedata
 from typing import Any
 
+from lightspeed_runtime.cgx_catalogue_root import resolve_cgx_catalogue_root
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+REPO_ROOT = resolve_cgx_catalogue_root(Path(__file__))
 DEFAULT_ROUTES_PATH = REPO_ROOT / "cgx" / "domain_templates" / "plugin_capability_routes.json"
 DEFAULT_SHORTCALLS_PATH = REPO_ROOT / "plugins" / "source" / "selector_shortcalls.json"
 

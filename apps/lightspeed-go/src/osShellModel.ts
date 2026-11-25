@@ -2,8 +2,43 @@ import { routeInstruction, type Floor } from "./desktopBridge";
 
 export const SHELL_SCHEMA = "lightspeed-cognigrex-os-shell-v0.1" as const;
 
-export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources"] as const;
+export const SHELL_VIEWS = ["command", "activity", "objects", "system", "sources", "filespace"] as const;
 export type ShellView = (typeof SHELL_VIEWS)[number];
+
+/**
+ * Presentation-only space selectors over the EXISTING UniSpace views.
+ * The five source-contract facets are File/Data/Social/Print/Intelligence;
+ * ProfileSpace and SystemSpace are shell contexts, not extra data roots.
+ * Selection grants no lease, private hydration, mint, actuation or native admission.
+ */
+export interface UniSpaceNavigationFacet {
+  readonly id: string;
+  readonly label: string;
+  readonly view: ShellView;
+  readonly description: string;
+  readonly status: "projection-only";
+}
+
+export const UNISPACE_FACETS: readonly UniSpaceNavigationFacet[] = [
+  { id: "profilespace", label: "ProfileSpace", view: "activity",
+    description: "Owner session and activity review; not a portable identity service.", status: "projection-only" },
+  { id: "filespace", label: "FileSpace", view: "filespace",
+    description: "Bounded FileSpace reader; private hydration requires approved scope.", status: "projection-only" },
+  { id: "dataspace", label: "DataSpace", view: "sources",
+    description: "Source and evidence review; no distributed persistence claim.", status: "projection-only" },
+  { id: "socialspace", label: "SocialSpace", view: "activity",
+    description: "Event and review evidence; no external social publication.", status: "projection-only" },
+  { id: "printspace", label: "PrintSpace", view: "objects",
+    description: "Object and CAD references; no physical machine commands.", status: "projection-only" },
+  { id: "intelligencespace", label: "IntelligenceSpace", view: "command",
+    description: "Neo-routed command intake; execution remains separately authorised.", status: "projection-only" },
+  { id: "systemspace", label: "SystemSpace", view: "system",
+    description: "Runtime status; selecting does not admit a node or root.", status: "projection-only" },
+] as const;
+
+export const resolveUniSpaceFacet = (id: string | null | undefined): UniSpaceNavigationFacet | undefined =>
+  UNISPACE_FACETS.find((facet) => facet.id === id);
+
 
 export type WorkflowStageId =
   | "intake"

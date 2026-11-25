@@ -169,6 +169,8 @@ def test_execute_uses_mocked_http_and_writes_floor_receipt(tmp_path: Path) -> No
     assert len(calls) == 1
     assert calls[0][0] == "http://127.0.0.1:11434/api/generate"
     assert calls[0][1]["model"] == "gemma3:27b"
+    assert f'Approved receipt route: {receipt["receipt_path"]}' in calls[0][1]["prompt"]
+    assert json.dumps(receipt["receipt_path"]) in calls[0][1]["prompt"]
     assert calls[0][1]["stream"] is False
     assert calls[0][1]["think"] is False
     assert Path(receipt["receipt_path"]).exists()

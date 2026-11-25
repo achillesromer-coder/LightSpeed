@@ -8,6 +8,7 @@ from lightspeed_runtime.source_intake_executor import validate_intake_payload
 from lightspeed_runtime.source_intake import SourceIntakeError
 import os
 import re
+import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 import sys
@@ -24,6 +25,15 @@ from lightspeed_runtime.corpus_test_orchestrator import (
     CorpusTestPlanError, assess_frontier_unit, plan_cascade,
 )
 from lightspeed_runtime.cgx_conversion_planner import CGXConversionPlanError, compile_conversion_plan
+from lightspeed_runtime.cgx_capability_registry import CapabilityRegistryError
+from lightspeed_runtime.cgx_family_topology import build_cgx_family_topology
+from lightspeed_runtime.cgx_surface_projection import (
+    build_unispace_surface_manifest, plan_temporary_subagent_batch,
+)
+from lightspeed_runtime.cgx_native_checkpoint import (
+    NativeCheckpointError, host_checkpoint_store, persist_checkpoint,
+    read_checkpoint, revoke_checkpoint,
+)
 from lightspeed_runtime.cgx_object_context import (CGXObjectContextError, resolve_object_context,
     twin_source_review_index, resolve_scoped_twin_context)
 from lightspeed_runtime.cgx_cross_analysis import (CGXCrossAnalysisError, atlas_review_workset,
@@ -1581,11 +1591,13 @@ def create_app(root: Path | str) -> FastAPI:
             or "local-node"
         )
         root_registry_ready = False
+        writable_root_registered = False
         root_registry_ref = os.environ.get("LIGHTSPEED_NODE_ROOT_REGISTRY", "").strip()
         if root_registry_ref:
             try:
                 root_registry = load_node_root_registry(root_registry_ref)
                 root_registry_ready = root_registry.get("node_id") == local_node_id
+                writable_root_registered = any(row["access"] == "read_write" for row in root_registry["roots"])
             except NodeExchangeError:
                 root_registry_ready = False
         return JSONResponse(
@@ -1668,15 +1680,15 @@ def create_app(root: Path | str) -> FastAPI:
                             ).split(",")
                             if item.strip()
                         ],
-                        peer_nodes=[
-                            item.strip()
-                            for item in os.environ.get(
-                                "LIGHTSPEED_PEER_NODES", ""
-                            ).split(",")
-                            if item.strip()
-                        ],
                         host_root_registry_ready=root_registry_ready,
+                        writable_root_registered=writable_root_registered,
                     ),
+                    # Configured names are pairing candidates. Verified peers
+                    # require a receiver receipt from an independent device.
+                    "configured_peer_nodes": list(dict.fromkeys(
+                        name for item in os.environ.get("LIGHTSPEED_PEER_NODES", "").split(",")
+                        if (name := item.strip()) and name.casefold() != local_node_id.casefold()
+                    )),
                     "transfer_planning_endpoint": "/api/v1/node-exchange/transfer/plan",
                     "compute_planning_endpoint": "/api/v1/node-exchange/compute/plan",
                     "execution_route": (
@@ -1687,6 +1699,160 @@ def create_app(root: Path | str) -> FastAPI:
                 "execution_boundary": "local queue, immutable named artifacts, receipts and review only; no public direct execution",
             }
         )
+
+    @app.get("/api/v1/cgx/surface")
+    async def read_cgx_surface(
+        selector: str = "LightSpeed",
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Owner-scoped, backend-generated presentation metadata; never dispatch."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions)
+        try:
+            surface = build_unispace_surface_manifest(selector)
+        except (CapabilityRegistryError, OSError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail="CGX selector revision held") from exc
+        if _verified_owner_actor(None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(surface, headers={"Cache-Control": "no-store"})
+
+    @app.get("/api/v1/cgx/family/topology")
+    async def read_cgx_family_topology(
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Only source identities and content-hash aliases; no hydration or mint."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(
+            None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions,
+        )
+        try:
+            topology = build_cgx_family_topology()
+        except (CapabilityRegistryError, ValueError, OSError) as exc:
+            raise HTTPException(status_code=409, detail="CGX family source review held") from exc
+        if _verified_owner_actor(
+            None, session_token=owner_session, credential_store=credential_store,
+            session_store=owner_sessions,
+        ) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(topology, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/cgx/temporary-batch/plan")
+    async def plan_cgx_temporary_batch(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Review a task-bound composition; not a mint, lease or execution."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        actor = _verified_owner_actor(None, session_token=owner_session,
+            credential_store=credential_store, session_store=owner_sessions)
+        allowed = {"selector", "task_id", "run_id", "expected_view_sha256",
+                   "role_ids", "route_ids", "cpu_threads", "memory_mib",
+                   "max_jobs", "ttl_seconds"}
+        if set(body) - allowed:
+            raise HTTPException(status_code=400, detail="Unrecognised review fields")
+        try:
+            candidate = plan_temporary_subagent_batch(**body)
+        except (CapabilityRegistryError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail="Invalid or stale temporary composition") from exc
+        if _verified_owner_actor(None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions) != actor:
+            raise HTTPException(status_code=403, detail="Owner scope changed")
+        return JSONResponse(candidate, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/cgx/persistence/checkpoint")
+    async def write_native_cgx_checkpoint(
+        body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        """Persist one metadata-only candidate to existing operational_events."""
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        def verified_owner():
+            return _verified_owner_actor(
+                None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions,
+            )
+        verified_owner()
+        current_authority = _current_go_authority_contract(shell_root)
+        if (current_authority.get("approval_or_hold_state") not in APPROVED_AUTHORITY_STATES
+                or "private local review queue" not in str(current_authority.get("authorised_scope", ""))):
+            raise HTTPException(status_code=403, detail="Local review authority is held")
+        allowed = {"selector", "task_id", "run_id", "expected_view_sha256",
+                   "role_ids", "route_ids", "cpu_threads", "memory_mib",
+                   "max_jobs", "ttl_seconds"}
+        if not body or set(body) - allowed:
+            raise HTTPException(status_code=400, detail="Bounded native checkpoint plan required")
+        try:
+            candidate = plan_temporary_subagent_batch(**body)
+            store = host_checkpoint_store(shell_root)
+            receipt = persist_checkpoint(store, candidate, verify_owner=verified_owner)
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail="Owner scope changed") from exc
+        except (CapabilityRegistryError, NativeCheckpointError, TypeError, ValueError) as exc:
+            raise HTTPException(status_code=409, detail="Native checkpoint admission held") from exc
+        except (sqlite3.Error, OSError, RuntimeError) as exc:
+            raise HTTPException(status_code=503, detail="Canonical checkpoint storage unavailable") from exc
+        return JSONResponse(receipt, headers={"Cache-Control": "no-store"})
+
+    @app.get("/api/v1/cgx/persistence/checkpoint/{task_id}/{run_id}")
+    async def open_native_cgx_checkpoint(
+        task_id: str, run_id: str,
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        def verified_owner():
+            return _verified_owner_actor(
+                None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions,
+            )
+        verified_owner()
+        try:
+            store = host_checkpoint_store(shell_root)
+            receipt = read_checkpoint(store, task_id, run_id, verify_owner=verified_owner)
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail="Owner scope changed") from exc
+        except NativeCheckpointError as exc:
+            raise HTTPException(status_code=409, detail="Checkpoint unavailable or held") from exc
+        except (sqlite3.Error, OSError, RuntimeError) as exc:
+            raise HTTPException(status_code=503, detail="Canonical checkpoint storage unavailable") from exc
+        return JSONResponse(receipt, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/v1/cgx/persistence/revoke/{task_id}/{run_id}")
+    async def revoke_native_cgx_checkpoint(
+        task_id: str, run_id: str, body: dict[str, Any],
+        owner_session: str | None = Header(default=None, alias="X-LightSpeed-Session"),
+    ):
+        if not owner_session or credential_store is None:
+            raise HTTPException(status_code=403, detail="Owner session required")
+        def verified_owner():
+            return _verified_owner_actor(
+                None, session_token=owner_session,
+                credential_store=credential_store, session_store=owner_sessions,
+            )
+        verified_owner()
+        if set(body) != {"expected_candidate_sha256"}:
+            raise HTTPException(status_code=400, detail="Exact candidate revision required")
+        try:
+            store = host_checkpoint_store(shell_root)
+            receipt = revoke_checkpoint(
+                store, task_id, run_id,
+                expected_candidate_sha256=body["expected_candidate_sha256"],
+                verify_owner=verified_owner,
+            )
+        except PermissionError as exc:
+            raise HTTPException(status_code=403, detail="Owner scope changed") from exc
+        except NativeCheckpointError as exc:
+            raise HTTPException(status_code=409, detail="Revocation revision or identity held") from exc
+        except (sqlite3.Error, OSError, RuntimeError) as exc:
+            raise HTTPException(status_code=503, detail="Canonical checkpoint storage unavailable") from exc
+        return JSONResponse(receipt, headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/object-context/{query}")
     async def read_object_context(

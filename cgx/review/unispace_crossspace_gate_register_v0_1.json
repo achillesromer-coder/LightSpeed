@@ -1,0 +1,772 @@
+{
+  "archive_candidates_unchanged": 3,
+  "authority": {
+    "archive_delete": false,
+    "file_space_product_phase_active": false,
+    "machine_control": false,
+    "mint": false,
+    "native_dbr_write": false,
+    "native_hydration": false,
+    "new_root": false,
+    "new_scheduler": false,
+    "owner_acceptance": false,
+    "public_release": false
+  },
+  "canonical_root": "cgx:root:cognigrex",
+  "checkpoint_sha256": "634695accc767f7a25e41e10335cc8b7a6c7f988cbaf4b024e700c92e1d522fa",
+  "dependency_provenance": "PROPOSED_SEQUENCE_NOT_INDEPENDENTLY_VERIFIED",
+  "facet_mesh_schema": "CGX-UNISPACE-SINGLE-ROOT-FACET-MESH/0.1",
+  "observation": "2026-11-22_CROSSSPACE_HANDOFF_SOURCE_ONLY",
+  "proposed_crossspace_count": 35,
+  "schedules_changed": false,
+  "schema": "CGX-UNISPACE-CROSSSPACE-GATE-REGISTRY/0.1",
+  "source_count": 51,
+  "source_heads_are_currently_authenticated": false,
+  "source_pr_heads": {
+    "205": "465876bcd99a4fa2dc400cead4ad7c5f991410ad",
+    "228": "2bdc431b6cee5d24e4f34a570b700a2d26fbc2e3",
+    "229": "dc312003b7e95dfd6b8ad6b975a318e208cda003",
+    "230": "1f540f6a8481d0faf078068af90f6ccee91fbfef",
+    "232": "b61519d09e009a223e6c0c2bec1b3414c3f1d5c0",
+    "236": "399b0c8721225bc82c0fa275d46e3b175fd5b9eb"
+  },
+  "source_verified_printspace_count": 16,
+  "status": "SOURCE_REVIEW_HANDOFF_OPEN_NO_NATIVE_ADMISSION",
+  "task_groups": [
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-01",
+      "label": "Owner acceptance of private rc.2",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-02",
+      "label": "Source rights, licences, trademarks and open/paid recipe permissions",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-03",
+      "label": "Independent security and privacy threat review",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-02"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-04",
+      "label": "Accessibility and cross-device user acceptance",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-03"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-05",
+      "label": "Publisher signing and distribution channel",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-01",
+        "SW-02",
+        "SW-03",
+        "SW-04"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-06",
+      "label": "Deployment rollback, support and commercial operating plan",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-05"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SW-07",
+      "label": "Merge and source ancestry reconciliation",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-02",
+        "SW-03"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "NATIVE-01",
+      "label": "Native Object_ID, ACL, owner rights and DBR readback",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SW-02"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "NATIVE-02",
+      "label": "Production trust roots and one-use challenge ledger",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "NATIVE-01"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "NATIVE-03",
+      "label": "FileSpace and LOAD native hydration interoperability",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "NATIVE-01",
+        "NATIVE-02"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "NATIVE-04",
+      "label": "DataSpace and five-facet UniSpace convergence",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "NATIVE-01",
+        "NATIVE-02",
+        "NATIVE-03"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "PHYS-01",
+      "label": "PrintCeptor PC01 CAD, true geometry and C0",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "NATIVE-01"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "PHYS-02",
+      "label": "Material lots and A to B / B to A directional coupons",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "PHYS-01"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "PHYS-03",
+      "label": "Atmospheres, encapsulation and 4D activation",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "PHYS-01",
+        "PHYS-02"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "PHYS-04",
+      "label": "Electronic function and diode-to-phone compliance",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "PHYS-01",
+        "PHYS-02",
+        "PHYS-03"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "PHYS-05",
+      "label": "Terrestrial-to-in-situ scale qualification",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "PHYS-01",
+        "PHYS-04"
+      ],
+      "provenance": "OPEN_SOURCE_VERIFIED",
+      "source_facet": "print_space",
+      "space": "PrintSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-01",
+      "label": "Reconcile source envelope, immutable original bytes, owner licence and Object_ID aliases",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-02",
+      "label": "Verify reversible R0/R1/R2/R3 and selective hydration, no data loss",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-03",
+      "label": "Authenticated two-device FileSpace read/write, ACL revocation and negative tests",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-01",
+        "NATIVE-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-04",
+      "label": "LOAD H0\u2192R1\u2013R3 private hydration/signed lease acceptance",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-01",
+        "NATIVE-02"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-05",
+      "label": "Windows/macOS/Linux shell bridges, FileSpace OS mounts and rollback",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-02",
+        "FS-04"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "FS-06",
+      "label": "Offline carrier reader, portable packaging and independent versioned UAT",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-02",
+        "FS-03",
+        "FS-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "file_space",
+      "space": "FileSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-01",
+      "label": "Two-node signed DBR atomic append, independent readback and restart",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "DS-02"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-02",
+      "label": "Production owner-key trust, nonce replay ledger, revocation and recovery",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-03",
+      "label": "Typed node exchange/relationship authority and source custody",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "DS-01",
+        "FS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-04",
+      "label": "Durable data storage/backups/snapshot integrity and eventual replication",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "DS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-05",
+      "label": "Consent, privacy/ACL and signed audit provenance across spaces",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "DS-02",
+        "DS-03"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "DS-06",
+      "label": "Versioned DataSpace software package and release gates",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "DS-03",
+        "DS-04",
+        "DS-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "data_space",
+      "space": "DataSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-01",
+      "label": "Exact existing profile/identity and opt-in schema; no auto activation",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-02",
+      "label": "Two-principal geometry/shorthand semantic compatibility and explainability",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SS-01",
+        "FS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-03",
+      "label": "Bilateral consent, AI-assisted/AI-free/no-AI-contact with server enforcement",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-04",
+      "label": "Durable relationship receipt, revocation and independent readback",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SS-02",
+        "SS-03",
+        "DS-03"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-05",
+      "label": "Optional OAuth/API authorised connectors, privacy/UAT and anti-spam",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SS-03",
+        "SS-04"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "SS-06",
+      "label": "Australian outreach only after individual owner authorisation",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "SS-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "social_space",
+      "space": "SocialSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-01",
+      "label": "Achilles/Neo/Athene/Raphael identities and canonical agent/capability role crosswalk",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-02",
+      "label": "Test native CGX intelligence model and resource-aware inference vs weights claims",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "IM-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-03",
+      "label": "Validate geometric reasoning, learning and persistence with measured baselines",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "IM-02"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-04",
+      "label": "Independent restore/embodiment and distributed reference under signed DBR",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "IM-01",
+        "DS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-05",
+      "label": "Rights, corpus sources and no-private-weight leak evidence",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "IM-01",
+        "FS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "IM-06",
+      "label": "Mint sequencing and signed independent owner acceptance (historically Neo before Achilles)",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "IM-02",
+        "IM-04",
+        "IM-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": "intelligence_space",
+      "space": "IntelligenceSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-01",
+      "label": "Reconcile PR228, PR230, PR232, PR236 and PR205 into one owned canonical review graph",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-02",
+      "label": "Five source facets, seven UX selectors, no second root/data store/agent",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "US-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-03",
+      "label": "Security and private/public R0\u2013R3/ACL/lease negative acceptance",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "US-02",
+        "FS-01",
+        "DS-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-04",
+      "label": "FileSpace\u2192DataSpace\u2192UniSpace gated product build and rollback",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "FS-06",
+        "DS-06",
+        "US-03",
+        "SW-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-05",
+      "label": "Owner approvals, licence/source provenance, signed promotion/CI evidence",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "US-03",
+        "US-04"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-06",
+      "label": "Launch/UOS site, docs, support and public claim constraints",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "US-04",
+        "US-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "US-07",
+      "label": "Post-launch Grex adoption and AU-only SocialSpace outreach",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "US-06",
+        "SS-05"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "UniSpace",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "AR-01",
+      "label": "Review 3 PC01 original archive candidates; preserve original bytes and hashes",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "ArchiveAndLegacy",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "AR-02",
+      "label": "Reconcile historical PR235 and superseded PR231 without destructive history rewrite",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "AR-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "ArchiveAndLegacy",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "AR-03",
+      "label": "Inventory disabled predecessor automations: do not reactivate, duplicate or delete",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "AR-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "ArchiveAndLegacy",
+      "state": "OPEN_REVIEW_ONLY"
+    },
+    {
+      "closure_gate": "INDEPENDENT_SOURCE_AND_OWNER_EVIDENCE_REQUIRED",
+      "effectful_action_authorised": false,
+      "id": "AR-04",
+      "label": "Map historic local PC, Drive and GPT exports to exact source receipts before cleanup",
+      "owner_approval_observed": false,
+      "proposed_dependencies": [
+        "AR-01",
+        "FS-01"
+      ],
+      "provenance": "PROPOSED_NEEDS_CURRENT_SOURCE_RECONCILIATION",
+      "source_facet": null,
+      "space": "ArchiveAndLegacy",
+      "state": "OPEN_REVIEW_ONLY"
+    }
+  ]
+}

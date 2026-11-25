@@ -1,0 +1,31 @@
+# CGX-IM native geometry review kernel (L5)
+
+Scope: pure deterministic review code inside the existing Achilles package. No native admission, model merge, runtime service, new worker, execution lease, mint, external dispatch or production DBR change. The tetrahedral centroid subdivision is a fixture, not a Raphael T173 catalogue definition. T174/0 sentinel is not a facet object. Existing capability registry and directional contracts remain authoritative for real routes; this kernel accepts only fixture-scope values and explicit synthetic allowed edges. State event evidence strings are fixture labels, not evidence verification. A supplied trusted head anchors replay; real signatures/independent acceptance must be provided by the existing governance plane.
+
+The API composes bounded exact-rational operations through directed incident boundaries, with typed units, scope and coordinate-frame checks. Me/Myself/I are symmetric reciprocal perspectives, not assigned functions. History is immutable in intent, latest unverified/revoked state is held, and a mismatching head or content is rejected. The review kernel is not an actual learning system or general-purpose intelligence. No actual capability resolution or external side effects are authorised here.
+
+Next gate: independent source reconciliation for T173/Trinity/N-resolve/RVUR, integration with real DBR/lease verification, and quality/resource comparisons against an equivalent baseline. Existing model and agent runtime remain unchanged.
+
+## Validated method discovery increment
+
+The native_methods review module derives an exact affine candidate from supplied examples, checks a disjoint supplied holdout, binds the candidate and its examples by digest, bounds reuse to the tested input envelope, and composes the result through the existing native geometry kernel. It reuses existing capability composition metadata rather than copying skills or executing handlers. A synthetic mass-ratio example may represent ingredient scaling (not food safety, nutrition, recipe certification or physical actuation). All outputs are fixture-only. This is narrow symbolic hypothesis discovery and test-driven reuse, not general machine learning, independent evidence validation, a claim of novelty in affine fitting, or production admission. Existing Neo learning may supply proposals through the governed interface after review; no new worker is introduced. Future method families require separate typed operators, independent holdouts, falsifiers and resource measurement.
+
+## Compositional model lifecycle increment
+
+Native model review uses ordered method references, exact content deduplication, caller-pinned historical event heads, candidate supersession and revocation, aggregate per-pipeline fixture budgets and read-only Z-stack release review from the existing floor realization contract and runtime mapping. It neither establishes native identities nor validates real signatures, actual independent evidence, device permissions, release eligibility or model training. No duplicate worker, database, boot sequence or publication path. Historical candidates remain inspectable as local review objects; revoked models cannot execute through this fixture's active-model entry point. The same method may recur in the pipeline without duplicating its stored envelope. This is an integration mechanism, not a claim of general intelligence or novel mathematics.
+
+## Cross-domain shared review carrier
+
+The native_shared_review adapter uses the existing ternary review-collection packer and occurrence authorisation checks to preserve one logical provenance/permission context per domain, identity and candidate revision while storing identical canonical method payloads once. It verifies the selected candidate on restore and does not infer active status, real rights, provenance independence, or authority from a common digest. Domain labels in tests are illustrative, not a grant for real data sharing; archive access must remain with a trusted boundary because raw ZIP access bypasses occurrence checks. No new store, service or production FileSpace/DataSpace dispatch. Semantic equivalence across differing evidence remains held. Future native admission requires signed DBR roots, grants, revocation enforcement and independent evidence.
+
+## Bounded semantic equivalence review
+
+The native_semantic_review module computes exact composed affine coefficients and the intersection of all stage envelopes expressed in input coordinates. It compares separately verified candidates without merging evidence, identity, permissions or execution capacity. Equal affine laws are mathematical equivalence on the reported overlap only; disjoint ranges, coordinate/unit differences and single-point agreement are distinct cases. No model replacement or empirical equivalence is claimed. It adds no loader, worker or database. General symbolic, nonlinear and cross-unit equivalence remain held.
+
+## Bounded verification reuse
+
+The batch review entry point verifies and captures a private model/history snapshot, reuses the existing mathematical apply helper within that call, checks the caller-supplied current head before and after each input, and enforces aggregate facet and per-input budgets. No persistent cache, actual lease authentication, native promotion or external dispatch. The head reader is a trusted-caller dependency, not independently authenticated; production integration requires the existing governance boundary. The batch preserves per-input traces and exact results. No partial result is returned after a hold.
+
+## Raphael source and online projection alignment
+
+Native Raphael review binds the existing Type-I equation kernel, geometry search catalogue, atlas workset and locally checked-in GO public projection by source digest, and reuses the existing Raphael sweep capability and atlas hydration. Explicitly selected atlas/kernel/search records are comparison candidates, not validated associations. No arbitrary physics equation evaluation, physical claim, remote publication or new store. Legacy placeholder equations remain held; full T173 and empirical admission require independent evidence. The checked-in public projection equality is not a live website verification.

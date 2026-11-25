@@ -1,0 +1,303 @@
+{
+  "schema": "CGX-UNISPACE-ALL-ATTEMPT-CONVERGENCE-OVERLAY/0.1",
+  "canonical_root": "cgx:root:cognigrex",
+  "repository": "achillesromer-coder/LightSpeed",
+  "observation_date": "2026-11-23",
+  "status": "SOURCE_REVIEW_ONLY_NOT_NATIVE_ADMISSION",
+  "historic_public_inputs": {
+    "source_pr_snapshot": {
+      "path": "cgx/review/unispace_git_pr_source_snapshot_20261122.json",
+      "git_blob": "43e78aec0ac196b59c1b91d43454ab803213d1e9",
+      "observed_open_prs": 74
+    },
+    "changed_path_overlap": {
+      "path": "cgx/review/unispace_source_path_overlap_20261122.json",
+      "git_blob": "94011bd8f7aba51785b18c8194cd61c0211418ba",
+      "observed_prs": 7
+    },
+    "crossspace_gates": {
+      "path": "cgx/review/unispace_crossspace_gate_register_v0_1.json",
+      "git_blob": "ba58ef20210ac5338fda786f60592ccc7b22b9f7",
+      "observed_open_gate_groups": 51
+    }
+  },
+  "current_focal_pr_observations": [
+    {
+      "pr": 205,
+      "title": "CGX review: LOAD.cgx minimum Alexandria library bootstrap",
+      "head_sha": "e5d78107c04a2e396f6bd3aaa5ab9592a6ce7796",
+      "head_branch": "review/load-alexandria-minimal-20261028",
+      "base_branch": "main",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/205"
+    },
+    {
+      "pr": 228,
+      "title": "Draft: UniSpace CGX native persistence and offline catalogue convergence",
+      "head_sha": "2bdc431b6cee5d24e4f34a570b700a2d26fbc2e3",
+      "head_branch": "ops/canonical-queue-index-20261115",
+      "base_branch": "main",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/228"
+    },
+    {
+      "pr": 229,
+      "title": "Draft: Achilles mobile CGX secondary handoff for UniSpace",
+      "head_sha": "dc312003b7e95dfd6b8ad6b975a318e208cda003",
+      "head_branch": "review/mobile-achilles-secondary-endpoint-20261118",
+      "base_branch": "ops/canonical-queue-index-20261115",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/229"
+    },
+    {
+      "pr": 230,
+      "title": "Draft: Single living CGX catalogue and safe empty-file reconciliation",
+      "head_sha": "87b9e909fd2c4f856e8ea47ec23c44e16ab6f1ed",
+      "head_branch": "review/cgx-living-consolidation-20261118",
+      "base_branch": "ops/canonical-queue-index-20261115",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/230"
+    },
+    {
+      "pr": 231,
+      "title": "Draft: repair CGX native source-manifest CI without host changes",
+      "head_sha": "0759137d9f67770eae81aeb1987f5f6097ab24c0",
+      "head_branch": "fix/cgx-native-source-manifest-20261119",
+      "base_branch": "ops/canonical-queue-index-20261115",
+      "state": "closed",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/231"
+    },
+    {
+      "pr": 232,
+      "title": "Draft: Five UniSpace workspace facets over one Cognigrex root",
+      "head_sha": "1d8a3feb26a9508ec461e9b3d090010e6f23972a",
+      "head_branch": "review/cgx-unispace-five-facet-mesh-20261119",
+      "base_branch": "review/cgx-living-consolidation-20261118",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/232"
+    },
+    {
+      "pr": 233,
+      "title": "Draft: Universal CGX/UOS public gateway — 51 routes and verified 404 map",
+      "head_sha": "94960c0730635c75a46bdaa161900b2d1459bf03",
+      "head_branch": "feature/uos-universal-public-gateway-20261119",
+      "base_branch": "main",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/233"
+    },
+    {
+      "pr": 235,
+      "title": "UniSpace: consolidate spaces into one existing GUI shell (review-only)",
+      "head_sha": "c0b91762fdd31248b15f5fa3b22aee27baf4428d",
+      "head_branch": "review/unispace-facet-single-shell-20261121",
+      "base_branch": "main",
+      "state": "closed",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/235"
+    },
+    {
+      "pr": 236,
+      "title": "PrintSpace: canonical CGX manufacturing review gate + Raphael/T173 crosswalk (draft)",
+      "head_sha": "399b0c8721225bc82c0fa275d46e3b175fd5b9eb",
+      "head_branch": "review/pc01-raphael-printspace-crosswalk-20261122",
+      "base_branch": "main",
+      "state": "open",
+      "draft": true,
+      "merged": false,
+      "mergeable_at_observation": true,
+      "source_url": "https://github.com/achillesromer-coder/LightSpeed/pull/236"
+    }
+  ],
+  "history_groups": [
+    {
+      "id": "identity_and_view",
+      "source_prs": [
+        55,
+        151,
+        152,
+        153,
+        167,
+        173,
+        174,
+        175,
+        177,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188
+      ],
+      "policy": "PRESERVE_SOURCE_VERSION_AND_ORIGINAL_R0; ALIAS_AND_FOLD_ONLY_IF_EQUALITY_OR_REVIEWED_SEMANTICS_PROVEN"
+    },
+    {
+      "id": "alexandria_source_rights",
+      "source_prs": [
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        196,
+        197,
+        198,
+        199,
+        205,
+        206,
+        207,
+        210,
+        211
+      ],
+      "policy": "KEEP_SOURCE_BYTES_PROVIDER_BOUND; INDEPENDENT_RIGHTS_AND_PRIVATE_PUBLIC_NEGATIVE_PROOF"
+    },
+    {
+      "id": "agent_intelligence_geometry",
+      "source_prs": [
+        213,
+        214,
+        215,
+        218,
+        220,
+        222,
+        223,
+        224,
+        225,
+        227
+      ],
+      "policy": "AGENT_IDENTITY_DISTINCT_FROM_MODEL; T173_RESEARCH_AND_T174_SENTINEL; ASSURANCE_AND_LEASE"
+    },
+    {
+      "id": "native_product_branches",
+      "source_prs": [
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        235,
+        236
+      ],
+      "policy": "SINGLE_ROOT_AND_SINGLE_REVIEW_CHAIN; CLOSED_BRANCHES_REFERENCE_ONLY; NO_BLIND_OVERWRITE"
+    }
+  ],
+  "verified_review_ancestry": [
+    {
+      "child_pr": 230,
+      "parent_pr": 228,
+      "relation": "BASE_BRANCH",
+      "branch": "ops/canonical-queue-index-20261115"
+    },
+    {
+      "child_pr": 232,
+      "parent_pr": 230,
+      "relation": "BASE_BRANCH",
+      "branch": "review/cgx-living-consolidation-20261118"
+    },
+    {
+      "child_pr": 229,
+      "parent_pr": 228,
+      "relation": "BASE_BRANCH",
+      "branch": "ops/canonical-queue-index-20261115"
+    }
+  ],
+  "merge_queue": [
+    {
+      "pr": 232,
+      "target_pr": 230,
+      "target_branch": "review/cgx-living-consolidation-20261118",
+      "disposition": "CONDITIONAL_SOURCE_MERGE_AFTER_EXACT_HEAD_CI_AND_BRANCH_RECHECK",
+      "public_deploy": false
+    },
+    {
+      "pr": 230,
+      "target_pr": 228,
+      "target_branch": "ops/canonical-queue-index-20261115",
+      "disposition": "NEXT_SOURCE_STAGE_REVALIDATE_AFTER_CHILD_MERGE",
+      "public_deploy": false
+    },
+    {
+      "pr": 228,
+      "target_pr": null,
+      "target_branch": "main",
+      "disposition": "HOLD_PRODUCTION_LINK_UNTIL_NATIVE_HOST_ROLLBACK_RIGHTS_SIGNED_DBR",
+      "public_deploy": false
+    },
+    {
+      "pr": 205,
+      "target_pr": null,
+      "target_branch": "main",
+      "disposition": "SEPARATE_SOURCE_DIFF_RIGHTS_AND_MAIN_AUTO_DEPLOY_REVIEW",
+      "public_deploy": false
+    },
+    {
+      "pr": 233,
+      "target_pr": null,
+      "target_branch": "main",
+      "disposition": "PUBLIC_SAFE_NO_PRIVATE_ASSETS_GATE",
+      "public_deploy": false
+    },
+    {
+      "pr": 236,
+      "target_pr": null,
+      "target_branch": "main",
+      "disposition": "SW_AND_PHYSICAL_QUALIFICATION_SEPARATE",
+      "public_deploy": false
+    }
+  ],
+  "closed_unmerged_attempts": [
+    231,
+    235
+  ],
+  "release_gates": [
+    "SIGNED_PROFILES_ACL_AND_LEASE",
+    "NATIVE_ROOT_DBR_READBACK",
+    "INDEPENDENT_PEER_COLD_RECOVERY",
+    "ORIGINAL_RIGHTS_AND_IP_CLEARANCE",
+    "PRIVATE_PUBLIC_DENIAL_AND_RED_TEAM",
+    "PRODUCTION_ROLLBACK_SUPPORT_AND_SECURITY"
+  ],
+  "invariants": {
+    "historical_source_snapshots_immutable": true,
+    "source_payloads_copied": false,
+    "all_historical_attempts_native_absorbed": false,
+    "all_models_retrained": false,
+    "model_weights_modified": false,
+    "source_branch_merged_in_this_manifest": false,
+    "network_published": false,
+    "new_canonical_root_created": false,
+    "new_scheduler_created": false,
+    "archive_deleted": false,
+    "permissions_granted": false
+  },
+  "coverage_semantics": "The 74-PR 2026-11-22 observation is an indexed public-history window, not proof that all repository or private attempts were found or integrated; this overlay adds current focal PRs and closed sources without erasing original versions."
+}

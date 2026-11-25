@@ -364,13 +364,17 @@ jobs:
               (out/name).write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8")
           PY
       - name: Archive sequential checkpoints and readbacks
-        if: always()
+        if: ${{ always() && github.event.repository.private == true }}
         uses: actions/upload-artifact@v4
         with:
           name: pc01-printspace-sequential-regression
           path: ${{ runner.temp }}/cgx-printspace-batch/
           if-no-files-found: warn
           retention-days: 30
+      - name: Validate historical PrintSpace handoff invariants
+        run: python scripts/validate_printspace_product_handoff.py --check
+      - name: Regress PrintSpace handoff and fail-closed gates
+        run: python -m pytest -q tests/test_printspace_product_handoff.py
       - name: Validate JSON syntax
         run: |
           python - <<'PY'
@@ -382,7 +386,7 @@ jobs:
           print("CGX component/manufacturing JSON validation PASS")
           PY
       - name: Archive private PrintSpace software release candidate (not a deployment)
-        if: success()
+        if: ${{ success() && github.event.repository.private == true }}
         uses: actions/upload-artifact@v4
         with:
           name: pc01-printspace-software-private-rc

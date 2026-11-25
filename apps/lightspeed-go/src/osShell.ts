@@ -1,4 +1,11 @@
 import "./osShell.css";
+import "./cgxGeneratedGui.css";
+import "./cgxImmersiveHomebase.css";
+import { mountCgxImmersiveHomebase } from "./cgxImmersiveHomebase";
+import "./cgxAchillesLocalShell.css";
+import { mountAchillesLocalShell } from "./cgxAchillesLocalShell";
+import cgxStudioSource from "../../../docs/architecture/CGX_UNISPACE_GO_FIVE_FACET_INTERFACE_20261122.json?raw";
+import { compileCgxGeneratedGui, mountCgxGeneratedGui } from "./cgxGeneratedGui";
 import { DEFAULT_DESKTOP_ORIGIN, readDesktopStatus, type Floor } from "./desktopBridge";
 import {
   AGENT_ROLES,
@@ -7,6 +14,8 @@ import {
   routeOperationalFloor,
   SHELL_SCHEMA,
   SHELL_VIEWS,
+  UNISPACE_FACETS,
+  resolveUniSpaceFacet,
   shellViewFromSearch,
   workflowStage,
   WORKFLOW_STAGES,
@@ -35,7 +44,7 @@ const readState = (): ShellState => {
       ? parsed.activeAgent as Floor
       : defaultState.activeAgent;
     return {
-      activeView: shellViewFromSearch(window.location.search, parsed.activeView),
+      activeView: shellViewFromSearch(window.location.search, window.location.hash.slice(1) || parsed.activeView),
       activeAgent: floor,
       focusMode: Boolean(parsed.focusMode),
     };
@@ -65,6 +74,9 @@ const setActiveView = (view: ShellView): void => {
   if (button && !button.classList.contains("active")) button.click();
   writeState({ activeView: view });
   document.body.dataset.lsWorkspace = view;
+  document.body.dataset.lsSpace = "unispace";
+  const context = document.getElementById("ls-os-space-context");
+  if (context) context.textContent = "UniSpace · one canonical workspace";
 };
 
 const setActiveAgent = (floor: Floor, focusInstruction = false): void => {
@@ -129,7 +141,7 @@ const makeStatusStrip = (): HTMLElement => {
     <div><span class="ls-os-status-dot stable"></span><strong>Neo operational head</strong><small>specialist-agent orchestration</small></div>
     <div><span class="ls-os-status-dot guarded"></span><strong>Achilles oversight</strong><small>evidence · canon · release gate</small></div>
     <div><span class="ls-os-status-dot private"></span><strong>De Sporte</strong><small>private persistence sidecar · metadata only</small></div>
-    <button type="button" id="ls-os-palette-open" title="Open command palette (Ctrl/Cmd+K)">⌘K</button>
+    <button type="button" id="ls-os-palette-open" aria-controls="ls-os-palette" aria-expanded="false" title="Open command palette (Ctrl/Cmd+K)">⌘K</button>
   `;
   return strip;
 };
@@ -162,7 +174,7 @@ const makePalette = (): HTMLElement => {
   palette.innerHTML = `
     <div class="ls-os-palette-card" role="dialog" aria-modal="true" aria-label="UniSpace command palette">
       <div class="ls-os-palette-head"><strong>UniSpace</strong><span>LightSpeed toolkit</span><button type="button" data-ls-close aria-label="Close">×</button></div>
-      <input id="ls-os-palette-input" type="search" autocomplete="off" placeholder="Open workspace, select agent, or route an outcome…" />
+      <input id="ls-os-palette-input" type="search" autocomplete="off" placeholder="Find a space, workspace, agent, or route an outcome…" />
       <div id="ls-os-palette-results" class="ls-os-palette-results"></div>
     </div>
   `;
@@ -171,20 +183,51 @@ const makePalette = (): HTMLElement => {
   });
   palette.querySelector<HTMLButtonElement>("[data-ls-close]")?.addEventListener("click", () => closePalette());
   palette.querySelector<HTMLInputElement>("#ls-os-palette-input")?.addEventListener("input", () => renderPaletteResults());
+  palette.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopPropagation();
+      closePalette();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const focusable = Array.from(palette.querySelectorAll<HTMLElement>("button:not([disabled]), input:not([disabled])"))
+      .filter((element) => element.getClientRects().length > 0);
+    const first = focusable[0], last = focusable[focusable.length - 1];
+    if (!first || !last) { event.preventDefault(); return; }
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
   return palette;
 };
+
+let palettePreviousFocus: HTMLElement | null = null;
 
 const openPalette = (): void => {
   const palette = document.getElementById("ls-os-palette");
   if (!palette) return;
+  if (palette.hidden) {
+    palettePreviousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  }
   palette.hidden = false;
+  document.getElementById("ls-os-palette-open")?.setAttribute("aria-expanded", "true");
   renderPaletteResults();
-  window.setTimeout(() => (document.getElementById("ls-os-palette-input") as HTMLInputElement | null)?.focus(), 0);
+  window.setTimeout(() => {
+    if (!palette.hidden) (document.getElementById("ls-os-palette-input") as HTMLInputElement | null)?.focus();
+  }, 0);
 };
 
-const closePalette = (): void => {
+const closePalette = (restoreFocus = true): void => {
   const palette = document.getElementById("ls-os-palette");
   if (palette) palette.hidden = true;
+  document.getElementById("ls-os-palette-open")?.setAttribute("aria-expanded", "false");
+  if (restoreFocus) palettePreviousFocus?.focus();
+  palettePreviousFocus = null;
 };
 
 const renderPaletteResults = (): void => {
@@ -192,6 +235,9 @@ const renderPaletteResults = (): void => {
   const mount = document.getElementById("ls-os-palette-results");
   if (!input || !mount) return;
   const query = input.value.trim().toLowerCase();
+  const facetItems = UNISPACE_FACETS
+    .filter((facet) => !query || `${facet.label} ${facet.description}`.toLowerCase().includes(query))
+    .map((facet) => `<button type="button" data-palette-facet="${facet.id}"><span>Space</span><strong>${escapeText(facet.label)}</strong><small>${escapeText(facet.description)}</small></button>`);
   const viewItems = SHELL_VIEWS
     .filter((view) => !query || view.includes(query))
     .map((view) => `<button type="button" data-palette-view="${view}"><span>Workspace</span><strong>${view}</strong><small>Open ${view} workspace</small></button>`);
@@ -201,14 +247,25 @@ const renderPaletteResults = (): void => {
   const routeItem = query
     ? [`<button type="button" data-palette-route="true"><span>Neo route</span><strong>${escapeText(routeOperationalFloor(input.value))}</strong><small>Use this text as the command outcome and route it through Cognigrex.</small></button>`]
     : [];
-  mount.innerHTML = [...routeItem, ...viewItems, ...agentItems].slice(0, 14).join("");
+  mount.innerHTML = [...facetItems, ...routeItem, ...viewItems, ...agentItems].slice(0, 18).join("");
   mount.querySelectorAll<HTMLButtonElement>("[data-palette-view]").forEach((button) => button.addEventListener("click", () => {
     setActiveView(normalizeShellView(button.dataset.paletteView));
     closePalette();
   }));
+  mount.querySelectorAll<HTMLButtonElement>("[data-palette-facet]").forEach((button) => {
+    const facet = resolveUniSpaceFacet(button.dataset.paletteFacet);
+    if (!facet) return;
+    button.addEventListener("click", () => {
+      setActiveView(facet.view);
+      const indicator = document.getElementById("ls-os-space-context");
+      if (indicator) indicator.textContent = `${facet.label} · projection-only · ${facet.description}`;
+      document.body.dataset.lsSpace = facet.id;
+      closePalette();
+    });
+  });
   mount.querySelectorAll<HTMLButtonElement>("[data-palette-agent]").forEach((button) => button.addEventListener("click", () => {
     setActiveAgent(button.dataset.paletteAgent as Floor, true);
-    closePalette();
+    closePalette(false);
   }));
   mount.querySelector<HTMLButtonElement>("[data-palette-route]")?.addEventListener("click", () => {
     const text = input.value.trim();
@@ -221,7 +278,7 @@ const renderPaletteResults = (): void => {
       instruction.focus();
     }
     setActiveView("command");
-    closePalette();
+    closePalette(false);
   });
 };
 
@@ -280,6 +337,9 @@ const bindExistingSurface = (): void => {
       const view = normalizeShellView(button.dataset.view);
       writeState({ activeView: view });
       document.body.dataset.lsWorkspace = view;
+      document.body.dataset.lsSpace = "unispace";
+      const indicator = document.getElementById("ls-os-space-context");
+      if (indicator) indicator.textContent = "UniSpace · one canonical workspace";
     });
   });
 
@@ -329,12 +389,66 @@ const installShell = (): void => {
   shell.prepend(makeStatusStrip());
   document.body.append(makePalette());
 
+  // Mount the existing source-qualified .cgx Interface Studio projection inside
+  // the SAME UniSpace shell. It never replaces legacy views or hosts a runtime.
+  const tabRail = shell.querySelector<HTMLElement>(".tabs");
+  if (tabRail) {
+    const generated = document.createElement("section");
+    generated.id = "ls-cgx-generated-gui";
+    generated.className = "ls-cgx-generated-gui";
+    generated.setAttribute("aria-label", "Generated Cognigrex FileSpace operator interface");
+    tabRail.after(generated);
+    // AR-first spatial workspace is a continuous overlay over the exact same
+    // generated Studio facet plan, not a second runtime or a second root.
+    const spatial = document.createElement("section");
+    spatial.id = "ls-cgx-immersive-homebase";
+    spatial.setAttribute("aria-label", "AR-first spatial Cognigrex home base");
+    tabRail.after(spatial);
+    try {
+      mountCgxImmersiveHomebase(
+        spatial,
+        compileCgxGeneratedGui(cgxStudioSource),
+        (view) => setActiveView(view),
+      );
+    } catch {
+      spatial.textContent = "Spatial layout held: source schema or local view invalid. Existing UniSpace workspaces remain operational.";
+      spatial.dataset.sourceState = "held";
+    }
+    try {
+      mountCgxGeneratedGui(generated, cgxStudioSource, (view) => setActiveView(view));
+    } catch {
+      // A damaged or unqualified contract must never prevent the old shell
+      // from loading; there is no auto-fetch, execution or silent fallback.
+      generated.textContent = "Generated .cgx layout held: review the source schema. Existing UniSpace views remain available.";
+      generated.dataset.sourceState = "held";
+    }
+  }
+
   const heading = shell.querySelector(".topbar h1");
   if (heading) heading.textContent = "UniSpace";
   const eyebrow = shell.querySelector(".topbar .eyebrow");
   if (eyebrow) eyebrow.textContent = "Cognigrex · powered by LightSpeed";
   const lede = shell.querySelector(".topbar .lede");
   if (lede) lede.textContent = "Your Cognigrex workspace for .cgx objects, local tools and evidence. Neo coordinates specialist agents through LightSpeed; Achilles governs evidence and release.";
+
+  const contextLine = document.createElement("p");
+  contextLine.id = "ls-os-space-context";
+  contextLine.setAttribute("role", "status");
+  contextLine.textContent = "UniSpace · one canonical workspace";
+  contextLine.style.cssText = "font-size:12px;color:var(--muted);margin-top:6px;line-height:1.4";
+  shell.querySelector(".topbar .lede")?.after(contextLine);
+
+  // Ancillary SystemSpace projection of the existing Achilles localhost shell.
+  // It never replaces desktopBridge (8765), controls the service or adds a root.
+  const systemView = document.querySelector<HTMLElement>("#view-system");
+  if (systemView && !document.getElementById("ls-achilles-local-oversight")) {
+    const oversight = document.createElement("article");
+    oversight.id = "ls-achilles-local-oversight";
+    oversight.className = "ls-achilles-local-panel";
+    oversight.setAttribute("aria-label", "Achilles local agent oversight endpoint");
+    systemView.prepend(oversight);
+    mountAchillesLocalShell(oversight);
+  }
 
   alignLegacySurfaceCopy(shell);
   bindExistingSurface();
@@ -358,7 +472,7 @@ const installShell = (): void => {
       return;
     }
     if (event.key === "Escape") closePalette();
-    if ((event.ctrlKey || event.metaKey) && /^[1-5]$/.test(event.key)) {
+    if ((event.ctrlKey || event.metaKey) && /^[1-6]$/.test(event.key)) {
       event.preventDefault();
       setActiveView(SHELL_VIEWS[Number(event.key) - 1] || "command");
     }

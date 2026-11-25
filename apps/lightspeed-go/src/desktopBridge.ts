@@ -952,6 +952,133 @@ export const decideDesktopReview = async (
     7000,
   );
 
+export interface CgxDynamicSurface {
+  schema: "CGX-UNISPACE-DYNAMIC-SURFACE/0.1";
+  selector: string;
+  source_view_sha256: string;
+  route_count: number;
+  routes: Array<{ id: string; state: string; kind: string; read_only: boolean; needs_review: boolean; gate: string; execution_enabled: false }>;
+  roles: Array<{ id: string; floor: string; responsibility: string; execution_enabled: false }>;
+  role_source_holds: string[];
+  native_mint_authorized: false;
+  execution_authorized: false;
+}
+export const readCgxDynamicSurface = (
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<CgxDynamicSurface> =>
+  withTimeout<CgxDynamicSurface>(
+    `${origin}/api/v1/cgx/surface?selector=LightSpeed`,
+    { method: "GET", headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) } },
+    10000,
+  );
+
+export interface CgxFamilyTopology {
+  schema: "CGX-UNISPACE-FAMILY-TOPOLOGY/0.1";
+  selector_count: number;
+  selectors: Array<{
+    selector: string;
+    registered_shortcalls: number;
+    available_routes: number;
+    gated_routes: number;
+    other_routes: number;
+    preferred_floors: string[];
+    toolkits: string[];
+    native_execution_verified: false;
+    native_mint_verified: false;
+  }>;
+  installed_carrier_state: string;
+  installed_carrier_count: number;
+  unique_carrier_hash_count: number;
+  hash_equal_aliases: Array<{ sha256: string; names: string[] }>;
+  content_groups: Array<{
+    sha256: string;
+    display_name: string;
+    reference_names: string[];
+    bytes: number;
+    collapsed_alias_count: number;
+    same_bytes_not_semantic_equivalence: true;
+    native_object_identity_verified: false;
+    safe_to_delete_aliases: false;
+    presentation_only: true;
+  }>;
+  collapsed_alias_card_count: number;
+  retained_empty_carrier_names: string[];
+  storage_root_is_alias: boolean;
+  safe_delete_candidates: [];
+  deletion_performed: false;
+  native_mint_verified: false;
+  data_space_network_mint_verified: false;
+}
+export const readCgxFamilyTopology = (
+  ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<CgxFamilyTopology> =>
+  withTimeout<CgxFamilyTopology>(
+    `${origin}/api/v1/cgx/family/topology`,
+    { method: "GET", headers: { "X-LightSpeed-Session": ownerSession.slice(0, 256) } },
+    12000,
+  );
+
+export interface CgxCheckpointPlan {
+  selector: "LightSpeed";
+  task_id: string;
+  run_id: string;
+  expected_view_sha256: string;
+  role_ids: string[];
+  route_ids: string[];
+  cpu_threads: number;
+  memory_mib: number;
+  max_jobs: number;
+  ttl_seconds: number;
+}
+export interface CgxCheckpointReceipt {
+  schema: "CGX-CANONICAL-TEMPORARY-CHECKPOINT/0.1";
+  task_id: string;
+  run_id: string;
+  candidate_sha256: string;
+  event_sha256: string;
+  state: "REVIEW_ONLY" | "REVOKED" | "EXPIRED";
+  expires_utc: string;
+  exact_readback_verified: boolean;
+  native_metadata_persisted: boolean;
+  execution_enabled: false;
+  native_mint_authorized: false;
+  inserted?: boolean;
+}
+export const checkpointSelectable = (surface: CgxDynamicSurface) => ({
+  roles: surface.roles.filter((role) => !role.execution_enabled),
+  routes: surface.routes.filter((route) =>
+    route.state === "available" && route.read_only && !route.execution_enabled
+  ),
+});
+export const writeCgxCheckpoint = (
+  plan: CgxCheckpointPlan, ownerSession: string,
+  origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<CgxCheckpointReceipt> =>
+  withTimeout<CgxCheckpointReceipt>(
+    `${origin}/api/v1/cgx/persistence/checkpoint`,
+    { method: "POST",
+      headers: { "Content-Type": "application/json",
+        "X-LightSpeed-Session": ownerSession.slice(0, 256) },
+      body: JSON.stringify(plan),
+    },
+    12000,
+  );
+export const revokeCgxCheckpoint = (
+  taskId: string, runId: string, candidateSha: string,
+  ownerSession: string, origin = DEFAULT_DESKTOP_ORIGIN,
+): Promise<CgxCheckpointReceipt> =>
+  withTimeout<CgxCheckpointReceipt>(
+    `${origin}/api/v1/cgx/persistence/revoke/${encodeURIComponent(taskId)}/${encodeURIComponent(runId)}`,
+    { method: "POST",
+      headers: { "Content-Type": "application/json",
+        "X-LightSpeed-Session": ownerSession.slice(0, 256) },
+      body: JSON.stringify({ expected_candidate_sha256: candidateSha }),
+    },
+    12000,
+  );
+
 export const reviewDecisionOutcomeMessage = (
   reviewId: string,
   decision: ReviewDecision,
