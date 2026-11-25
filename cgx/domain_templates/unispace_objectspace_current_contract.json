@@ -171,6 +171,60 @@
         "integrate existing GUIOS object action adapter and isolated snapshots",
         "native authority and rights gates remain held"
       ]
+    },
+    "scientificAdmission": {
+      "status": "SOURCE_REVIEW_CONTRACT_NOT_RUNTIME_ENFORCEMENT",
+      "existingRoot": "cgx:root:cognigrex",
+      "gateRegister": {
+        "path": "cgx/review/unispace_crossspace_gate_register_v0_1.json",
+        "blob": "ba58ef20210ac5338fda786f60592ccc7b22b9f7",
+        "printspaceGateIds": [
+          "PHYS-01",
+          "PHYS-02",
+          "PHYS-03",
+          "PHYS-04",
+          "PHYS-05"
+        ]
+      },
+      "classification": {
+        "visualPreset": "VISUAL_PRESET_ONLY",
+        "synthetic": "simulated",
+        "deduction": "inferred",
+        "hypothesis": "inferred",
+        "fiction": "fictional",
+        "measurement": "empirical"
+      },
+      "measurementRequirements": [
+        "source occurrence and rights",
+        "method and instrument or dataset",
+        "units and coordinate frame where applicable",
+        "timestamp or epoch",
+        "uncertainty and calibration or stated limitations",
+        "independent validation for physical claims"
+      ],
+      "geometryRequirements": [
+        "original coordinates and incidence",
+        "units and coordinate frame",
+        "mesh topology and dimensional checks",
+        "independent geometry verification",
+        "separate render provenance"
+      ],
+      "codec": {
+        "t173": "CANDIDATE_REVERSIBLE_CODEC_NOT_PHYSICS_PROOF",
+        "t174": "RESERVED_NONMINTABLE",
+        "binaryFallback": true
+      },
+      "physicalQualification": {
+        "meshPassIsNotMachineAuthority": true,
+        "simulationPassIsNotMeasurement": true,
+        "visualPresetIsNotMeteorology": true,
+        "materialDirectionRequiresIndependentCoupons": true,
+        "environmentalScaleTransferRequiresIndependentEvidence": true,
+        "physicalActuationAuthorised": false
+      },
+      "sourceOccurrenceAclRequired": true,
+      "gateClosureClaimed": false,
+      "nativeAdmission": false
     }
   },
   "release": {
@@ -289,6 +343,26 @@
       ],
       "dispatchPerformed": false,
       "executionAuthorized": false
+    },
+    "historicalReviewCompatibility": {
+      "status": "SOURCE_REVIEW_POLICY_ONLY",
+      "effectivePolicyRef": "#/executionPolicy",
+      "historicalReviewRef": {
+        "pr": 236,
+        "commit": "399b0c8721225bc82c0fa275d46e3b175fd5b9eb",
+        "register": "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+        "registerBlob": "060ec29e90913dc593f2498c3319d3725ca07792",
+        "archiveRegister": "cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json",
+        "archiveRegisterBlob": "20e2a5267feb4199ce274ed0fca1d50fbb368c24",
+        "normalRdcRemainingFloorPct": 25,
+        "emergencyRdcRemainingFloorPct": 24
+      },
+      "precedence": "Historical validators attest the recorded checkpoint only; current execution must use the canonical executionPolicy floors. Historical PASS cannot grant a lease or dispatch.",
+      "preserveHistoricalBytes": true,
+      "requireFreshQuota": true,
+      "unknownQuota": "HOLD",
+      "normalEmergencySeparation": true,
+      "nativeEnforcementVerified": false
     }
   },
   "mobileRouting": {
