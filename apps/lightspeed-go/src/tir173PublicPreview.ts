@@ -1,5 +1,5 @@
 /** Public-safe, read-only UniSpace tab: imports the shared CGX TIR/173 core. */
-import { makeCapsule,pack173,hex,reconcileThreeVoices,validateDictionary, type ShapeDictionary,type Trit } from '../../../cgx/runtime/tir173/tir173_core.mjs';
+import { makeCapsule,pack173,packThreeLines,hex,reconcileThreeVoices,validateDictionary, type ShapeDictionary,type Trit } from '../../../cgx/runtime/tir173/tir173_core.mjs';
 import { projectSynchronized } from '../../../cgx/runtime/tir173/tir173_composition.mjs';
 import neoProjection from '../../../docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json';
 
@@ -44,8 +44,8 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
     relations:[{predicate:'interacts_with',target:`review:public:shape:${b}`,evidence:'UNRESOLVED'}]});
    last=cap;const p=projectSynchronized(d,cap);
    const triad=reconcileThreeVoices(['intuitive','deliberative','assurance'].map(voice=>({voice,trit:value,validity:'UNRESOLVED' as const,source_ref:'review:neo:public'})));
-   const st=Array(173).fill(0) as Trit[];st[active-1]=value;
-   el(root,'tir-display').textContent=`Selected ${cap.shape_role} | reference mesh ${String(cap.geometry_ref)} | binary state ${hex(pack173(st)).slice(0,18)}… | ${triad.epistemic} | source-qualified hydration HOLD`;
+   const st=Array(173).fill(0) as Trit[];st[active-1]=value;const packedTriad=packThreeLines({intuitive:st,deliberative:st,assurance:st});
+   el(root,'tir-display').textContent=`Selected ${cap.shape_role} | reference mesh ${String(cap.geometry_ref)} | binary state ${hex(pack173(st)).slice(0,18)}… | three lanes ${packedTriad.length}B | ${triad.epistemic} | source-qualified hydration HOLD`;
    el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,projection:p.machine,negative_space:p.negative_space,binary_transport:p.transport},null,2);
   }catch(error){el(root,'tir-display').textContent=error instanceof Error?error.message:'Invalid TIR input';}
  };
