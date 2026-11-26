@@ -40,14 +40,14 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  <div class="form-grid"><label class="field"><span>View scale (ratio)</span><select id="tir-scale"><option value="0.001">0.001× micro</option><option value="1" selected>1× native</option><option value="1000">1000× macro</option></select></label></div>
  <p class="muted">The shape remains identical across lenses. The three state lines can disagree without being collapsed to neutral. LOAD and LOAD.Lite share the existing resolver; this surface produces a plan only, never hydration or admission.</p>
  <div class="route-preview" id="tir-context" aria-live="polite"></div>
- <div class="route-preview" id="tir-display"></div><div class="actions"><button type="button" id="tir-export">Export typed capsule</button></div>
+ <div class="route-preview" id="tir-display"></div><div class="actions"><button type="button" id="tir-export">Export synchronized review context</button></div>
  <pre id="tir-machine" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:300px;overflow:auto;border:1px solid #33435c;border-radius:8px;padding:12px"></pre>
  <p class="boundary">No public source access, minting, model execution, signed DBR, or canonical mutation is performed.</p></article>`;
  const choose=el<HTMLSelectElement>(root,'tir-role'),other=el<HTMLSelectElement>(root,'tir-second'),states=el<HTMLSelectElement>(root,'tir-state');
  const environment=el<HTMLSelectElement>(root,'tir-environment'),spatial=el<HTMLSelectElement>(root,'tir-spatial'),perspective=el<HTMLSelectElement>(root,'tir-perspective'),scale=el<HTMLSelectElement>(root,'tir-scale');
  const intuitive=el<HTMLSelectElement>(root,'tir-intuitive'),deliberative=el<HTMLSelectElement>(root,'tir-deliberative'),hydration=el<HTMLSelectElement>(root,'tir-hydration');
  const opts=d.roles.map((s,i)=>`<option value="${i+1}">${s.role} • ${s.name}</option>`).join('');
- choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>}|null;
+ choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>}|null;
  const display=():void=>{
   try{
    active=Number(choose.value);const b=Number(other.value),value=Number(states.value) as Trit;
@@ -65,7 +65,7 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
     spatial:spatial.value as 'in'|'on'|'through'|'across'|'around'|'between',
     perspective:perspective.value as 'top_down'|'bottom_up'|'intersection'|'side'|'void',
     scale_ratio:Number(scale.value),environment_ref:'review:declared-environment',source_ref:'review:neo:public'});
-   last={capsule:cap,lens};
+
    const line=(v:Trit):Trit[]=>{const st=Array(173).fill(0) as Trit[];st[active-1]=v;return st;};
    const st=line(value);
    const packedTriad=packThreeLines({
@@ -77,6 +77,7 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
     public_publish_authorized:false,canonical_mutation:false,host_context_readback_authenticated:false,
     source_rights_independently_verified:false,client_scope_independently_authenticated:false,
     requested_hydration:h,planned_hydration:h});
+   last={capsule:cap,lens,triad:voices,load_review_plan:load};
    el(root,'tir-display').textContent=`Selected ${cap.shape_role} | reference mesh ${String(cap.geometry_ref)} | binary state ${hex(pack173(st)).slice(0,18)}… | three lanes ${packedTriad.length}B | ${voices.conflict?'VOICE CONFLICT':'voices compatible'} | ${voices.epistemic} | LOAD ${h} PLAN ONLY`;
    el(root,'tir-context').textContent=`${lens.human.description} Apparent scale ${lens.human.view_scale}. Identity unchanged; relation not established. Void/fine detail remain explicit.`;
    el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,environment_lens:lens.context,human:lens.human,machine:p.machine,triad:voices,load_review_plan:load,negative_space:p.negative_space,binary_transport:p.transport},null,2);
