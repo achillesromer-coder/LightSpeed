@@ -70,3 +70,21 @@ export function reconcileThreeVoices(voices){must(Array.isArray(voices)&&voices.
  const missing=vs.some(x=>x.validity!=='SUPPORTED');return {schema:'cgx.ternary.reconcile/0.1',voices:by,conflict:s.size>1,combined_state:!missing&&s.size===1?val[0]:null,epistemic:missing?'UNRESOLVED':s.size>1?'CONFLICT':'SUPPORTED',automatic_promotion:false};
 }
 export function resolveWords(d,query,{limit=20}={}){validateDictionary(d);must(typeof query==='string'&&query.length<=120,'QUERY_BOUNDS');must(Number.isInteger(limit)&&limit>=1&&limit<=173,'RESULT_LIMIT');const q=query.trim().toLocaleLowerCase();if(!q)return [];return d.roles.map(e=>({role:e.role,name:e.name,family:e.family,terms:e.lexical_tokens||[],evidence:e.evidence,mesh_ref:e.mesh_ref,score:(e.name.toLocaleLowerCase().includes(q)?10:0)+(e.family.toLocaleLowerCase().includes(q)?3:0)+(e.lexical_tokens?.some(t=>t.includes(q))?2:0)})).filter(x=>x.score).sort((a,b)=>b.score-a.score||a.role.localeCompare(b.role)).slice(0,limit);}
+
+/** Three independently typed state lines, 173 positions each = 3 × 35 = 105 bytes.
+ * The carrier omits evidence masks, dictionary hash, units, sources and timestamps. */
+export const THREE_LINES=Object.freeze(['intuitive','deliberative','assurance']);
+export function packThreeLines(lines){
+ must(lines&&typeof lines==='object'&&!Array.isArray(lines)&&Object.keys(lines).length===3&&THREE_LINES.every(k=>own(lines,k)),'EXACTLY_THREE_NAMED_LINES');
+ const bytes=new Uint8Array(105);THREE_LINES.forEach((name,i)=>bytes.set(pack173(lines[name]),35*i));return bytes;
+}
+export function unpackThreeLines(bytes){must(bytes instanceof Uint8Array&&bytes.length===105,'THREE_LINES_105_BYTES');
+ const out={};for(let i=0;i<3;i++)out[THREE_LINES[i]]=unpack173(bytes.slice(i*35,(i+1)*35));return out;
+}
+/** Never collapse opposed lanes into 0: 0 is neutral; disagreement is a separate flag. */
+export function examineShapeTriad(lines,role){const i=normaliseRole(role)-1;
+ must(lines&&THREE_LINES.every(k=>Array.isArray(lines[k])&&lines[k].length===173&&STATES.has(lines[k][i])),'UNQUALIFIED_TRIAD_FRAME');
+ const states=THREE_LINES.map(k=>lines[k][i]);const conflict=new Set(states).size>1;
+ return {schema:'cgx.tir173.triad_shape_state/0.2',role:slotName(i+1),lines:Object.fromEntries(THREE_LINES.map((k,j)=>[k,states[j]])),conflict,
+  combined_state:conflict?null:states[0],epistemic:'EVIDENCE_MASK_NOT_INCLUDED',automatic_execution:false};
+}
