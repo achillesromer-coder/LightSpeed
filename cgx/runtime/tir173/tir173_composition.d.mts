@@ -1,0 +1,2 @@
+import type {ShapeDictionary,ShapeCapsule} from './tir173_core.mjs';
+export function projectSynchronized(d:ShapeDictionary,c:ShapeCapsule,graph?:null):{human:Record<string,unknown>;machine:Record<string,unknown>;negative_space:Record<string,unknown>;transport:{bytes:number;hex_prefix:string;exact_roundtrip:boolean}};
