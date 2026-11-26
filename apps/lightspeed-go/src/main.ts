@@ -66,6 +66,7 @@ import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./u
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
+import { mountTir173PublicPreview } from "./tir173PublicPreview";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -101,6 +102,7 @@ app.innerHTML = `
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
       <button class="tab" data-view="objects">Objects</button>
+      <button class="tab" data-view="language">Shape Language</button>
       <button class="tab" data-view="system">System</button>
       <button class="tab" data-view="sources">Sources</button>
     </nav>
@@ -201,6 +203,10 @@ app.innerHTML = `
       <div id="representation-graphs" class="graph-stack">
         <article class="panel"><p class="muted">Reading feature-gated object graphs from Desktop…</p></article>
       </div>
+    </section>
+
+    <section class="view" id="view-language">
+      <div id="tir173-public-preview"><article class="panel"><p class="muted">Loading typed TIR/173 shape-language review projection…</p></article></div>
     </section>
 
     <section class="view" id="view-system">
@@ -973,6 +979,11 @@ void loadType1CatalogueProjection(async () => {
 }).then((html) => { type1CatalogueMount.innerHTML = html; }).catch((error) => {
   const message = error instanceof Error ? error.message : "Type-I catalogue projection unavailable.";
   type1CatalogueMount.innerHTML = `<article class="panel"><p class="eyebrow">Type-I PrintSpace</p><h2>Projection unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
+});
+
+void mountTir173PublicPreview(byId("tir173-public-preview")).catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : "TIR/173 review projection unavailable";
+  byId("tir173-public-preview").textContent = `TIR/173 review projection on hold: ${message}`;
 });
 
 const exchangeMount = byId("neo-exchange");
