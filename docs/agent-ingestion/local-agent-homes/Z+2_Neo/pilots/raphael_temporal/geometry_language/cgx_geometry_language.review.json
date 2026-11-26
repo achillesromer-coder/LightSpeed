@@ -1,0 +1,27 @@
+{
+  "schema": "cgx.geometry_ternary_language/0.1",
+  "status": "REVIEW_ONLY_NOT_CANONICAL_NOT_LANGUAGE_MODEL_TRAINING",
+  "parent": "cgx:root:cognigrex",
+  "principle": "one shared typed language; existing libraries provide implementations; semantic references hydrate only when rights and evidence gates permit",
+  "namespaces": {
+    "T173:001..173": "stable Raphael geometry research roles; a role is not a distinct-solid proof",
+    "T173:174": "reserved null sentinel; never an object or payload",
+    "T3/<Grex>/<digits>": "navigation/trie address; not geometry identity or unique key",
+    "cgx://": "prospective native identity, only when separately admitted",
+    "lex:": "typed word/concept identity",
+    "rel:": "typed relation; requires source and evidential qualifier for a supported assertion",
+    "op:": "pure planned operator; not permission to execute"
+  },
+  "semantic_trit": {"-1":"REFUTED_BY_EVIDENCE","0":"UNRESOLVED_OR_NOT_ASSESSED","1":"SUPPORTED_BY_EVIDENCE","note":"Each classification separately requires provenance, scope, confidence, time; access denial is not semantic 0; contradictory evidence requires an explicit conflict state outside the trit"},
+  "transport_trit":{"range":"0,1,2","representation":"six fixed-width trits per byte for an exact simple transport demo","note":"semantic trits and transport trits are disjoint types; six trits per byte are NOT compression"},
+  "triad":{"nodes":["X:intrinsic_state","E:environment","R:typed_relation"],"status":"proposed recursive composition, not a demonstrated fundamental physical law"},
+  "axes":["X","E","L","T","P","C","V","R","I","B","U","Q"],
+  "controlled_nouns":["geometry","mesh","point","edge","face","solid","cell","topology","frame","unit","dimension","chirality","facet","material","interface","component","asset","function","data","evidence","source","identity","permission","receipt","agent","environment","state","history","frontier","branch","model","dictionary","relation","constraint"],
+  "controlled_relations":["is_a","part_of","has_mesh","has_role","equivalent_to","mirrors","adjacent_to","depends_on","encapsulates","interacts_with","derived_from","measured_by","validated_by","constrained_by","contradicts","supports"],
+  "controlled_operations":["SELECT","RELATE","TRIAD","PLAN_HYDRATE","PLAN_TRANSFORM","ENCODE_BYTES","DECODE_BYTES"],
+  "operator_policy":{"effects":"NONE","mode":"STATIC_DRY_RUN","source_hash_required_for_assertions":true,"source_rights_and_lease_required_for_hydration":true,"geometry_units_and_frame_required_for_transform":true,"natural_language_compiler_may_propose_AST_but_cannot_mint_or_execute":true},
+  "record_requirements":["stable_id","type","version","definition","role_ref","origin","units_if_physical","frame_if_geometric","evidence_state","source_ref","rights","content_digest_if_verified","transformation_law_or_loss_contract"],
+  "byte_codec_invariants":["roundtrip equals exact original byte sequence","reject non-ternary digit","reject 6-trit value above 255","no semantic inference from transport digits"],
+  "examples":["SELECT T173:001","RELATE T173:001 adjacent_to T173:002","TRIAD T173:001 interacts_with T173:002","PLAN_HYDRATE T173:131","PLAN_TRANSFORM T173:001 scale=2 unit=m frame=local","ENCODE_BYTES 00ff7f","DECODE_BYTES 000000100110011201"],
+  "release_gates":["per-slot independent geometry assurance","source and terminology rights","canonical equivalence review","native adapter typed and roundtrip verified","signed lease / DBR","independent user acceptance"]
+}
