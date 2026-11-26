@@ -1,4 +1,4 @@
-import test from 'node:test';
+import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const source=readFileSync(new URL('./main.ts',import.meta.url),'utf8');
