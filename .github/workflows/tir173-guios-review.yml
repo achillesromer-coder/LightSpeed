@@ -33,10 +33,12 @@ jobs:
         run: |
           node --test cgx/runtime/tir173/tir173_public.test.mjs
           node --test cgx/runtime/tir173/tir173_context.test.mjs
-          node --test apps/lightspeed-go/src/guios_layout.test.mjs
       - name: Install locked GO dependencies
         working-directory: apps/lightspeed-go
         run: npm ci --no-audit --no-fund
+      - name: Test unified LightSpeed GO with existing Vitest suite
+        working-directory: apps/lightspeed-go
+        run: npm test
       - name: Build unified GUIOS without deployment
         working-directory: apps/lightspeed-go
         run: npm run build
