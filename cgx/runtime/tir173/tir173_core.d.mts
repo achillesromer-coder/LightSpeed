@@ -10,3 +10,6 @@ export function makeCapsule(d:ShapeDictionary,opts:{path:number[];shape:number;l
 export function reconcileThreeVoices(voices:{voice:string;trit:Trit;validity:Validity;source_ref:string}[]):{conflict:boolean;epistemic:string;combined_state:Trit|null;automatic_promotion:boolean};
 export function encodeBinaryTransport(value:unknown):Uint8Array;
 export function hex(bytes:Uint8Array):string;
+
+export function packThreeLines(lines:Record<"intuitive"|"deliberative"|"assurance",Trit[]>):Uint8Array;
+export function unpackThreeLines(bytes:Uint8Array):Record<string,Trit[]>;
