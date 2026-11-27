@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 
 import pytest
@@ -72,7 +73,7 @@ def load_projection():
 
 
 def database(path):
-    with sqlite3.connect(path) as con:
+    with closing(sqlite3.connect(path)) as con, con:
         con.executescript("""
         CREATE TABLE canonical_objects(object_id TEXT PRIMARY KEY, state TEXT);
         CREATE TABLE object_identifiers(identifier_value TEXT, object_id TEXT, state TEXT);
@@ -168,7 +169,7 @@ def test_load_source_only_provenance_and_install_claims_fail_closed(tmp_path, mu
 
 def test_native_semantic_identifier_collision_remains_hold(tmp_path):
     family, load, db = fixture(tmp_path)
-    with sqlite3.connect(db) as con:
+    with closing(sqlite3.connect(db)) as con, con:
         con.execute(
             "INSERT INTO object_identifiers VALUES (?,?,?)",
             (ROOT, "another-native-object", "candidate"),

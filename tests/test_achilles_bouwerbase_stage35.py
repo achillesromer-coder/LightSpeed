@@ -11,6 +11,7 @@ import io
 import json
 from pathlib import Path
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -133,7 +134,7 @@ class Stage35PureTests(unittest.TestCase):
             with self.assertRaises(runner.Stage35Hold):
                 runner.native_snapshot(db)
             self.assertFalse(db.exists())
-            with sqlite3.connect(db) as con:
+            with closing(sqlite3.connect(db)) as con, con:
                 con.executescript("""
                     CREATE TABLE canonical_objects(object_id TEXT, state TEXT);
                     CREATE TABLE object_representations(
@@ -151,6 +152,8 @@ class Stage35PureTests(unittest.TestCase):
             self.assertEqual(result["parent"], [("candidate",)])
             self.assertEqual(result["review_count"], 0)
             self.assertEqual(hashlib.sha256(db.read_bytes()).hexdigest(), before)
+            db.unlink()
+            self.assertFalse(db.exists(), "read-only snapshot must release its SQLite handle")
 
     def test_source_archive_rejects_extra_files_and_tampering(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -247,15 +250,19 @@ class Stage35PureTests(unittest.TestCase):
                 runner.bridge_status()
 
     def test_non_windows_execution_is_rejected(self):
-        with patch.object(runner.os, "name", "posix"):
-            with tempfile.TemporaryDirectory() as temp:
-                root = Path(temp)
+        # Do not change process-wide os.name: pathlib and tempfile use it
+        # and a Windows CI worker must retain its actual filesystem identity.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            args = dict(
+                repo=root, stage34_file=root / "a", bundle=root / "b",
+                downloads=root, core=root, frontend=root, db=root / "c",
+                python=root / "d",
+            )
+            with patch.object(runner, "os") as mocked_os:
+                mocked_os.name = "posix"
                 with self.assertRaisesRegex(runner.Stage35Hold, "WINDOWS_ONLY"):
-                    runner.run(
-                        repo=root, stage34_file=root / "a", bundle=root / "b",
-                        downloads=root, core=root, frontend=root, db=root / "c",
-                        python=root / "d",
-                    )
+                    runner.run(**args)
 
     def test_script_cannot_start_remote_agent_or_native_mint(self):
         source = SOURCE.read_text(encoding="utf-8")
