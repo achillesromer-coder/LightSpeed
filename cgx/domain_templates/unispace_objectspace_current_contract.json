@@ -355,7 +355,34 @@
         "native route always held"
       ],
       "dispatchPerformed": false,
-      "executionAuthorized": false
+      "executionAuthorized": false,
+      "receiptBinding": {
+        "status": "PRIVATE_CURRENT_TESTED_NO_NATIVE_ENFORCEMENT",
+        "version": 2,
+        "moduleSha256": "84d23f5af914b8f16326cb3fa20362bb0aecb963581dbc7dc1f932e427e49864",
+        "previousModuleSha256": "674c77c8420b33c57d8f9495c446956bc076edc29abbb13c9b4868ecae515b83",
+        "reuseRequires": [
+          "current source qualification",
+          "exact source and evidence digests",
+          "same review route",
+          "matching complete dependency receipt bindings",
+          "dependency order and current cycle checks"
+        ],
+        "externalDependencies": "Explicit pins and supplied complete acyclic receipt closure; in-plan dependencies cannot be concealed by external receipts.",
+        "legacyReceipts": "Preserve as history; re-review rather than reuse.",
+        "checks": {
+          "additional": 17,
+          "productTotal": 42,
+          "rebuildScenarios": 7,
+          "sharedWorld": 31,
+          "browserProduct": true,
+          "browserSharedWorldViewports": [
+            1440,
+            390
+          ]
+        },
+        "receiptTrust": "Caller-supplied metadata only; no cryptographic verification, native authority or dispatch."
+      }
     },
     "historicalReviewCompatibility": {
       "status": "SOURCE_REVIEW_POLICY_ONLY",
