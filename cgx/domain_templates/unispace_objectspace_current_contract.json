@@ -119,7 +119,35 @@
       ],
       "aiContributionPercentageInvented": false
     },
-    "nativeAdmission": false
+    "nativeAdmission": false,
+    "nestedFacetBridge": {
+      "status": "SOURCE_REVIEW_CANDIDATE",
+      "schema": "CGX-LOAD-R0-NESTED-FACET-PLAN/0.1",
+      "module": "cgx/load_minimum/loadFractalReference.mjs#planR0NestedFacets",
+      "priorReferenceBlob": "0ad1e92afba9dfb20bb9b9b030527f4069bce7ac",
+      "model": "Existing R0 tuple identities and typed occurrence edges; shared child references, acyclic full supplied closure",
+      "human": "Nested top-down disclosure; repeated child is reference",
+      "machine": "Dependency-first unique candidates; exact R0 tuples at H2",
+      "fileSpace": "Original R0 custody unchanged",
+      "dataSpace": "Reference plan only; no transport",
+      "loadLite": "Existing root-only planR0ReferenceHydration remains bootstrap",
+      "adapter": "Existing operator_ref/operator_version; optional EVM ABI reference binding with matching R0 digest, chain, address, selector and runtime code hash claim",
+      "limits": {
+        "maxNodes": 256,
+        "maxDepth": 32,
+        "maxMetadataBytes": 1048576,
+        "publicLevel": 0
+      },
+      "sourceHydration": false,
+      "sourceDigestIndependentVerification": false,
+      "nativeAdmission": false,
+      "chainExecution": false,
+      "transactionConstruction": false,
+      "sourceCompression": false,
+      "geometryProof": false,
+      "semanticDeduplication": false,
+      "release": false
+    }
   },
   "portability": {
     "classicBytePreservingCompanion": true,

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {SCHEMA,packR0Reference,unpackR0Reference,planR0ReferenceHydration,planR0LeafPacket,LEAF_PACKET_SCHEMA} from "./loadFractalReference.mjs";
+import {SCHEMA,packR0Reference,unpackR0Reference,planR0ReferenceHydration,planR0LeafPacket,LEAF_PACKET_SCHEMA,planR0NestedFacets,NESTED_FACET_SCHEMA} from "./loadFractalReference.mjs";
 const sample=Object.freeze({
  candidate_key:"candidate:emassc:wad-leaf",owner_domain:"emassc",
  file_space:"EMASSC.cgx",parent_file_space:"Cognigrex.cgx",
@@ -112,4 +112,95 @@ test("public rights, corrupted hash, packet budget and malformed leaves deny tra
    const r=planR0LeafPacket({tuple:pack(),...scope,requested_leaf_keys:xs});
    assert.equal(r.reason,"INVALID_PACKET_REQUEST");
  }
+});
+
+
+const node=(key,children=[],more={})=>packR0Reference({...sample,candidate_key:"candidate:"+key,
+ source_ref:"fixture:"+key,source_sha256:"a".repeat(64),children:children.map(k=>"candidate:"+k),...more});
+const facet=(key,children=[],kind="assembly",binding=null,more={})=>({tuple:node(key,children,more),kind,binding});
+const evm={standard:"evm-abi/1",chain_ref:"eip155:11155111",contract_address:"0x"+"1".repeat(40),
+ interface_sha256:"a".repeat(64),runtime_code_sha256:"b".repeat(64),method_selector:"0x12345678",operation:"inspect"};
+const graph=()=>[facet("root",["left","right"]),facet("left",["shared"],"simulation"),
+ facet("right",["shared","contract"],"tool"),facet("shared",[],"geometry"),
+ facet("contract",[],"smart_contract",evm)];
+const nested=(facets=graph(),more={})=>{
+ const ds=facets.map(f=>unpackR0Reference(f.tuple));
+ return planR0NestedFacets({root_key:"candidate:root",facets,
+  authorized_keys:ds.map(d=>d.candidate_key),authorized_source_refs:ds.map(d=>d.source_ref),
+  expected_source_hashes:Object.fromEntries(ds.map(d=>[d.candidate_key,d.source_sha256])),...more});
+};
+test("nested human tree shares one machine identity, child before parent",()=>{
+ const r=nested();assert.equal(r.schema,NESTED_FACET_SCHEMA);assert.equal(r.state,"NESTED_REFERENCE_PLAN_ONLY");
+ assert.deepEqual(r.machine_bottom_up.map(n=>n.ref),["candidate:shared","candidate:left","candidate:contract","candidate:right","candidate:root"]);
+ assert.equal(r.unique_facets,5);
+ assert.deepEqual(r.human_top_down.children[1].children[0],{ref:"candidate:shared",occurrence:"SHARED_REFERENCE"});
+ assert.equal(r.machine_bottom_up.filter(n=>n.ref==="candidate:shared").length,1);
+ assert.deepEqual(nested(graph().reverse()),r);
+});
+test("machine ordering retains exact R0 tuples and contract binding across representation",()=>{
+ const original=graph(),r=nested(original);
+ const restored=r.machine_bottom_up.map(({tuple,kind,binding})=>({tuple,kind,binding}));
+ assert.deepEqual(nested(restored),r);
+ for(const f of original)assert.deepEqual(r.machine_bottom_up.find(n=>n.ref===unpackR0Reference(f.tuple).candidate_key).tuple,f.tuple);
+ for(const k of ["native_admission","public_release","operator_executed","transaction_constructed","chain_transaction_submitted","semantic_equivalence_verified","scope_independently_verified"])assert.equal(r[k],false,k);
+ assert.equal(r.payload_bytes_transferred,0);assert.equal(r.source_bytes_read,0);
+});
+test("root-only and H1 projections do not disclose source metadata or contract binding",()=>{
+ const a=nested(graph(),{level:0}),b=nested(graph(),{level:1});
+ assert.deepEqual(a.machine_bottom_up,[{ref:"candidate:root",kind:"assembly"}]);
+ assert.ok(!JSON.stringify(a).includes("candidate:shared"));
+ for(const r of [a,b]){const s=JSON.stringify(r);assert.ok(!s.includes("fixture:"));assert.ok(!s.includes(evm.contract_address));assert.ok(!s.includes("operator_ref"));}
+ assert.equal(b.machine_bottom_up.length,5);
+});
+test("each leaf has its own digest and scope; errors do not reveal a private source",()=>{
+ for(const [more,reason] of [
+  [{authorized_keys:["candidate:root"]},"SOURCE_SCOPE_NOT_AUTHORIZED"],
+  [{authorized_source_refs:["fixture:root"]},"SOURCE_SCOPE_NOT_AUTHORIZED"],
+  [{expected_source_hashes:{"candidate:root":"a".repeat(64)}},"SOURCE_DIGEST_REQUIRED"],
+  [{expected_source_hashes:Object.fromEntries(graph().map(f=>[f.tuple[1],"c".repeat(64)]))},"SOURCE_BYTES_IDENTITY_MISMATCH"]
+ ]){const r=nested(graph(),more);assert.equal(r.reason,reason);assert.ok(!JSON.stringify(r).includes("fixture:"));assert.ok(!JSON.stringify(r).includes(evm.contract_address));}
+});
+test("duplicate identities, disconnected nodes, missing children and cycles fail closed",()=>{
+ assert.equal(nested([...graph(),graph()[4]]).reason,"DUPLICATE_CANDIDATE_IDENTITY");
+ assert.equal(nested([...graph(),facet("unrelated")]).reason,"UNREACHABLE_FACET");
+ assert.equal(nested(graph().filter(f=>f.tuple[1]!=="candidate:shared")).reason,"CHILD_REFERENCE_MISSING");
+ assert.equal(nested([facet("root",["a"]),facet("a",["root"])]).reason,"NESTED_CYCLE");
+});
+test("shared node cannot bypass depth check through a deeper second occurrence",()=>{
+ const g=[facet("root",["leaf","a"]),facet("a",["b"]),facet("b",["leaf"]),facet("leaf")];
+ assert.equal(nested(g,{max_depth:2}).reason,"NESTED_DEPTH_EXCEEDED");
+ assert.equal(nested(g,{max_depth:3}).state,"NESTED_REFERENCE_PLAN_ONLY");
+ assert.equal(nested(graph(),{max_nodes:4}).reason,"INVALID_NESTED_SCOPE");
+ assert.equal(nested(graph(),{max_metadata_bytes:512}).reason,"NESTED_METADATA_BUDGET_EXCEEDED");
+});
+test("contract references bind source ABI digest and keep chain effects held",()=>{
+ for(const operation of ["inspect","simulate","submit"]){
+  const r=nested([facet("root",[],"smart_contract",{...evm,operation})]);
+  assert.equal(r.state,"NESTED_REFERENCE_PLAN_ONLY");
+  const x=r.machine_bottom_up[0].contract_review;
+  assert.equal(x.state,operation==="submit"?"HOLD_SIGNED_LEASE_AND_TRANSACTION_CONSENT":operation==="simulate"?"HOLD_QUALIFIED_SIMULATION_PROVIDER":"REFERENCE_INSPECTION_ONLY");
+  assert.equal(x.transaction_constructed,false);assert.equal(x.chain_identity_verified,false);
+  assert.equal(x.proxy_resolution_verified,false);assert.equal(x.runtime_code_verified,false);
+ }
+ for(const binding of [{...evm,interface_sha256:"c".repeat(64)},{...evm,chain_ref:"eip155:0"},
+  {...evm,contract_address:"0x"+"Z".repeat(40)},{...evm,method_selector:"0x123"},
+  {...evm,contract_address:null},{...evm,rpc_url:"https://example.invalid"},
+  {...evm,operation:"execute"}]){
+  assert.equal(nested([facet("root",[],"smart_contract",binding)]).reason,"SMART_CONTRACT_BINDING_INVALID");
+ }
+ assert.equal(nested([facet("root",[],"geometry",evm)]).reason,"UNEXPECTED_ADAPTER_BINDING");
+});
+test("public nested metadata requires private review; private sources never appear on public root",()=>{
+ assert.equal(nested(graph(),{surface:"public"}).reason,"PUBLIC_NESTED_METADATA_HOLD");
+ assert.equal(nested(graph(),{surface:"public",level:0}).reason,"SOURCE_PUBLIC_RIGHTS_HOLD");
+ const g=[facet("root",[], "smart_contract",evm,{rights:"PUBLIC_SAFE"})];
+ const r=nested(g,{surface:"public",level:0});assert.equal(r.state,"NESTED_REFERENCE_PLAN_ONLY");
+ assert.equal(r.public_release,false);assert.ok(!JSON.stringify(r).includes(evm.contract_address));
+});
+test("different candidate occurrences with same source digest are not semantically merged",()=>{
+ const r=nested([facet("root",["a","b"]),facet("a"),facet("b")]);
+ assert.equal(r.unique_facets,3);assert.equal(r.semantic_equivalence_verified,false);
+ assert.equal(planR0NestedFacets(null).reason,"INVALID_NESTED_REQUEST");
+ assert.equal(nested(graph(),{rpc_url:"secret"}).reason,"UNEXPECTED_NESTED_FIELD");
+ assert.throws(()=>packR0Reference({...sample,owner_domain:"__proto__",file_space:undefined,parent_file_space:undefined}),/FAMILY_SCOPE_CONFLICT/);
 });

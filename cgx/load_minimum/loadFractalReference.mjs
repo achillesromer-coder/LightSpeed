@@ -25,7 +25,7 @@ const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
 function normalize(d){
   if(!obj(d)||!Object.keys(d).every(k=>FIELDS.includes(k))||
      !FIELDS.every(k=>Object.hasOwn(d,k)))throw Error("LOSSLESS_FIELD_SET_REQUIRED");
-  const scope=DOMAINS[d.owner_domain];
+  const scope=Object.hasOwn(DOMAINS,d.owner_domain)?DOMAINS[d.owner_domain]:null;
   if(!scope||d.file_space!==scope[0]||d.parent_file_space!==scope[1])
     throw Error("FAMILY_SCOPE_CONFLICT");
   for(const key of ["candidate_key","source_ref","source_version","operator_ref","operator_version"])
@@ -143,4 +143,133 @@ export function planR0LeafPacket({
  const metadata_utf8_bytes=new TextEncoder().encode(JSON.stringify(packet)).length;
  if(metadata_utf8_bytes>max_packet_bytes)return deny("PACKET_BUDGET_EXCEEDED");
  return {...packet,metadata_utf8_bytes,max_packet_bytes};
+}
+
+
+/** Nested, source-reference-only assembly crosswalk.
+ * One R0 descriptor per candidate identity; shared child occurrences are edges,
+ * never extra native objects. H2 carries exact reversible metadata, not bytes.
+ * FileSpace retains custody; DataSpace transport and F80 execution require host
+ * authorization independently of this F70/F90 review descriptor.
+ */
+export const NESTED_FACET_SCHEMA="CGX-LOAD-R0-NESTED-FACET-PLAN/0.1";
+const FACET_KINDS=new Set(["assembly","document","dataset","geometry","simulation","model","tool","smart_contract","state","receipt"]);
+const exactFields=(v,keys)=>obj(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
+const evmFields=["standard","chain_ref","contract_address","interface_sha256","runtime_code_sha256","method_selector","operation"];
+function contractBinding(b,d){
+ if(!exactFields(b,evmFields)||b.standard!=="evm-abi/1"||
+    typeof b.chain_ref!=="string"||!/^eip155:[1-9][0-9]{0,31}$/.test(b.chain_ref)||
+    (b.contract_address!==null&&(typeof b.contract_address!=="string"||!/^0x[0-9a-f]{40}$/.test(b.contract_address)))||
+    b.interface_sha256!==d.source_sha256||
+    (b.runtime_code_sha256!==null&&!hex(b.runtime_code_sha256))||
+    (b.contract_address===null&&b.runtime_code_sha256!==null)||
+    (b.method_selector!==null&&(typeof b.method_selector!=="string"||!/^0x[0-9a-f]{8}$/.test(b.method_selector)))||
+    !["inspect","simulate","submit"].includes(b.operation))throw Error("SMART_CONTRACT_BINDING_INVALID");
+ return Object.fromEntries(evmFields.map(k=>[k,b[k]]));
+}
+const nestedDeny=reason=>({schema:NESTED_FACET_SCHEMA,state:"DENIED",reason,source_bytes_read:0,
+ payload_bytes_transferred:0,canonical_writes:0,native_admission:false,public_release:false});
+/** Full supplied closure, deterministic top-down occurrence projection and
+ * bottom-up unique-node order. Expected source digests and scopes are claims,
+ * not authenticated ACLs. No provider, chain, codec or simulation is executed.
+ * LOAD.Lite can still use planR0ReferenceHydration for the root-only bootstrap.
+ */
+export function planR0NestedFacets(request){
+ if(!obj(request))return nestedDeny("INVALID_NESTED_REQUEST");
+ const allowed=["root_key","facets","authorized_keys","authorized_source_refs","expected_source_hashes","surface","level","max_nodes","max_depth","max_metadata_bytes"];
+ if(!Object.keys(request).every(k=>allowed.includes(k)))return nestedDeny("UNEXPECTED_NESTED_FIELD");
+ const {root_key,facets,authorized_keys,authorized_source_refs,expected_source_hashes,
+  surface="private",level=2,max_nodes=128,max_depth=16,max_metadata_bytes=65536}=request;
+ if(!txt(root_key)||!root_key.startsWith("candidate:")||!Array.isArray(facets)||!facets.length||
+    !Number.isSafeInteger(max_nodes)||max_nodes<1||max_nodes>256||facets.length>max_nodes||
+    !Number.isSafeInteger(max_depth)||max_depth<0||max_depth>32||
+    !Number.isSafeInteger(max_metadata_bytes)||max_metadata_bytes<512||max_metadata_bytes>1048576||
+    !["private","public"].includes(surface)||![0,1,2].includes(level)||
+    !Array.isArray(authorized_keys)||authorized_keys.length>512||!authorized_keys.every(txt)||
+    !Array.isArray(authorized_source_refs)||authorized_source_refs.length>512||!authorized_source_refs.every(txt)||
+    !obj(expected_source_hashes)||Object.keys(expected_source_hashes).length>512)
+  return nestedDeny("INVALID_NESTED_SCOPE");
+ // Never publish nested R0 source locations or smart-contract bindings from
+ // caller-supplied rights. Public review here is root identity only.
+ if(surface==="public"&&level!==0)return nestedDeny("PUBLIC_NESTED_METADATA_HOLD");
+ const nodes=new Map();
+ try{
+  for(const f of facets){
+   if(!exactFields(f,["tuple","kind","binding"])||!FACET_KINDS.has(f.kind))throw Error("INVALID_FACET");
+   const d=unpackR0Reference(f.tuple), key=d.candidate_key;
+   if(nodes.has(key))throw Error("DUPLICATE_CANDIDATE_IDENTITY");
+   if(!Object.hasOwn(expected_source_hashes,key))throw Error("SOURCE_DIGEST_REQUIRED");
+   const projection=planR0ReferenceHydration({tuple:f.tuple,authorized_keys,authorized_source_refs,
+    source_sha256:expected_source_hashes[key],surface,level:0});
+   if(projection.state!=="SOURCE_REFERENCE_ONLY")throw Error(projection.reason||"FACET_SOURCE_DENIED");
+   let binding=null;
+   if(f.kind==="smart_contract")binding=contractBinding(f.binding,d);
+   else if(f.binding!==null)throw Error("UNEXPECTED_ADAPTER_BINDING");
+   nodes.set(key,{d,tuple:packR0Reference(d),kind:f.kind,binding});
+  }
+  if(!nodes.has(root_key))throw Error("ROOT_REFERENCE_MISSING");
+  const visiting=new Set(),heights=new Map(),ordered=[];
+  const visit=(key,depth)=>{
+   if(depth>max_depth)throw Error("NESTED_DEPTH_EXCEEDED");
+   if(visiting.has(key))throw Error("NESTED_CYCLE");
+   if(heights.has(key)){
+    if(depth+heights.get(key)>max_depth)throw Error("NESTED_DEPTH_EXCEEDED");
+    return heights.get(key);
+   }
+   const n=nodes.get(key);if(!n)throw Error("CHILD_REFERENCE_MISSING");
+   visiting.add(key);let height=0;
+   for(const child of n.d.children)height=Math.max(height,1+visit(child,depth+1));
+   visiting.delete(key);heights.set(key,height);ordered.push(key);return height;
+  };
+  visit(root_key,0);
+  if(ordered.length!==nodes.size)throw Error("UNREACHABLE_FACET");
+  const expanded=new Set();
+  const human=(key)=>{
+   const n=nodes.get(key);
+   if(expanded.has(key))return {ref:key,occurrence:"SHARED_REFERENCE"};
+   expanded.add(key);
+   const item={ref:key,occurrence:"EXPANDED",kind:n.kind};
+   if(level>=1)item.children=n.d.children.map(human);
+   return item;
+  };
+  const visible=level===0?[root_key]:ordered;
+  const bottom=visible.map(key=>{
+   const n=nodes.get(key),out={ref:key,kind:n.kind};
+   if(level>=1)out.children=[...n.d.children];
+   if(level===2){
+    out.tuple=n.tuple;out.binding=n.binding;
+    out.adapter={operator_ref:n.d.operator_ref,operator_version:n.d.operator_version,
+     source_ref:n.d.source_ref,source_sha256:n.d.source_sha256,
+     function_facets:["F70","F80","F90"],operator_executed:false};
+    if(n.binding)out.contract_review={operation:n.binding.operation,
+     state:n.binding.operation==="submit"?"HOLD_SIGNED_LEASE_AND_TRANSACTION_CONSENT":
+      n.binding.operation==="simulate"?"HOLD_QUALIFIED_SIMULATION_PROVIDER":"REFERENCE_INSPECTION_ONLY",
+     chain_identity_verified:false,abi_selector_verified:false,runtime_code_verified:false,
+     proxy_resolution_verified:false,finality_verified:false,transaction_constructed:false};
+   }
+   return out;
+  });
+  const plan={schema:NESTED_FACET_SCHEMA,state:"NESTED_REFERENCE_PLAN_ONLY",parent:"Cognigrex.cgx",
+   resolver_alias:"LOAD.cgx",root:root_key,level,surface,
+   human_top_down:human(root_key),machine_bottom_up:bottom,
+   unique_facets:visible.length,closure_checked:true,identity_model:"ONE_CANDIDATE_PER_KEY_SHARED_OCCURRENCES",
+   source_custody:"FileSpace_R0",exchange:"DataSpace_REFERENCE_PLAN_ONLY",
+   source_bytes_read:0,payload_bytes_transferred:0,canonical_writes:0,
+   source_digests_independently_verified:false,scope_independently_verified:false,
+   rights_independently_verified:false,semantic_equivalence_verified:false,geometry_verified:false,
+   source_body_hydrated:false,native_admission:false,public_release:false,
+   operator_executed:false,transaction_constructed:false,chain_transaction_submitted:false,
+   requires:["independent provider R0 digest and rights readback","existing scoped DataSpace peer and signed lease",
+    "adapter-specific proof and signed DBR before execution","transaction-specific consent before effectful chain operation"]};
+  const bytes=new TextEncoder().encode(JSON.stringify(plan)).length;
+  if(bytes>max_metadata_bytes)return nestedDeny("NESTED_METADATA_BUDGET_EXCEEDED");
+  return plan;
+ }catch(e){
+  // Never echo source metadata, paths, credentials or arbitrary exception text.
+  const known=new Set(["INVALID_FACET","DUPLICATE_CANDIDATE_IDENTITY","SOURCE_DIGEST_REQUIRED","SOURCE_SCOPE_NOT_AUTHORIZED",
+   "SOURCE_BYTES_IDENTITY_MISMATCH","SOURCE_PUBLIC_RIGHTS_HOLD","INVALID_HYDRATION_SCOPE","INVALID_SOURCE_DESCRIPTOR",
+   "SMART_CONTRACT_BINDING_INVALID","UNEXPECTED_ADAPTER_BINDING","ROOT_REFERENCE_MISSING",
+   "NESTED_DEPTH_EXCEEDED","NESTED_CYCLE","CHILD_REFERENCE_MISSING","UNREACHABLE_FACET"]);
+  return nestedDeny(known.has(e?.message)?e.message:"INVALID_NESTED_DESCRIPTOR");
+ }
 }
