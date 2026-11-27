@@ -2,7 +2,7 @@
 import { makeCapsule,pack173,packThreeLines,hex,reconcileThreeVoices,validateDictionary, type ShapeDictionary,type Trit } from '../../../cgx/runtime/tir173/tir173_core.mjs';
 import { projectSynchronized } from '../../../cgx/runtime/tir173/tir173_composition.mjs';
 import { projectGuiosContext } from '../../../cgx/runtime/tir173/tir173_context.mjs';
-import { inspectTir173Intent } from '../../../cgx/runtime/tir173/tir173_intent_guard.mjs';
+import { bindTirIntentToExistingPlans } from '../../../cgx/runtime/tir173/tir173_intent_binding.mjs';
 import { planExistingLoadTIR } from '../../../cgx/runtime/tir173/tir173_load_bridge.mjs';
 import { listAtlasInteractions, planAtlasInteraction } from '../../../cgx/runtime/tir173/tir173_interaction.mjs';
 import componentAtlasRaw from '../../../cgx/component_atlas/component_interaction_map_v0_1.json?raw';
@@ -60,7 +60,7 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  const intentInput=el<HTMLInputElement>(root,'tir-intent-command');
  for(const rule of listAtlasInteractions(componentAtlas,{limit:75})){const option=document.createElement('option');option.value=rule.id;option.textContent=`${rule.id} • ${rule.source_family} → ${rule.target_family} (${rule.interaction})`;ruleSelect.append(option);}
  const opts=d.roles.map((s,i)=>`<option value="${i+1}">${s.role} • ${s.name}</option>`).join('');
- choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>;physical_interaction_review:ReturnType<typeof planAtlasInteraction>;intent_review:ReturnType<typeof inspectTir173Intent>}|null;
+ choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>;physical_interaction_review:ReturnType<typeof planAtlasInteraction>;intent_binding_review:ReturnType<typeof bindTirIntentToExistingPlans>}|null;
  const display=():void=>{
   try{
    active=Number(choose.value);const b=Number(other.value),value=Number(states.value) as Trit;
@@ -84,20 +84,22 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
    const packedTriad=packThreeLines({
     intuitive:line(Number(intuitive.value) as Trit),deliberative:line(Number(deliberative.value) as Trit),assurance:st});
    const h=hydration.value as 'H0'|'H1'|'H2'|'H3';
-   const load=planExistingLoadTIR(d,cap,{schema:'UNISPACE-CGX-LOAD-LENS-PLAN/0.1',
+   const loadPlan:Parameters<typeof planExistingLoadTIR>[2]={schema:'UNISPACE-CGX-LOAD-LENS-PLAN/0.1',
     state:'PLAN_ONLY_NOT_HYDRATED',alias:'LOAD.cgx',parent_filespace:'Cognigrex.cgx',
     object_id:cap.object_ref,native_admitted:false,hydrated:false,execution_performed:false,
     public_publish_authorized:false,canonical_mutation:false,host_context_readback_authenticated:false,
     source_rights_independently_verified:false,client_scope_independently_authenticated:false,
-    requested_hydration:h,planned_hydration:h});
+    requested_hydration:h,planned_hydration:h};
+   const load=planExistingLoadTIR(d,cap,loadPlan);
    const physical=planAtlasInteraction(componentAtlas,cap,lens.context,{rule_id:ruleSelect.value,source_sha256:atlasDigest});
-   const intentReview=inspectTir173Intent(d,intentInput.value,{expected_role:cap.shape_role});
-   last={capsule:cap,lens,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_review:intentReview};
+   const intentBinding=bindTirIntentToExistingPlans(d,cap,lens.context,{command:intentInput.value,
+    loadPlan,atlas:componentAtlas,atlasSelection:{rule_id:ruleSelect.value,source_sha256:atlasDigest}});
+   last={capsule:cap,lens,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding};
    el(root,'tir-display').textContent=`Selected ${cap.shape_role} | reference mesh ${String(cap.geometry_ref)} | binary state ${hex(pack173(st)).slice(0,18)}… | three lanes ${packedTriad.length}B | ${voices.conflict?'VOICE CONFLICT':'voices compatible'} | ${voices.epistemic} | LOAD ${h} PLAN ONLY`;
-   el(root,'tir-intent-human').textContent=`${intentReview.human.summary} | ${intentReview.human.status} | Missing: ${intentReview.human.missing}`;
+   el(root,'tir-intent-human').textContent=`${intentBinding.human.summary} | ${intentBinding.human.interpretation} | Requires: ${intentBinding.human.missing_inputs.join(', ')||'independent evidence and authority'} | ${intentBinding.machine.status}`;
    el(root,'tir-interaction-review').textContent=`${physical.human.title} | ${physical.human.summary} | ${physical.human.interpretation} | Requires: ${physical.required_variables.geometry.concat(physical.required_variables.state).join(', ')||'defined source parameters'} | Test: ${physical.human.next_test} | ${physical.human.boundary}`;
    el(root,'tir-context').textContent=`${lens.human.description} Apparent scale ${lens.human.view_scale}. Identity unchanged; relation not established. Void/fine detail remain explicit.`;
-   el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,environment_lens:lens.context,human:lens.human,machine:p.machine,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_review:intentReview,negative_space:p.negative_space,binary_transport:p.transport},null,2);
+   el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,environment_lens:lens.context,human:lens.human,machine:p.machine,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding,negative_space:p.negative_space,binary_transport:p.transport},null,2);
   }catch(error){last=null;el(root,'tir-display').textContent=error instanceof Error?error.message:'Invalid TIR input';el(root,'tir-interaction-review').textContent='Interaction plan unavailable';el(root,'tir-intent-human').textContent='Shorthand review unavailable';el(root,'tir-machine').textContent='';}
  };
  for(const x of [other,states,environment,spatial,perspective,scale,intuitive,deliberative,hydration,ruleSelect])x.addEventListener('change',display);
