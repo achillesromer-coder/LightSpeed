@@ -72,6 +72,7 @@ on:
   push:
     branches:
       - "ops/merovingian-project-routing-*"
+      - "review/cgx-ls-family-ingestion-20261031"
       - "fix/provider-secret-boundary-*"
       - "fix/**"
     paths:
