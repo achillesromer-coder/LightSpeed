@@ -204,3 +204,69 @@ test("different candidate occurrences with same source digest are not semantical
  assert.equal(nested(graph(),{rpc_url:"secret"}).reason,"UNEXPECTED_NESTED_FIELD");
  assert.throws(()=>packR0Reference({...sample,owner_domain:"__proto__",file_space:undefined,parent_file_space:undefined}),/FAMILY_SCOPE_CONFLICT/);
 });
+
+
+import {CONTRACT_SCHEMA,CONFIGURATIONS,packContract,unpackContract,projectContract,prepareContractSignature} from "./contractShorthand.mjs";
+const contractFixture=(extra={})=>({
+ contract_ref:"candidate:root",revision:1,previous_payload_sha256:null,source_ref:"fixture:root",source_sha256:"a".repeat(64),
+ residual_ref:sample.residual_ref,configuration:"exchange",
+ parties:[["buyer","identity:buyer","customer"],["seller","identity:seller","supplier"]],
+ variables:[["price","quantity",["12.50".replace(/0$/,""),"AUD"]],["ready","bool",true],["count","integer","2"],["due","utc","2026-12-01T00:00:00.000Z"]],
+ commitments:[["pay","oblige","buyer","seller","action:pay",["price","ready"],[["ready","eq",true]],["receipt:payment"],["deliver"]],
+ ["deliver","oblige","seller","buyer","action:deliver",["count"],[["count","ge","1"]],["receipt:delivery"],[]]],
+ signature_policy:["cgx-ed25519-bytes/1",["buyer","seller"],2],
+ valid_from:"2026-11-27T00:00:00.000Z",valid_until:"2026-12-02T00:00:00.000Z",native_adapter:null,...extra});
+test("commitment shorthand retains exact ordered typed constituents and residual",()=>{
+ const d=contractFixture(),t=packContract(d);
+ assert.equal(t[0],CONTRACT_SCHEMA);assert.deepEqual(unpackContract(t),d);assert.deepEqual(packContract(unpackContract(t)),t);
+ const p=projectContract(t);assert.deepEqual(p.machine_bottom_up.commitment_order,["deliver","pay"]);
+ const paths=p.human_top_down.children.flatMap(g=>g.children.map(c=>c.path.join("")));
+ assert.equal(new Set(paths).size,paths.length);assert.ok(paths.every(s=>/^[012]{7}$/.test(s)));
+ assert.deepEqual(p.machine_bottom_up.tuple,t);assert.equal(p.physical_geometry_verified,false);
+});
+test("same primitives compose multiple configurations without silently deleting clauses",()=>{
+ for(const configuration of Object.keys(CONFIGURATIONS)){
+  const d=contractFixture({configuration});assert.deepEqual(unpackContract(packContract(d)),d);
+ }
+ assert.throws(()=>packContract(contractFixture({configuration:"constructor"})),/UNKNOWN_CONFIGURATION/);
+});
+test("typed values reject rounding, ambiguous timestamps and malformed quantities",()=>{
+ for(const variables of [[["price","decimal",12.5]],[["price","decimal","12.50"]],[["price","integer","02"]],[["due","utc","2026-02-30T00:00:00.000Z"]],[["price","quantity",["1",""]]]]){
+  assert.throws(()=>packContract(contractFixture({variables})),/VARIABLES_INVALID/);
+ }
+});
+test("amendments must link previous exact payload; omissions are not defaults",()=>{
+ assert.throws(()=>packContract(contractFixture({revision:2})),/AMENDMENT_LINK_REQUIRED/);
+ const d=contractFixture({revision:2,previous_payload_sha256:"b".repeat(64)});assert.deepEqual(unpackContract(packContract(d)),d);
+ const missing=contractFixture();delete missing.residual_ref;assert.throws(()=>packContract(missing),/CONTRACT_FIELD_SET/);
+});
+test("invalid parties, scope, dependency cycles and typed conditions fail closed",()=>{
+ const d=contractFixture();d.commitments[1][8]=["pay"];assert.throws(()=>packContract(d),/COMMITMENT_CYCLE/);
+ const e=contractFixture();e.commitments[0][2]="stranger";assert.throws(()=>packContract(e),/COMMITMENT_SCOPE/);
+ const f=contractFixture();f.commitments[0][6]=[["ready","gt",true]];assert.throws(()=>packContract(f),/CONDITION_INVALID/);
+ const g=contractFixture();g.parties[1][1]=g.parties[0][1];assert.throws(()=>packContract(g),/SIGNATURE_POLICY_INVALID/);
+});
+test("signature intent binds exact revision, party, key, challenge and context but never signs",()=>{
+ const t=packContract(contractFixture()),r={party_id:"buyer",key_ref:"key:buyer",challenge:"c".repeat(64),context_ref:"review:agreement"};
+ const a=prepareContractSignature(t,r);assert.equal(a.state,"UNSIGNED_PREIMAGE_ONLY");assert.equal(a.signature_verified,false);assert.equal(a.threshold_satisfied,false);
+ assert.equal(a.preimage_utf8,JSON.stringify(a.intent_binding));
+ for(const change of [{party_id:"seller"},{key_ref:"key:replacement"},{challenge:"d".repeat(64)},{context_ref:"review:other"}])assert.notEqual(prepareContractSignature(t,{...r,...change}).preimage_utf8,a.preimage_utf8);
+ assert.notEqual(prepareContractSignature(packContract(contractFixture({revision:2,previous_payload_sha256:"b".repeat(64)})),r).preimage_utf8,a.preimage_utf8);
+ assert.throws(()=>prepareContractSignature(t,{...r,party_id:"stranger"}),/SIGN_REQUEST_INVALID/);
+});
+test("external signatures retain native payload boundary and do not impersonate EIP712 or PAdES",()=>{
+ for(const profile of ["external-eip712","external-pades","external-cades","external-jades","external-provider"]){
+  const t=packContract(contractFixture({signature_policy:[profile,["buyer","seller"],2]}));
+  const r=prepareContractSignature(t,{party_id:"buyer",key_ref:"key:buyer",challenge:"a".repeat(64),context_ref:"review:agreement"});
+  assert.equal(r.state,"HOLD_NATIVE_SIGNING_PAYLOAD_ADAPTER");assert.equal(r.preimage_utf8,null);assert.equal(r.execution_authorized,false);
+ }
+});
+test("nested contract facet binds R0 identity, original source and residual, with selective projection",()=>{
+ const t=packContract(contractFixture()),g=[facet("root",[],"contract",{standard:"cgx-commitments/1",payload:t})];
+ const r=nested(g);assert.equal(r.state,"NESTED_REFERENCE_PLAN_ONLY");assert.deepEqual(r.machine_bottom_up[0].binding.payload,t);
+ assert.equal(r.machine_bottom_up[0].contract_review.state,"UNSIGNED_COMMITMENT_REFERENCE_ONLY");
+ for(const level of [0,1])assert.ok(!JSON.stringify(nested(g,{level})).includes("identity:buyer"));
+ for(const change of [{contract_ref:"candidate:other"},{source_ref:"fixture:wrong"},{source_sha256:"b".repeat(64)},{residual_ref:null}]){
+  assert.equal(nested([facet("root",[],"contract",{standard:"cgx-commitments/1",payload:packContract(contractFixture(change))})]).reason,"COMMITMENT_BINDING_INVALID");
+ }
+});

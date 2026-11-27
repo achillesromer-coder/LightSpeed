@@ -147,6 +147,48 @@
       "geometryProof": false,
       "semanticDeduplication": false,
       "release": false
+    },
+    "contractShorthand": {
+      "schema": "CGX-COMMITMENT-SHORTHAND/1",
+      "status": "SOURCE_REVIEW_CANDIDATE",
+      "library": "cgx/load_minimum/contractShorthand.mjs",
+      "entrypoints": [
+        "packContract",
+        "unpackContract",
+        "projectContract",
+        "prepareContractSignature"
+      ],
+      "primitives": [
+        "oblige",
+        "permit",
+        "prohibit",
+        "declare"
+      ],
+      "configurationPolicy": "Composable suggested classes, not exhaustive legal taxonomy; no inferred clauses or consent",
+      "geometry": "Symbolic ternary constituent paths, revision-local; stable IDs retained; not T173 physical shape claims",
+      "source": "Exact original source and residual refs preserved; reversible declared metadata only",
+      "signing": "Unsigned domain-separated CGX byte intent; external signature profiles held for native payload adapter",
+      "nestedBinding": "cgx-commitments/1 under existing planR0NestedFacets contract facet",
+      "compatibility": {
+        "executionLease": {
+          "path": "cgx/domain_templates/execution_lease_contract.json",
+          "gitBlob": "637de5a3b904b5df0e865dd8f9477b3e7750c3d7"
+        },
+        "nodeExchange": {
+          "path": "cgx/domain_templates/node_exchange_contract.json",
+          "gitBlob": "5ac9dee791cc6d653007360dee49d40c57e6ccab"
+        },
+        "sourceEnvelope": {
+          "path": "cgx/domain_templates/source_envelope_contract.json",
+          "gitBlob": "0839fb67855c434892c509c4c9dfb812b79328a4"
+        },
+        "evm": "Existing smart_contract facet unchanged"
+      },
+      "signatureVerified": false,
+      "legalValidityVerified": false,
+      "leaseIssued": false,
+      "executionAuthorized": false,
+      "nativeAdmission": false
     }
   },
   "portability": {

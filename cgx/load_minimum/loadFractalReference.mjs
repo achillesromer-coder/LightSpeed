@@ -1,3 +1,4 @@
+import {packContract,unpackContract} from "./contractShorthand.mjs";
 /** Reversible R0 source-reference shorthand for existing LOAD/Alexandria.
  * This is an exact metadata descriptor, NOT source-byte compression, native
  * CGX minting, a geometry operator, a DOOM/WASM codec or an ACL decision.
@@ -153,7 +154,7 @@ export function planR0LeafPacket({
  * authorization independently of this F70/F90 review descriptor.
  */
 export const NESTED_FACET_SCHEMA="CGX-LOAD-R0-NESTED-FACET-PLAN/0.1";
-const FACET_KINDS=new Set(["assembly","document","dataset","geometry","simulation","model","tool","smart_contract","state","receipt"]);
+const FACET_KINDS=new Set(["assembly","document","dataset","geometry","simulation","model","tool","smart_contract","contract","state","receipt"]);
 const exactFields=(v,keys)=>obj(v)&&Object.keys(v).length===keys.length&&keys.every(k=>Object.hasOwn(v,k));
 const evmFields=["standard","chain_ref","contract_address","interface_sha256","runtime_code_sha256","method_selector","operation"];
 function contractBinding(b,d){
@@ -204,7 +205,12 @@ export function planR0NestedFacets(request){
    if(projection.state!=="SOURCE_REFERENCE_ONLY")throw Error(projection.reason||"FACET_SOURCE_DENIED");
    let binding=null;
    if(f.kind==="smart_contract")binding=contractBinding(f.binding,d);
-   else if(f.binding!==null)throw Error("UNEXPECTED_ADAPTER_BINDING");
+   else if(f.kind==="contract"){
+    if(!exactFields(f.binding,["standard","payload"])||f.binding.standard!=="cgx-commitments/1")throw Error("COMMITMENT_BINDING_INVALID");
+    const doc=unpackContract(f.binding.payload);
+    if(doc.contract_ref!==key||doc.source_ref!==d.source_ref||doc.source_sha256!==d.source_sha256||doc.residual_ref!==d.residual_ref)throw Error("COMMITMENT_BINDING_INVALID");
+    binding={standard:f.binding.standard,payload:packContract(doc)};
+   }else if(f.binding!==null)throw Error("UNEXPECTED_ADAPTER_BINDING");
    nodes.set(key,{d,tuple:packR0Reference(d),kind:f.kind,binding});
   }
   if(!nodes.has(root_key))throw Error("ROOT_REFERENCE_MISSING");
@@ -241,7 +247,8 @@ export function planR0NestedFacets(request){
     out.adapter={operator_ref:n.d.operator_ref,operator_version:n.d.operator_version,
      source_ref:n.d.source_ref,source_sha256:n.d.source_sha256,
      function_facets:["F70","F80","F90"],operator_executed:false};
-    if(n.binding)out.contract_review={operation:n.binding.operation,
+    if(n.kind==="contract")out.contract_review={state:"UNSIGNED_COMMITMENT_REFERENCE_ONLY",signature_verified:false,legal_validity_verified:false,execution_authorized:false};
+    if(n.kind==="smart_contract")out.contract_review={operation:n.binding.operation,
      state:n.binding.operation==="submit"?"HOLD_SIGNED_LEASE_AND_TRANSACTION_CONSENT":
       n.binding.operation==="simulate"?"HOLD_QUALIFIED_SIMULATION_PROVIDER":"REFERENCE_INSPECTION_ONLY",
      chain_identity_verified:false,abi_selector_verified:false,runtime_code_verified:false,
@@ -268,7 +275,7 @@ export function planR0NestedFacets(request){
   // Never echo source metadata, paths, credentials or arbitrary exception text.
   const known=new Set(["INVALID_FACET","DUPLICATE_CANDIDATE_IDENTITY","SOURCE_DIGEST_REQUIRED","SOURCE_SCOPE_NOT_AUTHORIZED",
    "SOURCE_BYTES_IDENTITY_MISMATCH","SOURCE_PUBLIC_RIGHTS_HOLD","INVALID_HYDRATION_SCOPE","INVALID_SOURCE_DESCRIPTOR",
-   "SMART_CONTRACT_BINDING_INVALID","UNEXPECTED_ADAPTER_BINDING","ROOT_REFERENCE_MISSING",
+   "SMART_CONTRACT_BINDING_INVALID","COMMITMENT_BINDING_INVALID","UNEXPECTED_ADAPTER_BINDING","ROOT_REFERENCE_MISSING",
    "NESTED_DEPTH_EXCEEDED","NESTED_CYCLE","CHILD_REFERENCE_MISSING","UNREACHABLE_FACET"]);
   return nestedDeny(known.has(e?.message)?e.message:"INVALID_NESTED_DESCRIPTOR");
  }
