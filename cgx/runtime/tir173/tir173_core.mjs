@@ -56,7 +56,11 @@ export function makeCapsule(d,{path=[1],shape=1,label='',object_ref='local:revie
 }
 export function validateCapsule(d,c){validateDictionary(d);must(c?.schema===TIR_SCHEMA&&c.authority==='REVIEW_ONLY'&&c.native_admitted===false&&c.execution_performed===false,'CAPSULE_AUTHORITY');
  const check=makeCapsule(d,{path:c.local_path,shape:c.shape_role,label:c.label,object_ref:c.object_ref,frame:c.frame,unit:c.unit,magnitude:c.magnitude,coarse:c.scale_lenses?.coarse,fine:c.scale_lenses?.fine,relations:c.relations,state:c.state,source_ref:c.source_ref,kind:c.kind});
- must(c.ordinal_address===check.ordinal_address&&c.geometry_ref===check.geometry_ref&&c.dictionary_source_sha256===check.dictionary_source_sha256,'CAPSULE_DICTIONARY_HASH_MISMATCH');return true;
+ // Rebuilding applies defaults for absent inputs; a received capsule must instead
+ // carry every emitted field and bind its evidence label to the dictionary.
+ must(Object.keys(check).every(k=>own(c,k)&&c[k]!==undefined),'CAPSULE_FIELD_MISSING');
+ must(c.scale_lenses&&own(c.scale_lenses,'coarse')&&own(c.scale_lenses,'fine')&&c.scale_lenses.coarse!==undefined&&c.scale_lenses.fine!==undefined,'CAPSULE_SCALE_LENS_MISSING');
+ must(c.ordinal_address===check.ordinal_address&&c.geometry_ref===check.geometry_ref&&c.geometry_evidence===check.geometry_evidence&&c.dictionary_source_sha256===check.dictionary_source_sha256,'CAPSULE_DICTIONARY_HASH_MISMATCH');return true;
 }
 export function projectLenses(d,c){validateCapsule(d,c);const r=d.roles[normaliseRole(c.shape_role)-1];return {
  human:{object:c.label||c.object_ref,shape:r.name,geometry_role:c.shape_role,category:r.family,scale:`${c.magnitude} ${c.unit}`,frame:c.frame,available_detail:c.scale_lenses.fine?.status||'NO_DATA',coarse:c.scale_lenses.coarse?.status||'NO_DATA',source_status:r.evidence,voice_status:c.state.validity,meaning:c.state.trit===1?'positive along declared basis':c.state.trit===-1?'negative along declared basis':'neutral along declared basis',relations:c.relations},
