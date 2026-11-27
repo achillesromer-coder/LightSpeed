@@ -34,6 +34,7 @@ jobs:
           node --test cgx/runtime/tir173/tir173_public.test.mjs
           node --test cgx/runtime/tir173/tir173_intent_guard.test.mjs
           node --test cgx/runtime/tir173/tir173_intent_binding.test.mjs
+          node --test cgx/runtime/tir173/tir173_archetype_evidence.test.mjs
           node --test cgx/runtime/tir173/tir173_context.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction_atlas.test.mjs
