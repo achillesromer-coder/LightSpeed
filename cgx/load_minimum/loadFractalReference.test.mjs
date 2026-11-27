@@ -423,3 +423,12 @@ test("journal rejects tampered links, stale revision, future reports and invalid
  assert.equal((await reviewCommitmentJournal(next,[a],reviewTime)).state,"REVIEW_REVISION_MISMATCH");
  assert.equal((await reviewCommitmentJournal(t,[{...a,signature_verified:true}],reviewTime)).state,"REVIEW_EVENT_FIELDS");
 });
+
+
+test("review replay is stable if original caller objects change during hashing",async()=>{
+ const t=packContract(contractFixture()),e=await reviewEvent(t,[]),events=[e];
+ const original=await reviewCommitmentJournal(t,events,reviewTime);
+ const pending=reviewCommitmentJournal(t,events,reviewTime);
+ t[1]="candidate:changed";e.observations[0][1]="0";events.length=0;
+ assert.deepEqual(await pending,original);
+});

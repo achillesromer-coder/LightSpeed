@@ -301,10 +301,12 @@ export async function reviewCommitmentJournal(t,events,asOf){
   legal_validity_verified:false,signature_verified:false,native_admission:false,execution_authorized:false,
   effects_performed:false,canonical_writes:0});
  try{
-  const d=unpackContract(t),digest=await contractPayloadDigest(t);
+  const d=unpackContract(t),fixed=packContract(d);
   must(rows(events,256)&&utc(asOf),"REVIEW_JOURNAL_INPUT");
-  // Snapshot all records synchronously before asynchronous hashing.
-  const tuples=events.map(e=>eventTuple(d,digest,e));
+  // Snapshot and validate records before yielding to the crypto provider.
+  const tuples=events.map(e=>{must(exact(e,EVENT_FIELDS)&&sha(e.payload_sha256),"REVIEW_EVENT_FIELDS");return eventTuple(d,e.payload_sha256,e);});
+  const digest=await contractPayloadDigest(fixed);
+  must(tuples.every(v=>v[3]===digest),"REVIEW_REVISION_MISMATCH");
   let prev=null,last=null,bytesTotal=0;const latest=new Map(),links=[];
   for(let i=0;i<tuples.length;i++){
    const v=tuples[i],e=Object.fromEntries(EVENT_FIELDS.map((k,j)=>[k,v[j+1]]));
@@ -312,7 +314,7 @@ export async function reviewCommitmentJournal(t,events,asOf){
    must(e.reported_at<=asOf&&(last===null||e.reported_at>=last),"REVIEW_TIME_ORDER");
    const prior=latest.get(e.commitment_id);
    // Dispute only a recorded report; reopen only a disputed report. A new
-   // report cannot overwrite a dispute. A reopened clause requires new evidence.
+   // report cannot overwrite a dispute. A reopened clause requires a new report.
    must(e.kind==="report"?(!prior||prior.kind==="reopen"||prior.kind==="report"):
     e.kind==="dispute"?prior?.kind==="report":prior?.kind==="dispute","REVIEW_TRANSITION_INVALID");
    const bytes=new TextEncoder().encode(JSON.stringify(v));bytesTotal+=bytes.length;
@@ -320,7 +322,7 @@ export async function reviewCommitmentJournal(t,events,asOf){
    prev=await shaBytes(bytes);last=e.reported_at;
    latest.set(e.commitment_id,e);links.push({sequence:e.sequence,event_sha256:prev});
   }
-  const order=projectContract(t).machine_bottom_up.commitment_order,byId=new Map(d.commitments.map(c=>[c[0],c]));
+  const order=projectContract(fixed).machine_bottom_up.commitment_order,byId=new Map(d.commitments.map(c=>[c[0],c]));
   const vars=new Map(d.variables.map(v=>[v[0],v])),states=new Map();
   const validity=asOf<d.valid_from?"BEFORE_INTERVAL":asOf>=d.valid_until?"AFTER_INTERVAL":"WITHIN_INTERVAL";
   for(const key of order){
