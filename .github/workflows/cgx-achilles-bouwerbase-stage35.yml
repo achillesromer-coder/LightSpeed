@@ -4,17 +4,21 @@ on:
   push:
     branches:
       - review/cgx-achilles-bouwerbase-stage35-20261101
+      - review/stage35-windows-fixture-20261120
     paths:
       - 'scripts/achilles_bouwerbase_stage35.py'
       - 'tests/test_achilles_bouwerbase_stage35.py'
+      - 'desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py'
       - 'cgx/review/achilles_bouwerbase_stage35_queue_20261101.json'
       - '.github/workflows/cgx-achilles-bouwerbase-stage35.yml'
   pull_request:
     branches:
       - review/cgx-ls-family-ingestion-20261031
+      - review/cgx-achilles-bouwerbase-stage35-20261101
     paths:
       - 'scripts/achilles_bouwerbase_stage35.py'
       - 'tests/test_achilles_bouwerbase_stage35.py'
+      - 'desktop/LightSpeed_Runtime/tests/test_cgx_family_ingestion.py'
       - 'cgx/review/achilles_bouwerbase_stage35_queue_20261101.json'
       - '.github/workflows/cgx-achilles-bouwerbase-stage35.yml'
   workflow_dispatch:
@@ -28,6 +32,8 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Verify pinned local-host runner compiles
         run: python3 -m py_compile scripts/achilles_bouwerbase_stage35.py tests/test_achilles_bouwerbase_stage35.py
       - name: Run isolated, non-Windows fixture tests
@@ -56,3 +62,20 @@ jobs:
           assert a['delivery']['independent_host_readback'] is False
           print('CGX Achilles source-only queue validation PASS; no host operation claimed.')
           PY
+
+  windows-fixture-only:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile fixture and host runner without invoking host runner
+        run: python -m py_compile scripts/achilles_bouwerbase_stage35.py tests/test_achilles_bouwerbase_stage35.py
+      - name: Run isolated Windows fixture tests only
+        run: python -m unittest discover -s tests -p 'test_achilles_bouwerbase_stage35.py' -v
+      - name: Explicit cloud evidence boundary
+        run: Write-Output 'Windows CI fixtures only; not BouwerBase execution, Stage34 acceptance, or native authority.'
