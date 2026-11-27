@@ -507,6 +507,63 @@
         "Historical geographic renderers retained as exact-source evidence",
         "No native admission or inference asserted"
       ]
+    },
+    "tir173": {
+      "status": "SELECTIVE_SOURCE_INTEGRATION_REVIEW_ONLY",
+      "sourceCommit": "23a43e43f288057376e6de722a78c07001a136a7",
+      "sourcePR": 238,
+      "sourceWorkflowRuns": [
+        {
+          "id": 45967799942,
+          "name": "LS GO Sites Side Edit Validation",
+          "conclusion": "success"
+        },
+        {
+          "id": 45967799938,
+          "name": "TIR173 GUIOS review contract",
+          "conclusion": "success"
+        },
+        {
+          "id": 45967799993,
+          "name": "Merovingian Project Routing",
+          "conclusion": "success"
+        }
+      ],
+      "runtime": "cgx/runtime/tir173",
+      "sourceBlobs": {
+        "cgx/runtime/tir173/tir173_composition.d.mts": "ea508f3c08474946f94e94c329cc54c3dc053b5c",
+        "cgx/runtime/tir173/tir173_composition.mjs": "706cb7faf698fb65819b41f2bc97b4a11e2b7669",
+        "cgx/runtime/tir173/tir173_context.d.mts": "f334b61f3c60cf1e4950227c114d879f9983a787",
+        "cgx/runtime/tir173/tir173_context.mjs": "3e7f283517f94c3f7e31d393791e45c5b1183e5d",
+        "cgx/runtime/tir173/tir173_context.test.mjs": "247431782544f7bd19b684fcaf51b756bacbc0c1",
+        "cgx/runtime/tir173/tir173_core.d.mts": "d4d5f517722d66ec02e71273d38b52055659c5fa",
+        "cgx/runtime/tir173/tir173_core.mjs": "2c6fd62448a906c648f44b2b722ed6089cdf8b53",
+        "cgx/runtime/tir173/tir173_interaction.d.mts": "32ef3572a81d8f946ab0b3d17ecf59b07e608cd9",
+        "cgx/runtime/tir173/tir173_interaction.mjs": "54c81af763078391345e478814db87a8d040cb87",
+        "cgx/runtime/tir173/tir173_interaction.test.mjs": "95adcb3d793d3e9e479a3ab1eea4d99501a92e9e",
+        "cgx/runtime/tir173/tir173_interaction_atlas.test.mjs": "2a32993396c1494c431b3f20abb8cfc598f619b5",
+        "cgx/runtime/tir173/tir173_load_bridge.d.mts": "6daf72b19e93c46d7c82217abe45a63bed06848a",
+        "cgx/runtime/tir173/tir173_load_bridge.mjs": "db29cb4eee55e8fcd31b294a4a6e854575ddaa7f",
+        "cgx/runtime/tir173/tir173_public.test.mjs": "474519c255a51784fed2aae9fea740e0479cc2ea",
+        "docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json": "65063103705c9b0332fdc1b2d3d45484acf45e06"
+      },
+      "existingAtlas": {
+        "path": "cgx/component_atlas/component_interaction_map_v0_1.json",
+        "gitBlob": "d0d9ff20d2361201eeb5cbd2f1ad344384b69b44",
+        "reused": true
+      },
+      "resolver": "LOAD.cgx existing review-plan seam",
+      "bootstrap": "LOAD.Lite",
+      "authority": "REVIEW_ONLY",
+      "destinationCombinedCI": "REQUIRED",
+      "nativeAdmission": false,
+      "sourceHydration": false,
+      "geometryProof": false,
+      "modelTraining": false,
+      "executionPerformed": false,
+      "interfaceMount": false,
+      "currentPackageIntegration": false,
+      "scope": "Five runtime modules, five type declarations, four regression files and existing public-safe role projection. No source main.ts/styles.css replacement or pilot history merge."
     }
   },
   "manualIntake": {

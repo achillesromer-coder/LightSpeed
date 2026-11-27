@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {createHash} from 'node:crypto';
+import {verifyComponentInteractionAtlas,listAtlasInteractions,planAtlasInteraction} from './tir173_interaction.mjs';
+const bytes=readFileSync(new URL('../../component_atlas/component_interaction_map_v0_1.json',import.meta.url));
+const atlas=JSON.parse(bytes.toString('utf8'));
+const hash=createHash('sha256').update(bytes).digest('hex');
+const capsule={schema:'cgx.tir173/0.2',authority:'REVIEW_ONLY',object_ref:'review:coil',shape_role:'T173:014',geometry_ref:'14',dictionary_source_sha256:'0'.repeat(64),native_admitted:false,execution_performed:false};
+const lens={schema:'cgx.guios.tir173.context/0.1',authority:'REVIEW_ONLY',object_ref:capsule.object_ref,shape_role:capsule.shape_role,geometry_ref:capsule.geometry_ref,dictionary_source_sha256:capsule.dictionary_source_sha256,environment:{kind:'hybrid'},interaction:{spatial:'on',relation_established:false},scale:{frame:'local',unit:'m',observed_magnitude:1},native_admitted:false,execution_performed:false};
+test('real owner-attributed CGX interaction atlas is used, not another physics catalogue',()=>{assert.equal(verifyComponentInteractionAtlas(atlas).records,75);assert.equal(listAtlasInteractions(atlas).length,75);assert.match(atlas.authority.drive_sheet,/30_CGX/);});
+test('CIM-001 source physics still requires independent object and measurement evidence',()=>{const r=planAtlasInteraction(atlas,capsule,lens,{rule_id:'CIM-001',source_sha256:hash});assert.equal(r.source.atlas_row,'CIM-001');assert.equal(r.source.source_family,'Interconnect');assert.equal(r.geometry.spatial_relation,'on');assert.equal(r.physical_interaction_established,false);assert.equal(r.simulation_performed,false);assert.equal(r.source.atlas_sha256_claim,hash);});
