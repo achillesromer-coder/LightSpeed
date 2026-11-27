@@ -86,3 +86,17 @@ For proposed roles `131..136`, does “24/36/48 facets” mean physically bounde
 
 **Next acceptance path:** (1) independently authenticate original mesh/material/source component IDs and licence for one real object; (2) map its T173 role + CGX facet family through a declared, testable relation with units, orientation, tolerance and boundaries; (3) resolve dependent variables through scoped LOAD/Filespace under existing lease; (4) compare a source model against independent numerical/physical evidence; (5) derive authorised simulation planning and GUIOS 3D interaction; (6) independent DBR/native admission and owner release, without promoting private coordinates or source-bearing runtime into public Git.
 
+
+## 27 November — exact T173 shorthand and fail-closed GUIOS intent review (implemented)
+
+This reuses the **existing** TIR173 role dictionary and GUIOS Objects lens, without creating another language engine, tab, native command path, training database or model. The owner-side exact-intent boundary is now a source-safe JavaScript review module on Neo's existing draft branch.
+
+- **cgx/runtime/tir173/tir173_intent_guard.mjs** (+ .d.mts): eight exact, declared intent families (SELECT, RELATE, TRIAD, PLAN_HYDRATE, PLAN_TRANSFORM, ENCODE_BYTES, DECODE_BYTES, ATLAS_RULE). The single role must be T173:001…T173:173; 174 is reserved. The parser binds the shape to the existing dictionary mesh reference/evidence and five-trit address, making **no** independent geometric or physical qualification claim. Unknown, multiple-role, malformed, extra-effect or privileged requests abstain without execution.
+- **apps/lightspeed-go/src/tir173PublicPreview.ts**: shows command interpretation beside the selected object, existing 75-rule interaction atlas, three voices, environmental scale and LOAD plan. It refuses a command targeting a different selected shape. The human review and machine export share the same typed intent_review object. A shape-selection change updates the default SELECT command.
+- **cgx/runtime/tir173/tir173_intent_guard.test.mjs**: 32 exact typed cases, 38 project-authored negative/ambiguous cases, 173 valid shape roles, reserved slots and GUIOS identity mismatch. **apps/lightspeed-go/src/tir173_intent_ui.test.mjs** verifies that the feature belongs to the existing inspector, not a new tab.
+- Code head **117439ed1e0ccfe353e166f6623fc19c5103db39** passed GitHub review workflow **46009409175**: Node TIR173/LOAD/context/interaction contracts, locked GO dependencies, GO Vitest and GUIOS production **build only**. A build is not a deployment.
+
+**Strong boundary:** EXACT_CANONICAL_REVIEW_PLAN means a syntax and dictionary reference were recognised. It does not mean operands supplied, content semantically understood, or permissioned action established. Every result preserves missing inputs, geometry/source evidence, rights and authority holds. No native LOAD hydration, simulation, signed DBR, mint, privileged effect, model inference or host service restart is enabled through this gate.
+
+**Next qualifications:** independently authored blind natural-language paraphrases, ambiguity/attack tests, confidence and abstention calibration, trained specialist per-operation acceptance and native rights/source attestation. The locally trained CPU Neo v1 remains held at 78/96 project-authored held-out phrasing tests, including four below-threshold classes. No Ollama or other foundation-model weights were altered.
+
