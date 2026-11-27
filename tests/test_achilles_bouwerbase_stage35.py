@@ -11,6 +11,7 @@ import io
 import json
 from pathlib import Path
 import sqlite3
+from contextlib import closing
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -133,7 +134,7 @@ class Stage35PureTests(unittest.TestCase):
             with self.assertRaises(runner.Stage35Hold):
                 runner.native_snapshot(db)
             self.assertFalse(db.exists())
-            with sqlite3.connect(db) as con:
+            with closing(sqlite3.connect(db)) as con, con:
                 con.executescript("""
                     CREATE TABLE canonical_objects(object_id TEXT, state TEXT);
                     CREATE TABLE object_representations(
