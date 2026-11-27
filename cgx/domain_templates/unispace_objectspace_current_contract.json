@@ -28,7 +28,18 @@
       "fiction/empirical semantic mirror",
       "RomerGrex solar and interplanetary workbench"
     ],
-    "noImpliedDeployment": true
+    "noImpliedDeployment": true,
+    "loadReuseEvidence": {
+      "sourceReviewPR": 205,
+      "sourceHead": "e5d78107c04a2e396f6bd3aaa5ab9592a6ce7796",
+      "targetHeadBefore": "b20b4144474dbb54c1be807205f54526431fff0f",
+      "identicalBlobs": {
+        "cgx/load_minimum/loadSemanticViewport.mjs": "600dd07416dc66586ad1bb35b253e14a34df9962",
+        "cgx/load_minimum/loadFractalReference.mjs": "0ad1e92afba9dfb20bb9b9b030527f4069bce7ac",
+        "cgx/load_minimum/cgxLoadFeaturePlanner.mjs": "58392a9662be2a0dd4b790eed9a737feff9738c6"
+      },
+      "action": "Reuse identical existing modules; no duplicate implementation; remaining PR delta not certified equivalent."
+    }
   },
   "objectContract": {
     "independentAxes": {
@@ -267,7 +278,9 @@
     "independent_native_DBR": "HOLD",
     "CCC_contract_enforcement": "HOLD",
     "public_bundle_privacy": "HOLD",
-    "public_release": "HOLD"
+    "public_release": "HOLD",
+    "achillesNativeAgent": "HOLD_CURRENT_HOST_AND_SIGNED_AUTHORITY",
+    "nativeAgentConvergence": "Reuse existing runtime entrypoint and operator; reconcile persistence-family source review against current ABI before installation; no second supervisor."
   },
   "releasePhases": [
     "private-local-demonstration",
@@ -430,6 +443,43 @@
       "sharedRoot": true,
       "nativeDeviceBenchmark": false,
       "publicRelease": false
+    },
+    "sharedWorld": {
+      "status": "PRIVATE_CURRENT_BROWSER_TESTED",
+      "world": "cgx:world:earth",
+      "sourceModule": "CGX_Geo_View.js",
+      "sourceSha256": "2992f4e73750873baa658f6bcebad24c78c9ced3e6a19d27b19e615ace376b6f",
+      "frame": "WGS84",
+      "renderers": [
+        "generalised local map",
+        "generalised local orthographic globe"
+      ],
+      "sharedState": [
+        "focus",
+        "epoch",
+        "zoom",
+        "source occurrences",
+        "epistemic classification"
+      ],
+      "routing": "Contextual user intent and device width/bandwidth; no provider transmission until explicit action.",
+      "providers": {
+        "maps": "documented Maps URL handoff",
+        "earth": "external Earth plus local KML export; no Earth client embed API",
+        "wikipedia": "explicit source search",
+        "commons": "explicit media search"
+      },
+      "testEvidence": {
+        "pureAssertions": 31,
+        "desktopMobileBrowser": true,
+        "rebuildScenarios": 6,
+        "productAssertions": 25,
+        "originalEarthAndECWRecovery": true
+      },
+      "limits": [
+        "No live Maps SDK or Maps Embed credentials tested",
+        "Historical geographic renderers retained as exact-source evidence",
+        "No native admission or inference asserted"
+      ]
     }
   },
   "manualIntake": {
