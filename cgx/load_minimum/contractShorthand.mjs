@@ -23,8 +23,9 @@ const sha=x=>typeof x==="string"&&/^[a-f0-9]{64}$/.test(x);
 const utc=x=>typeof x==="string"&&/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString()===x;
 const int=x=>typeof x==="string"&&/^(?:0|-?[1-9][0-9]{0,63})$/.test(x);
 const dec=x=>typeof x==="string"&&/^-?(?:0|[1-9][0-9]{0,47})(?:\.[0-9]{0,30}[1-9])?$/.test(x)&&x!=="-0";
-const rows=(x,max)=>Array.isArray(x)&&x.length<=max;
-const tuple=(x,n)=>Array.isArray(x)&&x.length===n&&Array.from({length:n},(_,i)=>Object.hasOwn(x,i)).every(Boolean);
+const dense=x=>Array.isArray(x)&&Object.keys(x).length===x.length&&Array.from({length:x.length},(_,i)=>Object.hasOwn(x,i)).every(Boolean);
+const rows=(x,max)=>Array.isArray(x)&&x.length<=max&&dense(x);
+const tuple=(x,n)=>Array.isArray(x)&&x.length===n&&dense(x);
 const unique=a=>new Set(a).size===a.length;
 const checkValue=(type,v)=>{
  switch(type){
@@ -34,7 +35,7 @@ const checkValue=(type,v)=>{
   case "utc":return utc(v);case "sha256":return sha(v);default:return false;
  }
 };
-const clone=v=>JSON.parse(JSON.stringify(v));
+const clone=v=>Array.isArray(v)?Array.from(v,clone):v;
 const bounded=x=>{must(new TextEncoder().encode(JSON.stringify(x)).length<=262144,"CONTRACT_METADATA_BUDGET");return x;};
 /** Exact record. No missing-field defaults, inferred consent, floating-point
  * amount rounding, sorting of legally meaningful clauses or implicit amendments.
@@ -117,4 +118,28 @@ export function prepareContractSignature(t,{party_id,key_ref,challenge,context_r
   preimage_utf8:native?null:JSON.stringify(binding),intent_binding:binding,
   native_payload_verified:false,key_binding_verified:false,signature_verified:false,
   threshold_satisfied:false,consent_verified:false,legal_validity_verified:false,execution_authorized:false};
+}
+
+/** Verify an exact, recomputed CGX signing preimage with a caller-supplied
+ * Ed25519 public key. This is only mathematical verification, never a trust
+ * store, identity/key binding, replay check, consent or threshold decision.
+ * External signature schemes must use their own native verification adapter.
+ */
+export async function verifyContractSignature(t,intent,publicKeyHex,signatureHex){
+ const result=(state,valid=false)=>({schema:"CGX-CONTRACT-SIGNATURE-CHECK/1",state,mathematical_signature_valid:valid,
+  signer_identity_verified:false,key_binding_verified:false,challenge_freshness_verified:false,
+  threshold_satisfied:false,consent_verified:false,legal_validity_verified:false,
+  execution_authorized:false,native_admission:false});
+ try{
+  const p=prepareContractSignature(t,intent);
+  if(p.profile!=="cgx-ed25519-bytes/1")return result("HOLD_NATIVE_VERIFICATION_ADAPTER");
+  if(!/^[a-f0-9]{64}$/.test(publicKeyHex)||typeof publicKeyHex!=="string"||
+     typeof signatureHex!=="string"||!/^[a-f0-9]{128}$/.test(signatureHex))return result("INVALID_SIGNATURE_ENCODING");
+  const subtle=globalThis.crypto?.subtle;
+  if(!subtle)return result("HOLD_CRYPTO_PROVIDER_UNAVAILABLE");
+  const bytes=x=>Uint8Array.from(x.match(/../g),b=>parseInt(b,16));
+  const key=await subtle.importKey("raw",bytes(publicKeyHex),{name:"Ed25519"},false,["verify"]);
+  const valid=await subtle.verify({name:"Ed25519"},key,bytes(signatureHex),new TextEncoder().encode(p.preimage_utf8));
+  return result(valid?"MATHEMATICAL_SIGNATURE_VALID_ONLY":"SIGNATURE_MISMATCH",valid);
+ }catch{return result("SIGNATURE_CHECK_FAILED");}
 }

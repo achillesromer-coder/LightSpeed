@@ -156,7 +156,8 @@
         "packContract",
         "unpackContract",
         "projectContract",
-        "prepareContractSignature"
+        "prepareContractSignature",
+        "verifyContractSignature"
       ],
       "primitives": [
         "oblige",
@@ -188,7 +189,9 @@
       "legalValidityVerified": false,
       "leaseIssued": false,
       "executionAuthorized": false,
-      "nativeAdmission": false
+      "nativeAdmission": false,
+      "signingVerification": "WebCrypto Ed25519 exact recomputed CGX preimage, caller-supplied raw public key; mathematical validity only; external profiles held",
+      "signingFixture": "Ephemeral Node-generated keypair regression; no owner keys or signatures"
     }
   },
   "portability": {

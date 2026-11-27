@@ -206,7 +206,7 @@ test("different candidate occurrences with same source digest are not semantical
 });
 
 
-import {CONTRACT_SCHEMA,CONFIGURATIONS,packContract,unpackContract,projectContract,prepareContractSignature} from "./contractShorthand.mjs";
+import {CONTRACT_SCHEMA,CONFIGURATIONS,packContract,unpackContract,projectContract,prepareContractSignature,verifyContractSignature} from "./contractShorthand.mjs";
 const contractFixture=(extra={})=>({
  contract_ref:"candidate:root",revision:1,previous_payload_sha256:null,source_ref:"fixture:root",source_sha256:"a".repeat(64),
  residual_ref:sample.residual_ref,configuration:"exchange",
@@ -269,4 +269,30 @@ test("nested contract facet binds R0 identity, original source and residual, wit
  for(const change of [{contract_ref:"candidate:other"},{source_ref:"fixture:wrong"},{source_sha256:"b".repeat(64)},{residual_ref:null}]){
   assert.equal(nested([facet("root",[],"contract",{standard:"cgx-commitments/1",payload:packContract(contractFixture(change))})]).reason,"COMMITMENT_BINDING_INVALID");
  }
+});
+
+test("sparse and extended arrays cannot become different serialised contract fields",()=>{
+ const d=contractFixture();d.variables.length++;assert.throws(()=>packContract(d),/VARIABLES_INVALID/);
+ const e=contractFixture();e.parties.note="extra";assert.throws(()=>packContract(e),/PARTIES_INVALID/);
+});
+test("ephemeral Ed25519 verifies exact bytes but never establishes trust or authority",async()=>{
+ const {generateKeyPairSync,sign}=await import("node:crypto");
+ const {publicKey,privateKey}=generateKeyPairSync("ed25519");
+ const raw=publicKey.export({format:"der",type:"spki"}).subarray(-32).toString("hex");
+ const t=packContract(contractFixture()),intent={party_id:"buyer",key_ref:"key:buyer",challenge:"a".repeat(64),context_ref:"review:contract"};
+ const preimage=prepareContractSignature(t,intent).preimage_utf8;
+ const sig=sign(null,Buffer.from(preimage,"utf8"),privateKey).toString("hex");
+ const r=await verifyContractSignature(t,intent,raw,sig);
+ assert.equal(r.state,"MATHEMATICAL_SIGNATURE_VALID_ONLY");assert.equal(r.mathematical_signature_valid,true);
+ for(const k of ["signer_identity_verified","key_binding_verified","challenge_freshness_verified","threshold_satisfied","consent_verified","legal_validity_verified","execution_authorized","native_admission"])assert.equal(r[k],false,k);
+ for(const changed of [{party_id:"seller"},{challenge:"b".repeat(64)},{context_ref:"review:other"}]){
+  assert.equal((await verifyContractSignature(t,{...intent,...changed},raw,sig)).mathematical_signature_valid,false);
+ }
+ const changed=contractFixture();changed.variables[0][2][0]="13";
+ assert.equal((await verifyContractSignature(packContract(changed),intent,raw,sig)).mathematical_signature_valid,false);
+ const other=generateKeyPairSync("ed25519").publicKey.export({format:"der",type:"spki"}).subarray(-32).toString("hex");
+ assert.equal((await verifyContractSignature(t,intent,other,sig)).mathematical_signature_valid,false);
+ assert.equal((await verifyContractSignature(t,intent,raw,"bad")).state,"INVALID_SIGNATURE_ENCODING");
+ const external=packContract(contractFixture({signature_policy:["external-eip712",["buyer","seller"],2]}));
+ assert.equal((await verifyContractSignature(external,intent,raw,sig)).state,"HOLD_NATIVE_VERIFICATION_ADAPTER");
 });
