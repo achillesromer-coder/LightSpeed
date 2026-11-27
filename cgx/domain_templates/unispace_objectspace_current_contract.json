@@ -157,7 +157,12 @@
         "unpackContract",
         "projectContract",
         "prepareContractSignature",
-        "verifyContractSignature"
+        "verifyContractSignature",
+        "indexContractComposition",
+        "contractPayloadDigest",
+        "verifyContractLineage",
+        "prepareEip712Commitment",
+        "bindNativeSignaturePayload"
       ],
       "primitives": [
         "oblige",
@@ -191,7 +196,34 @@
       "executionAuthorized": false,
       "nativeAdmission": false,
       "signingVerification": "WebCrypto Ed25519 exact recomputed CGX preimage, caller-supplied raw public key; mathematical validity only; external profiles held",
-      "signingFixture": "Ephemeral Node-generated keypair regression; no owner keys or signatures"
+      "signingFixture": "Ephemeral Node-generated keypair regression; no owner keys or signatures",
+      "compositionIndex": {
+        "mask": "four primitive presence bits, 15 nonempty patterns; three symbolic trits",
+        "equivalence": false,
+        "classification": "candidate configuration suggestions only"
+      },
+      "revisionChain": {
+        "digest": "SHA256_UTF8_JSON_EXACT_CGX_TUPLE_V1",
+        "scope": "supplied contiguous history only",
+        "authority": false
+      },
+      "externalSignatureBridge": {
+        "profiles": [
+          "external-eip712",
+          "external-jws",
+          "external-cose",
+          "external-pades",
+          "external-cades",
+          "external-jades",
+          "external-provider"
+        ],
+        "eip712": "unsigned CGX-specific typed data; explicit chainId/verifyingContract; not existing contract compatibility or transaction",
+        "payload": "exact supplied byte hash and intent hash binding, not native semantics/signature proof",
+        "nativeVerification": false,
+        "replayProtection": false,
+        "execution": false
+      },
+      "priorQualifiedCommit": "540ca615cade4dbe7928d3fdddff2cb02487e5ab"
     }
   },
   "portability": {

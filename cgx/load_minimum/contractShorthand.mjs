@@ -12,7 +12,7 @@ const profiles={
  custom:[...COMMITMENT_CLASSES]
 };
 export const CONFIGURATIONS=Object.freeze(Object.fromEntries(Object.entries(profiles).map(([k,v])=>[k,Object.freeze(v)])));
-export const SIGNATURE_PROFILES=Object.freeze(["cgx-ed25519-bytes/1","external-pades","external-cades","external-jades","external-eip712","external-provider"]);
+export const SIGNATURE_PROFILES=Object.freeze(["cgx-ed25519-bytes/1","external-pades","external-cades","external-jades","external-eip712","external-provider","external-jws","external-cose"]);
 const F=["contract_ref","revision","previous_payload_sha256","source_ref","source_sha256","residual_ref","configuration","parties","variables","commitments","signature_policy","valid_from","valid_until","native_adapter"];
 const fail=code=>{throw Error(code);},must=(ok,code)=>{if(!ok)fail(code);};
 const obj=x=>x!==null&&typeof x==="object"&&!Array.isArray(x);
@@ -142,4 +142,110 @@ export async function verifyContractSignature(t,intent,publicKeyHex,signatureHex
   const valid=await subtle.verify({name:"Ed25519"},key,bytes(signatureHex),new TextEncoder().encode(p.preimage_utf8));
   return result(valid?"MATHEMATICAL_SIGNATURE_VALID_ONLY":"SIGNATURE_MISMATCH",valid);
  }catch{return result("SIGNATURE_CHECK_FAILED");}
+}
+
+
+/** Composition index, not a legal classification. The four primitive classes
+ * give 15 nonempty presence masks. Different actors, actions, conditions,
+ * remedies, source text and signature policy remain distinct. Three trits
+ * encode the mask as a symbolic geometric address, not physical geometry.
+ */
+export function indexContractComposition(t){
+ const d=unpackContract(t),counts=COMMITMENT_CLASSES.map(kind=>d.commitments.filter(c=>c[1]===kind).length);
+ const mask=counts.reduce((n,v,i)=>n+(v?2**i:0),0);
+ const present=COMMITMENT_CLASSES.filter((_,i)=>counts[i]>0);
+ const compatible=Object.keys(CONFIGURATIONS).filter(k=>present.every(x=>CONFIGURATIONS[k].includes(x)));
+ return {schema:"CGX-COMMITMENT-COMPOSITION/1",ref:d.contract_ref,revision:d.revision,
+  mask,trits:mask.toString(3).padStart(3,"0").split("").map(Number),
+  classes:COMMITMENT_CLASSES.map((kind,i)=>({kind,count:counts[i]})),candidate_configurations:compatible,
+  declared_configuration:d.configuration,source_retained:true,legal_equivalence_verified:false,
+  semantic_equivalence_verified:false,execution_authorized:false};
+}
+async function shaBytes(b){
+ const subtle=globalThis.crypto?.subtle;
+ must(!!subtle,"HOLD_CRYPTO_PROVIDER_UNAVAILABLE");
+ return Array.from(new Uint8Array(await subtle.digest("SHA-256",b)),x=>x.toString(16).padStart(2,"0")).join("");
+}
+/** Explicit digest convention for NEW amendment links: UTF-8 JSON serialization
+ * of the exact validated version-1 tuple (not original source or a signature).
+ */
+export async function contractPayloadDigest(t){
+ return shaBytes(new TextEncoder().encode(JSON.stringify(packContract(unpackContract(t)))));
+}
+/** Check a complete caller-supplied history from revision one. No decision
+ * about which fork is canonical, who authorized amendments, or legal effect.
+ */
+export async function verifyContractLineage(history){
+ const result=(state,links=[])=>({schema:"CGX-CONTRACT-LINEAGE-CHECK/1",state,links,
+  digest_convention:"SHA256_UTF8_JSON_EXACT_CGX_TUPLE_V1",
+  complete_global_history_verified:false,amendment_authority_verified:false,
+  signatures_verified:false,legal_validity_verified:false,native_admission:false,execution_authorized:false});
+ try{
+  if(!rows(history,128)||!history.length)return result("LINEAGE_INPUT_INVALID");
+  let ref=null,prior=null,total=0;const links=[];
+  for(let i=0;i<history.length;i++){
+   const d=unpackContract(history[i]),bytes=new TextEncoder().encode(JSON.stringify(packContract(d)));
+   total+=bytes.length;if(total>4194304)return result("LINEAGE_METADATA_BUDGET");
+   if(i===0)ref=d.contract_ref;
+   if(d.contract_ref!==ref||d.revision!==i+1||d.previous_payload_sha256!==prior)return result("LINEAGE_LINK_MISMATCH");
+   prior=await shaBytes(bytes);links.push({contract_ref:ref,revision:d.revision,payload_sha256:prior});
+  }
+  return result("SUPPLIED_LINEAGE_HASH_LINKS_MATCH_ONLY",links);
+ }catch(e){return result(e?.message==="HOLD_CRYPTO_PROVIDER_UNAVAILABLE"?e.message:"LINEAGE_INPUT_INVALID");}
+}
+/** EIP-712 unsigned typed-data projection for a *new CGX-specific* commitment
+ * acknowledgement. A destination contract must independently implement and
+ * verify this exact schema; this is not a transfer, permit or generic call.
+ * No wallet invocation, signing, RPC, Keccak computation or replay state.
+ */
+export async function prepareEip712Commitment(t,intent,domain){
+ const d=unpackContract(t),p=prepareContractSignature(t,intent);
+ must(p.profile==="external-eip712","SIGNATURE_PROFILE_MISMATCH");
+ must(d.native_adapter!==null&&d.native_adapter[0]==="evm-abi","EVM_ADAPTER_REQUIRED");
+ must(exact(domain,["chain_id","verifying_contract"])&&typeof domain.chain_id==="string"&&
+  /^[1-9][0-9]{0,77}$/.test(domain.chain_id)&&BigInt(domain.chain_id)<(1n<<256n)&&
+  typeof domain.verifying_contract==="string"&&/^0x[0-9a-f]{40}$/.test(domain.verifying_contract)&&
+  !/^0x0{40}$/.test(domain.verifying_contract),"EIP712_DOMAIN_INVALID");
+ const payload=await contractPayloadDigest(t);
+ const binding=await shaBytes(new TextEncoder().encode(JSON.stringify(p.intent_binding)));
+ const types={EIP712Domain:[{name:"name",type:"string"},{name:"version",type:"string"},
+  {name:"chainId",type:"uint256"},{name:"verifyingContract",type:"address"}],
+  CGXCommitment:[{name:"contractRef",type:"string"},{name:"revision",type:"uint256"},
+   {name:"payloadSha256",type:"bytes32"},{name:"intentSha256",type:"bytes32"},
+   {name:"partyId",type:"string"},{name:"challenge",type:"bytes32"},
+   {name:"validUntil",type:"string"}]};
+ return {schema:"CGX-EIP712-COMMITMENT-PROJECTION/1",state:"UNSIGNED_TYPED_DATA_REVIEW_ONLY",
+  typed_data:{types,primaryType:"CGXCommitment",domain:{name:"CGX Commitment",version:"1",
+   chainId:domain.chain_id,verifyingContract:domain.verifying_contract},
+   message:{contractRef:d.contract_ref,revision:String(d.revision),payloadSha256:"0x"+payload,
+    intentSha256:"0x"+binding,partyId:p.party_id,challenge:"0x"+intent.challenge,validUntil:d.valid_until}},
+  adapter_ref:d.native_adapter[1],adapter_version:d.native_adapter[2],adapter_sha256:d.native_adapter[3],
+  chain_verified:false,destination_schema_verified:false,replay_protection_verified:false,
+  signature_verified:false,key_binding_verified:false,consent_verified:false,legal_validity_verified:false,
+  wallet_invoked:false,transaction_constructed:false,execution_authorized:false,native_admission:false};
+}
+/** Retain exact native payload bytes in FileSpace; bind their *computed* hash
+ * to the CGX intent in an unsigned metadata receipt. This proves neither the
+ * native message semantics nor its signature. For JWS/COSE/PAdES/CAdES/JAdES,
+ * the actual native signature input, canonicalization and verifier remain
+ * provider-specific. Never substitute a JSON reserialization.
+ */
+export async function bindNativeSignaturePayload(t,intent,payloadBytes,metadata){
+ const d=unpackContract(t),p=prepareContractSignature(t,intent);
+ must(p.profile!=="cgx-ed25519-bytes/1","EXTERNAL_PROFILE_REQUIRED");
+ must(d.native_adapter!==null,"NATIVE_ADAPTER_REQUIRED");
+ must(payloadBytes instanceof Uint8Array&&payloadBytes.length>0&&payloadBytes.length<=1048576,"NATIVE_PAYLOAD_BUDGET");
+ must(exact(metadata,["profile","payload_ref","payload_sha256","intent_sha256","domain_ref","adapter_sha256"])&&
+  metadata.profile===p.profile&&text(metadata.payload_ref)&&text(metadata.domain_ref)&&
+  sha(metadata.payload_sha256)&&sha(metadata.intent_sha256)&&metadata.adapter_sha256===d.native_adapter[3],"NATIVE_BINDING_INVALID");
+ const digest=await shaBytes(Uint8Array.from(payloadBytes));
+ const intentDigest=await shaBytes(new TextEncoder().encode(JSON.stringify(p.intent_binding)));
+ must(digest===metadata.payload_sha256&&intentDigest===metadata.intent_sha256,"NATIVE_BINDING_DIGEST_MISMATCH");
+ return {schema:"CGX-NATIVE-SIGNATURE-PAYLOAD-BINDING/1",state:"EXACT_PAYLOAD_HASH_BOUND_REVIEW_ONLY",
+  contract_ref:d.contract_ref,revision:d.revision,party_id:p.party_id,profile:p.profile,
+  payload_ref:metadata.payload_ref,payload_sha256:digest,payload_bytes:payloadBytes.length,
+  intent_sha256:intentDigest,domain_ref:metadata.domain_ref,adapter_sha256:metadata.adapter_sha256,
+  payload_hash_verified:true,native_semantics_verified:false,native_domain_verified:false,
+  signature_verified:false,key_binding_verified:false,challenge_freshness_verified:false,
+  consent_verified:false,legal_validity_verified:false,execution_authorized:false,native_admission:false};
 }

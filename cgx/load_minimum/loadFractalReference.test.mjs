@@ -296,3 +296,64 @@ test("ephemeral Ed25519 verifies exact bytes but never establishes trust or auth
  const external=packContract(contractFixture({signature_policy:["external-eip712",["buyer","seller"],2]}));
  assert.equal((await verifyContractSignature(external,intent,raw,sig)).state,"HOLD_NATIVE_VERIFICATION_ADAPTER");
 });
+
+
+import {indexContractComposition,contractPayloadDigest,verifyContractLineage,prepareEip712Commitment,bindNativeSignaturePayload} from "./contractShorthand.mjs";
+test("composition mask exhausts 15 nonempty class sets without manufacturing legal equivalence",()=>{
+ const classes=["oblige","permit","prohibit","declare"],seen=new Set();
+ for(let mask=1;mask<16;mask++){
+  const d=contractFixture({configuration:"custom"});
+  d.commitments=classes.filter((_,i)=>mask&(1<<i)).map((kind,i)=>["clause"+i,kind,"buyer","seller","action:fixture",[],[],[],[]]);
+  const p=indexContractComposition(packContract(d));
+  assert.equal(p.mask,mask);assert.equal(parseInt(p.trits.join(""),3),mask);seen.add(p.trits.join(""));
+  assert.equal(p.legal_equivalence_verified,false);assert.equal(p.execution_authorized,false);
+ }
+ assert.equal(seen.size,15);
+ const a=contractFixture(),b=contractFixture();b.variables[0][2][0]="99";
+ assert.equal(indexContractComposition(packContract(a)).mask,indexContractComposition(packContract(b)).mask);
+ assert.notDeepEqual(packContract(a),packContract(b));
+});
+test("exact revision chain rejects changed, skipped, foreign or unbound amendments",async()=>{
+ const a=packContract(contractFixture()),h=await contractPayloadDigest(a);
+ const b=packContract(contractFixture({revision:2,previous_payload_sha256:h}));
+ const c=packContract(contractFixture({revision:3,previous_payload_sha256:await contractPayloadDigest(b)}));
+ const r=await verifyContractLineage([a,b,c]);
+ assert.equal(r.state,"SUPPLIED_LINEAGE_HASH_LINKS_MATCH_ONLY");assert.equal(r.links.length,3);
+ assert.equal(r.amendment_authority_verified,false);assert.equal(r.complete_global_history_verified,false);
+ const changed=contractFixture();changed.variables[0][2][0]="13";
+ const wrong=packContract(contractFixture({revision:2,previous_payload_sha256:h,contract_ref:"candidate:other"}));
+ for(const chain of [[packContract(changed),b],[a,c],[b],[a,wrong],[a,b,b]])assert.equal((await verifyContractLineage(chain)).state,"LINEAGE_LINK_MISMATCH");
+ assert.equal((await verifyContractLineage([])).state,"LINEAGE_INPUT_INVALID");
+});
+const nativeIntent={party_id:"buyer",key_ref:"key:buyer",challenge:"c".repeat(64),context_ref:"review:contract"};
+const nativeFixture=(profile)=>packContract(contractFixture({signature_policy:[profile,["buyer","seller"],2],native_adapter:[profile==="external-eip712"?"evm-abi":"document-signature","adapter:review","1","f".repeat(64)]}));
+test("EIP712 typed data explicitly binds chain, contract, revision, digest, party and challenge",async()=>{
+ const t=nativeFixture("external-eip712"),domain={chain_id:"11155111",verifying_contract:"0x"+"1".repeat(40)};
+ const a=await prepareEip712Commitment(t,nativeIntent,domain);
+ assert.equal(a.typed_data.primaryType,"CGXCommitment");assert.equal(a.typed_data.domain.chainId,domain.chain_id);
+ assert.equal(a.typed_data.message.payloadSha256,"0x"+await contractPayloadDigest(t));
+ assert.equal(a.typed_data.message.challenge,"0x"+nativeIntent.challenge);
+ assert.equal(a.execution_authorized,false);assert.equal(a.replay_protection_verified,false);assert.equal(a.wallet_invoked,false);
+ const b=await prepareEip712Commitment(t,{...nativeIntent,context_ref:"review:other"},domain);
+ assert.notEqual(a.typed_data.message.intentSha256,b.typed_data.message.intentSha256);
+ const c=await prepareEip712Commitment(t,nativeIntent,{...domain,chain_id:"1"});assert.notDeepEqual(a.typed_data.domain,c.typed_data.domain);
+ for(const change of [{chain_id:"0"},{chain_id:(1n<<256n).toString()},{chain_id:1},{verifying_contract:"0x"+"0".repeat(40)}]){
+  await assert.rejects(prepareEip712Commitment(t,nativeIntent,{...domain,...change}),/EIP712_DOMAIN_INVALID/);
+ }
+ await assert.rejects(prepareEip712Commitment(nativeFixture("external-jws"),nativeIntent,domain),/SIGNATURE_PROFILE_MISMATCH/);
+});
+test("native JWS, COSE and document envelopes bind exact supplied bytes, not native verification",async()=>{
+ const {createHash}=await import("node:crypto"),hash=x=>createHash("sha256").update(x).digest("hex");
+ const bytes=Uint8Array.from([0,255,13,10,65]);
+ for(const profile of ["external-jws","external-cose","external-pades","external-cades","external-jades","external-eip712"]){
+  const t=nativeFixture(profile),intent=prepareContractSignature(t,nativeIntent);
+  const m={profile,payload_ref:"fixture:native",payload_sha256:hash(bytes),
+   intent_sha256:hash(JSON.stringify(intent.intent_binding)),domain_ref:"fixture:domain",adapter_sha256:"f".repeat(64)};
+  const r=await bindNativeSignaturePayload(t,nativeIntent,bytes,m);
+  assert.equal(r.payload_hash_verified,true);assert.equal(r.native_semantics_verified,false);assert.equal(r.signature_verified,false);assert.equal(r.execution_authorized,false);
+  await assert.rejects(bindNativeSignaturePayload(t,nativeIntent,Uint8Array.from([1,2]),m),/NATIVE_BINDING_DIGEST_MISMATCH/);
+  await assert.rejects(bindNativeSignaturePayload(t,{...nativeIntent,challenge:"d".repeat(64)},bytes,m),/NATIVE_BINDING_DIGEST_MISMATCH/);
+  await assert.rejects(bindNativeSignaturePayload(t,nativeIntent,bytes,{...m,adapter_sha256:"a".repeat(64)}),/NATIVE_BINDING_INVALID/);
+  await assert.rejects(bindNativeSignaturePayload(t,nativeIntent,bytes,{...m,private_key:"never"}),/NATIVE_BINDING_INVALID/);
+ }
+});
