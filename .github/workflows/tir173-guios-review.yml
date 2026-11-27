@@ -32,6 +32,7 @@ jobs:
       - name: Exercise existing TIR173 codec, LOAD and contextual GUIOS contracts
         run: |
           node --test cgx/runtime/tir173/tir173_public.test.mjs
+          node --test cgx/runtime/tir173/tir173_intent_guard.test.mjs
           node --test cgx/runtime/tir173/tir173_context.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction_atlas.test.mjs
