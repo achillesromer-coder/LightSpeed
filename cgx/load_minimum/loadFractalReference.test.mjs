@@ -357,3 +357,69 @@ test("native JWS, COSE and document envelopes bind exact supplied bytes, not nat
   await assert.rejects(bindNativeSignaturePayload(t,nativeIntent,bytes,{...m,private_key:"never"}),/NATIVE_BINDING_INVALID/);
  }
 });
+
+
+import {commitmentReviewEventDigest,reviewCommitmentJournal} from "./contractShorthand.mjs";
+const reviewTime="2026-11-28T00:00:00.000Z";
+async function reviewEvent(t,events,change={}){
+ const d=unpackContract(t);
+ return {contract_ref:d.contract_ref,revision:d.revision,payload_sha256:await contractPayloadDigest(t),
+ sequence:events.length+1,previous_event_sha256:events.length?await commitmentReviewEventDigest(t,events.at(-1)):null,
+ commitment_id:"deliver",kind:"report",reported_at:reviewTime,reporter_id:"seller",
+ evidence_refs:["receipt:delivery"],observations:[["count","2"]],...change};
+}
+test("review journal separates reported criteria from legal fulfilment and replays dependency order",async()=>{
+ const t=packContract(contractFixture()),events=[];
+ events.push(await reviewEvent(t,events));
+ events.push(await reviewEvent(t,events,{commitment_id:"pay",reporter_id:"buyer",evidence_refs:["receipt:payment"],observations:[["ready",true]]}));
+ const r=await reviewCommitmentJournal(t,events,reviewTime);
+ assert.equal(r.state,"SUPPLIED_REVIEW_JOURNAL_REPLAY_ONLY");
+ assert.deepEqual(r.machine_bottom_up.map(x=>x.commitment_ref),["deliver","pay"]);
+ assert.deepEqual(r.human_top_down.map(x=>x.commitment_ref),["pay","deliver"]);
+ assert.ok(r.machine_bottom_up.every(x=>x.status==="REPORTED_CRITERIA_MATCH"));
+ for(const k of ["legal_fulfilment_verified","reported_facts_independently_verified","reporter_identity_verified","signature_verified","execution_authorized","effects_performed"])assert.equal(r[k],false);
+ assert.equal(r.head_event_sha256,await commitmentReviewEventDigest(t,events[1]));
+});
+test("dispute invalidates downstream readiness; reopen requires new report and cannot bypass dispute",async()=>{
+ const t=packContract(contractFixture()),events=[];
+ events.push(await reviewEvent(t,events));
+ events.push(await reviewEvent(t,events,{commitment_id:"pay",reporter_id:"buyer",evidence_refs:["receipt:payment"],observations:[["ready",true]]}));
+ events.push(await reviewEvent(t,events,{kind:"dispute",evidence_refs:["receipt:dispute"],observations:[]}));
+ let r=await reviewCommitmentJournal(t,events,reviewTime);
+ assert.deepEqual(r.machine_bottom_up.map(x=>x.status),["DISPUTED","REPORTED_DEPENDENCY_HOLD"]);
+ assert.equal((await reviewCommitmentJournal(t,[...events,await reviewEvent(t,events)],reviewTime)).state,"REVIEW_TRANSITION_INVALID");
+ events.push(await reviewEvent(t,events,{kind:"reopen",evidence_refs:["receipt:review"],observations:[]}));
+ r=await reviewCommitmentJournal(t,events,reviewTime);
+ assert.deepEqual(r.machine_bottom_up.map(x=>x.status),["REOPENED","REPORTED_DEPENDENCY_HOLD"]);
+ events.push(await reviewEvent(t,events));r=await reviewCommitmentJournal(t,events,reviewTime);
+ assert.deepEqual(r.machine_bottom_up.map(x=>x.status),["REPORTED_CRITERIA_MATCH","REPORTED_CRITERIA_MATCH"]);
+});
+test("journal does not default missing observations to contract variables or silently infer evidence",async()=>{
+ const t=packContract(contractFixture());
+ for(const [change,expected] of [[{observations:[]},"REPORTED_CONDITION_UNKNOWN"],[{observations:[["count","0"]]},"REPORTED_CONDITION_MISMATCH"],[{evidence_refs:[]},"REPORTED_EVIDENCE_MISSING"]]){
+  const r=await reviewCommitmentJournal(t,[await reviewEvent(t,[],change)],reviewTime);
+  assert.equal(r.machine_bottom_up[0].status,expected);
+ }
+ const r=await reviewCommitmentJournal(t,[],"2026-12-03T00:00:00.000Z");
+ assert.equal(r.declared_interval,"AFTER_INTERVAL");assert.ok(r.machine_bottom_up.every(x=>x.status==="NO_REPORT"));
+});
+test("condition ordering is exact for large decimal and integer values",async()=>{
+ const d=contractFixture();d.variables.push(["precise","decimal","9007199254740993.0000000001"]);
+ d.commitments[1][5].push("precise");d.commitments[1][6].push(["precise","gt","9007199254740993"]);
+ const t=packContract(d);
+ const r=await reviewCommitmentJournal(t,[await reviewEvent(t,[],{observations:[["count","2"],["precise","9007199254740993.0000000001"]]})],reviewTime);
+ assert.equal(r.machine_bottom_up[0].status,"REPORTED_CRITERIA_MATCH");
+ const s=await reviewCommitmentJournal(t,[await reviewEvent(t,[],{observations:[["count","2"],["precise","9007199254740992.9999999999"]]})],reviewTime);
+ assert.equal(s.machine_bottom_up[0].status,"REPORTED_CONDITION_MISMATCH");
+});
+test("journal rejects tampered links, stale revision, future reports and invalid parties",async()=>{
+ const t=packContract(contractFixture()),a=await reviewEvent(t,[]),b=await reviewEvent(t,[a],{kind:"dispute",evidence_refs:["receipt:dispute"],observations:[]});
+ assert.equal((await reviewCommitmentJournal(t,[{...a,evidence_refs:["other"]},b],reviewTime)).state,"REVIEW_EVENT_CHAIN_MISMATCH");
+ assert.equal((await reviewCommitmentJournal(t,[b],reviewTime)).state,"REVIEW_EVENT_CHAIN_MISMATCH");
+ assert.equal((await reviewCommitmentJournal(t,[{...a,reported_at:"2026-11-29T00:00:00.000Z"}],reviewTime)).state,"REVIEW_TIME_ORDER");
+ assert.equal((await reviewCommitmentJournal(t,[{...a,reporter_id:"unknown"}],reviewTime)).state,"REVIEW_EVENT_SCOPE");
+ assert.equal((await reviewCommitmentJournal(t,[{...a,observations:[["ready",true]]}],reviewTime)).state,"REVIEW_OBSERVATIONS_INVALID");
+ const next=packContract(contractFixture({revision:2,previous_payload_sha256:await contractPayloadDigest(t)}));
+ assert.equal((await reviewCommitmentJournal(next,[a],reviewTime)).state,"REVIEW_REVISION_MISMATCH");
+ assert.equal((await reviewCommitmentJournal(t,[{...a,signature_verified:true}],reviewTime)).state,"REVIEW_EVENT_FIELDS");
+});

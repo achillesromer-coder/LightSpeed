@@ -249,3 +249,103 @@ export async function bindNativeSignaturePayload(t,intent,payloadBytes,metadata)
   signature_verified:false,key_binding_verified:false,challenge_freshness_verified:false,
   consent_verified:false,legal_validity_verified:false,execution_authorized:false,native_admission:false};
 }
+
+
+/** Review-only lifecycle journal, orthogonal to the signed commitment tuple.
+ * Records reported observations and disputes; never settles a legal obligation.
+ * Original clauses and native signing preimages are unchanged.
+ */
+export const COMMITMENT_JOURNAL_SCHEMA="CGX-COMMITMENT-REVIEW-EVENT/1";
+const EVENT_FIELDS=["contract_ref","revision","payload_sha256","sequence","previous_event_sha256",
+ "commitment_id","kind","reported_at","reporter_id","evidence_refs","observations"];
+const compareDecimal=(a,b)=>{
+ const scale=Math.max((a.split(".")[1]||"").length,(b.split(".")[1]||"").length);
+ const units=x=>{const negative=x.startsWith("-"),[whole,frac=""]=x.replace(/^-/,"").split(".");
+  return (negative?-1n:1n)*BigInt(whole+frac.padEnd(scale,"0"));};
+ const x=units(a),y=units(b);return x<y?-1:x>y?1:0;
+};
+function compareTyped(type,a,b,op){
+ if(op==="eq"||op==="ne"){const equal=JSON.stringify(a)===JSON.stringify(b);return op==="eq"?equal:!equal;}
+ const cmp=type==="utc"?(a<b?-1:a>b?1:0):compareDecimal(a,b);
+ return op==="lt"?cmp<0:op==="le"?cmp<=0:op==="gt"?cmp>0:cmp>=0;
+}
+function eventTuple(d,digest,e){
+ must(exact(e,EVENT_FIELDS),"REVIEW_EVENT_FIELDS");
+ must(e.contract_ref===d.contract_ref&&e.revision===d.revision&&e.payload_sha256===digest,"REVIEW_REVISION_MISMATCH");
+ must(Number.isSafeInteger(e.sequence)&&e.sequence>=1&&
+  (e.sequence===1?e.previous_event_sha256===null:sha(e.previous_event_sha256)),"REVIEW_EVENT_LINK_INVALID");
+ const clause=d.commitments.find(c=>c[0]===e.commitment_id);
+ must(!!clause&&["report","dispute","reopen"].includes(e.kind)&&utc(e.reported_at)&&
+  d.parties.some(p=>p[0]===e.reporter_id),"REVIEW_EVENT_SCOPE");
+ must(rows(e.evidence_refs,32)&&unique(e.evidence_refs)&&e.evidence_refs.every(x=>text(x)),"REVIEW_EVIDENCE_INVALID");
+ const vars=new Map(d.variables.map(v=>[v[0],v]));
+ must(rows(e.observations,32)&&e.observations.every(v=>tuple(v,2)&&clause[5].includes(v[0])&&
+  vars.has(v[0])&&checkValue(vars.get(v[0])[1],v[1]))&&unique(e.observations.map(v=>v[0])),"REVIEW_OBSERVATIONS_INVALID");
+ must(e.kind==="report"||(e.evidence_refs.length>0&&e.observations.length===0),"REVIEW_DISPUTE_EVIDENCE_REQUIRED");
+ return [COMMITMENT_JOURNAL_SCHEMA,...EVENT_FIELDS.map(k=>clone(e[k]))];
+}
+/** Prepare a digest of a validated event; a digest is not an authenticated receipt. */
+export async function commitmentReviewEventDigest(t,e){
+ const d=unpackContract(t),digest=await contractPayloadDigest(t);
+ return shaBytes(new TextEncoder().encode(JSON.stringify(eventTuple(d,digest,e))));
+}
+/** Replay supplied events deterministically at an explicit, untrusted as-of time.
+ * Per-clause dependency readiness is recomputed after disputes and reopens;
+ * never carry a previous observation forward into a new contract revision.
+ * No event is treated as actual execution, legal consent, or factual proof.
+ */
+export async function reviewCommitmentJournal(t,events,asOf){
+ const out=(state,extra={})=>({schema:"CGX-COMMITMENT-REVIEW-JOURNAL/1",state,...extra,
+  reported_facts_independently_verified:false,reporter_identity_verified:false,
+  clock_independently_verified:false,global_history_verified:false,legal_fulfilment_verified:false,
+  legal_validity_verified:false,signature_verified:false,native_admission:false,execution_authorized:false,
+  effects_performed:false,canonical_writes:0});
+ try{
+  const d=unpackContract(t),digest=await contractPayloadDigest(t);
+  must(rows(events,256)&&utc(asOf),"REVIEW_JOURNAL_INPUT");
+  // Snapshot all records synchronously before asynchronous hashing.
+  const tuples=events.map(e=>eventTuple(d,digest,e));
+  let prev=null,last=null,bytesTotal=0;const latest=new Map(),links=[];
+  for(let i=0;i<tuples.length;i++){
+   const v=tuples[i],e=Object.fromEntries(EVENT_FIELDS.map((k,j)=>[k,v[j+1]]));
+   must(e.sequence===i+1&&e.previous_event_sha256===prev,"REVIEW_EVENT_CHAIN_MISMATCH");
+   must(e.reported_at<=asOf&&(last===null||e.reported_at>=last),"REVIEW_TIME_ORDER");
+   const prior=latest.get(e.commitment_id);
+   // Dispute only a recorded report; reopen only a disputed report. A new
+   // report cannot overwrite a dispute. A reopened clause requires new evidence.
+   must(e.kind==="report"?(!prior||prior.kind==="reopen"||prior.kind==="report"):
+    e.kind==="dispute"?prior?.kind==="report":prior?.kind==="dispute","REVIEW_TRANSITION_INVALID");
+   const bytes=new TextEncoder().encode(JSON.stringify(v));bytesTotal+=bytes.length;
+   must(bytesTotal<=2097152,"REVIEW_JOURNAL_BUDGET");
+   prev=await shaBytes(bytes);last=e.reported_at;
+   latest.set(e.commitment_id,e);links.push({sequence:e.sequence,event_sha256:prev});
+  }
+  const order=projectContract(t).machine_bottom_up.commitment_order,byId=new Map(d.commitments.map(c=>[c[0],c]));
+  const vars=new Map(d.variables.map(v=>[v[0],v])),states=new Map();
+  const validity=asOf<d.valid_from?"BEFORE_INTERVAL":asOf>=d.valid_until?"AFTER_INTERVAL":"WITHIN_INTERVAL";
+  for(const key of order){
+   const c=byId.get(key),e=latest.get(key),obs=new Map(e?.observations||[]);
+   const conditions=c[6].map(([ref,op,literal])=>({variable_ref:ref,result:!obs.has(ref)?"UNKNOWN":
+    compareTyped(vars.get(ref)[1],obs.get(ref),literal,op)?"MATCH":"MISMATCH"}));
+   const missingEvidence=c[7].filter(x=>!e?.evidence_refs.includes(x));
+   const blockedBy=c[8].filter(x=>states.get(x).status!=="REPORTED_CRITERIA_MATCH");
+   let status=!e?"NO_REPORT":e.kind==="dispute"?"DISPUTED":e.kind==="reopen"?"REOPENED":
+    conditions.some(x=>x.result==="MISMATCH")?"REPORTED_CONDITION_MISMATCH":
+    conditions.some(x=>x.result==="UNKNOWN")?"REPORTED_CONDITION_UNKNOWN":
+    missingEvidence.length?"REPORTED_EVIDENCE_MISSING":
+    blockedBy.length?"REPORTED_DEPENDENCY_HOLD":"REPORTED_CRITERIA_MATCH";
+   states.set(key,{commitment_ref:key,commitment_class:c[1],status,
+    latest_event_sequence:e?.sequence??null,reported_at:e?.reported_at??null,
+    report_time_within_declared_interval:e?e.reported_at>=d.valid_from&&e.reported_at<d.valid_until:null,
+    conditions,missing_evidence_refs:missingEvidence,blocked_by:blockedBy});
+  }
+  return out("SUPPLIED_REVIEW_JOURNAL_REPLAY_ONLY",{contract_ref:d.contract_ref,revision:d.revision,
+   payload_sha256:digest,as_of:asOf,declared_interval:validity,head_event_sha256:prev,links,
+   machine_bottom_up:order.map(k=>states.get(k)),human_top_down:d.commitments.map(c=>states.get(c[0]))});
+ }catch(e){
+  const known=["REVIEW_EVENT_FIELDS","REVIEW_REVISION_MISMATCH","REVIEW_EVENT_LINK_INVALID","REVIEW_EVENT_SCOPE",
+   "REVIEW_EVIDENCE_INVALID","REVIEW_OBSERVATIONS_INVALID","REVIEW_DISPUTE_EVIDENCE_REQUIRED","REVIEW_JOURNAL_INPUT",
+   "REVIEW_EVENT_CHAIN_MISMATCH","REVIEW_TIME_ORDER","REVIEW_TRANSITION_INVALID","REVIEW_JOURNAL_BUDGET","HOLD_CRYPTO_PROVIDER_UNAVAILABLE"];
+  return out(known.includes(e?.message)?e.message:"REVIEW_INPUT_INVALID");
+ }
+}

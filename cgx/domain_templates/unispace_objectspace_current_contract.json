@@ -162,7 +162,9 @@
         "contractPayloadDigest",
         "verifyContractLineage",
         "prepareEip712Commitment",
-        "bindNativeSignaturePayload"
+        "bindNativeSignaturePayload",
+        "commitmentReviewEventDigest",
+        "reviewCommitmentJournal"
       ],
       "primitives": [
         "oblige",
@@ -223,7 +225,16 @@
         "replayProtection": false,
         "execution": false
       },
-      "priorQualifiedCommit": "540ca615cade4dbe7928d3fdddff2cb02487e5ab"
+      "priorQualifiedCommit": "919313239b12a22ba7bf7664948c01a65e8de555",
+      "lifecycleReview": {
+        "schema": "CGX-COMMITMENT-REVIEW-JOURNAL/1",
+        "eventSchema": "CGX-COMMITMENT-REVIEW-EVENT/1",
+        "model": "Separate exact-revision hash-linked report/dispute/reopen journal, no mutation of signed tuple",
+        "conditions": "Explicit typed observed values only, exact decimal/integer comparison, no default from declared variables",
+        "dependencies": "Bottom-up recomputation; dispute and reopen invalidate downstream readiness",
+        "authority": "Reported criteria only; no fact, consent, legal fulfilment, clock, signer or global history proof",
+        "effects": false
+      }
     }
   },
   "portability": {
