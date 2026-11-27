@@ -15,7 +15,7 @@ test('human and machine command reviews derive from one source-bound adapter',()
  assert.match(ui,/intentBinding\.human\.summary/);
  assert.match(ui,/intentBinding\.human\.interpretation/);
  assert.match(ui,/intentBinding\.machine\.status/);
- assert.match(ui,/intent_binding_review:intentBinding,negative_space/);
+ assert.match(ui,/intent_binding_review:intentBinding,archetype_review:archetypeReview,negative_space/);
  assert.match(ui,/intentInput\.addEventListener\('input',display\)/);
  assert.match(ui,/choose\.addEventListener\('change'/);
  assert.doesNotMatch(ui,/eval\(|new Function\(/);
