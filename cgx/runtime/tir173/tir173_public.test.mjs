@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync} from 'node:fs';import {createHash} from 'node:crypto';
-import {validateDictionary,encodeOrdinal,decodeOrdinal,pack173,unpack173,packThreeLines,unpackThreeLines,makeCapsule,encodeBinaryTransport,decodeBinaryTransport,reconcileThreeVoices} from './tir173_core.mjs';
+import {validateDictionary,encodeOrdinal,decodeOrdinal,pack173,unpack173,packThreeLines,unpackThreeLines,makeCapsule,encodeBinaryTransport,decodeBinaryTransport,reconcileThreeVoices,validateCapsule} from './tir173_core.mjs';
 import {bridgeNeoPlan,compileShapeRecipe,projectSynchronized} from './tir173_composition.mjs';
 import {planExistingLoadTIR} from './tir173_load_bridge.mjs';
 const source=readFileSync(new URL('../../../docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json',import.meta.url));
@@ -22,4 +22,20 @@ test('existing LOAD planning contract maps shape but never authorises hydration'
  const lp={schema:'UNISPACE-CGX-LOAD-LENS-PLAN/0.1',state:'PLAN_ONLY_NOT_HYDRATED',alias:'LOAD.cgx',parent_filespace:'Cognigrex.cgx',object_id:'public:review',native_admitted:false,hydrated:false,execution_performed:false,public_publish_authorized:false,canonical_mutation:false,host_context_readback_authenticated:false,source_rights_independently_verified:false,client_scope_independently_authenticated:false,requested_hydration:'H0',planned_hydration:'H0'};
  const out=planExistingLoadTIR(dict,cap,lp);assert.equal(out.source_bytes_transferred,0);assert.equal(out.source_hydrated,false);
  for(const patch of [{hydrated:true},{native_admitted:true},{object_id:'public:different'},{state:'HYDRATED'}])assert.throws(()=>planExistingLoadTIR(dict,cap,{...lp,...patch}));
+});
+
+test('capsule evidence cannot be replaced and required fields cannot default on receipt',()=>{
+ const c=makeCapsule(dict,{shape:1,path:[1],object_ref:'public:review',source_ref:'public:projection'});
+ assert.equal(validateCapsule(dict,c),true);
+ assert.throws(()=>validateCapsule(dict,{...c,geometry_evidence:c.geometry_evidence==='SUPPORTED'?'REFUTED':'SUPPORTED'}),/CAPSULE_DICTIONARY_HASH_MISMATCH/);
+ for(const field of Object.keys(c)){
+   const absent={...c};delete absent[field];
+   assert.throws(()=>validateCapsule(dict,absent),undefined,`missing ${field}`);
+ }
+ for(const field of ['coarse','fine']){
+   const lenses={...c.scale_lenses};delete lenses[field];
+   assert.throws(()=>validateCapsule(dict,{...c,scale_lenses:lenses}),/CAPSULE_SCALE_LENS_MISSING/);
+ }
+ assert.throws(()=>validateCapsule(dict,{...c,scale_lenses:null}),/CAPSULE_SCALE_LENS_MISSING/);
+ assert.equal(validateCapsule(dict,decodeBinaryTransport(encodeBinaryTransport(c))),true);
 });
