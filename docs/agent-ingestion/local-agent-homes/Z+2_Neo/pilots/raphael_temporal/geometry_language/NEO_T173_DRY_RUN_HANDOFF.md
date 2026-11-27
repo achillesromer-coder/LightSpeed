@@ -100,3 +100,21 @@ This reuses the **existing** TIR173 role dictionary and GUIOS Objects lens, with
 
 **Next qualifications:** independently authored blind natural-language paraphrases, ambiguity/attack tests, confidence and abstention calibration, trained specialist per-operation acceptance and native rights/source attestation. The locally trained CPU Neo v1 remains held at 78/96 project-authored held-out phrasing tests, including four below-threshold classes. No Ollama or other foundation-model weights were altered.
 
+
+## 28 November — existing LOAD/CGX-atlas shorthand plan binding (review-only; implemented)
+
+**Concrete gap closed:** Exact Neo T173 shorthand now crosswalks into the already-existing LOAD.cgx review-plan adapter and the original 75-entry CGX component interaction atlas, in the same GUIOS Objects lens. No parallel dictionary, second physics kernel, separate runtime, model or UI tab was created.
+
+- Runtime: cgx/runtime/tir173/tir173_intent_binding.mjs (+ .d.mts). The bridge validates the original role dictionary, source-bound capsule and GUIOS context, then independently re-parses the raw command with the already-tested exact-intent guard. It cannot trust a model-supplied accepted-intent flag.
+- PLAN_HYDRATE: invokes the original planExistingLoadTIR contract only when the existing GUIOS plan states PLAN_ONLY_NOT_HYDRATED, has consistent requested/planned H0–H3 depth, correct object identity and every host rights/lease/readback/authority bit remains false. No LOAD source bytes are accessed.
+- ATLAS_RULE: invokes the original planAtlasInteraction contract with operator-selected CIM row and exact review source-digest claim. Source rule status remains SOURCE_RULE_CANDIDATE_ONLY, not validated material behaviour. It never infers materials or component geometry from the selected T173 role.
+- SELECT: preserves the current source-dictionary identity as a review reference. RELATE, TRIAD, PLAN_TRANSFORM, ENCODE_BYTES and DECODE_BYTES still require typed operands/appropriate existing adapters. An exact word is not sufficient for automatic execution.
+- An ambiguous input, reserved role, multiple shape roles, unexpected effects or GUIOS selection mismatch abstains before a LOAD/atlas plan is selected. A malformed/privileged LOAD plan, invalid measurement or forged geometry/context throws a typed error rather than becoming an accepted plan.
+- GUIOS source: apps/lightspeed-go/src/tir173PublicPreview.ts now builds intent_binding_review from the *same* loadPlan, selected atlas rule, context and capsule as its pre-existing object view. Both human-readable explanation and machine export carry the same typed result. No new GUIOS tab.
+- Regression: cgx/runtime/tir173/tir173_intent_binding.test.mjs adds seven Node test groups; apps/lightspeed-go/src/tir173_intent_ui.test.mjs guards the one-view synchronized seam. Existing codec/LOAD/context/interaction, original 70-case exact-intent review and GUIOS tests remain in CI.
+
+**Verified exact source head:** ed1fd19622e16a406382db94660da14c12f9d7c2. GitHub TIR173 GUIOS workflow 46069850059 succeeded on that head, including Node tests, locked GO dependency install, Vitest and GUIOS production build. The current PR remains draft and unmerged. A build is not a deployment.
+
+**Evidence boundaries:** model_inference_performed=false, model_weights_changed=false, source_bytes_transferred=0, source_hydrated=false, rights_verified=false, native_admitted=false, physical_interaction_established=false, simulation_performed=false, execution_performed=false, signed_dbr=false, mint_performed=false. These are hard review outputs, not independent rights or solver authority.
+
+**Next open:** Independent source/mesh/material binding, permissioned LOAD/CCC readback, qualified units and physical solver, blind evaluation of model-authored shorthand interpretations with abstention, per-Grex model training/admission, and native DBR/owner approval. The branch was updated without touching the owner PC processes or private local checkpoints.
