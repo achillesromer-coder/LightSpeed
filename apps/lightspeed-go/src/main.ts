@@ -197,6 +197,10 @@ app.innerHTML = `
       <div id="object-review-catalogue" class="graph-stack">
         <article class="panel"><p class="muted">Reading the CGX object review catalogue…</p></article>
       </div>
+      <details class="panel" id="tir173-object-inspector">
+        <summary>TIR/173 · contextual geometry and evidence</summary>
+        <div id="tir173-object-mount"><p class="muted">Open to load the existing review-only geometry lens.</p></div>
+      </details>
       <div id="cgx-review-lens" class="graph-stack">
         <article class="panel"><p class="muted">Reading the internal .cgx review projection…</p></article>
       </div>
@@ -1053,6 +1057,22 @@ void loadNeoExchange(async () => {
   if (!response.ok) throw new Error(`Neo exchange returned HTTP ${response.status}`);
   return response.json();
 }).then((exchange) => { exchangeMount.innerHTML = renderExchangePanel(exchange); });
+
+const tir173Inspector = byId<HTMLDetailsElement>("tir173-object-inspector");
+const tir173Mount = byId("tir173-object-mount");
+tir173Inspector.addEventListener("toggle", () => {
+  if (!tir173Inspector.open || tir173Mount.dataset.state === "loading" || tir173Mount.dataset.state === "ready") return;
+  tir173Mount.dataset.state = "loading";
+  tir173Mount.textContent = "Loading contextual review lens…";
+  void import("./tir173PublicPreview").then(({ mountTir173PublicPreview }) =>
+    mountTir173PublicPreview(tir173Mount)
+  ).then(() => {
+    tir173Mount.dataset.state = "ready";
+  }).catch(() => {
+    tir173Mount.dataset.state = "failed";
+    tir173Mount.textContent = "Review lens unavailable. Close and reopen to retry.";
+  });
+});
 
 const activateView = (view: string): void => {
   const target = Array.from(document.querySelectorAll<HTMLButtonElement>(".tab")).find(

@@ -555,15 +555,35 @@
       "resolver": "LOAD.cgx existing review-plan seam",
       "bootstrap": "LOAD.Lite",
       "authority": "REVIEW_ONLY",
-      "destinationCombinedCI": "REQUIRED",
+      "destinationCombinedCI": {
+        "commit": "88571f44ccea142a4352a30852dc2ac826135bf2",
+        "passed": 11,
+        "runIds": [
+          45969621909,
+          45969621929,
+          45969621930,
+          45969622180,
+          45969621976,
+          45969621908,
+          45969621879,
+          45969621906,
+          45969621984,
+          45969621937,
+          45969621854
+        ]
+      },
       "nativeAdmission": false,
       "sourceHydration": false,
       "geometryProof": false,
       "modelTraining": false,
       "executionPerformed": false,
-      "interfaceMount": false,
+      "interfaceMount": "SOURCE_MOUNT_CANDIDATE_NOT_BROWSER_ACCEPTED",
       "currentPackageIntegration": false,
-      "scope": "Five runtime modules, five type declarations, four regression files and existing public-safe role projection. No source main.ts/styles.css replacement or pilot history merge."
+      "scope": "Five runtime modules, five type declarations, four regression files and existing public-safe role projection. No source main.ts/styles.css replacement or pilot history merge.",
+      "interfaceModule": "apps/lightspeed-go/src/tir173PublicPreview.ts",
+      "mount": "Existing Objects disclosure; lazy dynamic import, no new tab",
+      "sourceByteDigest": "SHA-256 of original UTF-8 role projection",
+      "publicLoadBoundary": "Existing projectUniSpaceLoadLens returns HOLD without exact object context; no fabricated resolver output"
     }
   },
   "manualIntake": {
