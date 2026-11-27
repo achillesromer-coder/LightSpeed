@@ -432,3 +432,66 @@ test("review replay is stable if original caller objects change during hashing",
  t[1]="candidate:changed";e.observations[0][1]="0";events.length=0;
  assert.deepEqual(await pending,original);
 });
+
+
+import {prepareReviewEvidence,verifyReviewEvidence} from "./contractShorthand.mjs";
+const evidenceIntent={key_ref:"key:seller",challenge:"a".repeat(64),context_ref:"review:evidence",
+ issued_at:reviewTime,expires_at:"2026-11-28T01:00:00.000Z"};
+async function evidenceFixture(){
+ const {createHash,generateKeyPairSync,sign}=await import("node:crypto");
+ const t=packContract(contractFixture()),e=await reviewEvent(t,[]),bytes=Uint8Array.from([1,2,3,255]);
+ const evidence=[{ref:e.evidence_refs[0],sha256:createHash("sha256").update(bytes).digest("hex"),bytes}];
+ const {publicKey,privateKey}=generateKeyPairSync("ed25519");
+ const p=await prepareReviewEvidence(t,e,evidence,evidenceIntent);
+ const proof={public_key_hex:publicKey.export({format:"der",type:"spki"}).subarray(-32).toString("hex"),
+  signature_hex:sign(null,Buffer.from(p.preimage_utf8),privateKey).toString("hex"),as_of:reviewTime,used_challenges:[]};
+ return {t,e,evidence,proof,p};
+}
+test("evidence binds actual bytes and exact event without claiming custody, truth or authority",async()=>{
+ const {t,e,evidence,proof,p}=await evidenceFixture();
+ assert.equal(p.byte_count,4);assert.equal(p.event_sha256,await commitmentReviewEventDigest(t,e));
+ const r=await verifyReviewEvidence(t,e,evidence,evidenceIntent,proof);
+ assert.equal(r.state,"MATHEMATICAL_EVIDENCE_SIGNATURE_VALID_ONLY");
+ assert.equal(r.mathematical_signature_valid,true);assert.equal(r.declared_evidence_hashes_match,true);
+ for(const k of ["evidence_truth_verified","source_custody_verified","signer_identity_verified","key_binding_verified","revocation_verified","replay_protection_verified","challenge_consumed","execution_authorized","legal_fulfilment_verified"])assert.equal(r[k],false,k);
+});
+test("missing, changed, duplicate, foreign and oversized evidence is rejected",async()=>{
+ const {t,e,evidence,proof}=await evidenceFixture();
+ for(const [items,state] of [[[],"EVIDENCE_CLOSURE_REQUIRED"],
+  [[{...evidence[0],bytes:Uint8Array.from([0])}],"EVIDENCE_BYTE_MISMATCH"],
+  [[{...evidence[0],ref:"foreign"}],"EVIDENCE_MEMBER_INVALID"],
+  [[{...evidence[0],bytes:new Uint8Array(1048577)}],"EVIDENCE_MEMBER_INVALID"],
+  [[evidence[0],evidence[0]],"EVIDENCE_CLOSURE_REQUIRED"]]){
+  assert.equal((await verifyReviewEvidence(t,e,items,evidenceIntent,proof)).state,state);
+ }
+ const ee={...e,evidence_refs:[e.evidence_refs[0],"another"]};
+ assert.equal((await verifyReviewEvidence(t,ee,[evidence[0],evidence[0]],evidenceIntent,proof)).state,"EVIDENCE_MEMBER_INVALID");
+});
+test("event, context and key substitutions cannot reuse evidence signature",async()=>{
+ const {t,e,evidence,proof}=await evidenceFixture();
+ for(const [ev,intent] of [[{...e,observations:[["count","3"]]},evidenceIntent],
+  [e,{...evidenceIntent,context_ref:"review:other"}],[e,{...evidenceIntent,key_ref:"key:other"}],
+  [e,{...evidenceIntent,challenge:"b".repeat(64)}]]){
+  assert.equal((await verifyReviewEvidence(t,ev,evidence,intent,proof)).state,"EVIDENCE_SIGNATURE_MISMATCH");
+ }
+ const next=packContract(contractFixture({revision:2,previous_payload_sha256:await contractPayloadDigest(t)}));
+ assert.equal((await verifyReviewEvidence(next,e,evidence,evidenceIntent,proof)).state,"REVIEW_REVISION_MISMATCH");
+});
+test("supplied challenge reuse and expiry hold without claiming actual anti-replay protection",async()=>{
+ const {t,e,evidence,proof}=await evidenceFixture();
+ assert.equal((await verifyReviewEvidence(t,e,evidence,evidenceIntent,{...proof,used_challenges:[evidenceIntent.challenge]})).state,"HOLD_SUPPLIED_CHALLENGE_REUSED");
+ assert.equal((await verifyReviewEvidence(t,e,evidence,evidenceIntent,{...proof,as_of:evidenceIntent.expires_at})).state,"HOLD_SUPPLIED_TIME_WINDOW");
+ assert.equal((await verifyReviewEvidence(t,e,evidence,{...evidenceIntent,expires_at:"2026-11-30T00:00:00.000Z"},proof)).state,"EVIDENCE_INTENT_INVALID");
+ assert.equal((await verifyReviewEvidence(t,e,evidence,evidenceIntent,{...proof,used_challenges:[evidenceIntent.challenge,evidenceIntent.challenge]})).state,"EVIDENCE_PROOF_INVALID");
+});
+test("evidence preparation snapshots event, intent and bytes before yielding",async()=>{
+ const {t,e,evidence,p}=await evidenceFixture(),intent={...evidenceIntent};
+ const pending=prepareReviewEvidence(t,e,evidence,intent);
+ t[1]="candidate:changed";e.observations[0][1]="0";evidence[0].bytes[0]=0;intent.context_ref="changed";
+ assert.deepEqual(await pending,p);
+});
+test("individual event digest snapshots input before asynchronous hashing",async()=>{
+ const t=packContract(contractFixture()),e=await reviewEvent(t,[]);
+ const expected=await commitmentReviewEventDigest(t,e),pending=commitmentReviewEventDigest(t,e);
+ e.observations[0][1]="0";t[1]="candidate:changed";assert.equal(await pending,expected);
+});

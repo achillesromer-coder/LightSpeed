@@ -286,8 +286,12 @@ function eventTuple(d,digest,e){
 }
 /** Prepare a digest of a validated event; a digest is not an authenticated receipt. */
 export async function commitmentReviewEventDigest(t,e){
- const d=unpackContract(t),digest=await contractPayloadDigest(t);
- return shaBytes(new TextEncoder().encode(JSON.stringify(eventTuple(d,digest,e))));
+ const d=unpackContract(t),fixed=packContract(d);
+ must(exact(e,EVENT_FIELDS)&&sha(e.payload_sha256),"REVIEW_EVENT_FIELDS");
+ const v=eventTuple(d,e.payload_sha256,e);
+ const digest=await contractPayloadDigest(fixed);
+ must(v[3]===digest,"REVIEW_REVISION_MISMATCH");
+ return shaBytes(new TextEncoder().encode(JSON.stringify(v)));
 }
 /** Replay supplied events deterministically at an explicit, untrusted as-of time.
  * Per-clause dependency readiness is recomputed after disputes and reopens;
@@ -349,5 +353,92 @@ export async function reviewCommitmentJournal(t,events,asOf){
    "REVIEW_EVIDENCE_INVALID","REVIEW_OBSERVATIONS_INVALID","REVIEW_DISPUTE_EVIDENCE_REQUIRED","REVIEW_JOURNAL_INPUT",
    "REVIEW_EVENT_CHAIN_MISMATCH","REVIEW_TIME_ORDER","REVIEW_TRANSITION_INVALID","REVIEW_JOURNAL_BUDGET","HOLD_CRYPTO_PROVIDER_UNAVAILABLE"];
   return out(known.includes(e?.message)?e.message:"REVIEW_INPUT_INVALID");
+ }
+}
+
+
+/** Exact byte evidence binding for an existing review event. Evidence bodies
+ * are supplied by the caller, never fetched or stored here. A matching digest
+ * proves byte integrity against the declared pin, not provenance or truth.
+ * A separate domain-separated signature may authenticate the preimage
+ * mathematically under a supplied public key, never establish identity.
+ */
+export const REVIEW_EVIDENCE_SCHEMA="CGX-COMMITMENT-EVIDENCE-INTENT/1";
+const REVIEW_PROOF_FIELDS=["key_ref","challenge","context_ref","issued_at","expires_at"];
+export async function prepareReviewEvidence(t,event,evidence,intent){
+ const d=unpackContract(t),fixed=packContract(d);
+ must(exact(event,EVENT_FIELDS)&&sha(event.payload_sha256),"REVIEW_EVENT_FIELDS");
+ const v=eventTuple(d,event.payload_sha256,event);
+ const e=Object.fromEntries(EVENT_FIELDS.map((k,i)=>[k,v[i+1]]));
+ must(exact(intent,REVIEW_PROOF_FIELDS)&&text(intent.key_ref)&&sha(intent.challenge)&&
+  text(intent.context_ref)&&utc(intent.issued_at)&&utc(intent.expires_at)&&
+  intent.issued_at<intent.expires_at&&intent.issued_at>=e.reported_at&&
+  Date.parse(intent.expires_at)-Date.parse(intent.issued_at)<=86400000,"EVIDENCE_INTENT_INVALID");
+ const proof=Object.fromEntries(REVIEW_PROOF_FIELDS.map(k=>[k,intent[k]]));
+ must(rows(evidence,32)&&evidence.length===e.evidence_refs.length,"EVIDENCE_CLOSURE_REQUIRED");
+ let total=0;const byRef=new Map();
+ for(const item of evidence){
+  must(exact(item,["ref","sha256","bytes"])&&e.evidence_refs.includes(item.ref)&&
+   !byRef.has(item.ref)&&sha(item.sha256)&&item.bytes instanceof Uint8Array&&
+   item.bytes.byteLength>0&&item.bytes.byteLength<=1048576,"EVIDENCE_MEMBER_INVALID");
+  total+=item.bytes.byteLength;must(total<=4194304,"EVIDENCE_BYTE_BUDGET");
+  byRef.set(item.ref,{ref:item.ref,sha256:item.sha256,bytes:Uint8Array.from(item.bytes)});
+ }
+ const digest=await contractPayloadDigest(fixed);
+ must(e.payload_sha256===digest,"REVIEW_REVISION_MISMATCH");
+ const eventDigest=await shaBytes(new TextEncoder().encode(JSON.stringify(v)));
+ const pins=[];
+ for(const ref of e.evidence_refs){
+  const item=byRef.get(ref);must(!!item,"EVIDENCE_CLOSURE_REQUIRED");
+  const actual=await shaBytes(item.bytes);must(actual===item.sha256,"EVIDENCE_BYTE_MISMATCH");
+  pins.push([ref,actual,item.bytes.length]);
+ }
+ const identity=d.parties.find(p=>p[0]===e.reporter_id)[1];
+ const binding=[REVIEW_EVIDENCE_SCHEMA,"cgx:root:cognigrex",d.contract_ref,d.revision,digest,
+  eventDigest,e.commitment_id,e.reporter_id,identity,pins,...REVIEW_PROOF_FIELDS.map(k=>proof[k])];
+ return {schema:REVIEW_EVIDENCE_SCHEMA,state:"UNSIGNED_EVIDENCE_BYTE_BINDING_ONLY",
+  contract_ref:d.contract_ref,revision:d.revision,event_sha256:eventDigest,
+  evidence_pins:pins,byte_count:total,preimage_utf8:JSON.stringify(binding),
+  issued_at:proof.issued_at,expires_at:proof.expires_at,challenge:proof.challenge,
+  declared_evidence_hashes_match:true,source_custody_verified:false,evidence_truth_verified:false,
+  signature_verified:false,identity_verified:false,authority_verified:false,execution_authorized:false};
+}
+/** Check an exact evidence statement against a supplied Ed25519 key and a
+ * caller-provided clock/used-challenge set. No durable nonce consumption,
+ * identity trust, revocation lookup, receipt issuance or side effects.
+ */
+export async function verifyReviewEvidence(t,event,evidence,intent,proof){
+ const out=(state,extra={})=>({schema:"CGX-COMMITMENT-EVIDENCE-CHECK/1",state,
+  declared_evidence_hashes_match:false,mathematical_signature_valid:false,
+  supplied_window_matches:false,supplied_challenge_unused:false,...extra,
+  evidence_truth_verified:false,source_custody_verified:false,signer_identity_verified:false,
+  key_binding_verified:false,revocation_verified:false,clock_independently_verified:false,
+  replay_protection_verified:false,challenge_consumed:false,reporter_authority_verified:false,
+  consent_verified:false,legal_fulfilment_verified:false,native_admission:false,execution_authorized:false,
+  effects_performed:false,canonical_writes:0});
+ try{
+  must(exact(proof,["public_key_hex","signature_hex","as_of","used_challenges"])&&
+   typeof proof.public_key_hex==="string"&&/^[a-f0-9]{64}$/.test(proof.public_key_hex)&&
+   typeof proof.signature_hex==="string"&&/^[a-f0-9]{128}$/.test(proof.signature_hex)&&
+   utc(proof.as_of)&&rows(proof.used_challenges,4096)&&proof.used_challenges.every(sha)&&
+   unique(proof.used_challenges),"EVIDENCE_PROOF_INVALID");
+  const fixed={...proof,used_challenges:[...proof.used_challenges]};
+  const p=await prepareReviewEvidence(t,event,evidence,intent);
+  const checks={declared_evidence_hashes_match:true,event_sha256:p.event_sha256,
+   evidence_pins:p.evidence_pins,supplied_window_matches:fixed.as_of>=p.issued_at&&fixed.as_of<p.expires_at,
+   supplied_challenge_unused:!fixed.used_challenges.includes(p.challenge)};
+  if(!checks.supplied_window_matches)return out("HOLD_SUPPLIED_TIME_WINDOW",checks);
+  if(!checks.supplied_challenge_unused)return out("HOLD_SUPPLIED_CHALLENGE_REUSED",checks);
+  const subtle=globalThis.crypto?.subtle;if(!subtle)return out("HOLD_CRYPTO_PROVIDER_UNAVAILABLE",checks);
+  const bytes=x=>Uint8Array.from(x.match(/../g),b=>parseInt(b,16));
+  const key=await subtle.importKey("raw",bytes(fixed.public_key_hex),{name:"Ed25519"},false,["verify"]);
+  const valid=await subtle.verify({name:"Ed25519"},key,bytes(fixed.signature_hex),new TextEncoder().encode(p.preimage_utf8));
+  return out(valid?"MATHEMATICAL_EVIDENCE_SIGNATURE_VALID_ONLY":"EVIDENCE_SIGNATURE_MISMATCH",
+   {...checks,mathematical_signature_valid:valid});
+ }catch(e){
+  const known=["EVIDENCE_PROOF_INVALID","EVIDENCE_INTENT_INVALID","EVIDENCE_CLOSURE_REQUIRED",
+   "EVIDENCE_MEMBER_INVALID","EVIDENCE_BYTE_BUDGET","EVIDENCE_BYTE_MISMATCH","REVIEW_REVISION_MISMATCH",
+   "REVIEW_EVENT_FIELDS","HOLD_CRYPTO_PROVIDER_UNAVAILABLE"];
+  return out(known.includes(e?.message)?e.message:"EVIDENCE_CHECK_FAILED");
  }
 }

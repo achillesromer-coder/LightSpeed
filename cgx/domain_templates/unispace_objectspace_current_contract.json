@@ -164,7 +164,9 @@
         "prepareEip712Commitment",
         "bindNativeSignaturePayload",
         "commitmentReviewEventDigest",
-        "reviewCommitmentJournal"
+        "reviewCommitmentJournal",
+        "prepareReviewEvidence",
+        "verifyReviewEvidence"
       ],
       "primitives": [
         "oblige",
@@ -225,7 +227,7 @@
         "replayProtection": false,
         "execution": false
       },
-      "priorQualifiedCommit": "919313239b12a22ba7bf7664948c01a65e8de555",
+      "priorQualifiedCommit": "96f6af0e6267df85ff57bcab79d817011558ade3",
       "lifecycleReview": {
         "schema": "CGX-COMMITMENT-REVIEW-JOURNAL/1",
         "eventSchema": "CGX-COMMITMENT-REVIEW-EVENT/1",
@@ -234,6 +236,24 @@
         "dependencies": "Bottom-up recomputation; dispute and reopen invalidate downstream readiness",
         "authority": "Reported criteria only; no fact, consent, legal fulfilment, clock, signer or global history proof",
         "effects": false
+      },
+      "evidenceProof": {
+        "schema": "CGX-COMMITMENT-EVIDENCE-INTENT/1",
+        "check": "CGX-COMMITMENT-EVIDENCE-CHECK/1",
+        "binding": "Exact revision, event digest, reporter and declared identity, ordered evidence refs and computed byte hashes, key/challenge/context/time window",
+        "crypto": "Ed25519 mathematical verification only with caller-supplied key",
+        "limits": {
+          "members": 32,
+          "memberBytes": 1048576,
+          "totalBytes": 4194304,
+          "windowHours": 24
+        },
+        "replay": "Supplied challenge list and clock screening only; no trusted nonce store or consumption",
+        "custodyVerified": false,
+        "truthVerified": false,
+        "identityVerified": false,
+        "revocationVerified": false,
+        "execution": false
       }
     }
   },
