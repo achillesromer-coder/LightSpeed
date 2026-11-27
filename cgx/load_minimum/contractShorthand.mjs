@@ -442,3 +442,95 @@ export async function verifyReviewEvidence(t,event,evidence,intent,proof){
   return out(known.includes(e?.message)?e.message:"EVIDENCE_CHECK_FAILED");
  }
 }
+
+
+/** Offline status-statement bridge. The supplied anchor must eventually come
+ * from an authenticated native authority provider, not a user assertion.
+ * A signed snapshot is historical evidence, not durable replay protection.
+ */
+export const REVIEW_AUTHORITY_SCHEMA="CGX-COMMITMENT-REVIEW-STATUS/1";
+const STATUS_FIELDS=["issuer_ref","authority_ref","lease_ref","sequence","observed_at","expires_at",
+ "contract_ref","revision","payload_sha256","event_sha256","intent_sha256","reporter_id","identity_ref",
+ "key_ref","public_key_hex","key_valid_from","key_valid_until","key_state","challenge","challenge_state"];
+const pubhex=x=>typeof x==="string"&&/^[a-f0-9]{64}$/.test(x);
+const sighex=x=>typeof x==="string"&&/^[a-f0-9]{128}$/.test(x);
+const hexbytes=x=>Uint8Array.from(x.match(/../g),b=>parseInt(b,16));
+export function prepareReviewStatusStatement(s){
+ must(exact(s,STATUS_FIELDS),"STATUS_FIELDS_INVALID");
+ must([s.issuer_ref,s.authority_ref,s.lease_ref,s.identity_ref,s.key_ref].every(x=>text(x))&&
+  id(s.contract_ref)&&id(s.reporter_id)&&Number.isSafeInteger(s.revision)&&s.revision>0&&
+  Number.isSafeInteger(s.sequence)&&s.sequence>0&&
+  [s.payload_sha256,s.event_sha256,s.intent_sha256,s.challenge].every(sha)&&pubhex(s.public_key_hex),"STATUS_SCOPE_INVALID");
+ must([s.observed_at,s.expires_at,s.key_valid_from,s.key_valid_until].every(utc)&&
+  s.observed_at<s.expires_at&&s.key_valid_from<s.key_valid_until&&
+  Date.parse(s.expires_at)-Date.parse(s.observed_at)<=900000,"STATUS_WINDOW_INVALID");
+ must(["ACTIVE","SUSPENDED","REVOKED"].includes(s.key_state)&&
+  ["ISSUED","CONSUMED","REVOKED"].includes(s.challenge_state),"STATUS_VALUE_INVALID");
+ return JSON.stringify([REVIEW_AUTHORITY_SCHEMA,"cgx:root:cognigrex",...STATUS_FIELDS.map(k=>s[k])]);
+}
+export async function reviewStatusStatementDigest(s){
+ return shaBytes(new TextEncoder().encode(prepareReviewStatusStatement(s)));
+}
+/** Verify an evidence signature and separately signed status snapshot against
+ * caller-pinned issuer key/digest/sequence. No current registry observation,
+ * issuer trust, lease validation, global revocation or nonce mutation occurs.
+ * Never treat the successful result as a permission decision.
+ */
+export async function reviewEvidenceAuthority(t,event,evidence,intent,proof,statement,issuerSignature,anchor){
+ const out=(state,extra={})=>({schema:"CGX-COMMITMENT-AUTHORITY-REVIEW/1",state,
+  evidence_signature_valid:false,issuer_signature_valid:false,supplied_statement_pin_matches:false,
+  supplied_identity_binding_matches:false,supplied_status_window_matches:false,
+  supplied_active_key:false,supplied_issued_challenge:false,...extra,
+  issuer_trust_verified:false,signer_identity_verified:false,revocation_verified:false,
+  clock_independently_verified:false,lease_verified:false,replay_protection_verified:false,
+  challenge_consumed:false,evidence_truth_verified:false,consent_verified:false,
+  native_admission:false,execution_authorized:false,effects_performed:false,canonical_writes:0});
+ try{
+  must(exact(anchor,["issuer_ref","authority_ref","public_key_hex","statement_sha256","minimum_sequence"])&&
+   text(anchor.issuer_ref)&&text(anchor.authority_ref)&&pubhex(anchor.public_key_hex)&&sha(anchor.statement_sha256)&&
+   Number.isSafeInteger(anchor.minimum_sequence)&&anchor.minimum_sequence>0&&sighex(issuerSignature),"STATUS_ANCHOR_INVALID");
+  const a={...anchor},preimage=prepareReviewStatusStatement(statement),s={...statement};
+  // Snapshot inputs before yielding. Both existing functions copy all data
+  // synchronously before crypto work. Never use caller objects after await.
+  const d=unpackContract(t),fixed=packContract(d),reporter=event.reporter_id;
+  const identity=d.parties.find(p=>p[0]===reporter)?.[1];
+  const i={...intent},pr={...proof,used_challenges:Array.isArray(proof?.used_challenges)?[...proof.used_challenges]:null};
+  const evidencePrepared=prepareReviewEvidence(fixed,event,evidence,i);
+  const evidenceChecked=verifyReviewEvidence(fixed,event,evidence,i,pr);
+  const [ep,ec]=await Promise.all([evidencePrepared,evidenceChecked]);
+  if(ec.state!=="MATHEMATICAL_EVIDENCE_SIGNATURE_VALID_ONLY")return out("HOLD_EVIDENCE_SIGNATURE",{evidence_review_state:ec.state});
+  const flags={evidence_signature_valid:true,event_sha256:ep.event_sha256};
+  const pin=await shaBytes(new TextEncoder().encode(preimage));
+  if(pin!==a.statement_sha256||s.sequence<a.minimum_sequence||s.issuer_ref!==a.issuer_ref||
+    s.authority_ref!==a.authority_ref||a.public_key_hex===pr.public_key_hex||s.issuer_ref===identity)
+   return out("HOLD_STATUS_ANCHOR_MISMATCH",flags);
+  flags.supplied_statement_pin_matches=true;
+  const subtle=globalThis.crypto?.subtle;if(!subtle)return out("HOLD_CRYPTO_PROVIDER_UNAVAILABLE",flags);
+  const issuer=await subtle.importKey("raw",hexbytes(a.public_key_hex),{name:"Ed25519"},false,["verify"]);
+  if(!await subtle.verify({name:"Ed25519"},issuer,hexbytes(issuerSignature),new TextEncoder().encode(preimage)))
+   return out("HOLD_ISSUER_SIGNATURE_MISMATCH",flags);
+  flags.issuer_signature_valid=true;
+  const payload=await contractPayloadDigest(fixed),intentHash=await shaBytes(new TextEncoder().encode(ep.preimage_utf8));
+  if(s.contract_ref!==d.contract_ref||s.revision!==d.revision||s.payload_sha256!==payload||
+    s.event_sha256!==ep.event_sha256||s.intent_sha256!==intentHash||s.reporter_id!==reporter||
+    s.identity_ref!==identity||s.key_ref!==i.key_ref||s.public_key_hex!==pr.public_key_hex||s.challenge!==i.challenge)
+   return out("HOLD_STATUS_BINDING_MISMATCH",flags);
+  flags.supplied_identity_binding_matches=true;
+  if(s.observed_at<i.issued_at||pr.as_of<s.observed_at||pr.as_of>=s.expires_at||
+    i.issued_at<s.key_valid_from||pr.as_of>=s.key_valid_until)
+   return out("HOLD_STATUS_STALE_OR_KEY_WINDOW",flags);
+  flags.supplied_status_window_matches=true;
+  if(s.key_state!=="ACTIVE")return out("HOLD_SUPPLIED_KEY_"+s.key_state,flags);
+  flags.supplied_active_key=true;
+  if(s.challenge_state!=="ISSUED")return out("HOLD_SUPPLIED_CHALLENGE_"+s.challenge_state,flags);
+  flags.supplied_issued_challenge=true;
+  return out("SUPPLIED_SIGNED_STATUS_MATCH_ONLY",{...flags,statement_sha256:pin,sequence:s.sequence,
+   authority_ref:s.authority_ref,lease_ref:s.lease_ref,
+   requires:["authenticate issuer and current authority/lease independently",
+    "verify current key status and trusted time","atomically consume scoped challenge through existing authenticated DataSpace",
+    "retain independent DBR and evidence custody readback"]});
+ }catch(e){
+  const known=["STATUS_FIELDS_INVALID","STATUS_SCOPE_INVALID","STATUS_WINDOW_INVALID","STATUS_VALUE_INVALID","STATUS_ANCHOR_INVALID","HOLD_CRYPTO_PROVIDER_UNAVAILABLE"];
+  return out(known.includes(e?.message)?e.message:"STATUS_REVIEW_FAILED");
+ }
+}

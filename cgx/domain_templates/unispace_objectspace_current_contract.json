@@ -166,7 +166,10 @@
         "commitmentReviewEventDigest",
         "reviewCommitmentJournal",
         "prepareReviewEvidence",
-        "verifyReviewEvidence"
+        "verifyReviewEvidence",
+        "prepareReviewStatusStatement",
+        "reviewStatusStatementDigest",
+        "reviewEvidenceAuthority"
       ],
       "primitives": [
         "oblige",
@@ -227,7 +230,7 @@
         "replayProtection": false,
         "execution": false
       },
-      "priorQualifiedCommit": "96f6af0e6267df85ff57bcab79d817011558ade3",
+      "priorQualifiedCommit": "c117a69e1079cb49b52142e747b4a7d4d1da644c",
       "lifecycleReview": {
         "schema": "CGX-COMMITMENT-REVIEW-JOURNAL/1",
         "eventSchema": "CGX-COMMITMENT-REVIEW-EVENT/1",
@@ -254,6 +257,21 @@
         "identityVerified": false,
         "revocationVerified": false,
         "execution": false
+      },
+      "statusStatementReview": {
+        "schema": "CGX-COMMITMENT-REVIEW-STATUS/1",
+        "check": "CGX-COMMITMENT-AUTHORITY-REVIEW/1",
+        "binding": "Exact evidence intent, revision, reporter, key, challenge, signed status, authority and lease references; caller-pinned issuer key, statement digest and minimum sequence",
+        "freshnessMinutes": 15,
+        "independentIssuerTrust": false,
+        "currentRevocationVerified": false,
+        "durableNonceConsumption": false,
+        "execution": false,
+        "existingAuthorityContracts": [
+          "cgx/domain_templates/execution_lease_contract.json",
+          "cgx/domain_templates/node_exchange_contract.json",
+          "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json"
+        ]
       }
     }
   },

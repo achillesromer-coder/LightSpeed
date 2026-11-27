@@ -495,3 +495,58 @@ test("individual event digest snapshots input before asynchronous hashing",async
  const expected=await commitmentReviewEventDigest(t,e),pending=commitmentReviewEventDigest(t,e);
  e.observations[0][1]="0";t[1]="candidate:changed";assert.equal(await pending,expected);
 });
+
+
+import {prepareReviewStatusStatement,reviewStatusStatementDigest,reviewEvidenceAuthority} from "./contractShorthand.mjs";
+async function authorityFixture(change={}){
+ const f=await evidenceFixture(),{createHash,generateKeyPairSync,sign}=await import("node:crypto");
+ const {publicKey,privateKey}=generateKeyPairSync("ed25519");
+ const s={issuer_ref:"authority:fixture",authority_ref:"receipt:fixture-root",lease_ref:"lease:fixture",sequence:7,
+  observed_at:reviewTime,expires_at:"2026-11-28T00:10:00.000Z",contract_ref:"candidate:root",revision:1,
+  payload_sha256:await contractPayloadDigest(f.t),event_sha256:f.p.event_sha256,
+  intent_sha256:createHash("sha256").update(f.p.preimage_utf8).digest("hex"),reporter_id:"seller",identity_ref:"identity:seller",
+  key_ref:evidenceIntent.key_ref,public_key_hex:f.proof.public_key_hex,key_valid_from:"2026-11-27T00:00:00.000Z",
+  key_valid_until:"2026-12-01T00:00:00.000Z",key_state:"ACTIVE",challenge:evidenceIntent.challenge,challenge_state:"ISSUED",...change};
+ const preimage=prepareReviewStatusStatement(s);
+ const a={issuer_ref:s.issuer_ref,authority_ref:s.authority_ref,public_key_hex:publicKey.export({format:"der",type:"spki"}).subarray(-32).toString("hex"),
+  statement_sha256:await reviewStatusStatementDigest(s),minimum_sequence:7};
+ return {...f,s,a,sig:sign(null,Buffer.from(preimage),privateKey).toString("hex")};
+}
+const reviewAuthority=(f,over={})=>reviewEvidenceAuthority(f.t,f.e,f.evidence,evidenceIntent,over.proof??f.proof,over.s??f.s,over.sig??f.sig,over.a??f.a);
+test("signed supplied status matches only, never grants trusted identity or authority",async()=>{
+ const f=await authorityFixture(),r=await reviewAuthority(f);
+ assert.equal(r.state,"SUPPLIED_SIGNED_STATUS_MATCH_ONLY");
+ for(const k of ["evidence_signature_valid","issuer_signature_valid","supplied_statement_pin_matches","supplied_identity_binding_matches","supplied_status_window_matches","supplied_active_key","supplied_issued_challenge"])assert.equal(r[k],true,k);
+ for(const k of ["issuer_trust_verified","signer_identity_verified","revocation_verified","clock_independently_verified","lease_verified","replay_protection_verified","challenge_consumed","execution_authorized","native_admission"])assert.equal(r[k],false,k);
+ assert.equal(r.statement_sha256,f.a.statement_sha256);
+});
+test("signed revocation suspension and consumed challenge hold even with valid signatures",async()=>{
+ for(const [change,state] of [[{key_state:"REVOKED"},"HOLD_SUPPLIED_KEY_REVOKED"],[{key_state:"SUSPENDED"},"HOLD_SUPPLIED_KEY_SUSPENDED"],[{challenge_state:"CONSUMED"},"HOLD_SUPPLIED_CHALLENGE_CONSUMED"],[{challenge_state:"REVOKED"},"HOLD_SUPPLIED_CHALLENGE_REVOKED"]]){
+  const r=await reviewAuthority(await authorityFixture(change));assert.equal(r.state,state);assert.equal(r.issuer_signature_valid,true);assert.equal(r.execution_authorized,false);
+ }
+});
+test("status binds exact reporter revision intent key and challenge",async()=>{
+ for(const change of [{identity_ref:"identity:other"},{revision:2},{event_sha256:"b".repeat(64)},{intent_sha256:"c".repeat(64)},{challenge:"d".repeat(64)},{key_ref:"key:other"}]){
+  const r=await reviewAuthority(await authorityFixture(change));assert.equal(r.state,"HOLD_STATUS_BINDING_MISMATCH");
+ }
+});
+test("status cannot use substituted issuer pin stale sequence or self attestation",async()=>{
+ const f=await authorityFixture();
+ for(const a of [{...f.a,statement_sha256:"b".repeat(64)},{...f.a,minimum_sequence:8},{...f.a,public_key_hex:f.proof.public_key_hex},{...f.a,issuer_ref:"other"}])
+  assert.equal((await reviewAuthority(f,{a})).state,"HOLD_STATUS_ANCHOR_MISMATCH");
+ assert.equal((await reviewAuthority(f,{sig:"0".repeat(128)})).state,"HOLD_ISSUER_SIGNATURE_MISMATCH");
+ assert.equal((await reviewAuthority(f,{s:{...f.s,key_state:"REVOKED"}})).state,"HOLD_STATUS_ANCHOR_MISMATCH");
+});
+test("status freshness and key validity are checked against supplied time only",async()=>{
+ const f=await authorityFixture();
+ assert.equal((await reviewAuthority(f,{proof:{...f.proof,as_of:f.s.expires_at}})).state,"HOLD_STATUS_STALE_OR_KEY_WINDOW");
+ const g=await authorityFixture({key_valid_until:reviewTime});
+ assert.equal((await reviewAuthority(g)).state,"HOLD_STATUS_STALE_OR_KEY_WINDOW");
+ assert.throws(()=>prepareReviewStatusStatement({...f.s,expires_at:"2026-11-28T01:00:00.000Z"}),/STATUS_WINDOW_INVALID/);
+ assert.throws(()=>prepareReviewStatusStatement({...f.s,execution_authorized:true}),/STATUS_FIELDS_INVALID/);
+});
+test("authority review snapshots all original inputs before hashing",async()=>{
+ const f=await authorityFixture(),expected=await reviewAuthority(f),pending=reviewAuthority(f);
+ f.s.key_state="REVOKED";f.a.minimum_sequence=99;f.e.observations[0][1]="0";f.evidence[0].bytes[0]=9;f.proof.used_challenges.push(evidenceIntent.challenge);f.t[1]="candidate:other";
+ assert.deepEqual(await pending,expected);
+});
