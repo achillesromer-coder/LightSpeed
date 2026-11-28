@@ -2,7 +2,7 @@
 No execution of source, network, new store, native admission or source deletion.
 """
 from __future__ import annotations
-import argparse, ast, collections, hashlib, json, os, re, stat, tempfile, zlib
+import argparse, ast, collections, hashlib, json, math, os, re, stat, tempfile, zlib
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 MAGIC=b'CGXBYTE17'
@@ -12,6 +12,19 @@ MAX_ITEMS=16
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def enc(value): return (json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=True)+'\n').encode()
+def strict_json(text):
+    def unique(pairs):
+        result={}
+        for key,value in pairs:
+            if key in result: raise ValueError('DUPLICATE_JSON_KEY_HOLD')
+            result[key]=value
+        return result
+    def reject(value): raise ValueError('NONFINITE_JSON_NUMBER_HOLD')
+    def finite(value):
+        number=float(value)
+        if not math.isfinite(number): reject(value)
+        return number
+    return json.loads(text,object_pairs_hook=unique,parse_constant=reject,parse_float=finite)
 def redirected(st): return stat.S_ISLNK(st.st_mode) or bool(getattr(st,'st_file_attributes',0)&0x400)
 def stamp(st): return (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime_ns,st.st_nlink)
 # Windows path stat and handle fstat may expose different creation/change times.
@@ -80,7 +93,7 @@ def projection(raw,suffix):
         elif suffix=='.md':
             data={'headings':[x[:240] for x in re.findall(r'^#{1,6}\s+(.+)$',text,re.M)[:128]],'lines':len(text.splitlines())};kind='DOCUMENT_STRUCTURE';purpose='source-grounded knowledge candidate'
         elif suffix=='.json':
-            value=json.loads(text);data={'type':type(value).__name__,'top_level_count':len(value) if isinstance(value,(list,dict)) else 1,'keys':list(value)[:128] if isinstance(value,dict) else []};kind='DATA_STRUCTURE';purpose='typed data candidate'
+            value=strict_json(text);data={'type':type(value).__name__,'top_level_count':len(value) if isinstance(value,(list,dict)) else 1,'keys':list(value)[:128] if isinstance(value,dict) else []};kind='DATA_STRUCTURE';purpose='typed data candidate'
         else: return {'kind':'BYTE_ONLY','data':{},'semantic':{'status':'VIEW_HOLD','reason':'UNQUALIFIED_PARSER'}}
         return {'kind':kind,'data':data,'semantic':{'status':'REVIEW_CANDIDATE','purpose':purpose,'scientific_validation':False}}
     except (UnicodeError,ValueError,SyntaxError,RecursionError):return {'kind':'BYTE_ONLY','data':{},'semantic':{'status':'VIEW_HOLD','reason':'PARSE_FAILED'}}
@@ -89,8 +102,11 @@ def ingest(root,load,relative):
     p,st,raw=read_source(root,relative);h=sha(raw)
     packs=load/'R0_PACKS_private';receipts=load/'Local_batch_receipts'
     if not packs.is_dir() or not receipts.is_dir():raise ValueError('EXISTING_LOAD_STORE_REQUIRED')
-    guard=json.loads((load/'INTEGRITY_AND_GC_GATES.review.json').read_text(encoding='utf-8-sig'))
-    if guard.get('schema')!='CGX-LOAD-INTAKE-AUDIT/0.17':raise ValueError('LOAD_CONTRACT_HOLD')
+    try:
+        guard=strict_json((load/'INTEGRITY_AND_GC_GATES.review.json').read_text(encoding='utf-8-sig'))
+    except (ValueError, RecursionError) as exc:
+        raise ValueError('LOAD_CONTRACT_HOLD') from exc
+    if not isinstance(guard,dict) or guard.get('schema')!='CGX-LOAD-INTAKE-AUDIT/0.17':raise ValueError('LOAD_CONTRACT_HOLD')
     carrier=packs/(h+'.cgxpre');blob=MAGIC+len(raw).to_bytes(8,'big')+bytes.fromhex(h)+zlib.compress(raw,9)
     if carrier.exists():
         if redirected(carrier.lstat()) or restore(carrier.read_bytes(),h)!=raw:raise ValueError('EXISTING_CARRIER_HOLD')

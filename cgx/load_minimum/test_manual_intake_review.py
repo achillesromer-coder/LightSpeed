@@ -109,6 +109,32 @@ class ManualIntakeTest(unittest.TestCase):
             self.assertEqual(a["view_kind"],"BYTE_ONLY")
             self.assertEqual(a["semantic_state"],"VIEW_HOLD")
             self.assertTrue(a["exact_inverse"])
+    def test_ambiguous_json_preserves_bytes_but_holds_projection(self):
+        samples=(b'{"x":1,"x":2}',b'{"nested":{"a":0,"\\u0061":1}}',
+                 b'{"x":NaN}',b'{"x":Infinity}',b'{"x":-Infinity}',b'{"x":1e999}')
+        for i,raw in enumerate(samples):
+            with self.subTest(raw=raw):
+                p=self.source(f'bad{i}.json',raw)
+                a=intake.ingest(self.root,self.load,p.name)
+                self.assertEqual(a['view_kind'],'BYTE_ONLY')
+                self.assertEqual(a['semantic_state'],'VIEW_HOLD')
+                self.assertTrue(a['exact_inverse'])
+                self.assertEqual(p.read_bytes(),raw)
+        p=self.source('valid.json',b'{"x":1,"nested":{"x":2},"finite":2.5}')
+        self.assertEqual(intake.ingest(self.root,self.load,p.name)['view_kind'],'DATA_STRUCTURE')
+    def test_ambiguous_guard_rejected_before_persistence(self):
+        p=self.source('a.json',b'{"value":1}')
+        guard=self.load/"INTEGRITY_AND_GC_GATES.review.json"
+        for raw in ('{"schema":"wrong","schema":"CGX-LOAD-INTAKE-AUDIT/0.17"}',
+                    '{"schema":"CGX-LOAD-INTAKE-AUDIT/0.17","x":NaN}',
+                    '{"schema":"CGX-LOAD-INTAKE-AUDIT/0.17","x":1e999}', '[]'):
+            with self.subTest(raw=raw):
+                guard.write_text(raw,encoding="utf-8")
+                with self.assertRaisesRegex(ValueError,'LOAD_CONTRACT_HOLD'):
+                    intake.ingest(self.root,self.load,p.name)
+                self.assertEqual(self.receipts(),[])
+                self.assertEqual(list((self.load/"R0_PACKS_private").iterdir()),[])
+                self.assertEqual(p.read_bytes(),b'{"value":1}')
     def test_collision_no_overwrite(self):
         p=self.root/"collision"
         self.assertTrue(intake.put_exact(p,b"first"))
