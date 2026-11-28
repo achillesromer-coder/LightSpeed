@@ -195,7 +195,7 @@ def test_current_execution_policy_does_not_rewrite_historical_review():
     contract = json.loads((ROOT / 'cgx/domain_templates/unispace_objectspace_current_contract.json').read_text(encoding='utf-8'))
     policy = contract['executionPolicy']
     historical = policy['historicalReviewCompatibility']
-    assert (policy['normalRdcRemainingFloorPct'], policy['emergencyRdcRemainingFloorPct']) == (21, 20)
+    assert (policy['normalRdcRemainingFloorPct'], policy['emergencyRdcRemainingFloorPct']) == (16, 15)
     assert historical['effectivePolicyRef'] == '#/executionPolicy'
     assert historical['historicalReviewRef']['normalRdcRemainingFloorPct'] == 25
     assert historical['historicalReviewRef']['emergencyRdcRemainingFloorPct'] == 24
@@ -230,7 +230,7 @@ def test_science_crosswalk_cannot_promote_historical_physical_gates():
 def test_executable_current_crosscheck_real_source_and_no_authority():
     r = m.validate_current_contract(ROOT, fixture())
     assert r['state'] == 'CURRENT_CONTRACT_SOURCE_CROSSCHECK_ONLY'
-    assert r['current_rdc_floors'] == [21, 20]
+    assert r['current_rdc_floors'] == [16, 15]
     assert r['historical_rdc_floors'] == [25, 24]
     assert r['physical_gate_ids'] == ['PHYS-01', 'PHYS-02', 'PHYS-03', 'PHYS-04', 'PHYS-05']
     assert not r['native_admitted'] and not r['physical_actuation_authorised']
@@ -254,7 +254,7 @@ def test_executable_current_crosscheck_rejects_drift(tmp_path, fault):
     contract = json.loads(path.read_bytes())
     science = contract['crossGrex']['scientificAdmission']
     if fault == 'quota':
-        contract['executionPolicy']['normalRdcRemainingFloorPct'] = 20
+        contract['executionPolicy']['normalRdcRemainingFloorPct'] = 15
     elif fault == 'visual':
         science['classification']['visualPreset'] = 'empirical'
     elif fault == 'sentinel':

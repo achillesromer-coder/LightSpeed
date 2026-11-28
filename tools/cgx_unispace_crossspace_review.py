@@ -239,7 +239,7 @@ def validate_current_contract(repo: Path, registry: dict) -> dict:
         expected = [row["id"] for row in registry["task_groups"] if row["space"] == "PrintSpace" and row["id"].startswith("PHYS-")]
         _hold_if(contract["parent"] != ROOT or contract["product"] != "UniSpace" or
                  science["existingRoot"] != ROOT, "current product/root mismatch")
-        _hold_if((policy["normalRdcRemainingFloorPct"], policy["emergencyRdcRemainingFloorPct"]) != (21, 20) or
+        _hold_if((policy["normalRdcRemainingFloorPct"], policy["emergencyRdcRemainingFloorPct"]) != (16, 15) or
                  compat["effectivePolicyRef"] != "#/executionPolicy" or
                  compat["preserveHistoricalBytes"] is not True or
                  compat["requireFreshQuota"] is not True or compat["unknownQuota"] != "HOLD" or
@@ -278,7 +278,7 @@ def validate_current_contract(repo: Path, registry: dict) -> dict:
         raise CrossSpaceHold("current contract fields missing or malformed") from exc
     return {"state": "CURRENT_CONTRACT_SOURCE_CROSSCHECK_ONLY", "contract_git_blob": contract_blob,
             "historical_handoff_git_blob": handoff_blob, "historical_archive_git_blob": archive_blob,
-            "physical_gate_ids": expected, "current_rdc_floors": [21, 20], "historical_rdc_floors": [25, 24],
+            "physical_gate_ids": expected, "current_rdc_floors": [16, 15], "historical_rdc_floors": [25, 24],
             "native_admitted": False, "physical_actuation_authorised": False, "dispatch_performed": False}
 
 
