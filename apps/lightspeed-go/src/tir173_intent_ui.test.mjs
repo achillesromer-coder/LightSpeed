@@ -15,7 +15,7 @@ test('human and machine command reviews derive from one source-bound adapter',()
  assert.match(ui,/intentBinding\.human\.summary/);
  assert.match(ui,/intentBinding\.human\.interpretation/);
  assert.match(ui,/intentBinding\.machine\.status/);
- assert.match(ui,/intent_binding_review:intentBinding,archetype_review:archetypeReview,negative_space/);
+ assert.match(ui,/intent_binding_review:intentBinding,archetype_review:archetypeReview,instance_review:instanceReview,negative_space/);
  assert.match(ui,/intentInput\.addEventListener\('input',display\)/);
  assert.match(ui,/choose\.addEventListener\('change'/);
  assert.doesNotMatch(ui,/eval\(|new Function\(/);
@@ -41,4 +41,26 @@ test('unresolved empirical status remains legible beside human and machine ident
  assert.match(ui,/archetypeReview\.human\.proof_stages/);
  assert.match(ui,/source_claims:\{geometry_atlas_sha256:geometryDigest/);
  assert.match(ui,/intent_binding_review:intentBinding,archetype_review:archetypeReview/);
+});
+
+test('existing GUIOS adds exactly matched eight-instance evidence without new tabs or automatic binding',()=>{
+ assert.match(ui,/component_instance_population_v0_1\.json\?raw/);
+ assert.match(ui,/reviewTirExistingInstance/);
+ assert.match(ui,/id="tir-instance"/);
+ assert.match(ui,/id="tir-instance-review"/);
+ assert.match(ui,/record\.archetype_id!==archetypeSelect\.value/);
+ assert.match(ui,/empty\.value=''/);
+ assert.match(ui,/archetypeSelect\.addEventListener\('change',\(\)=>\{syncInstanceOptions\(\);display\(\);\}\)/);
+ assert.match(ui,/instance_id:instanceSelect\.value\|\|null/);
+ assert.match(ui,/instance_register_sha256:populationDigest/);
+ assert.match(ui,/instance_review:instanceReview,negative_space/);
+ assert.doesNotMatch(ui,/data-view="cgx-instances"|id="view-cgx-instances"/);
+});
+test('instance review human and machine projections are the same source-scoped result',()=>{
+ assert.match(ui,/instanceReview\.human\.summary/);
+ assert.match(ui,/instanceReview\.human\.interpretation/);
+ assert.match(ui,/instanceReview\.human\.next_binding/);
+ assert.match(ui,/instance_review:ReturnType<typeof reviewTirExistingInstance>/);
+ assert.match(ui,/instanceSelect\]\)x\.addEventListener\('change',display\)/);
+ assert.match(ui,/syncInstanceOptions\(\);\s*display\(\);\s*\}/);
 });
