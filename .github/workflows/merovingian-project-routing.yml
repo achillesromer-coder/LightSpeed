@@ -250,6 +250,7 @@ jobs:
             tests/test_achilles_lsgo_recovery_snapshot.py \
             tests/test_achilles_file_space_launch_review_contract.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
+            desktop/Desktop_Hooks/LightSpeed/tests/test_operational_store.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \

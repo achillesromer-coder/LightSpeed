@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from contextlib import closing
 from datetime import UTC, datetime
 import hashlib
 import json
+import re
 from pathlib import Path
 import sqlite3
 from typing import Any
@@ -27,6 +29,8 @@ class OperationalStore:
     """SQLite authority for queues, handoffs, telemetry, and governance events."""
 
     _COUNTABLE_TABLES = frozenset({"operational_events"})
+    _CHALLENGE_PREFIX = "cgx:commitment-challenge:"
+    _CHALLENGE_KIND = "commitment_challenge_claim"
 
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -95,6 +99,58 @@ class OperationalStore:
         return text or None
 
     def record_event(self, event: dict[str, Any]) -> dict[str, Any]:
+        """General operational stream; reserved claims cannot be forged here."""
+        if not isinstance(event, dict):
+            raise TypeError("event must be a dictionary")
+        event_id = self._required_text(event, "event_id")
+        kind = self._required_text(event, "kind")
+        if event_id.startswith(self._CHALLENGE_PREFIX) or kind == self._CHALLENGE_KIND:
+            raise ValueError("reserved commitment challenge claim")
+        return self._record_event(event, one_time=False)
+
+    def _record_commitment_challenge_claim(
+        self, *, challenge: str, event_sha256: str, intent_sha256: str,
+        statement_sha256: str, authority_ref: str, lease_ref: str,
+    ) -> dict[str, Any]:
+        """Internal storage primitive only; NOT an authorization or API endpoint.
+
+        The future authenticated native dispatcher must validate current issuer,
+        lease, identity, trusted time, revocation, and challenge scope before
+        calling this method. Never expose it to caller-supplied approval flags.
+        This reserves a challenge once across this SQLite authority, not across
+        disconnected peers. A successful insert authorizes no external effect.
+        """
+        digests = (challenge, event_sha256, intent_sha256, statement_sha256)
+        if any(not isinstance(v, str) or re.fullmatch(r"[0-9a-f]{64}", v) is None for v in digests):
+            raise ValueError("invalid commitment challenge digest")
+        for ref in (authority_ref, lease_ref):
+            if not isinstance(ref, str) or not ref or ref != ref.strip() or len(ref) > 512 or any(ord(ch) < 32 for ch in ref):
+                raise ValueError("invalid commitment authority reference")
+        # The namespace is independent of contract/key/lease to prevent a
+        # challenge being claimed a second time under a different scope.
+        challenge_digest = hashlib.sha256(
+            b"CGX-COMMITMENT-CHALLENGE/1\x00" + bytes.fromhex(challenge)
+        ).hexdigest()
+        event = {
+            "event_id": self._CHALLENGE_PREFIX + challenge_digest,
+            "kind": self._CHALLENGE_KIND,
+            "status": "recorded",
+            "payload": {
+                "schema": "CGX-COMMITMENT-CHALLENGE-CLAIM/1",
+                "challenge_sha256": challenge_digest,
+                "event_sha256": event_sha256,
+                "intent_sha256": intent_sha256,
+                "statement_sha256": statement_sha256,
+                "authority_ref": authority_ref,
+                "lease_ref": lease_ref,
+            },
+        }
+        result = self._record_event(event, one_time=True)
+        return {**result, "storage_claim_recorded": result["inserted"],
+                "authority_verified": False, "distributed_replay_verified": False,
+                "execution_authorized": False}
+
+    def _record_event(self, event: dict[str, Any], *, one_time: bool) -> dict[str, Any]:
         if not isinstance(event, dict):
             raise TypeError("event must be a dictionary")
 
@@ -112,7 +168,7 @@ class OperationalStore:
         payload_sha256 = hashlib.sha256(payload_json.encode("utf-8")).hexdigest()
         stamp = self._optional_text(event, "recorded_at") or datetime.now(UTC).isoformat()
 
-        with self._connect() as connection:
+        with closing(self._connect()) as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
             existing = connection.execute(
                 """
@@ -127,6 +183,10 @@ class OperationalStore:
                     raise OperationalConflict(
                         f"event_id {event_id!r} already identifies different content"
                     )
+                if one_time:
+                    return {"event_id": event_id, "inserted": False,
+                            "duplicate_count": int(existing["duplicate_count"]),
+                            "payload_sha256": payload_sha256}
                 duplicate_count = int(existing["duplicate_count"]) + 1
                 connection.execute(
                     """
@@ -247,6 +307,8 @@ class OperationalStore:
         target = str(target).strip()
         if not event_id or not source or not target:
             raise ValueError("event_id, source, and target are required")
+        if event_id.startswith(self._CHALLENGE_PREFIX):
+            raise ValueError("reserved commitment challenge claim cannot be routed")
         stamp = recorded_at or datetime.now(UTC).isoformat()
         with self._connect() as connection:
             cursor = connection.execute(

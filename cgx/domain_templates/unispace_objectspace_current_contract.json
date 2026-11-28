@@ -272,6 +272,18 @@
           "cgx/domain_templates/node_exchange_contract.json",
           "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json"
         ]
+      },
+      "challengeStorage": {
+        "status": "SOURCE_REVIEW_CANDIDATE_NOT_WIRED",
+        "store": "desktop/LightSpeed_Runtime/lightspeed_runtime/operational_store.py",
+        "method": "_record_commitment_challenge_claim",
+        "eventKind": "commitment_challenge_claim",
+        "schema": "CGX-COMMITMENT-CHALLENGE-CLAIM/1",
+        "key": "SHA256(domain prefix + decoded challenge); global within one store across all scopes",
+        "storage": "Existing operational_events, BEGIN IMMEDIATE; first insert only, immutable identical retry, conflict on changed scope",
+        "authority": "Requires independently authenticated native dispatcher; no public binding, no trusted lease, issuer, clock or revocation proof",
+        "distributedReplayVerified": false,
+        "executionAuthorized": false
       }
     }
   },

@@ -284,3 +284,89 @@ def test_z_direct_deduplicates_payload_and_route_without_jsonl(tmp_path):
         limit=10,
     ) == [envelope]
     assert not list(root.rglob("*.jsonl"))
+
+
+def _claim_fixture(**changes):
+    return {
+        "challenge": "a" * 64,
+        "event_sha256": "b" * 64,
+        "intent_sha256": "c" * 64,
+        "statement_sha256": "d" * 64,
+        "authority_ref": "fixture:authority",
+        "lease_ref": "fixture:lease",
+        **changes,
+    }
+
+
+def test_commitment_claim_is_once_only_and_durable(tmp_path):
+    path = tmp_path / "runtime.db"
+    store = OperationalStore(path)
+    first = store._record_commitment_challenge_claim(**_claim_fixture())
+    before = store.recent(kind="commitment_challenge_claim")[0]
+    again = OperationalStore(path)._record_commitment_challenge_claim(**_claim_fixture())
+    assert first["storage_claim_recorded"] is True
+    assert again["storage_claim_recorded"] is False
+    assert before == store.recent(kind="commitment_challenge_claim")[0]
+    assert store.count() == 1
+    assert first["payload_sha256"] == again["payload_sha256"]
+    assert first["authority_verified"] is False
+    assert first["distributed_replay_verified"] is False
+    assert first["execution_authorized"] is False
+    assert "a" * 64 not in before["payload_json"]
+
+
+def test_commitment_claim_rejects_changed_scope_without_mutating_first_record(tmp_path):
+    store = OperationalStore(tmp_path / "runtime.db")
+    store._record_commitment_challenge_claim(**_claim_fixture())
+    before = store.recent()[0]
+    for changes in ({"lease_ref": "other"}, {"event_sha256": "e" * 64},
+                    {"intent_sha256": "f" * 64}, {"authority_ref": "other"},
+                    {"statement_sha256": "1" * 64}):
+        with pytest.raises(OperationalConflict):
+            store._record_commitment_challenge_claim(**_claim_fixture(**changes))
+    assert store.recent()[0] == before
+    assert store.count() == 1
+
+
+def test_commitment_claim_namespace_not_available_to_general_events(tmp_path):
+    store = OperationalStore(tmp_path / "runtime.db")
+    with pytest.raises(ValueError, match="reserved"):
+        store.record_event({"event_id": "cgx:commitment-challenge:fake", "kind": "event"})
+    with pytest.raises(ValueError, match="reserved"):
+        store.record_event({"event_id": "fake", "kind": "commitment_challenge_claim"})
+    assert store.count() == 0
+    first = store._record_commitment_challenge_claim(**_claim_fixture())
+    with pytest.raises(ValueError, match="reserved"):
+        store.record_route(event_id=first["event_id"], source="Neo", target="Oracle")
+    assert store.count() == 1
+
+
+def test_commitment_claim_rejects_malformed_input(tmp_path):
+    store = OperationalStore(tmp_path / "runtime.db")
+    for changes in ({"challenge": "short"}, {"event_sha256": "X" * 64},
+                    {"intent_sha256": None}, {"statement_sha256": 12},
+                    {"lease_ref": ""}, {"authority_ref": "a" * 513},
+                    {"lease_ref": "a\nb"}):
+        with pytest.raises(ValueError):
+            store._record_commitment_challenge_claim(**_claim_fixture(**changes))
+    assert store.count() == 0
+
+
+def test_commitment_claim_concurrent_writers_only_one_insert(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Barrier
+
+    path = tmp_path / "runtime.db"
+    stores = [OperationalStore(path) for _ in range(8)]
+    barrier = Barrier(len(stores))
+
+    def claim(store):
+        barrier.wait(timeout=10)
+        return store._record_commitment_challenge_claim(**_claim_fixture())
+
+    with ThreadPoolExecutor(max_workers=len(stores)) as pool:
+        results = list(pool.map(claim, stores))
+    assert sum(r["storage_claim_recorded"] for r in results) == 1
+    assert len({r["payload_sha256"] for r in results}) == 1
+    assert OperationalStore(path).count(kind="commitment_challenge_claim") == 1
+    assert OperationalStore(path).recent()[0]["duplicate_count"] == 0

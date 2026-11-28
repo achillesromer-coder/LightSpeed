@@ -316,9 +316,9 @@
       "sha256": "61005a3ec9bceed921e2d2ffb12b230651da514545f646fe69519e34f1cfc9d6"
     },
     {
-      "bytes": 9387,
+      "bytes": 13183,
       "path": "Desktop_Hooks/LightSpeed/tests/test_operational_store.py",
-      "sha256": "b51198411f7677063e8e1f397ebc298b219b0e506ca722c6cf82ebd95b28ce0b"
+      "sha256": "ce63cc50f3a19af7bc9d801f49c9fabea37df032e9bd5797e6e94386fa29bead"
     },
     {
       "bytes": 2758,
@@ -3316,9 +3316,9 @@
       "sha256": "244d55f9d8486a6b4e572ac05622efff7253c97349eb9b789b03ac1d6f150c08"
     },
     {
-      "bytes": 10713,
+      "bytes": 14155,
       "path": "LightSpeed_Runtime/lightspeed_runtime/operational_store.py",
-      "sha256": "596741f4e446f5c9d3954eaeb02bbf4600d08c2c081d1272534669d76ced7eb6"
+      "sha256": "31df364132bb36491c5e1a187e9c3892ca0eb06764b6bc21648d0f364691e8e4"
     },
     {
       "bytes": 61882,
