@@ -1,0 +1,229 @@
+{
+  "schema": "CGX-PRINTSPACE-GEOMETRY-COMPOSITION/0.1",
+  "composite_id": "pc01-digital-three-layer-coupon",
+  "manufacturing_ir_ref": "cgx://manufacturing/build/pc01-three-layer-coupon",
+  "load_mode": "H0_REVIEW_ONLY",
+  "source_shapes": [
+    {
+      "shape_id": "body-4x4x2",
+      "units": "mm",
+      "source_ref": "SYNTHETIC-DIGITAL-ONLY-NOT-OWNER",
+      "rights_ref": "NO_EXTERNAL_PUBLISHING_RIGHTS_TEST_FIXTURE",
+      "vertices_mm": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0
+        ],
+        [
+          4,
+          4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          2
+        ],
+        [
+          4,
+          0,
+          2
+        ],
+        [
+          4,
+          4,
+          2
+        ],
+        [
+          0,
+          4,
+          2
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          5,
+          4
+        ],
+        [
+          1,
+          2,
+          6,
+          5
+        ],
+        [
+          2,
+          3,
+          7,
+          6
+        ],
+        [
+          3,
+          0,
+          4,
+          7
+        ]
+      ]
+    },
+    {
+      "shape_id": "thin-4x4x1",
+      "units": "mm",
+      "source_ref": "SYNTHETIC-DIGITAL-ONLY-NOT-OWNER",
+      "rights_ref": "NO_EXTERNAL_PUBLISHING_RIGHTS_TEST_FIXTURE",
+      "vertices_mm": [
+        [
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0
+        ],
+        [
+          4,
+          4,
+          0
+        ],
+        [
+          0,
+          4,
+          0
+        ],
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          4,
+          0,
+          1
+        ],
+        [
+          4,
+          4,
+          1
+        ],
+        [
+          0,
+          4,
+          1
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          3,
+          2,
+          1
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          5,
+          4
+        ],
+        [
+          1,
+          2,
+          6,
+          5
+        ],
+        [
+          2,
+          3,
+          7,
+          6
+        ],
+        [
+          3,
+          0,
+          4,
+          7
+        ]
+      ]
+    }
+  ],
+  "instances": [
+    {
+      "instance_id": "structure",
+      "shape_id": "body-4x4x2",
+      "kernel_id": "VGK-018",
+      "material_slot": "structural",
+      "translate_mm": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "instance_id": "interface",
+      "shape_id": "thin-4x4x1",
+      "kernel_id": "VGK-018",
+      "material_slot": "interlayer",
+      "translate_mm": [
+        0,
+        0,
+        2
+      ]
+    },
+    {
+      "instance_id": "conductive",
+      "shape_id": "thin-4x4x1",
+      "kernel_id": "VGK-001",
+      "material_slot": "conductive",
+      "translate_mm": [
+        0,
+        0,
+        3
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "from": "structure",
+      "to": "interface",
+      "kind": "CONTACT_CANDIDATE",
+      "evidence_state": "UNTESTED"
+    },
+    {
+      "from": "interface",
+      "to": "conductive",
+      "kind": "CONTACT_CANDIDATE",
+      "evidence_state": "UNTESTED"
+    }
+  ]
+}

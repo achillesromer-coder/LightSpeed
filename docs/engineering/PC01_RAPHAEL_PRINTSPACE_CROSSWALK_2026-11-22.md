@@ -1,0 +1,335 @@
+# PC01 / Raphael / PrintSpace — geometry-to-process crosswalk (22 November 2026)
+
+**Status:** DIGITAL REVIEW ONLY. Typed handoff to the existing PC01 contract. **Not** a second canonical engineering workbook, a validated geometry admission, a hardware commissioning result, or permission to manufacture. The binding source of engineering decisions and evidence remains [Type 1 Romer Cognigrex](https://docs.google.com/spreadsheets/d/1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8/edit), in particular `32_CGX_Universal_Type1_Tech_Matrix_v0_1!AK:BH` and `33_PC01_CGX_Operational_Matrix_v0_1!A:AD`.
+
+## Existing checked implementations to reuse
+
+- [PC01 typed operational contract](../../cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json): `PC01-NODE-001`, `CGX-PHYSOBJ-001`, `UTP-117` / 411 archetypes, 16 route profiles, C0–C2 separation, and the first-article hold.
+- [UniSpace product verifier](../../tools/verify_unispace_product.py): deterministic archive identity, bounded nested hydrate, T173 parent/previous/next transition grammar, exact *convex integer* mesh review, and canonical fixed-axis translation identity. Its explicit limitations mean the 173 numbered catalogue entries are not 173 validated printer meshes.
+- [Raphael Fascicle II code](https://github.com/NCNBOUWER/Raphael/blob/main/N%5E3/RUN/code/fascicle_ii_geomatrices.py): finite normalisation, barycentric map and closure-preserving interpolation. These are mathematical modelling utilities, not material or physical-force validation.
+- [Raphael falsification crosswalk](https://github.com/NCNBOUWER/Raphael/blob/main/N%5E3/RUN/proofs/Fascicle%20III/Raphael%20claim%20crosswalk.md): separates internal proof from external empirical tests.
+
+## Minimal interoperable object chain
+
+`source/rights -> geometry construct or validated mesh -> exact instance + scale/units -> interface and gradient zones -> materials and lots -> directed process DAG -> qualified tool & environment -> witness/inspection -> frozen build packet -> C0-authorised execution -> readback -> DBR/evidence`
+
+Represent each source/reference once, resolved by stable content hash plus revision. Composition is a typed tree/DAG of instances, not copying physical property evidence from parent to child. T174 is a reserved non-mintable sentinel. Geometry identity and geometrical equivalence have explicit frames, precision and chirality; no universal deduplication without proof.
+
+### Geometry and physical manufacturing have separate domains
+
+| Geometry projection | Required manufacturing interpretation | Failure/hold condition |
+| --- | --- | --- |
+| Closed primitive or compound solid | Units, topology, nozzle/tool clearance, stock/feed and production orientation | No coordinates/incidence or constructive proof |
+| Transition between two shapes | Explicit geometry correspondence, tolerances, local process and test coupon | Non-manifold or unbounded transition |
+| Boundary/offset/interlock | Surface finish, differential contraction, adhesion and collision envelope | Unqualified deposition direction |
+| Functionally graded zone | Spatial composition law, mixing/diffusion window, rheology and gradient coupon | Unsupported cross-material interface |
+| 4D dynamic state | Initial/reference state, stimulus, constitutive response, hysteresis, repeat-cycle target | Unmeasured transfer function |
+| Embedded field/EM function | Conductivity/permittivity/permeability, geometry, measured frequency/power/bandwidth/exposure, EMC and temperature | Field parameter exceeds approved tool envelope |
+| Scale/repetition/packing | Dimensionful rescale, minimum feature, process-specific resolution, thermal diffusion, mechanical stability and metrology | Scale crosses qualified envelope |
+
+Representing a geometry compactly does **not** imply constant-time slicing, FEM, collision checking, field simulation or all printer control. Cost savings must be benchmarked against conventional CAD/CAM using end-to-end CPU time, memory, byte size and measured part quality.
+
+## Directed material compatibility and process-DAG contract
+
+Existing authoritative matrix `AK:BH` already declares predecessor and successor classes, interface, atmosphere, cleaning, damage checks, activation, encapsulation, 4D state and verification. Compile these fields into **directed edges keyed by exact material lots and process revisions**. **A deposited onto B is not equivalent to B onto A**. Architecture-level class `ALLOW_IF` is only a proposed planning edge; acceptance requires source-bound evidence.
+
+Each transition node must carry predecessor state, tool, preconditions, measurements, postconditions, irreversible exposure budget and an explicit failed-branch outcome. Typical process vocabulary: `PREPARE / DEPOSIT / CLEAN / PURGE / DRY / CURE / INSPECT / INSERT / ENCAPSULATE / ACTIVATE / VERIFY / READBACK`. Pressure, vacuum, gas flow, laser/UV/EM exposures, moisture and heat are measured machine states where applicable, never merely textual settings.
+
+The scheduler may propose lowest-cost qualified sequences and alternate hybrid or outsource routes but **cannot overrule independent machine-local C0 safety**.
+
+## Near-term digital implementation lane
+
+1. Parse and validate the existing 411-row class-level directional matrix, preserving its source cells and revisions; do not independently rewrite technical content in Git.
+2. Add `GeometryInstance`, `InterfaceZone`, `GradedZone`, `ProcessOperation`, `WitnessReceipt`, `MachineEnvelope` and `RightsGrant` type contracts, each with its own source, hash, time and evidence state.
+3. Admit *only independently validated* geometry records with exact units/incidence, geometry checks, canonical equivalence policy and rights; keep 173 positions visible as a catalogue even when geometry is unresolved.
+4. Compile the simplest closed route to a read-only review packet; create negative tests for reverse-order incompatibility, missing interlayer, atmosphere handoff, collision/thermal damage, field-dose exceedance and untested encapsulation.
+5. Benchmark geometric identity/composition versus conventional geometry generation and slices. Report CPU time, RAM, storage and geometry equivalence with instrumentation, not estimated performance.
+6. Release reference build kits only after exact source rights and capability gates: (a) directional interface coupon; (b) responsive strip; (c) encapsulated conductor/sensor.
+7. Retain the existing root/queue and append outcomes/readbacks there. No new root scheduler, agents, DB service or alternative canonical master.
+
+## FreeSpace / commercial library boundaries
+
+UniSpace is the first-party user brand and voice; FileSpace is identity/provenance/rights, DataSpace is permitted state/events, PrintSpace is physical planning/manufacturing. Offer four rights-aware library projections: **open rights-cleared source**, **community licensed**, **paid qualified reusable recipes**, **private/restricted engineering**. A possible **AUD 5 per authorised print use** is a commercial hypothesis, not an implemented payment product. Each recipe needs licensing scope, revocation/version terms, tax/payment reconciliation, vendor shares where relevant, rights checks, support boundaries and evidence of physical compatibility.
+
+A source-licensed digital design may be publishable before PC01 hardware is built. Claims about 4D actuation, safety, hermeticity, atmospheric modes, hardware throughput or production suitability require their respective experimental evidence before commercial marketing.
+
+## Closeout versus outstanding
+
+**Completed in this handoff:** surveyed and cross-linked existing contracts and verified geometry utilities; defined a proposed typed bridge, directed transition rule, geometry/scaling policy, catalogue rights lanes and eight negative acceptance cases. This is a reviewed *specification*, not an integrated compiler.
+
+**Still open:** authoritative 173-row mesh+rights admission audit; true CAD with units; exact machine envelope/calibration; physical coupon matrix and service-life tests; pressure-rated process hardware evidence; implemented billing and licence enforcement; end-to-end integration tests; public privacy/security regression gates. No offline machine, printer or cloud runner was operated by this change.
+
+**Research alignment:** see the contemporaneous PrintSpace literature review for 2026 PLA/TPU orientation, DLP multivat carryover, graded resin interfaces, sequential LCD/Xolography and polymer/copper encapsulation. Translate each relevant paper into *bounded hypotheses* and coupon designs, never automatic acceptance.
+
+## Handoff destination and approvals
+
+- **Engineering/evidence owner:** existing Drive workbook/ranges above. This review does not elevate authority.
+- **Git implementation:** [LightSpeed](https://github.com/achillesromer-coder/LightSpeed) existing `cgx/component_atlas`, `tools/verify_unispace_product.py`, `tests/test_unispace_product.py`; this branch provides a crosswalk only.
+- **Raphael geometry evidence:** [NCNBOUWER/Raphael](https://github.com/NCNBOUWER/Raphael) and the existing 173/174 audit. Falsification and empirical validation remain independent.
+- **Approval gates:** (A) lock exact source coordinates/units and material-rights references, (B) choose first physical coupon route and host safety owner, (C) separately approve public licensing/product terms. These are gates, not requests to approve unsafe hardware execution.
+
+
+## 22 November continuation — actual tested integration
+
+**No competing engine.** Repo discovery confirmed the existing canonical manufacturing IR at `cgx/manufacturing/compiler.py`, the 4D stack adapter at `cgx/manufacturing/printstack.py`, the exact-binding gate at `cgx/manufacturing/binding.py`, and the volumetric kernel at `cgx/manufacturing/volumetric.py`. The isolated prototype was consequently refactored into a **pure review gate**, `cgx/manufacturing/review_gate.py`, exported as `cgx.manufacturing.review_printspace_sequence`. The review input **must reference** an existing `cgx://manufacturing/build/<id>` URI; it does not compile a rival manufacturing IR or grant downstream authority.
+
+It validates candidate geometry identity/units/source, the reserved T174 sentinel, exact directed material lot edges, typed DAG ordering, active atmosphere across sequential or parallel branches, calibrated transition metadata, gradient composition and resolution, encapsulation requiring a dependent post-seal test, EM field exposure parameters, machine-local C0 declaration, and rights before any candidate is projected.
+
+**Review result contract:** `HOLD` or `REVIEW_ONLY`; both have `physical_machine_authorised=false`, `mint_authorised=false` and `commercial_release_authorised=false`. The review result says `DECLARED_NOT_INDEPENDENTLY_VERIFIED` because arbitrary receipt identifiers cannot establish physical evidence or provenance. Interoperability with the canonical IR is currently a **referenced review overlay**, not automatic assembly of a fully source-bound PC01 build packet.
+
+**Test evidence:** 22 standalone synthetic regression cases passed locally on 22 Nov 2026, plus a separate 400-input malformed-data investigation with no unhandled exceptions after hardening. The shared CGX component-atlas CI includes `tests/test_printspace_review_gate.py`; consult the corresponding GitHub Actions result for branch validation. No printer or local machine tests were run.
+
+**Still open:** exact 411-row owner-matrix ingestion and per-row revision crosswalk, verified geometry/rights admission, machine and material source lots, measured coupon experiments, link from actual `compile_component` output to the per-operation review envelope, public library entitlement/billing, and actual C0 integration only following commissioning.
+
+
+## 22 November operational batching and RDC reserve policy
+
+**Owner-supplied current budget:** treat **25% RDC calls remaining** as the protected normal reserve and **24% remaining** as the emergency floor. Do not spend routine Remote Desktop Commander calls at or below 25%. Any emergency draw requires an explicit consequence and approval; never run unknown, restart or destructive local commands simply to consume budget. This is a policy declaration, not an independent connector-usage readback. The review work below used **no RDC calls**.
+
+The bounded runner lives at `scripts/run_cgx_printspace_batch.py` and uses the existing canonical LightSpeed repository and tests. It is not an additional root scheduler, agent, database, or print execution service. Its CLI exposes only named allowlisted test profiles, a fixed local repo root, bounded step/total timeout and an inter-stage rest. Each stage serially exits before the next begins; it writes a checkpoint JSON atomically after completion, plus each stage's log, length and SHA-256. A timeout/failure stops the remaining sequence and returns a nonzero exit code. Test-only PASS cannot promote physical evidence or permissions.
+
+For an **already verified local checkout of this branch** (after installing `pytest`), operators may choose a single explicit execution:
+
+```powershell
+python scripts/run_cgx_printspace_batch.py --profile comprehensive --step-limit-seconds 240 --total-limit-seconds 1200 --rest-seconds 2 --output-dir "$env:TEMP\cgx-printspace-batches"
+```
+
+The CI path runs the same allowed comprehensive profile inside a GitHub-hosted checkout, uses the CI temporary directory for receipts, and uploads an artifact named `pc01-printspace-sequential-regression` irrespective of test outcome. Review those checkpoints and GitHub Actions outcome before attempting any next phase. CI does not need local network access, RDC, or machine control. This script does not fetch remote assets, change hardware, restart local services, make commits, mint or publish.
+
+**Backpressure:** only one child test command runs at a time; the short pause is a configurable cooling interval, not a measured CPU/thermal safety monitor. Do not claim it protects an overloaded local workstation without independent telemetry. Full local run was not performed during this GitHub-only commit.
+
+## 411-row owner-matrix source reconciliation — observed 22 November 2026
+
+A read-only connector traversal of the **actual Drive owner workbook** `Type 1 Romer Cognigrex`, tab `32_CGX_Universal_Type1_Tech_Matrix_v0_1`, was completed in four bounded batches for `A2:B412` and `AK2:BH412`. Exactly **411 unique matrix IDs** (`T1M-0001` through `T1M-0411`) were observed, with **411 populated 16-field directional records and 8-field compiler-factorisation sets**. All rows contained a directional non-reversal rule and explicit exact-instance evidence precedence. These are **architectural planning strings**, not observed material compatibility, geometry admission, or 4D performance proof.
+
+A bounded metadata-only implementation mirror is at `cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json`. It records the canonical row locations, matrix/archetype IDs, primitive/operation selectors, a SHA-256 fingerprint per complete set of 24 source fields, aggregate digest and coverage statistics. Full material recipes and sensitive process text are **not** duplicated into this index. It is a point-in-time projection and does not automatically track changes to Drive; any source modification requires an authenticated re-read and reconciliation.
+
+The cross-check tests at `tests/test_printspace_owner_matrix_projection.py` validate exactly 411 rows and matching identities against `cgx/component_atlas/component_geometry_atlas_v0_1.json`, digest consistency, completeness and the no-evidence-promotion policy. This check is included as a stage in the same bounded sequential regression runner. Passing these tests is digital source-index consistency only and cannot replace empirical material/geometry/process/tool verification.
+
+**Reserve:** 25% remaining is the normal RDC stop line, and 24% is a separately controlled emergency floor; no RDC tools were used for this matrix reconciliation, implementation or cloud regression.
+
+
+## Pre-DBR supersession and Achilles archive-review handoff — 22 November 2026
+
+**No archive move, deletion, DBR promotion, merge, mint, hardware execution or source overwrite has been performed.** This is a pre-DBR **candidate review** under existing `Cognigrex.cgx:/archive-dbr` and ACR3/Type 1 Operations/Achilles P.A governance, not a new archive database or agent queue. The owner-declared Remote Desktop Commander 25% normal stop line / 24% emergency floor is preserved; this change uses no RDC calls.
+
+The typed, read-only candidate register is [`cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json`](../../cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json). The fail-closed parser [`scripts/validate_printspace_pre_dbr.py`](../../scripts/validate_printspace_pre_dbr.py) and [`tests/test_printspace_pre_dbr_archive_register.py`](../../tests/test_printspace_pre_dbr_archive_register.py) reject attempts to set archive/deletion/DBR permissions, omit protected sources, remove review gates or invent receipt equivalence. Those are schema checks only; the human archive owner must independently re-read source and restoration evidence.
+
+| Candidate | Precisely observed source | Disposition | Independent Achilles action |
+| --- | --- | --- | --- |
+| `PC01-ARCH-001` | Historical standalone `tools/compile_printspace_review.py` blob `306cad8b...` retained under Git commit `0d8f2c1...` | Ready for **archive review**, not movement | Confirm that active `cgx/manufacturing/review_gate.py` covers unique code; scan active imports, retain Git history, issue parent DBR supersession receipt |
+| `PC01-ARCH-002` | Historical standalone `tests/test_printspace_review.py` blob `e686b4c...` under commit `e301f072...` | Ready for **archive review**, not movement | Compare test semantics and negative coverage, preserve historical result lineage, issue supersession receipt |
+| `PC01-ARCH-003` | Earlier 12-stage GitHub Actions artifact `14732115075`; ZIP digest `3027f5ed...`, expires 22 Dec 2026 | **HOLD until archived evidence captured** | Copy artifact immutably with checksum, bind exact old-run receipts and chronological provenance; newer 13-stage result is *not* byte-identical or an excuse to delete the older evidence |
+
+**Protected (15 current source and evidence pointers, with exact Git or artifact hash bindings):** the October PC01 convergence note, 81-item printable catalogue, original solid-state portfolio, PC01 operational contract, current 411-row owner index and active review compiler are retained as source/reference or active implementation; latest 13-stage CI evidence is retained. Older source content and the 411-row index must not be conflated with completed canonical absorption. `T173` remains a candidate geometry catalogue; no physical PrintCeptor exists yet.
+
+**Achilles acceptance checklist:** verify the original immutable source SHA and exact locations; traverse current Git references and affected Drive/ACR3 owner records; detect unique content and contradictions; independently test the nominated successor; confirm licence/privacy and immutable recovery destination; obtain scoped review and separate mutation authority; perform exact archive readback *if* authorised; record irreversible operations as distinct final DBR events; issue the explicit reversible closure receipt. Before those gates close, use **HOLD** and do not remove source bytes or close historical lineage.
+
+**Canonical one-version rule:** active implementation remains `cgx.manufacturing` in the existing LightSpeed worktree. Superseded standalone compiler and tests exist **only in Git history** and this register refers to them by exact blob/ref, without reintroducing them in a separate working branch or duplicate corpus. Drive keeps owner engineering/evidence authority and Achilles/A﻿CR3 keeps archival governance.
+
+
+## 22 November — LOAD/Raphael ground-up composite geometry integration
+
+**Reused committed capabilities, not a competing engine.**
+
+- \`tools/verify_unispace_product.py\` provides **bounded exact convex-integer mesh and fixed-axis translation-canonical identity**. It does not prove arbitrary non-convex CSG, chirality or T173 catalogue admission.
+- \`cgx/component_atlas/type1_volumetric_kernel_v0_1.json\` owns the existing **40 VGK topology/boundary records**. Composition references their canonical IDs and hashes; it does not establish another primitive-basis source.
+- \`cgx.manufacturing.compiler\` remains the sole manufacturing IR compiler, \`cgx.manufacturing.review_gate\` remains the machine-neutral directional process preflight and \`cgx.manufacturing.composition\` now provides deterministic **geometry references and bounded placements** over those existing components.
+- \`apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs\` and \`cgxUniSpaceLoadCommandSurface.mjs\` provide the existing non-executing **LOAD.cgx / Alexandria alias and R0/H0 planning conventions**. The new composite carries a minimal \`CGX-PRINTSPACE-LOAD-H0-REFERENCE/0.1\` content-addressed reference **without** a native LOAD activation or private-body hydration.
+- Separate [LightSpeed draft PR #205](https://github.com/achillesromer-coder/LightSpeed/pull/205) implements an R0 **source-only** LOAD GPT export-manifest intake; its original source contents, permissions and native DBR remain **outside** PrintSpace. \`LOAD.Lite\` continues as a proposed minimal bootstrap path, not a new agent/root or an authorised private source adapter.
+
+**New digital building unit.** A geometry composite is a bounded immutable description: a source-owned, exactly reviewed convex mesh under explicit millimetre units; an instance placement by integer translation; a VGK topology reference; a material-slot label; a directed candidate interface; and a canonical graph hash. The result maps to \`cgx://manufacturing/composite/<sha256>\` only as a **reference key**, with \`cgx://manufacturing/build/<id>\` remaining the manufacturing IR namespace. The H0 envelope references the canonical mesh hashes and VGK IDs; it never includes private source bytes, executes equipment, installs a model or authorises publishing.
+
+**Ground-up coupon example.** \`cgx/manufacturing/printspace_composite_pilot_v0_1.json\` is a wholly synthetic **three-layer coupon** proposal: a structural region, an interlayer region and a conductive region, formed from **two reusable exact box shapes** and **three placements**, linked by two *untested* directional interface candidates. The bounds may classify a possible touch, separation or overlap; a bounding-box match is *not* exact face contact, mechanical interlocking, adhesion or material compatibility. There is no Boolean union, CAD mesh export, physical build or claimed 4D response.
+
+**Numeric and source limits.** The first release uses exact integer coordinates/translation in millimetres, up to 12 source shapes, 24 instances, 64 interface edges and 256 KiB input; it rejects unverified kernel IDs, malformed/non-convex meshes, disconnected/empty interface graphs, unbound source references, attempted qualified material status and out-of-scope H1–H4 hydration. Changing orientation, scaling, units, shape family, mesh topology, material recipe, stimulus frequency, temperature or response requires explicit new bounded operations and independent validation; they are **not** secretly inferred from the shorthand or ternary representation.
+
+**T173/T174.** A proposed Raphael \`t173_position\` 1–173 on a shape produces a visible **HOLD** pending independently accepted coordinates/incidence/rights/source revision. Position 174 remains reserved and rejected. A generic exact convex mesh can reach \`REVIEW_ONLY\` without thereby becoming a mintable Raphael object. Finiteness of the indexed catalogue does not exhaust manufacturable forms or physical process combinations.
+
+**Test and integration gates.** \`tests/test_printspace_composition.py\` tests deterministic shape-key reuse, order-invariant graph hashing, the three-layer fixture, T173 hold/T174 rejection, directional edge identity, disjoint/ambiguous bounds, invalid mesh/units/transform/kernel/source, unrelated graph nodes, untrusted rights and H1 denial. Included as the **15th stage** of the existing bounded sequential regression batch and the same CGX component-atlas workflow. Exact source-bound CGXI configuration and the PC01 physical build authority remain subject to the existing \`review_existing_manufacturing_ir\` and independently measured coupon/calibrated machine gates.
+
+**Current exact-IR review link.** The existing `review_existing_manufacturing_ir` now accepts an optional geometry-composition input, validates the graph using `cgx.manufacturing`, and requires its exact build URI and the identical frozen IR configuration SHA-256. Unbound CGXI/material/tool/source requirements, malformed geometry, T173 shape candidates and revised hashes remain HOLD. Even matching synthetic review never authorises a machine. **Next justified work:** verify actual contact/Boolean geometry and tool clearance; bind measured directional materials, atmosphere, field-history and encapsulation evidence with calibrated physical tests.
+
+**Archive governance:** existing pre-DBR register now protects the new composite resolver, fixture, canonical VGK library, exact mesh verifier and LOAD source-review lenses in addition to existing PC01 sources. No archive/delete/publication authority is conveyed.
+
+**Regressions:** URI mismatch, configuration-hash drift, malformed shape input and T173 unadmitted candidates are checked on the canonical IR review path. The existing comprehensive batch now contains 15 bounded regression stages. No native LOAD/LOAD.Lite R1–R3 admission or H1–H4 hydration is implied.
+
+
+## 22 November continuation — exact convex-contact kernel and measured-interface preparation
+
+**Single digital geometry source:** `cgx.manufacturing.exact_contact` now extends the existing `composition` review. It reuses `tools.verify_unispace_product.exact_convex_mesh_review` rather than minting another T173 atlas or changing the manufacturing IR. There is no new LOAD root, host service, archive scheduler or machine executor.
+
+**Mathematical scope:** for two independently validated closed, outward-facing **convex integer meshes** with bounded integer-mm translations, intersect the oriented face half-spaces using **exact rational edge–plane intersections**. Derive the affine dimension of the resulting convex intersection: disjoint, point contact, edge contact, planar face contact or positive-volume overlap. For planar intersections provide **exact rational squared area** (mm⁴); output area in mm² only when its square root is rational. Face direction is carried as an exact outward primitive integer normal from the requested source region toward the target. This is exact **for the supplied geometry and unit assumptions**, not a claim of manufacturing tolerance, physical contact, surface preparation or material state.
+
+The computation fails closed beyond its bounded envelope: up to 64 oriented faces, 192 undirected mesh edges, 12,000 edge–face crossing checks and 2,048 intersection vertices **per pair**. It does not perform a Boolean union/difference, non-convex contact, arbitrary rotation/scale, 4D swept collisions, slicing, tool clearance or physical compatibility analysis. Large or unadmitted meshes must not silently revert to bounding-box clearance evidence.
+
+**Concrete digital pilot:** the two directed interfaces of `pc01-digital-three-layer-coupon` each have **16 mm² geometrically shared planar area** between four-by-four-millimetre regions. This is derived from integer geometry, not measured. An overlap without Boolean resolution blocks ordinary contact/interlayer planning; an interlayer requiring a finite shared face rejects point-only/edge-only contact. Bare `CONTACT_CANDIDATE` remains descriptive even at point contact and cannot assert adhesive capability. A mathematically separated pair may be recognised as separate even if their axis-aligned bounding boxes overlap.
+
+**Qualification, not automatic admission:** each interface carries a deliberately unfulfilled plan: exact lot/tool/pasport identity; deposition of source→target; separately measured reverse target→source; source-atmosphere/surface-preparation/cure record; and a functional/adhesion/damage readback. Every test must bind its own process revision, geometry orientation, real metrology, environment, observed uncertainty, specimen history and rights. Source row metadata under the 411-entry owner matrix can select planning archetypes but never substitutes for the exact UTP-106 material-lot/process coupon.
+
+**First physical comparator proposal (not scheduled or authorised):** choose one verified structurally compatible pair for a 4×4 mm reference geometry, use source-bound material batches, characterise dimensional and surface conditions, fabricate both A→B and B→A with individually controlled deposition and post-cure histories; measure cross-sectional integrity and interface performance under an engineer-approved method appropriate for the feature scale. Compare with unjoined and process-control specimens; predefine reject thresholds and equipment hazards. After successful independent replication, test the interlayer→conductor interface and any later encapsulation or 4D activation separately. Do not assign strength, dose, uncertainty or sample count without a reviewed standard/test protocol.
+
+**Architecture alignment:** the optional `review_existing_manufacturing_ir(..., geometry_composition=...)` still checks *one exact* build URI and configuration SHA-256; the geometry graph hash and LOAD H0 source references are downstream non-authoritative keys. Passing the exact-contact or digital regression cannot override parent rights, native R0→R3 admission, T173 source verification, C0 device safety, witnessed physical receipts, minting or commercial release. The pre-DBR Achilles register protects the new exact-contact kernel and current composite, **22 protected sources**; the three historical archive candidates remain proposed and no bytes are deleted.
+
+**Digital regression:** `tests/test_printspace_exact_contact.py` covers point, edge, planar area, overlap, disjoint, direction, non-convex/invalid input and candidate qualification boundaries; the existing serial cloud regression is extended to **16 test stages**. Use GitHub Actions for full-repository verification and inspect the attached synthetic receipt before approving a merge. No Remote Desktop Commander calls were required.
+
+
+## 22 November continuation — source-indexed directional witness qualification (digital only)
+
+**Existing sources reused.** Authoritative engineering remains in the Type 1 Romer Cognigrex Drive workbook, tab 32_CGX_Universal_Type1_Tech_Matrix_v0_1, ranges A2:B412 and AK2:BH412. Its fixed 411-row read-only fingerprint projection at cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json retains row identities and observed SHA-256s, not source recipes. The existing cgx.manufacturing.binding owns exact CGXI source/lot/tool/witness evidence semantics, and the canonical compiler owns the build IR. No second material database, manufacturing compiler, LOAD root or private corpus was created.
+
+**Bounded planning integration.** cgx/manufacturing/interface_qualification.py now compiles a deterministic *unmeasured witness requirement plan* from the existing exact convex geometry composition and graph hash, canonical build URI/configuration hash, and owner-row fingerprints. The fixture cgx/manufacturing/pc01_interface_witness_plan_v0_1.json is synthetic planning metadata only; its manufacturing configuration hash is intentionally null until inserted from a real digital compiler output during testing. It is not an authenticated signature or approved configuration.
+
+**Three source-class candidates, not actual material lots:**
+- Structure: T1M-0257 / CGA-M-001 / STRUCTURE_DATUM. Not an identified structural polymer or metal lot.
+- Interlayer: T1M-0409 / CGA-DIEL-001 / DIELECTRIC_ISOLATION. Not a validated adhesive or sourced dielectric batch.
+- Conductive region: T1M-0039 / CGA-I-001 / CONDUCTOR_INTERCONNECT. Not a validated ink/metal formulation.
+
+Each region references the exact observed directional_sha256. Fingerprints bind an observed planning class and one source revision; they must be re-read from authoritative Drive before consequential application. No physical chemical/material compatibility can be inferred from matching source-row identity.
+
+**Four independent directed coupon plans.** The digital three-layer pilot has two geometric interfaces at exactly 16 mm² of *synthetic planned contact area* each. Each interface generates a source-to-target and an independently identified reverse target-to-source coupon, giving FOUR unique candidate coupon keys. A successful test in one direction cannot qualify the other. Each route requires original lot passport, equipment and calibration, independent C0 safety, exact process and pre-treatment revision, atmosphere and cure history, control specimens, method, uncertainty and falsifiers, raw results, independent reviewer, rights and native DBR readback. All physical test evidence fields remain null. State: PLAN_READY_UNQUALIFIED; never BUILD_READY or a licence to print.
+
+**Single canonical IR coupling.** The existing review_existing_manufacturing_ir function accepts the optional interface_selections projection alongside geometry_composition and checks all three against one exact emitted CGX manufacturing build URI and configuration SHA-256. Even a syntactically complete plan yields a MATERIAL_INTERFACE_EVIDENCE_PENDING hold. Modified selection rows, stale geometric source, unbound configuration, claimed qualified measurements, fabricated DBR signatures and mismatched instance IDs cannot promote physical authority.
+
+**Next empirical gate.** Identify or acquire real material lots with observed batch, storage and provider source evidence; choose an engineer-approved machine, process route, deposition orientation and calibrated tools; pre-register both A-to-B and B-to-A comparators and control specimens; independently review oxygen/moisture/pressure/temperature/time exposure, cure and surface-conditioning risks. Specify objective mechanical/electrical readbacks, acceptance thresholds, independent uncertainty and rejection handling *before* any authorised run. No sample counts, mixing recipes, strengths, energy doses or qualification claims are assigned without a signed protocol and native evidence. Non-ambient, chemical, heated and EM steps require independent C0 approval.
+
+**Retained audit.** tests/test_printspace_interface_witness_plan.py tests deterministic four-coupon generation and fail-closed row/identity/authority cases. The existing sequential CI batch increases to 17 stages and emits an unmeasured witness-plan receipt. Achilles's pre-DBR register now protects 24 current/source/evidence references and retains 3 historical candidates pending separate approval. Archive/deletion/native admission are unauthorised. RDC normal reserve 25%; emergency floor 24%. No routine RDC usage.
+
+
+### Owner-source spot-check and 17-stage witness regression receipt — 22 November 2026
+
+**Live Drive readback, bounded to exactly three rows:** selected owner sheet 32_CGX_Universal_Type1_Tech_Matrix_v0_1 in spreadsheet 1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8; each row was separately read at A:B (matrix/archetype identity) and AK:BH (24 directional/compiler fields). The SHA-256 recomputed over UTF-8 JSON.stringify([sheet_row,matrix_id,archetype_id,24 field strings]) matched the committed read-only source index:
+
+- Row 258 / T1M-0257 / CGA-M-001 / STRUCTURE_DATUM: 79e1f684061160701bfbef7da797aedba6f05e7317025c35acb6cfb5e45efdc0 — MATCH.
+- Row 410 / T1M-0409 / CGA-DIEL-001 / DIELECTRIC_ISOLATION: 186095ddb9bb75a50104abbe62eaa5f2015e6aecca7c7ef28eb2e958cdab0663 — MATCH.
+- Row 40 / T1M-0039 / CGA-I-001 / CONDUCTOR_INTERCONNECT: 55ad6b189c9b1c9f562f7ee9402a9b48f4c83ea072787039b46d163dc420bab7 — MATCH.
+
+The selected source text explicitly states that interface allowance is directional (X→Y does not imply Y→X), depends on the exact process and prior-layer damage envelope, and is subordinate to UTP-106 instance/material/process evidence. Matching source strings does not establish that the material lots, tools or processing histories exist. This **spot-check does not reverify the other 408 rows**, provider-wide permissions, independently accepted geometry or owner DBR.
+
+**Digital GitHub evidence:** existing component-atlas CI run 44971628913 at the implementation/documentation-head preceding this note, completed SUCCESS. The dedicated 17-step comprehensive regression receipt records 17 PASS, no mismatched source log length/SHA256, 10.682 s of recorded stage execution, and explicit machine/mint/commercial authority false. The archived output contains the synthetic composite, sequential logs/receipt and the new exact unmeasured four-direction witness plan. GitHub artifact 14734011739, ZIP digest 2dc79d05c7a4cb0b3b25ef568f9e9f9e5e47c457c980e58116a05841360530d6; 30-day provider expiry reported as 22 December 2026, pending long-term owner evidence capture.
+
+- Exact unmeasured witness plan SHA-256: 6923cc437535a33c9b8e526633bff415e8aef018ed331c670300f691870d5d31.
+- Synthetic forward/reverse coupon keys for interlayer/conductor: CGX-WITNESS-CEEBDBCD45AAEED0505E and CGX-WITNESS-B176B16F93C9BB866F1B.
+- Synthetic forward/reverse coupon keys for structure/interlayer: CGX-WITNESS-FD6302402A669999F1FA and CGX-WITNESS-6093810BD53202C63BB8.
+- All four measurement, material-lot and tool-calibration receipt fields: NULL; state PLAN_READY_UNQUALIFIED. These keys are *proposed digital specimen identifiers*, not native mint, acquisition, test completion or owner release receipts.
+
+**One-version retention:** new witness planner and pilot selection fixture are added to the same review branch and recorded as protected active evidence/source in the existing Achilles pre-DBR register (24 protected; 3 historical review candidates). No second CGX manufacturing root, private LOAD hydration, autonomous device sequence, physical operation, archive move or original source deletion occurred. PR remains unmerged pending owner and engineering release gates.
+
+
+## 22 November — 12-service bottom-up digital composite and reverse audit
+
+**Single authoritative implementation, no new root.** This continues draft PR #236 and the canonical cgx.manufacturing family. It reuses the owner Drive source index and VGK40, UniSpace's exact convex mesh verifier, existing PrintSpace composition, exact convex contact, material-class witness planning, canonical manufacturing IR, process-review gate, and LOAD.cgx H0 references. No independent manufacturing compiler, archive database, machine driver, source corpus or native LOAD agent was created.
+
+**Exact nominal solid mathematics.** The new cgx/manufacturing/solid_metrics.py uses the already-verified closed outward-facing integer convex mesh and signed tetrahedra to compute rational volume and centroid. For a source-face triangle (a,b,c), its signed six-times-volume is det(a,b,c), with corresponding first-moment contributions. Integer arithmetic is retained until the final rational output; face area squared is computed exactly, and irrational face area is not rounded into a false exact number. Source vertices, face loops and placement translations are copied into the digital composition review rather than aliased to mutable caller input. This is not a Boolean union, tolerance stack-up, mesh-to-toolpath conversion, density or mass analysis.
+
+The synthetic three-layer coupon has 2 unique shape definitions and 3 placements:
+- Structure: 4×4×2 mm, nominal volume 32 mm3, centroid (2,2,1) mm.
+- Interlayer: 4×4×1 mm, nominal volume 16 mm3, centroid (2,2,2.5) mm.
+- Conductor: 4×4×1 mm, nominal volume 16 mm3, centroid (2,2,3.5) mm.
+- Exact nominal sum volume = 64 mm3; volume-weighted geometric centroid = (2,2,2) mm. Geometric face contact at both planned interfaces = 16 mm2 each.
+- Material density, real centre of mass, measured adhesion, conductivity, exact Boolean union, nonconvex geometry, environmental damage and 4D actuation remain unqualified/uncomputed. The illustrative canonical IR emitter fixture uses a PN rectifier archetype purely to exercise frozen-build logic; that does not make it a real PC01 device or recipe.
+
+**Twelve existing-service projections, one content-addressed manifest.** The new cgx/manufacturing/digital_service_stack.py assembles a bounded directed acyclic graph whose layers carry source ownership, exact payload digest, upstream node SHA-256 links, their own node SHA-256 and explicit proof ceiling:
+
+| Layer ID | Reused service and purpose | Strict ceiling |
+| --- | --- | --- |
+| R0_SOURCE | Source geometry keys, owner row SHA-256s and VGK40 library | Observed/synthetic source-only |
+| G0_NOMINAL_SOLIDS | Exact rational volume and centroid | Digital; no Boolean or mass |
+| G1_EXACT_CONTACT | Convex face/edge/point/disjoint/overlap geometry | No physical interface proof |
+| M0_MATERIAL_ARCHETYPES | Owner's 411-row metadata index | Planning classes, no actual lots |
+| I0_DIRECTIONAL_INTERFACES | Two exact face interfaces with directional ownership | Not a qualified material interface |
+| P0_MANUFACTURING_IR | Existing CGX build URI and frozen configuration hash | Non-executing manufacturing IR |
+| P1_PROCESS_REVIEW | Existing source-aware process and sequencing review | Declarations, not independent proof |
+| E0_ENVIRONMENT_CONTROL | Needed atmosphere, cure, pressure, moisture, field and C0 | Actual sensor history/calibration unbound |
+| Q0_WITNESS_COUPONS | Four uniquely keyed A→B/B→A witness plans | No raw physical measurements |
+| S0_FUNCTIONAL_SERVICE_SCOPES | Scopes selected by existing canonical IR | Solvers and measured parameters unbound |
+| L0_LOAD_H0 | Source-only FileSpace shorthand/alias and component graph key | H0, no private hydration |
+| A0_AUTHORITY_HOLD | Source rights, native parent DBR, C0 and release | All authority denied |
+
+**Bottom-up build and back-down regression.** compile_digital_service_stack() checks that all four original input domains—the canonical IR, geometry, owner matrix row choices and optional process packet—share the correct build URI/source hashes. It compiles the existing digital projections and emits immutable content-addressed service dependencies. verify_digital_service_stack_backwards() requires the **same original objects again**, recompiles the complete stack and traverses the source graph from A0_AUTHORITY_HOLD back to R0_SOURCE. It rejects stale IR changes, modified face geometry or translation, altered owner matrix rows, missing/duplicate service nodes, changed payload hashes or dependency edges, false material/host/DBR authority and unadmitted T173 candidates. A successful result is PASS_DIGITAL_ONLY: this is a deterministic digital regression, never independent external source or physical qualification.
+
+**Cloud execution and receipts.** The existing bounded serial runner has grown from 17 to **19** comprehensive test stages (adding nominal-solid metrics and the full digital service/back-trace). The existing GitHub Actions job produces, alongside earlier composite and directional witness fixtures, a nominal geometry JSON, complete 12-node service stack JSON, and backwards audit JSON. Every new output has explicit false flags for machine execution, physical qualification, minting, commercial release and DBR mutation. Engineering source files remain in one draft branch. No RDC calls or BouwerBase local host operations are implied.
+
+**Hard remaining engineering gates.** The digital service stack does not supply actual material passports, deposition recipes, verified atmosphere/surface history, temperature/field/chemical response, calibrated machine tolerances, witnessed coupons or independently accepted T173 meshes. Complete those through owner-source identity, directional A→B and B→A controlled tests, quantitative uncertainty, independent C0 and original DBR governance. Nonconvex Boolean geometry and tool clearance remain separate proof requirements. Synthetic successful tests never become a signed release.
+
+**Achilles pre-DBR:** 27 protected current source/evidence references, including the 19-stage regression evidence artifact (including the two new modules and frozen composition), 3 historical archive candidates and no archive/delete authority. Preserve RDC reserve at 25% normal / 24% emergency.
+
+
+### Verified 19-stage regression and reverse audit — owner handoff
+
+The existing GitHub component atlas workflow **44972499425** completed SUCCESS against the 12-service implementation head. Independently fetched artifact 14734346016; archive SHA-256 is **b6a767f1c2e9057ea478eff9b2f4fd5ca0b88b37047aa3def742bb0ad2c49522**. ZIP integrity passed, and the recorded 19 stage logs each match both stored byte size and SHA-256. The sequential receipt state is PASS_TESTS_ONLY (19/19 PASS, 10.047 s recorded stage execution; cloud checkout is an ephemeral PR merge commit). Do not confuse that with owner host, source right or physical machine verification. Provider expiry: 22 Dec 2026; long-term approved owner retention must be separately completed.
+
+The synthetic root service manifest is **ca600888ab97bbe4a9b7d641d6b66733463f482c97a16bf84d132da457c333e9**. It declares 12 nodes, 3 placements from 2 shape definitions, nominal 64 mm3, 2 digital 16 mm2 interfaces, 4 separate directional test plans and physical source/rights/equipment gates pending. The reverse audit returns **PASS_DIGITAL_ONLY** with all 12 dependencies traced to re-read input objects. All device, DBR, mint and commercial flags are explicitly false. The pre-DBR register now protects 27 references (including this readback artifact); 3 previous archive candidates remain unacted upon, and no file deletion or archive move was performed.
+
+
+## 22 November continuation — bounded placement tolerance and STATIC keep-out screen
+
+**One manufacturing implementation.** The existing twelve-service digital CGX composite and canonical manufacturing IR remain unchanged in scope and authority. The new module cgx/manufacturing/tolerance_clearance.py consumes the existing exact convex composition and same frozen CGXI build URI/configuration SHA-256. It does not create a new compiler, hardware adapter, scheduler, LOAD carrier, archive DBR or verified material database. Its optional use updates the existing G1 exact-contact, E0 environment and S0 functional-service node hashes, but leaves the count at twelve services. Without the option the previously audited service root identity remains unchanged; the existing back-down auditor must have the same original optional tolerance input to reconstruct an enhanced root.
+
+**Conservative exact-unit method.** This 64 KiB-bounded digital review accepts at most 24 convex integer-millimetre shape placements, 64 directed interfaces and 12 synthetic fixed keep-out AABBs. Individual placement errors are declared as symmetric absolute integer micrometre translation bounds in X/Y/Z; they are not measured machine errors. For each axis-aligned shared planar face, the maximum relative displacement along the face normal is exactly the sum of the two input normal-axis error bounds. It reports both possible opening and possible interference; tangential shifts are separate. Oblique, ambiguous and point/edge-only interfaces HOLD rather than silently using a false normal-translation formula.
+
+A conservative AABB interval expands each nominal region by its declared translation error. For a user-supplied synthetic fixed keep-out, the maximum positive axis separation is a lower bound on three-dimensional separation for the supplied AABB geometry; a screen passes the requested static margin only if at least one separating axis has a positive gap meeting that threshold. Any possible overlap or below-margin gap is a HOLD. This is not exact 3D minimum distance, not a tested actual machine, and not a moving/swept toolpath, Gantry XYZ kinematics, CNC/nozzle collision, tolerance stack-up certification, nonconvex CSG, finite element analysis, motor safety or a verified real clearance.
+
+**Concrete digital reference (illustrative and unmeasured).** Structure ±50 micrometres per axis, dielectric interlayer ±75 micrometres, conductor candidate ±25 micrometres. All three share the same original nominal digital geometry and 16-square-millimetre face contacts. Possible opening OR interference is bounded by 125 micrometres for structure to interlayer, and 100 micrometres for interlayer to conductor, on their nominal Z-normal faces. The synthetic keep-out X=6000..8000 micrometres, Y=-1000..5000, Z=-1000..5000 is at least 500 micrometres away from each expanded synthetic region in the static AABB screen. It does NOT represent a verified PrintCeptor printhead, tool-carriage, calibrated fixture or real machine motion envelope. All physical clearance and material qualification flags remain false.
+
+**Single-source back-down integration.** The digital_service_stack compile path optionally receives clearance_plan, runs the existing geometry review, source-index witness plan and static screen, then adds the static hash and normal displacement bounds to its existing G1/E0/S0 service dependency nodes. Reverse replay requires the original tolerance plan as well as the canonical IR, geometry source, material-row selections and any process input. Changing a declared micrometre value, static fixture, geometry input, build configuration or authority field must invalidate the original root. The previous unextended root remains reproducible. Even the successful synthetic enhanced service returns DIGITAL_STACK_REVIEW_ONLY_PHYSICAL_HOLD; it never executes machine instructions, qualifies real tolerances, admits native DBR, publishes or mints.
+
+**Regression and empirical ceiling.** The existing bounded sequential test battery now has 20 stages, adding tests/test_printspace_tolerance_clearance.py. Negative tests exercise stale source replay, physical authorisation forgery, duplicate/missing error declarations, float/nonfinite micrometre inputs, malformed keep-outs, potential AABB collisions and insufficient nominal static gap. GitHub CI emits the synthetic static clearance review, 12-node extended service root and PASS_DIGITAL_ONLY reverse-audit receipts. The original nominal geometry tests and material coupon reviews remain in the same set. These are software tests on *assumed digital geometry and synthetic uncertainty*, not machine certification.
+
+**Next empirical requirements.** Exact source-identified real tool and machine workspace geometry, independent C0 safety constraints, observed calibration/position-error envelopes, thermal/chemical cure changes, fixture and tooling tolerances, orientation/swept collision kernel, validated sample plans, and measured downstream test receipts. These are separate input/evidence gates; no real print or toolpath command was issued.
+
+**Retention.** Achilles's existing pre-DBR register now protects 30 active/source/evidence references including the 20-stage synthetic audit artifact and still carries three historical archive-review candidates. No archive/deletion/DBR/write authority is promoted; zero Remote Desktop Commander calls. Preserve 25 percent normal RDC reserve and 24 percent emergency floor.
+
+
+### Static tolerance and back-down evidence — independently checked 20-stage baseline
+
+Implementation CI run 44974564977 completed SUCCESS. Retrieved artifact ID 14734629721 (21,030 bytes), ZIP SHA256 8cf47ea0945f72977f003ac27f8714c65369d26702a0391f4587ad82b2f90618, provider expiry 22 December 2026. All 20 stage logs independently matched the receipt's recorded size and SHA256; 20/20 PASS_TESTS_ONLY, zero mismatches and 14.2 seconds recorded sequential test execution. This is a digital software test; CI did not authenticate any physical machine or print a specimen.
+
+Synthetic face normal uncertainty screen SHA256: 280acc9fb8d8493be9dc59bfe131312636eec1501748ccb3ce1a5ebd27a982a4. The structural to interlayer directed contact has a hypothetical possible 125 micrometre gap or interference; the interlayer to conductor contact has 100 micrometre possible gap or interference. At the deliberately synthetic fixed keep-out, the conservative AABB axis gaps under these hypothetical bounds are 1950 micrometres for structure, 1925 for interlayer and 1975 for conductor. Every result retains physical_tolerances_verified=false, moving_toolpaths_evaluated=false and physical_clearance_authorised=false.
+
+Enhanced twelve-service root SHA256: b9d9a67b1d747b29e6eae89a993ec986835b389b95ac5519650f345ba8a67318, different from the previously protected no-screen root as required. Its reverse-audit receipt state is PASS_DIGITAL_ONLY (manifest matched). No physical claims or source-rights promotion. Achilles pre-DBR retained original 3 archive proposals and now **30 protected** references, including the exact 20-stage artifact. This is a retention review pointer, not proof of permanent owner archive readback.
+
+
+## 22 November — full-factorial analytical cross-domain emulation and operational sequence handoff
+
+**A new bounded read-only analysis facet, not another engine.** The existing canonical twelve-service PrintSpace stack is still the computational authority for machine-neutral geometry, source classes, nominal mass/volume declarations, interface topology, manufacturing IR, process preflight, four directional witness-coupon plans, static tolerance review, LOAD H0 shorthand and Achilles/owner release holds. The new cgx.manufacturing.cross_domain_emulation uses ONLY these approved digital source references and the current Type-I equation catalogue (T1K-001 structural expansion, T1K-002 conductor interconnect, T1K-004 resistive heater/RC analogue, T1K-013 thermal, T1K-018 service access/tolerance, T1K-019 DBR identity). It introduces **no** new physical material database, FEA/CFD solver, real chemical model, 4D actuation, unsafe waveform/field commands, device controller or native LOAD admission.
+
+**Model type and quantitative limits.** This first-pass simulator is a deterministic analytical *hypothetical electrothermal plus differential-expansion* analogue, not a calibrated finite-element or coupled material-property calculation. The source already-reviewed 4×4×1 mm conductor-shaped box supplies an exact 4 mm nominal path length and 4 mm2 rectangular cross-section only. All other electrical/thermal quantities are explicit synthetic assumptions:
+- Rbulk = assumed resistivity × conductor length / cross-section; Rtest = Rbulk + assumed external TERMINAL resistance. No electrical conduction is assumed through the dielectric interlayer or the structural region.
+- One thermal node and ONE assumed effective heat transfer resistance: Ctheta×d(ΔT)/dt = I²×Rtest×(1+alpha×ΔT) − ΔT/Rtheta. The emulator uses the closed-form exponential update per phase and independently integrates heat input/loss/storage, reporting a first-law residual.
+- A purely illustrative relative-expansion estimate is ΔLmicrometre = reference length(mm) × 1000 × assumed relative CTE × peak ΔT. It does not prove bond failure, a true material interface, delamination, bowing, bending, stress, slip, adhesion or actual machine tolerance.
+- Environment is represented solely as an **assumed thermal resistance multiplier**. It is NOT an inert-gas, vacuum, oxygen, moisture, pressure, convective-flow or physical atmosphere prediction. No hot/reactive process or field is executed.
+
+**Full factorial design, bounded for deterministic operation.** cgx/manufacturing/pc01_synthetic_cross_sweep_v0_1.json contains the following six independent finite grids:
+- test current: 0.1, 0.5 and 1.0 A;
+- assumed external terminal resistance: 0.05, 0.2 and 0.8 Ω;
+- assumed effective thermal resistance: 5, 20 and 80 K/W;
+- assumed relative CTE: 0 or 50×10^−6/K;
+- analytical current-on duration: 30 or 120 s;
+- synthetic thermal-boundary multiplier: 1 or 2.
+Their Cartesian product is **216 simulation cases** (hard maximum 256) with 15 two-factor screening interaction pairs. Fixed hypothetical parameters: conductor resistivity 1×10^−6 Ωm, network temperature coefficient 0.002/K, lumped heat capacity 0.5 J/K, ambient 293.15 K, an arbitrary 353.15 K (80°C) digital screening threshold, recovery 60 s, expansion reference length 4 mm. These are artificial comparison values, not PC01 source-lot, machine, regulatory or validated operating specifications.
+
+**Sequential phase representation.** Every numerically supported case has immutable source-bound phases PREPARE → ANALYTICAL_ENERGISE → ANALYTICAL_RECOVER → UNMEASURED_READBACK_HOLD. The analytical state stores phase temperature and energy in/out, never a hardware command, runtime sensor readback or actual cure. The code explicitly rejects false source status, nonfinite/invalid inputs, stale equation/IR/geometry/owner material/tolerance hashes, inaccurate energy balance, and claimed native release or machine authority. Even a digital threshold comparison marked WITHIN_SYNTHETIC_LIMIT_NOT_QUALIFIED must remain **physically unqualified**; exceeding 80°C is only a screen against a user-chosen illustrative benchmark, not automatic evidence of real failure.
+
+**Independent numerical result readback (first 21-stage cloud run).** Source kernel digest 5c6e60f932400fd728355830dddd705e2644d8cd576409ae8a6325cf162447f1. Original unchanged 12-service static-tolerance root b9d9a67b1d747b29e6eae89a993ec986835b389b95ac5519650f345ba8a67318. The generated 216-case result SHA256 is **96d887530eef48b19267c81b40f5d174af8ad8fa9bfb1af6d326554c0e38fd9c**. Report results:
+- 212 of 216 cases were within the *synthetic* 353.15 K threshold, and 4 exceed it. No scenario is production-qualified.
+- Ideal predicted peak temperatures span 293.15255 K to 409.00121 K; largest illustrative relative expansion 23.17024 micrometres.
+- Exact analytical first-law residual from double precision per stage remained below 2.85×10^−14 J across the evaluated grid; this supports internal numerical consistency **not** physical validity.
+- Main-effect screening *mean peak-temperature spans*: current 13.44561 K, terminal resistance 12.26770 K, thermal resistance 10.50589 K; energise time 3.34439 K, boundary multiplier 2.65393 K, relative CTE 0 K. The zero CTE main effect on temperature is an explicit model independence, not evidence that expansion has no mechanical consequence.
+- Top two-factor **finite-grid difference-of-differences** (not statistical interaction estimates): current×terminal resistance 31.76644 K; current×thermal resistance 23.67685 K; terminal resistance×thermal resistance 22.35294 K. These are comparative algebra under a small factorial grid. No uncertainty distribution, true calibration or causal interpretation was inferred.
+- The four separate directional material-interface coupons remain UNMEASURED; a sweep of a hypothetical external circuit terminal resistance does **not** predict actual interlayer→conductor interface electrical resistance, conductivity or reverse deposition behaviour.
+
+**Quality and evidence.** The 21-stage cloud run 44975281519 completed SUCCESS. Its independently retrieved ZIP artifact 14734969656 has SHA256 298008b3679f74f15515d4e0caafa5b33ebadcac4d1a418aee6b082b8efb31d7, provider expiry 22 Dec 2026. All **21/21** serial checks passed with **zero** log byte-size or SHA256 mismatches, over 17.757 s recorded. Tests include alpha=0 independent thermal exponential, unpowered exponential cooling, energy conservation, factor monotonicity, relative-CTE/temperature independence, above-threshold outliers, factorial case limits, source hash drift, missing numerical coefficients, calculated no-stable-steady-state HOLD cases and forged machine/DBR rights. The run is TESTS_ONLY, not a signed owner facility readback.
+
+**Expected operational state machine (not deployed physically).**
+1. Acquire explicit user intent, source rights, native CGX object/geometry revision and resolved Type-I/LOAD H0 source keys (native H1/R1-R3 private hydration prohibited here).
+2. Select exact geometry and existing VGK/T173-admission-gated topology; compile and reverse-check original CGXI/IR, source-class matrix and directional interface identity.
+3. Resolve measured/bounded environmental geometry, calibrated static and moving tool envelope, real lot passports and 4 separate directional specimen records. Unprovided physical data is HOLD rather than substituted by benchmark numbers.
+4. Run low-cost analytical source-bound parameter screens *before* requesting a higher-fidelity solver. Emit ranked sensitivities and failing scenarios with reproducible hashes, but do not allow simulation to promote rights, physical approval, lot evidence or hardware authority.
+5. For an independently qualified modelling regime, delegate *separately* to appropriately validated FEM/CFD/electromagnetic/chemical/4D solvers, with independent residuals, mesh/time-step convergence, boundary uncertainty and experimental falsification. Availability or source authority must be checked first. No such solver was activated in this run.
+6. Independently approve a physically safe bidirectional coupon test plan, C0 risk controls, chemistry, surface preparation, temperature/field/time envelopes and calibrated instrument method. Run only with separately authorised host/device permissions; retain raw source measurements, deviations, uncertainty and independent review.
+7. Only if the actual physical evidence and owner rights gates close: parent DBR admission, signed/versioned readback, native resource lease, permitted machine automation and release. None of those gates are closed by this digital exercise.
+
+**Explicit remaining interdisciplinary sectors.** Mechanical stress/contact/creep/fatigue, dielectric breakdown/leakage and parasitic fields, RF/EMC, optical coupling, acoustic/piezo, chemical species/phase change/solvent dynamics, fluidic/pressure/oxygen transport, true multi-layer thermal diffusion, 4D activation/response, full device kinematics, support/fixturing/tool sweep, error budget and control-system safety remain model selection or source/material evidence holds. A 216-scenario screen does not close any of them. The governing rule is to add only the validated model necessary for the requested service and preserve the uncertainty/rights ceilings.
+
+**Achilles retention and quota:** One existing draft source branch; existing pre-DBR queue now retains 34 protected current/source/evidence pointers, with the same 3 historical archive-review candidates. No source/body moved/deleted, no archive/DBR/authority or host device action, no RDC calls. Preserve normal 25%/emergency 24% RDC remaining thresholds.

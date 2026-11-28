@@ -1,0 +1,236 @@
+{
+  "schema": "CGX-PC01-RAPHAEL-PRINTSPACE-BRIDGE/0.1",
+  "state": "PROPOSED_DIGITAL_REVIEW_ONLY",
+  "date": "2026-11-22",
+  "identity": {
+    "node_id": "PC01-NODE-001",
+    "object_id": "CGX-PHYSOBJ-001",
+    "physical_state": "NOT_BUILT",
+    "owner": "Romer-Grex / EMASSC PrintSpace"
+  },
+  "authority": {
+    "engineering_workbook": "https://docs.google.com/spreadsheets/d/1refNFmebTcmPVojCuZsyILJEWaKz-sVzYLfZtqMl8k8/edit",
+    "directional_source": "32_CGX_Universal_Type1_Tech_Matrix_v0_1!AK:BH",
+    "pc01_source": "33_PC01_CGX_Operational_Matrix_v0_1!A:AD",
+    "git_operational_contract": "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
+    "geometry_review_implementation": "tools/verify_unispace_product.py",
+    "raphael_geometry_provenance": "https://github.com/NCNBOUWER/Raphael/tree/main/N%5E3/RUN",
+    "rule": "Drive remains engineering/evidence owner. This Git bridge is a proposed typed crosswalk only; no implied physical qualification."
+  },
+  "geometry": {
+    "index_namespace": "T173",
+    "valid_position_range": [
+      1,
+      173
+    ],
+    "reserved_sentinel": 174,
+    "admission_requirements": [
+      "source_id",
+      "rights_clearance",
+      "coordinate_frame",
+      "units",
+      "vertices_and_incidence_or_equivalent_exact_constructive_generator",
+      "topological_integrity",
+      "canonical_identity_and_chirality_policy",
+      "numerical_tolerance_and_scale_range",
+      "independent_test_receipt"
+    ],
+    "supported_existing_test_classes": [
+      "exact_convex_integer_mesh_review",
+      "canonical_translation_fixed_axes_mesh_identity",
+      "bounded_parent_previous_next_facet_transition"
+    ],
+    "limits": [
+      "Catalogue index is not a printable mesh",
+      "T174 non-mintable",
+      "No general non-convex mesh proof by existing validator",
+      "No automatic scale/rotation/chirality invariance",
+      "No Raphael force-law or empirical hypothesis validation"
+    ],
+    "composition_operators": [
+      "instance",
+      "translate",
+      "rotate",
+      "scale_with_units",
+      "union",
+      "subtract",
+      "intersect",
+      "boundary_offset",
+      "lattice",
+      "graded_interface",
+      "toolpath_transform",
+      "time_state_transition"
+    ],
+    "operator_state": "PROPOSAL; each operator requires an implementation ID, domain, precision, and tests before release"
+  },
+  "process": {
+    "directed_pair_key": [
+      "predecessor_material_lot_id",
+      "successor_material_lot_id",
+      "tool_id",
+      "surface_preparation_id",
+      "atmosphere_class",
+      "recipe_revision"
+    ],
+    "edge_state_values": [
+      "UNTESTED",
+      "CONDITIONAL",
+      "QUALIFIED",
+      "FAILED",
+      "REVOKED"
+    ],
+    "never_infer_reverse_edge": true,
+    "compatibility_requirements": [
+      "surface_energy_and_adhesion",
+      "rheology_and_flow",
+      "thermal_budget_of_previous_layers",
+      "cure_and_exposure_window",
+      "solvent_moisture_oxidation",
+      "CTE_shrinkage_and_residual_stress",
+      "field_history",
+      "interface_geometry_and_test_geometry",
+      "deposition_order",
+      "measured_evidence"
+    ],
+    "operations": [
+      "PREPARE",
+      "DEPOSIT",
+      "PAUSE",
+      "CLEAN",
+      "PURGE",
+      "DRY",
+      "CURE",
+      "INSPECT",
+      "PLACE_COMPONENT",
+      "BOND",
+      "ENCAPSULATE",
+      "ACTIVATE",
+      "VERIFY",
+      "READBACK"
+    ],
+    "transition_requirements": [
+      "prior_layer_damage_check",
+      "calibrated atmosphere_sensor_if_required",
+      "tool_calibration",
+      "contamination_limit",
+      "clearance_and_collision_check",
+      "signed_handoff_receipt"
+    ],
+    "gradient_requires": {
+      "composition_law": true,
+      "spatial_coordinates": true,
+      "minimum_feature": true,
+      "mixing_and_diffusion_model": true,
+      "interface_test": true
+    },
+    "encapsulation_requires": [
+      "barrier_chemistry_compatibility",
+      "seam_and_bond_test",
+      "post_encapsulation_function_test",
+      "ingress_or_transport_test_if_claimed"
+    ],
+    "field_activation_requires": [
+      "frequency_hz",
+      "bandwidth_hz",
+      "power_and_energy",
+      "coupling_and_geometry",
+      "exposure_time",
+      "measured_temperature_or_response",
+      "electrical_safety_and_emc_envelope"
+    ],
+    "atmosphere_modes": [
+      "AMBIENT",
+      "CONTROLLED_GAS",
+      "DRY",
+      "VACUUM_ONLY_IF_HARDWARE_RATED",
+      "PRESSURE_ONLY_IF_HARDWARE_RATED"
+    ],
+    "frequency_rule": "Field/EM models do not confer physical machine capability or replace calibrated measurement"
+  },
+  "execution": {
+    "planes": {
+      "filespace": "identity, rights, geometry and recipes, evidence refs, provenance, passports",
+      "dataspace": "queues, leases, calibration telemetry, event receipts, readback",
+      "printspace": "bounded tool/process hardware with independent C0 interlocks",
+      "unispace": "UI and review projection only"
+    },
+    "gates": [
+      "geometry_exactness",
+      "material_lot_and_directional_compatibility",
+      "process_sequence_and_environment",
+      "machine_envelope",
+      "C0_safety_independence",
+      "calibration",
+      "simulation_baseline",
+      "witness_coupon",
+      "encapsulation",
+      "lifecycle_testing",
+      "rights_and_release_review"
+    ],
+    "default_no_hardware_execution": true,
+    "rule": "REVIEW does not imply BUILD_READY; BUILD_READY does not imply BUILT/MEASURED/RELEASED/CERTIFIED."
+  },
+  "library": {
+    "namespaces": [
+      "OPEN_RIGHTS_CLEARED",
+      "COMMUNITY_LICENSED",
+      "PAID_RECIPE",
+      "PRIVATE_RESTRICTED"
+    ],
+    "paid_recipe_example_currency": "AUD",
+    "example_price_AUD": 5,
+    "required_receipts": [
+      "licence_version",
+      "rights_grant_or_restrictions",
+      "object_hash",
+      "recipe_hash",
+      "eligible_machine_and_material_scope",
+      "transaction_receipt",
+      "provenance",
+      "support_and_refund_terms"
+    ],
+    "rule": "Do not publish or sell an object, third-party design, recipe or geometry without a verified rights chain. Price is a proposed commercial example, not a live listing."
+  },
+  "validation_cases": [
+    {
+      "id": "V01",
+      "input": "mesh exact convex integer topology but not admitted",
+      "expected": "REVIEW_ONLY"
+    },
+    {
+      "id": "V02",
+      "input": "T174 used as geometry ID",
+      "expected": "REJECT"
+    },
+    {
+      "id": "V03",
+      "input": "material A->B QUALIFIED but B->A UNTESTED",
+      "expected": "B->A HOLD"
+    },
+    {
+      "id": "V04",
+      "input": "gradient missing measured composition law",
+      "expected": "HOLD"
+    },
+    {
+      "id": "V05",
+      "input": "encapsulation without post-seal test",
+      "expected": "HOLD"
+    },
+    {
+      "id": "V06",
+      "input": "field actuation lacking calibrated power/exposure/bandwidth",
+      "expected": "HOLD"
+    },
+    {
+      "id": "V07",
+      "input": "printer hardware NOT_BUILT",
+      "expected": "NO_EXECUTE"
+    },
+    {
+      "id": "V08",
+      "input": "third-party rights unknown",
+      "expected": "NO_PUBLICATION_OR_SALE"
+    }
+  ]
+}

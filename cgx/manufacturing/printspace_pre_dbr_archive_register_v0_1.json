@@ -583,7 +583,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs",
-      "git_blob_sha1": "47dffb311400888c03f432c75b95c703a92392c3",
+      "git_blob_sha1": "3e685b4e0c548ac7fabfa292ab7ac7b67ac9bd47",
       "reason": "Uses existing UniSpace HostObjectContextGate and LoadLibraryLensPlan; no source hydration, permission or DBR grant"
     },
     {
@@ -591,7 +591,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs",
-      "git_blob_sha1": "fb58bc411b40722104a81811145a42c7a9d74680",
+      "git_blob_sha1": "322b463ffc8a91b4e396c97a15e710844e2cb4ec",
       "reason": "Node interop and negative source/rights/collision tests with synthetic host responses only"
     },
     {
@@ -632,7 +632,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs",
-      "git_blob_sha1": "6dacc7d85f30cadc1a32736313d2c9e995166bd6",
+      "git_blob_sha1": "511837d780a7080e5050eac239f5d7ee8be924b5",
       "reason": "Read-only Ed25519 registry/rights/host three-role R0 verifier with externally pinned public key fingerprints, nonce/expiry/revocation and explicit no-native authority"
     },
     {
@@ -640,7 +640,7 @@
       "classification": "EVIDENCE_ACTIVE",
       "disposition": "RETAIN_EVIDENCE",
       "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.test.mjs",
-      "git_blob_sha1": "0001f5e875a8b038c34183cfe2b4ea1b94968ac7",
+      "git_blob_sha1": "aaa5ea654f554a4838750738a42784ce91d77f2c",
       "reason": "In-memory synthetic 3-role cryptographic source/identity/rights hold and negative replay/tamper tests; no owner private keys"
     },
     {

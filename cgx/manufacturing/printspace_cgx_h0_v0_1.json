@@ -1,0 +1,18 @@
+{
+  "bundle_sha256": "sha256:4d78928273facb97b210867beb4bd58b611ac29ed8d62f09c470f2b7d7d83acc",
+  "catalogue_sha256": "6f7724e0069fd65e56ba77a43b73dd5ff40616d69cf9a01d2f2fe78960ad1bd1",
+  "machine_authorised": false,
+  "native_admitted": false,
+  "object_count": 80,
+  "parent_dbr_receipt": null,
+  "products": {
+    "product/board": "sha256:880b7f1c833d495af94c507f3f1bcd84f9923b5d834a15faf78525c60a811910",
+    "product/diode": "sha256:a1573c98c2f3e7d852638b5e3635f91d880a6f9209243ea1996f4962e6f9e861",
+    "product/phone": "sha256:86a881c7e705884043b83af1449242d71a9ad8f7893ea1f5bf1761e17546cafd"
+  },
+  "root_namespace": "cgx://romer.industries/romer/printspace/",
+  "root_ref": "sha256:0074bbcdc191c953633e1ecdef457b39c82aa2d6ea98230fb59bf0ea5b012451",
+  "schema": "CGX-PRINTSPACE-LOAD-LITE-H0/0.1",
+  "source_bytes_hydrated": 0,
+  "state": "H0_NONHYDRATING_SOURCE_INDEX_ONLY"
+}

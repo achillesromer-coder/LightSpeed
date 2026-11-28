@@ -1,0 +1,28 @@
+# CGX PrintSpace R0 cryptographic source-evidence review (v0.1)
+
+**Implementation**: `apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs` extends the **existing** read-only `printspaceCgxHostR0Bridge.mjs`, which composes canonical UniSpace `cgxHostObjectContextGate.mjs` and `cgxLoadLibraryLensPlan.mjs`. It never replaces the parent CGX DBR, source registry, cryptographic trust store, root, lease or native FileSpace/LOAD engine.
+
+## Purpose and precisely bounded claim
+
+This verifier checks three independently keyed Ed25519 attestations of the *same* R0 product-source request. The three roles are `registry`, `rights` and `host`. Each signature binds the existing plan and 80-facet product graph, the exact candidate Object_ID and twin, the `Romer.cgx` child namespace, lineage/registry candidate SHA-1s, a challenge nonce, an expiry, a revocation epoch, and a separate source/evidence reference. Extra fields, missing roles, repeated keys, cross-role keys, collision assertions, unreviewed rights, native-DBR mutations or machine commands are rejected.
+
+The implementation performs **genuine Ed25519 signature verification** with Node's cryptographic library against public-key pins supplied in a separate trust argument; it neither signs statements nor stores private keys. Test-only keys are generated in memory for regression. **There are no production trust roots in this repository.** The pins' *origin* is not authenticated merely because their supplied public key hash matches. A positive result is therefore named `THREE_ROLE_ED25519_SIGNATURES_VALID_REVIEW_ONLY`, and it has `trust_root_origin_authenticated: false`, `real_source_readback_authenticated: false`, `real_rights_independently_accepted: false`, `host_session_independently_authenticated: false`, `challenge_consumption_recorded: false`, `native_admitted: false`, `machine_authorised: false`, and `native_dbr_written: false`.
+
+The signature statement is immutable canonical UTF-8 JSON (lexically sorted keys, no floats/nonfinite values). Maximum packet is 128 KiB, maximum challenge lifetime 300 seconds, permitted future clock skew 30 seconds, with actual `clockSeconds` supplied by a host caller rather than by the signed packet. Three independently pinned Ed25519 *public* keys are mandatory, fingerprints are SHA-256 of SPKI DER, and any duplicate fingerprint, key identifier, explicitly revoked key or revocation epoch mismatch fails closed. Validity and key fingerprints are returned only as digests and references; raw host messages, private paths, public-key PEMs, secrets and source bodies are never echoed.
+
+## Deployment sequence (not yet performed)
+
+1. Owner establishes a dedicated trust-root registry, verifying key origin, chain of custody, signer authority and rotation/revocation **outside** the user-supplied request. No key exists in this package that could authorise an actual operation.
+2. Authenticated host reads source registry and source lineage bytes, compares the Git object contents with their expected native source identity, resolves exact Object_ID/twin collisions, confirms rights scope and obtains per-child ACL and session context. Repository metadata or user-entered Git blob hashes are not sufficient.
+3. Host issues a fresh 256-bit unpredictable challenge, stores its one-time use in a revocation/challenge ledger, and provides the exact request and source snapshot to each qualified independent registry/rights/host attestor.
+4. Three authorised attestors sign canonical R0 *review* statements, each containing the exact source and rights scope. The Node verifier validates their signatures, source pointer continuity, one-time challenge and time limits under the host-provided trust pins. This code checks matching nonces and freshness, but cannot itself persist consumption or authenticate a client-supplied trust store/clock.
+5. Host independently checks DBR append/readback, parent ACL, source-owner/licence provenance, key revocation, audited identity/rights reviews and explicit owner permission **before** any native Object_ID admission or private H1–H4 hydration. This package offers no such operation.
+6. Physical PrintCeptor C0, tool calibration, real material-lot traceability and independently witnessed directional coupons remain separate hard gates. R0 signature validation never authorises printing, synthesis, a phone's function, native minting, commercial release or spacecraft operation.
+
+## Regression and falsification
+
+Synthetic tests generate fresh Ed25519 keypairs at runtime; no private keys or trust roots are committed. Positive R0 signature verification for diode/board/phone is checked alongside negative cases for signature alteration, key substitution, revoked/duplicate role keys, nonce replays under a changed challenge, clock expiry/future-dating, revocation-epoch drift, extra/secret authority fields, incorrect source/facet/child, forged rights scope and native DBR mutation. Tests run through the existing **LightSpeed GO Vitest** workflow. The existing 24-stage Python/CGX PrintSpace sequential regression remains unchanged and is run in parallel by its existing GitHub Actions; neither succeeds as empirical manufacturing evidence.
+
+## Handoff and archive
+
+The new JS module, tests and this exact specification are protected under the existing Achilles **pre-DBR read-only register**. The historical three archive candidates remain unexecuted. No Remote Desktop Commander, database mutation, archive deletion, owner-key import, host service, real API fetch, mint or machine movement is required or performed in this development increment.

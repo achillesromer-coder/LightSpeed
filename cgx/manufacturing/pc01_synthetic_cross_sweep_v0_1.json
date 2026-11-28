@@ -1,0 +1,48 @@
+{
+  "schema": "CGX-PRINTSPACE-ANALYTICAL-CROSS-SWEEP/0.1",
+  "model": "ONE_NODE_ANALYTICAL_ELECTROTHERMAL_ELASTIC_SCREEN",
+  "evidence_status": "SYNTHETIC_UNCALIBRATED_NO_ACTUATION",
+  "source_equation_library_sha256": null,
+  "source_service_manifest_sha256": "b9d9a67b1d747b29e6eae89a993ec986835b389b95ac5519650f345ba8a67318",
+  "source_geometry_sha256": "55b8de2df57a8b19ecda4d5ab0ed0619de57789e21e793ea2170a68b00dfb613",
+  "conductor_instance_id": "conductive",
+  "conductor_path_axis": "x",
+  "factor_grid": {
+    "test_current_a": [
+      0.1,
+      0.5,
+      1
+    ],
+    "external_terminal_resistance_ohm": [
+      0.05,
+      0.2,
+      0.8
+    ],
+    "effective_thermal_resistance_k_per_w": [
+      5,
+      20,
+      80
+    ],
+    "relative_cte_per_k": [
+      0,
+      0.00005
+    ],
+    "energise_duration_s": [
+      30,
+      120
+    ],
+    "synthetic_boundary_multiplier": [
+      1,
+      2
+    ]
+  },
+  "fixed": {
+    "assumed_conductor_resistivity_ohm_m": 0.000001,
+    "assumed_effective_network_tcr_per_k": 0.002,
+    "assumed_lumped_heat_capacity_j_per_k": 0.5,
+    "ambient_temperature_k": 293.15,
+    "synthetic_temperature_screen_limit_k": 353.15,
+    "recover_duration_s": 60,
+    "mechanical_reference_length_mm": 4
+  }
+}
