@@ -3739,6 +3739,26 @@
       "bytes": 6451,
       "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_surface_projection.py",
       "sha256": "c40c0039c06ce605194a5dc2cacc6fec5a836959d8af77a4d8396c409b51dc0e"
+    },
+    {
+      "bytes": 3500,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/achilles/native_footprint.py",
+      "sha256": "cb09dd2667b372dc32821e3c22207cddb8fe800cc1e0f0dbf598fe08715e0543"
+    },
+    {
+      "bytes": 8592,
+      "path": "LightSpeed_Runtime/lightspeed_runtime/cgx_signed_peer_review.py",
+      "sha256": "72f05d76ae0df415ff03f94548ff03c007c4254994a98359214a607bd26c8020"
+    },
+    {
+      "bytes": 2341,
+      "path": "LightSpeed_Runtime/tests/test_achilles_native_footprint.py",
+      "sha256": "2700f0d2ef07f7696ad5020c5d10c30d9af9b63021d09911c78284959ee2abfb"
+    },
+    {
+      "bytes": 9718,
+      "path": "LightSpeed_Runtime/tests/test_cgx_signed_peer_review.py",
+      "sha256": "bceb0ec3dc60f6e820d14cc78545bfa52396152e825ad90d6678e0894728968a"
     }
   ],
   "schema_version": 1

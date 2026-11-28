@@ -29,3 +29,7 @@ The batch review entry point verifies and captures a private model/history snaps
 ## Raphael source and online projection alignment
 
 Native Raphael review binds the existing Type-I equation kernel, geometry search catalogue, atlas workset and locally checked-in GO public projection by source digest, and reuses the existing Raphael sweep capability and atlas hydration. Explicitly selected atlas/kernel/search records are comparison candidates, not validated associations. No arbitrary physics equation evaluation, physical claim, remote publication or new store. Legacy placeholder equations remain held; full T173 and empirical admission require independent evidence. The checked-in public projection equality is not a live website verification.
+
+## Model footprint review
+
+Read-only manifest accounting separates unique size-matched model blobs, logical references and missing or inconsistent files. It reads manifest bytes and file sizes, not weight payloads, and makes no content-hash, RAM, inference, compression or native admission claim. Cloud/no-weight manifests are not local weights. This complements the existing historical root inventory and earlier GGUF index without introducing a second store or scanning all disk contents.
