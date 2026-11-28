@@ -5,6 +5,7 @@ import {createHash} from 'node:crypto';
 import {makeCapsule} from './tir173_core.mjs';
 import {projectGuiosContext} from './tir173_context.mjs';
 import {bindTirIntentToExistingPlans} from './tir173_intent_binding.mjs';
+import {projectUniSpaceLoadLens} from '../../../apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs';
 
 const projectionBytes=readFileSync(new URL('../../../docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json',import.meta.url));
 const slots=JSON.parse(projectionBytes.toString('utf8')).slots;
@@ -127,4 +128,18 @@ test('forged atlas rights, incomplete row selector and context identity cannot e
    assert.throws(()=>bindTirIntentToExistingPlans(dictionary,cap,drift,{...common,command:'SELECT T173:173'}));
  }
  assert.throws(()=>bindTirIntentToExistingPlans(dictionary,{...cap,native_admitted:true},lens,{...common,command:'SELECT T173:173'}));
+});
+
+
+test('existing LOAD planner offline H1-H3 review output binds without fabricating hydration',()=>{
+ const activation=JSON.parse(readFileSync(new URL('../../load_minimum/activation_contract.json',import.meta.url),'utf8'));
+ const filespace='Cognigrex.cgx',object_id=cap.object_ref;
+ for(const requested_hydration of ['H0','H1','H2','H3'])for(const offline of [true,false]){
+  const plan=projectUniSpaceLoadLens({load_contract:activation,requested_object_id:object_id,destination_filespace:filespace,requested_hydration,requested_layer:'R0',offline,
+   context_plan:{schema:'UNISPACE-CGX-HOST-CONTEXT-GATE/0.1',state:'PLAN_ONLY_NOT_HYDRATED',object_id,filespace,source_lineage_git_blob_sha:'a'.repeat(40),source_registry_git_blob_sha:'b'.repeat(40),native_admitted:false,canonical_mutation:false,execution_performed:false,private_hydration_authorized:false,public_publish_authorized:false,host_context_readback_authenticated:false,source_registry_independently_verified:false},
+   client_permissions:{mode:'review_only',revoked:false,allowed_object_ids:[object_id],allowed_filespaces:[filespace]},source_status:{collision:'no_conflict_reported',rights:'cleared_for_review',evidence_class:'scientific'}});
+  assert.equal(plan.state,'PLAN_ONLY_NOT_HYDRATED');
+  const result=bindTirIntentToExistingPlans(dictionary,cap,lens,{command:'PLAN_HYDRATE T173:173',loadPlan:plan});
+  assert.equal(result.machine.status,'EXISTING_LOAD_PLAN_REVIEW');assert.equal(result.machine.adapter_result.requested_level,requested_hydration);assert.equal(result.machine.adapter_result.planned_level,offline?'H0':requested_hydration);checkNoAction(result);
+ }
 });

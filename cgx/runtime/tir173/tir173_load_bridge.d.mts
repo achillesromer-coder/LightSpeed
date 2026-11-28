@@ -5,7 +5,7 @@ export interface ExistingLoadReviewPlan {
  state:'PLAN_ONLY_NOT_HYDRATED';alias:'LOAD.cgx';parent_filespace:'Cognigrex.cgx';object_id:string;
  native_admitted:false;hydrated:false;execution_performed:false;public_publish_authorized:false;
  canonical_mutation:false;host_context_readback_authenticated:false;source_rights_independently_verified:false;
- client_scope_independently_authenticated:false;requested_hydration:string;planned_hydration:'H0'|'H1'|'H2'|'H3';
+ client_scope_independently_authenticated:false;requested_hydration:'H0'|'H1'|'H2'|'H3';planned_hydration:'H0'|'H1'|'H2'|'H3';offline_degraded?:boolean;
 }
 export declare function planExistingLoadTIR(dictionary:ShapeDictionary,capsule:ShapeCapsule,plan:ExistingLoadReviewPlan):{
  schema:typeof LOAD_SEAM_SCHEMA;identity:string;parent:string;resolver_alias:string;grammar:string;shape_role:string;geometry_ref:string;

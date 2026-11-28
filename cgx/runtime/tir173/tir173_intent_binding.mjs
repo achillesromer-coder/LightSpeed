@@ -65,9 +65,7 @@ export function bindTirIntentToExistingPlans(
       parsed.mesh_ref===capsule.geometry_ref&&parsed.shape_role===capsule.shape_role,
       'TIR_INTENT_DICTIONARY_IDENTITY_MISMATCH');
     if(parsed.intent==='PLAN_HYDRATE'&&loadPlan!==null){
-      need(['H0','H1','H2','H3'].includes(loadPlan.requested_hydration)&&
-        loadPlan.requested_hydration===loadPlan.planned_hydration,
-        'INCONSISTENT_LOAD_HYDRATION_REQUEST');
+      // The shared LOAD seam validates both levels and explicit offline degradation.
       adapter=planExistingLoadTIR(dictionary,capsule,loadPlan);
       need(adapter.source_bytes_transferred===0&&adapter.source_hydrated===false&&
         adapter.native_admitted===false&&adapter.execution_performed===false,

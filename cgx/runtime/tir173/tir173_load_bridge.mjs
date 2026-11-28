@@ -9,7 +9,15 @@ export function planExistingLoadTIR(dictionary,capsule,loadPlan){
   loadPlan.hydrated!==false||loadPlan.execution_performed!==false||loadPlan.public_publish_authorized!==false||loadPlan.canonical_mutation!==false||
   loadPlan.host_context_readback_authenticated!==false||loadPlan.source_rights_independently_verified!==false||loadPlan.client_scope_independently_authenticated!==false)
   throw new TIRError('EXISTING_LOAD_REVIEW_PLAN_REQUIRED');
- if(!['H0','H1','H2','H3'].includes(loadPlan.planned_hydration))throw new TIRError('INVALID_HYDRATION_LEVEL');
+ const levels=['H0','H1','H2','H3'];
+ const requested=loadPlan.requested_hydration,planned=loadPlan.planned_hydration;
+ if(!levels.includes(requested)||!levels.includes(planned))throw new TIRError('INVALID_HYDRATION_LEVEL');
+ // The existing LOAD planner degrades offline H1-H3 to H0, never escalates.
+ // This is caller-declared review metadata, not authentication of offline state.
+ const degraded=loadPlan.offline_degraded;
+ if((degraded!==undefined&&typeof degraded!=='boolean')||
+    (requested===planned?degraded===true:!(degraded===true&&planned==='H0')))
+  throw new TIRError('INCONSISTENT_LOAD_HYDRATION_REQUEST');
  return {schema:LOAD_SEAM_SCHEMA,identity:capsule.object_ref,parent:'Cognigrex.cgx',resolver_alias:'LOAD.cgx',
   grammar:capsule.schema,shape_role:capsule.shape_role,geometry_ref:capsule.geometry_ref,ordinal_address:capsule.ordinal_address,
   source_dictionary_sha256:dictionary.source_sha256,requested_level:loadPlan.requested_hydration,planned_level:loadPlan.planned_hydration,

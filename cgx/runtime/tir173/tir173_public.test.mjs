@@ -39,3 +39,14 @@ test('capsule evidence cannot be replaced and required fields cannot default on 
  assert.throws(()=>validateCapsule(dict,{...c,scale_lenses:null}),/CAPSULE_SCALE_LENS_MISSING/);
  assert.equal(validateCapsule(dict,decodeBinaryTransport(encodeBinaryTransport(c))),true);
 });
+
+
+test('direct LOAD seam rejects unknown and escalating levels; accepts explicit offline H0 only',()=>{
+ const cap=makeCapsule(dict,{shape:1,path:[1],object_ref:'public:review',source_ref:'public:projection'});
+ const lp={schema:'UNISPACE-CGX-LOAD-LENS-PLAN/0.1',state:'PLAN_ONLY_NOT_HYDRATED',alias:'LOAD.cgx',parent_filespace:'Cognigrex.cgx',object_id:cap.object_ref,native_admitted:false,hydrated:false,execution_performed:false,public_publish_authorized:false,canonical_mutation:false,host_context_readback_authenticated:false,source_rights_independently_verified:false,client_scope_independently_authenticated:false,requested_hydration:'H0',planned_hydration:'H0'};
+ for(const requested_hydration of ['H0','H1','H2','H3']){
+  const r=planExistingLoadTIR(dict,cap,{...lp,requested_hydration,planned_hydration:requested_hydration,offline_degraded:false});assert.equal(r.requested_level,requested_hydration);assert.equal(r.source_hydrated,false);
+  if(requested_hydration!=='H0'){const d=planExistingLoadTIR(dict,cap,{...lp,requested_hydration,offline_degraded:true});assert.equal(d.planned_level,'H0');assert.equal(d.source_bytes_transferred,0);}
+ }
+ for(const patch of [{requested_hydration:'H4'},{requested_hydration:null},{planned_hydration:'H1'},{planned_hydration:'H1',offline_degraded:true},{requested_hydration:'H2'},{requested_hydration:'H2',planned_hydration:'H1',offline_degraded:true},{offline_degraded:true},{offline_degraded:'true'}])assert.throws(()=>planExistingLoadTIR(dict,cap,{...lp,...patch}),undefined,JSON.stringify(patch));
+});
