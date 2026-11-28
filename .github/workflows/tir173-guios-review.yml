@@ -1,0 +1,51 @@
+name: TIR173 GUIOS review contract
+
+on:
+  pull_request:
+    paths:
+      - "cgx/runtime/tir173/**"
+      - "apps/lightspeed-go/src/**"
+      - "apps/lightspeed-go/package.json"
+      - "apps/lightspeed-go/package-lock.json"
+      - ".github/workflows/tir173-guios-review.yml"
+  push:
+    branches:
+      - "pilot/neo-raphael-temporal-*"
+    paths:
+      - "cgx/runtime/tir173/**"
+      - "apps/lightspeed-go/src/**"
+      - ".github/workflows/tir173-guios-review.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Exercise existing TIR173 codec, LOAD and contextual GUIOS contracts
+        run: |
+          node --test cgx/runtime/tir173/tir173_public.test.mjs
+          node --test cgx/runtime/tir173/tir173_intent_guard.test.mjs
+          node --test cgx/runtime/tir173/tir173_intent_binding.test.mjs
+          node --test cgx/runtime/tir173/tir173_archetype_evidence.test.mjs
+          node --test cgx/runtime/tir173/tir173_instance_evidence.test.mjs
+          node --test cgx/runtime/tir173/tir173_context.test.mjs
+          node --test cgx/runtime/tir173/tir173_interaction.test.mjs
+          node --test cgx/runtime/tir173/tir173_interaction_atlas.test.mjs
+          node --test cgx/runtime/tir173/tir173_neo_review_import.test.mjs
+      - name: Install locked GO dependencies
+        working-directory: apps/lightspeed-go
+        run: npm ci --no-audit --no-fund
+      - name: Test unified LightSpeed GO with existing Vitest suite
+        working-directory: apps/lightspeed-go
+        run: npm test
+      - name: Build unified GUIOS without deployment
+        working-directory: apps/lightspeed-go
+        run: npm run build

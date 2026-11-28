@@ -66,6 +66,7 @@ import { loadType1CatalogueProjection, type Type1CatalogueProjection } from "./u
 import { bindCgxReviewProjection, loadCgxReviewProjection, type CgxReviewProjection } from "./cgxReview";
 import { bindObjectReview, loadObjectReview, type ComponentAtlas, type ObjectReviewCatalogue } from "./objectReview";
 import { sourceLinks } from "./sourceRegistry";
+import { mountTir173PublicPreview } from "./tir173PublicPreview";
 import { facilityRecords, twinZones, workbookTabs } from "./spaceportTwin";
 
 const app = document.getElementById("app");
@@ -84,12 +85,12 @@ const agentRows = [
 ] as const;
 
 app.innerHTML = `
-  <main class="shell">
+  <main class="shell guios-workbench">
     <header class="topbar">
       <div>
         <p class="eyebrow">Cognigrex · powered by LightSpeed</p>
         <h1>UniSpace</h1>
-        <p class="lede">Achilles-governed commands, Desktop execution, project visibility, review receipts and source continuity.</p>
+        <p class="lede">One GUIOS workbench: command, object/shape interpretation, runtime receipts and provenance as contextual components.</p>
       </div>
       <div class="connection-pill" id="desktop-pill" data-state="checking">
         <span class="status-dot"></span>
@@ -97,13 +98,14 @@ app.innerHTML = `
       </div>
     </header>
 
-    <nav class="tabs" aria-label="UniSpace views">
-      <button class="tab active" data-view="command">Command</button>
-      <button class="tab" data-view="activity">Activity</button>
-      <button class="tab" data-view="objects">Objects</button>
-      <button class="tab" data-view="system">System</button>
-      <button class="tab" data-view="sources">Sources</button>
-    </nav>
+    <div class="guios-context-strip" aria-label="GUIOS component shortcuts">
+      <span><strong>GUIOS</strong> · one runtime · one object identity</span>
+      <a href="#view-command">Command</a>
+      <a href="#guios-objects">Shape and object</a>
+      <a href="#guios-activity">Receipts and activity</a>
+      <a href="#guios-system">Engines and rules</a>
+      <a href="#guios-sources">Provenance</a>
+    </div>
 
     <section class="view active" id="view-command">
       <div class="command-layout">
@@ -144,7 +146,9 @@ app.innerHTML = `
       </div>
     </section>
 
-    <section class="view" id="view-activity">
+    <details class="guios-facet" id="guios-activity">
+      <summary><strong>Activity and receipts</strong><span>Owner identity, project health, audited tasks and review decisions</span></summary>
+      <section class="view" id="view-activity">
       <article class="panel owner-auth-panel">
         <div class="panel-head">
           <div><p class="eyebrow">NCNB owner access</p><h2>Local credential gate</h2></div>
@@ -184,7 +188,11 @@ app.innerHTML = `
       <article class="panel"><div class="panel-head"><div><p class="eyebrow">Neo exchange</p><h2>Public-safe projection</h2></div></div><div id="neo-exchange"><p class="muted">Reading bounded exchange projection…</p></div></article>
     </section>
 
-    <section class="view" id="view-objects">
+    </details>
+    <details class="guios-facet" id="guios-objects" open>
+      <summary><strong>Object and shape intelligence</strong><span>Same object across geometry, environment, scale, relations and void</span></summary>
+      <section class="view" id="view-objects">
+      <div id="tir173-public-preview"><article class="panel"><p class="muted">Loading shared TIR/173 contextual geometry component…</p></article></div>
       <article class="panel definition">
         <div><p class="eyebrow">Canonical representation edge</p><h2>Identity, evidence, horizon, review</h2></div>
         <p>Three bounded local candidates prove the complete intake route. Drive becomes canonical only after owner decision, promotion, and exact readback.</p>
@@ -203,7 +211,10 @@ app.innerHTML = `
       </div>
     </section>
 
-    <section class="view" id="view-system">
+    </details>
+    <details class="guios-facet" id="guios-system">
+      <summary><strong>Engines, rules and node exchange</strong><span>Runtime capabilities, agent responsibilities and authority boundaries</span></summary>
+      <section class="view" id="view-system">
       <article class="panel"><p class="eyebrow">Application and toolkit</p><h2>UniSpace on LightSpeed</h2><p>UniSpace brings your Cognigrex workspace together. LightSpeed provides the local tools, agent routing and runtime services; .cgx carries object identity, provenance and evidence.</p><p class="muted">Connections and capabilities are reported below from the active runtime. A listed tool or plugin is usable only when its connection and permissions are ready.</p></article>
       <article class="panel definition">
         <div><p class="eyebrow">cognigrex</p><h2>Common goal, distinct agents</h2></div>
@@ -269,10 +280,14 @@ app.innerHTML = `
       </article>
     </section>
 
-    <section class="view" id="view-sources">
+    </details>
+    <details class="guios-facet" id="guios-sources">
+      <summary><strong>Provenance and sources</strong><span>Existing Git, Drive, Desktop and UniSpace authorities</span></summary>
+      <section class="view" id="view-sources">
       <div class="source-grid">${sourceLinks.map(([name, url, role]) => `<a class="source-card" href="${url}" target="_blank" rel="noreferrer"><strong>${name}</strong><span>${role}</span><em>Open ↗</em></a>`).join("")}</div>
       <article class="panel"><p class="eyebrow">Authority order</p><h2>Where each truth lives</h2><div class="authority-grid"><div><strong>Drive</strong><span>evidence, workbooks and review receipts</span></div><div><strong>Git</strong><span>code, schemas, tests and implementation receipts</span></div><div><strong>Desktop</strong><span>projects, local execution, state and jobs</span></div><div><strong>UniSpace</strong><span>owner commands, review and bounded decisions</span></div></div></article>
     </section>
+    </details>
   </main>
 `;
 
@@ -975,6 +990,11 @@ void loadType1CatalogueProjection(async () => {
   type1CatalogueMount.innerHTML = `<article class="panel"><p class="eyebrow">Type-I PrintSpace</p><h2>Projection unavailable</h2><p class="muted">${escapeHtml(message)}</p></article>`;
 });
 
+void mountTir173PublicPreview(byId("tir173-public-preview")).catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : "TIR/173 review projection unavailable";
+  byId("tir173-public-preview").textContent = `TIR/173 review projection on hold: ${message}`;
+});
+
 const exchangeMount = byId("neo-exchange");
 const projectionUrl = new URL("./data/neo_exchange.json", document.baseURI).toString();
 void loadNeoExchange(async () => {
@@ -983,22 +1003,16 @@ void loadNeoExchange(async () => {
   return response.json();
 }).then((exchange) => { exchangeMount.innerHTML = renderExchangePanel(exchange); });
 
-const activateView = (view: string): void => {
-  const target = document.querySelector<HTMLButtonElement>(`.tab[data-view="${view}"]`)
-    ? view
-    : "command";
-  document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
-  document.querySelectorAll(".view").forEach((item) => item.classList.remove("active"));
-  document.querySelector<HTMLButtonElement>(`.tab[data-view="${target}"]`)?.classList.add("active");
-  byId(`view-${target}`).classList.add("active");
+// Legacy deep links stay usable, but they open context components instead of tab pages.
+const openGuiosContextFromHash = (): void => {
+  const raw = window.location.hash.replace(/^#/, "");
+  const legacy: Record<string, string> = {
+    language: "objects", objects: "objects", activity: "activity",
+    system: "system", sources: "sources"
+  };
+  const context = legacy[raw] || raw.replace(/^guios-/, "");
+  const fold = document.getElementById(`guios-${context}`);
+  if (fold instanceof HTMLDetailsElement) fold.open = true;
 };
-
-document.querySelectorAll<HTMLButtonElement>(".tab").forEach((button) => button.addEventListener("click", () => {
-  const view = button.dataset.view || "command";
-  activateView(view);
-  const nextHash = view === "command" ? "" : `#${view}`;
-  if (window.location.hash !== nextHash) window.history.replaceState(null, "", nextHash || window.location.pathname + window.location.search);
-}));
-
-window.addEventListener("hashchange", () => activateView(window.location.hash.replace(/^#/, "") || "command"));
-activateView(window.location.hash.replace(/^#/, "") || "command");
+window.addEventListener("hashchange", openGuiosContextFromHash);
+openGuiosContextFromHash();
