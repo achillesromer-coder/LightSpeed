@@ -85,3 +85,18 @@ def test_cannot_claim_local_test_chain_executed_by_text():
     data["bounded_test_chain"][2]["passed_on_current_machine"] = True
     with pytest.raises(AssertionError):
         check(data)
+
+
+def test_current_owner_intent_addendum_preserves_existing_native_gates():
+    data = source()
+    check(data)
+    row, = data["owner_intent_addenda"]
+    assert row["date"] == "2026-11-28"
+    assert row["class"] == "CHAT_RECORDED_PERMISSION_NOT_SIGNED_NATIVE_LEASE"
+    assert row["scope"]["test_network_operations"].startswith("PERMITTED_SUBJECT_TO_")
+    assert row["scope"]["test_deployments"].startswith("PERMITTED_SUBJECT_TO_")
+    assert row["scope"]["production_mint"] == row["scope"]["public_product_release"] == "HELD"
+    for field in ("native_signed_lease_verified", "issuer_verified", "independent_peer_verified",
+                  "canonical_dbr_verified", "chain_transaction_observed", "native_admission_performed",
+                  "production_release_performed"):
+        assert row[field] is False

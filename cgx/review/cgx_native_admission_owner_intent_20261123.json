@@ -94,5 +94,39 @@
     "NO_PUBLIC_PRIVATE_ASSET_EXPOSURE",
     "NO_MINT_BY_SOURCE_OR_CI_PASS"
   ],
-  "source_state": "OWNER_INTENT_PRESERVED_NATIVE_ACTIONS_HELD_UNTIL_WITNESSED"
+  "source_state": "OWNER_INTENT_PRESERVED_NATIVE_ACTIONS_HELD_UNTIL_WITNESSED",
+  "owner_intent_addenda": [
+    {
+      "date": "2026-11-28",
+      "class": "CHAT_RECORDED_PERMISSION_NOT_SIGNED_NATIVE_LEASE",
+      "review_source": "e741fa95cdd26cdd9a2992ca59c9a2bf36484bab",
+      "scope": {
+        "native_admission": "PERMITTED_SUBJECT_TO_EXISTING_VERIFICATION_GATES",
+        "test_network_operations": "PERMITTED_SUBJECT_TO_EXISTING_SIGNER_CHAIN_SCOPE_AND_DBR_GATES",
+        "test_deployments": "PERMITTED_SUBJECT_TO_EXACT_SOURCE_ISOLATION_AND_ROLLBACK",
+        "offchain_fixtures": "PERMITTED",
+        "production_mint": "HELD",
+        "public_product_release": "HELD"
+      },
+      "interpretation": "Conservative test-only scope; no inference of production or public release authority from ambiguous wording.",
+      "observations": {
+        "hosted_site_user_authenticated": true,
+        "hosted_native_admitted": false,
+        "hosted_peer_verified": false,
+        "desktop_report_stale": true,
+        "desktop_report_at": "2026-10-13T13:10:34.846Z",
+        "rdc_remaining_rounded_pct": 22,
+        "normal_reserve_pct": 21,
+        "emergency_reserve_pct": 20,
+        "normal_host_work": "HOLD_NO_SAFE_ROUNDED_MARGIN"
+      },
+      "native_signed_lease_verified": false,
+      "issuer_verified": false,
+      "independent_peer_verified": false,
+      "canonical_dbr_verified": false,
+      "chain_transaction_observed": false,
+      "native_admission_performed": false,
+      "production_release_performed": false
+    }
+  ]
 }
