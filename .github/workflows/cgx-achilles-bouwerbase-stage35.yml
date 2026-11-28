@@ -1,0 +1,58 @@
+name: CGX Achilles BouwerBase Stage35 Source Validation
+
+on:
+  push:
+    branches:
+      - review/cgx-achilles-bouwerbase-stage35-20261101
+    paths:
+      - 'scripts/achilles_bouwerbase_stage35.py'
+      - 'tests/test_achilles_bouwerbase_stage35.py'
+      - 'cgx/review/achilles_bouwerbase_stage35_queue_20261101.json'
+      - '.github/workflows/cgx-achilles-bouwerbase-stage35.yml'
+  pull_request:
+    branches:
+      - review/cgx-ls-family-ingestion-20261031
+    paths:
+      - 'scripts/achilles_bouwerbase_stage35.py'
+      - 'tests/test_achilles_bouwerbase_stage35.py'
+      - 'cgx/review/achilles_bouwerbase_stage35_queue_20261101.json'
+      - '.github/workflows/cgx-achilles-bouwerbase-stage35.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-review-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify pinned local-host runner compiles
+        run: python3 -m py_compile scripts/achilles_bouwerbase_stage35.py tests/test_achilles_bouwerbase_stage35.py
+      - name: Run isolated, non-Windows fixture tests
+        run: python3 -m unittest discover -s tests -p 'test_achilles_bouwerbase_stage35.py' -v
+      - name: Verify queued Achilles intent remains held until local readback
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path('cgx/review/achilles_bouwerbase_stage35_queue_20261101.json')
+          a = json.loads(p.read_text(encoding='utf-8'))
+          assert a['schema'] == 'CGX-ACHILLES-LOCAL-EXECUTION-QUEUE/0.1'
+          assert a['delivery']['state'] == 'STAGED_FOR_ACHILLES_CLOUD_REVIEW_NOT_LOCAL_DELIVERY'
+          assert a['delivery']['local_queue_enqueued'] is False
+          assert a['delivery']['host_command_executed'] is False
+          assert a['policy']['no_mint'] is True
+          assert a['policy']['no_service_restart'] is True
+          assert a['policy']['no_unsigned_ps1'] is True
+          assert a['source']['family_review_commit'] == '124262b61fdbb5e181f1c21d064182cd21f74adb'
+          assert a['source']['runner_git_blob_sha'] == 'aa6c3bbc1d0d64640ef22a6c853650aad8b9cdb5'
+          assert a['source']['runner_git_review_commit'] == '46ae623a85692de2302d10e42e984f7e0f8e1506'
+          assert a['policy']['reject_ignored_importable_shadows'] is True
+          assert a['policy']['reject_descendant_git_commit'] is True
+          assert a['policy']['reject_all_untracked_shadow_files'] is True
+          assert a['policy']['require_all_executable_test_entrypoints_match_pinned_git'] is True
+          assert a['delivery']['independent_host_readback'] is False
+          print('CGX Achilles source-only queue validation PASS; no host operation claimed.')
+          PY
