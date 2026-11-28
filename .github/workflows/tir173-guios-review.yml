@@ -43,6 +43,7 @@ jobs:
           node --test cgx/runtime/tir173/tir173_context.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction.test.mjs
           node --test cgx/runtime/tir173/tir173_interaction_atlas.test.mjs
+          node --test cgx/runtime/tir173/tir173_neo_review_import.test.mjs
       - name: Install locked GO dependencies
         working-directory: apps/lightspeed-go
         run: npm ci --no-audit --no-fund
