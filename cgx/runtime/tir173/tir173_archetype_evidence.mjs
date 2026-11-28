@@ -119,3 +119,167 @@ export function reviewTirComponentArchetype(
     authority:'Review only — no source hydration or physical execution'
   }};
 }
+
+
+/**
+ * Inspect the EXISTING eight Drive-owned P0–P3 instance envelopes. They are
+ * unbound digital review records, not a production register or test receipt.
+ * The P0 SH01/PHYSOBJ record uses a distinct identity family and must NOT be
+ * silently coerced into one of the 411 CGA archetypes.
+ */
+export const CGX_INSTANCE_REGISTER_SCHEMA='CGX-COMPONENT-INSTANCE-REGISTER/0.1';
+const INSTANCE_ID=/^CGXI-P[0-3]-[A-Z0-9-]+$/;
+const SOURCE_KEYS=['instance_id','proof_stage','archetype_id','binding_state',
+  'revision','exact_source_authority','source_locator_or_hash',
+  'geometry_source_type','geometry_revision','dimensions_and_tolerances',
+  'material_stack_and_lots','material_passport_refs','ports_and_interfaces',
+  'manufacturing_or_assembly_route','tool_and_calibration_refs',
+  'environment_profile','evidence_ceiling','uncertainty','configuration_hash',
+  'source_hashes','readback_receipt','dbr_pointer','physical_state','instance_type','blocked_by_next_binding'];
+export function verifyOriginalInstancePopulation(population,packet,ladder) {
+  need(population?.schema===CGX_INSTANCE_REGISTER_SCHEMA&&
+    population.record_count===8&&Array.isArray(population.records)&&
+    population.records.length===8,'EXISTING_EIGHT_INSTANCE_REGISTER_REQUIRED');
+  need(text(population.authority?.drive_sheet)&&
+    population.authority.drive_sheet==='31_CGX_Component_Instance_Register_v0_1'&&
+    text(population.authority?.rule)&&
+    population.common_state?.binding_state==='UNBOUND'&&
+    population.common_state?.physical_state==='NOT_RUN',
+    'DRIVE_INSTANCE_REGISTER_AUTHORITY_REQUIRED');
+  need(packet?.schema===CGX_INSTANCE_PACKET_SCHEMA&&
+    Array.isArray(packet.required_instance_fields)&&
+    packet.required_instance_fields.includes('dbr_pointer')&&
+    packet.required_instance_fields.includes('source_hashes'),
+    'EXISTING_INSTANCE_PACKET_CONTRACT_REQUIRED');
+  need(ladder?.schema===CGX_PHYSICAL_LADDER_SCHEMA&&
+    Array.isArray(ladder.stages)&&ladder.stages.length===11,
+    'EXISTING_PHYSICAL_PROOF_LADDER_REQUIRED');
+  const ids=new Set(),cga=new Set();
+  let p0Count=0;
+  for(const r of population.records){
+    need(r&&SOURCE_KEYS.every(k=>text(r[k]))&&INSTANCE_ID.test(r.instance_id),
+      'INSTANCE_RECORD_REQUIRED_FIELD_MISSING');
+    need(!ids.has(r.instance_id),'DUPLICATED_INSTANCE_ID');
+    ids.add(r.instance_id);
+    need(['P0','P1','P2','P3'].includes(r.proof_stage)&&
+      r.instance_id.startsWith('CGXI-'+r.proof_stage+'-')&&
+      ladder.stages.some(s=>s.id===r.proof_stage&&s.physical_state==='NOT_RUN'),
+      'INSTANCE_PROOF_STAGE_MISMATCH');
+    need(r.binding_state==='UNBOUND'&&r.physical_state==='NOT_RUN'&&
+      r.geometry_revision==='UNRESOLVED'&&
+      r.dimensions_and_tolerances==='UNRESOLVED'&&
+      r.configuration_hash==='UNRESOLVED'&&r.source_hashes==='UNRESOLVED'&&
+      r.readback_receipt==='UNRESOLVED'&&r.dbr_pointer==='UNRESOLVED',
+      'INSTANCE_EVIDENCE_CEILING_CONTRADICTION');
+    if(r.proof_stage==='P0'){
+      p0Count++;
+      need(r.instance_id==='CGXI-P0-SH01-ID-A'&&
+        r.archetype_id==='SH01-ID-A / CGX-PHYSOBJ-001',
+        'P0_NON_CGA_IDENTITY_MISMATCH');
+    }else{
+      need(ID.test(r.archetype_id),'INSTANCE_CGA_ARCHETYPE_ID_REQUIRED');
+      cga.add(r.archetype_id);
+    }
+  }
+  need(p0Count===1,'EXISTING_P0_IDENTITY_REQUIRED');
+  return {instance_count:ids.size,cga_related_instances:7,
+    distinct_cga_ids:cga.size,non_cga_p0_instances:1,
+    unbound_count:8,physical_tests_completed:0,
+    authority:'DRIVE_OWNER_GIT_MIRROR_ONLY',native_admitted:false};
+}
+/**
+ * Both the selected T173 role and selected CGA ID are still REVIEW objects.
+ * An instance may be looked up only by its exact declared archetype ID.
+ * No inferred equivalence, source-rights authentication or measurement occurs.
+ */
+export function reviewTirExistingInstance(
+  dictionary,capsule,atlas,ladder,packet,population,
+  {archetype_id=null,instance_id=null,source_claims={}}={}
+){
+  const original=verifyOriginalInstancePopulation(population,packet,ladder);
+  need(source_claims&&typeof source_claims==='object'&&
+    !Array.isArray(source_claims)&&
+    Object.keys(source_claims).length===4&&
+    ['geometry_atlas_sha256','proof_ladder_sha256',
+      'instance_contract_sha256','instance_register_sha256']
+      .every(k=>sha(source_claims[k])),
+    'FOUR_SOURCE_DIGEST_CLAIMS_REQUIRED');
+  const compared=reviewTirComponentArchetype(dictionary,capsule,atlas,ladder,packet,{
+    archetype_id,
+    source_claims:{
+      geometry_atlas_sha256:source_claims.geometry_atlas_sha256,
+      proof_ladder_sha256:source_claims.proof_ladder_sha256,
+      instance_contract_sha256:source_claims.instance_contract_sha256
+    }
+  });
+  need(instance_id===null||(typeof instance_id==='string'&&INSTANCE_ID.test(instance_id)),
+    'EXPLICIT_REGISTERED_INSTANCE_ID_REQUIRED');
+  need(instance_id===null||compared.machine.status==='EXPLICIT_ARCHETYPE_CANDIDATE_REVIEW',
+    'INSTANCE_CANNOT_PRECEDE_ARCHETYPE_SELECTION');
+  const eligible=archetype_id===null?[]:
+    population.records.filter(r=>r.archetype_id===archetype_id)
+      .map(r=>r.instance_id);
+  const selected=instance_id===null?null:
+    population.records.find(r=>r.instance_id===instance_id);
+  need(instance_id===null&&selected===null||selected!==undefined,
+    'UNKNOWN_INSTANCE_IN_ORIGINAL_REGISTER');
+  need(!selected||selected.archetype_id===archetype_id,
+    'INSTANCE_ARCHETYPE_IDENTITY_MISMATCH');
+  const outstanding=[
+    'T173_SHAPE_TO_CGA_EQUIVALENCE_NOT_VERIFIED',
+    'CGA_ARCHETYPE_TO_EXACT_INSTANCE_NOT_QUALIFIED',
+    'CAD_REVISION_AND_TOLERANCES_UNRESOLVED',
+    'EXACT_MATERIAL_LOTS_AND_PASSPORTS_UNVERIFIED',
+    'SOURCE_RIGHTS_AND_DRIVE_READBACK_UNVERIFIED',
+    'PROCESS_TOOLS_ENVIRONMENT_AND_CALIBRATION_UNVERIFIED',
+    'CONFIGURATION_AND_SOURCE_HASHES_UNRESOLVED',
+    'MEASUREMENTS_AND_UNCERTAINTY_NOT_PROVIDED',
+    'PHYSICAL_STAGE_NOT_RUN','SIGNED_DBR_AND_NATIVE_ADMISSION_ABSENT'
+  ];
+  const machine={
+    schema:'cgx.tir173.existing-instance-review/0.1',
+    status:selected?'EXPLICIT_REGISTERED_INSTANCE_CANDIDATE':'NO_INSTANCE_SELECTED',
+    shape_role:capsule.shape_role,object_ref:capsule.object_ref,
+    geometry_ref:capsule.geometry_ref,archetype_id:archetype_id||null,
+    eligible_existing_instance_ids:eligible,
+    instance_id:selected?.instance_id||null,
+    selected_record:selected?{
+      instance_id:selected.instance_id,proof_stage:selected.proof_stage,
+      archetype_id:selected.archetype_id,instance_type:selected.instance_type,
+      source_revision:selected.revision,binding_state:selected.binding_state,
+      physical_state:selected.physical_state,
+      geometry_revision:selected.geometry_revision,
+      dimensions_and_tolerances:selected.dimensions_and_tolerances,
+      exact_source_authority:selected.exact_source_authority,
+      candidate_materials:selected.material_stack_and_lots,
+      missing_next_binding:selected.blocked_by_next_binding,
+      evidence_ceiling:selected.evidence_ceiling,
+      source_hashes:selected.source_hashes,
+      readback_receipt:selected.readback_receipt,dbr_pointer:selected.dbr_pointer
+    }:null,
+    source_claims:{...source_claims},source_claims_authenticated:false,
+    original_register_instance_count:original.instance_count,
+    original_unbound_count:original.unbound_count,
+    p0_identity_separate_from_cga:true,
+    archetype_to_shape_mapping_verified:false,
+    exact_instance_bound:false,geometry_verified:false,material_verified:false,
+    rights_verified:false,source_verified_against_drive:false,
+    physical_test_performed:false,measurement_verified:false,
+    execution_performed:false,source_bytes_transferred:0,
+    native_admitted:false,signed_dbr:false,mint_performed:false,
+    model_inference_performed:false,model_weights_changed:false,
+    authority:'REVIEW_ONLY',negative_space:outstanding
+  };
+  return {machine,human:{
+    summary:selected?selected.instance_id+' · '+selected.archetype_id:
+      'No registered component instance selected',
+    interpretation:selected?
+      'Existing '+selected.proof_stage+' candidate; binding='+selected.binding_state+
+      ', physical='+selected.physical_state+'. Neither T173 correspondence nor exact material/geometry is proven.':
+      'Select an original CGA archetype first, then independently choose a matching registered instance.',
+    next_binding:selected?.blocked_by_next_binding||
+      'Exact instance identification and evidence review required',
+    missing:outstanding.join(', '),
+    authority:'Review only — no native receipt, rights, fabrication or validation'
+  }};
+}

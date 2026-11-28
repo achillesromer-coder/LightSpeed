@@ -798,7 +798,24 @@
       "interfaceModule": "apps/lightspeed-go/src/tir173PublicPreview.ts",
       "mount": "Existing Objects disclosure; lazy dynamic import, no new tab",
       "sourceByteDigest": "SHA-256 of original UTF-8 role projection",
-      "publicLoadBoundary": "Existing projectUniSpaceLoadLens returns HOLD without exact object context; no fabricated resolver output"
+      "publicLoadBoundary": "Existing projectUniSpaceLoadLens returns HOLD without exact object context; no fabricated resolver output",
+      "existingInstanceReview": {
+        "status": "SELECTIVE_SOURCE_REVIEW_CANDIDATE",
+        "sourceCommit": "23237775aaa7e521a7861f611f15b2ecbc8e2bc7",
+        "sourceModuleBlob": "dc53bf13df06ee338f8fb9a1aa6823cb4854d1d0",
+        "sourceDeclarationBlob": "a1d45440e6d32b0174091e5f02221ad882140adf",
+        "sourceTestBlob": "f71732847940984c4102699160be0c2e3d78a972",
+        "scope": "Eight unbound original P0-P3 instance envelopes; exact CGA selection; P0 distinct identity mandatory; output fields required. No physical measurement, equivalence, rights, native authority or execution.",
+        "existingSourceBlobs": {
+          "cgx/component_atlas/component_geometry_atlas_v0_1.json": "049b58731afb7633e16e0a36fafa011c77fedd36",
+          "cgx/component_atlas/component_instance_build_packet_contract_v0_1.json": "fe80065938a4fb6bc3a2d35e1feddcdad7577188",
+          "cgx/component_atlas/component_instance_population_v0_1.json": "82b03b2d7d8bc6e3e2203bc929de2b2f737c1e74",
+          "cgx/component_atlas/component_physical_proof_ladder_v0_1.json": "b2d71f0921595dbc8c3e759cefa5100dbcf126a6"
+        },
+        "nativeAdmission": false,
+        "physicalQualification": false,
+        "publicRelease": false
+      }
     }
   },
   "manualIntake": {
