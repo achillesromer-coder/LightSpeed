@@ -30,7 +30,7 @@ test('the same GUIOS object view presents the original 411-component archetype e
  assert.match(ui,/id="tir-archetype-review"/);
  assert.match(ui,/archetype_id:archetypeSelect\.value\|\|null/);
  assert.match(ui,/reviewTirComponentArchetype\(d,cap,geometryAtlas,physicalProof,instanceContract/);
- assert.match(ui,/archetype_review:archetypeReview,negative_space/);
+ assert.match(ui,/archetype_review:archetypeReview,instance_review:instanceReview,negative_space/);
  assert.match(ui,/archetypeSelect\.append\(none\)/);
  assert.match(ui,/archetypeSelect\.addEventListener|ruleSelect,archetypeSelect/);
  assert.doesNotMatch(ui,/data-view="geometry-archetypes"|id="view-geometry-archetypes"/);
