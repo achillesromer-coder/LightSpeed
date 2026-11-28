@@ -49,6 +49,20 @@ class ManualIntakeTest(unittest.TestCase):
         self.assertEqual(a["sha256"],b["sha256"])
         self.assertEqual(len(self.receipts()),2)
         self.assertEqual(len(list((self.load/"R0_PACKS_private").glob("*.cgxpre"))),1)
+    def test_lexical_aliases_fail_before_receipts_or_carriers(self):
+        (self.root/"nested").mkdir()
+        source=self.source("nested/a.md",b"fixture")
+        for alias in ("./nested/a.md","nested//a.md","nested/./a.md","nested/a.md/","nested/a.md/.","nested/a.md\x00","nested/a.md\n"):
+            with self.subTest(alias=alias),self.assertRaisesRegex(ValueError,"PATH_HOLD"):
+                intake.ingest(self.root,self.load,alias)
+        self.assertEqual(self.receipts(),[])
+        self.assertEqual(list((self.load/"R0_PACKS_private").iterdir()),[])
+        self.assertEqual(source.read_bytes(),b"fixture")
+        a=intake.ingest(self.root,self.load,"nested/a.md")
+        b=intake.ingest(self.root,self.load,"nested/a.md")
+        self.assertEqual(a["occurrence"],b["occurrence"])
+        self.assertEqual(a["receipt_sha256"],b["receipt_sha256"])
+        self.assertEqual(len(self.receipts()),1)
     def test_tamper_denied(self):
         p=self.source("x.md",b"# Fixture")
         a=intake.ingest(self.root,self.load,p.name)

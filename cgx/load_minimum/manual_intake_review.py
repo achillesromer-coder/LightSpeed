@@ -19,7 +19,10 @@ def stamp(st): return (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_ctime
 def identity(st): return (st.st_dev,st.st_ino,st.st_size,st.st_mtime_ns,st.st_nlink)
 
 def read_source(root,relative):
+    if not isinstance(relative,str) or any(ord(c)<32 or ord(c)==127 for c in relative): raise ValueError('PATH_HOLD')
     r=PurePosixPath(relative)
+    # Reject lexical aliases before hashing the occurrence; never merge distinct paths by byte digest.
+    if r.as_posix()!=relative: raise ValueError('PATH_HOLD')
     if r.is_absolute() or not r.parts or any(p in ('.','..') or ':' in p or '\\' in p for p in r.parts): raise ValueError('PATH_HOLD')
     if redirected(root.lstat()): raise ValueError('ROOT_REDIRECT_HOLD')
     p=root
