@@ -11,17 +11,15 @@ test('one GUIOS object workbench uses existing physics map in the T173 context, 
  assert.doesNotMatch(ui,/id="view-physics"|data-view="physics"/);
 });
 test('owner-selected Neo triad stays inside existing GUIOS object inspector without native authority',()=>{
- assert.match(ui,/tir173_neo_review_import\\.mjs/);
- assert.match(ui,/id="tir-neo-file"/);
- assert.match(ui,/id="tir-neo-case"/);
- assert.match(ui,/id="tir-neo-human"/);
- assert.match(ui,/id="tir-neo-machine"/);
- assert.match(ui,/reviewLocalNeoBatch\\(JSON\\.parse\\(raw\\)\\)/);
- assert.match(ui,/file\\.size>200_000/);
- assert.match(ui,/file\\.text\\(\\)/);
- assert.match(ui,/localReview=validated/);
- assert.match(ui,/UNTRUSTED_LOCAL_PREVIEW_ONLY/);
- assert.match(ui,/model_weights_verified_by_browser:false/);
- assert.match(ui,/neoCase\\.addEventListener\\('change',showLocalReview\\)/);
+ assert.ok(ui.includes('tir173_neo_review_import.mjs'));
+ for(const id of ['tir-neo-file','tir-neo-case','tir-neo-human','tir-neo-machine'])
+   assert.ok(ui.includes('id="'+id+'"'),id);
+ assert.ok(ui.includes('reviewLocalNeoBatch(JSON.parse(raw))'));
+ assert.ok(ui.includes('file.size>200_000'));
+ assert.ok(ui.includes('file.text()'));
+ assert.ok(ui.includes('localReview=validated'));
+ assert.ok(ui.includes('UNTRUSTED_LOCAL_PREVIEW_ONLY'));
+ assert.ok(ui.includes('model_weights_verified_by_browser:false'));
+ assert.ok(ui.includes("neoCase.addEventListener('change',showLocalReview)"));
  assert.doesNotMatch(ui,/id="view-neo-model"|data-view="neo-model"/);
 });
