@@ -3,7 +3,7 @@ import { makeCapsule,pack173,packThreeLines,hex,reconcileThreeVoices,validateDic
 import { projectSynchronized } from '../../../cgx/runtime/tir173/tir173_composition.mjs';
 import { projectGuiosContext } from '../../../cgx/runtime/tir173/tir173_context.mjs';
 import { bindTirIntentToExistingPlans } from '../../../cgx/runtime/tir173/tir173_intent_binding.mjs';
-import { reviewTirComponentArchetype } from '../../../cgx/runtime/tir173/tir173_archetype_evidence.mjs';
+import { reviewTirComponentArchetype,reviewTirExistingInstance } from '../../../cgx/runtime/tir173/tir173_archetype_evidence.mjs';
 import { planExistingLoadTIR } from '../../../cgx/runtime/tir173/tir173_load_bridge.mjs';
 import { listAtlasInteractions, planAtlasInteraction } from '../../../cgx/runtime/tir173/tir173_interaction.mjs';
 import { reviewLocalNeoBatch } from '../../../cgx/runtime/tir173/tir173_neo_review_import.mjs';
@@ -12,9 +12,11 @@ const componentAtlas=JSON.parse(componentAtlasRaw);
 import geometryAtlasRaw from '../../../cgx/component_atlas/component_geometry_atlas_v0_1.json?raw';
 import physicalProofRaw from '../../../cgx/component_atlas/component_physical_proof_ladder_v0_1.json?raw';
 import instanceContractRaw from '../../../cgx/component_atlas/component_instance_build_packet_contract_v0_1.json?raw';
+import instancePopulationRaw from '../../../cgx/component_atlas/component_instance_population_v0_1.json?raw';
 const geometryAtlas=JSON.parse(geometryAtlasRaw);
 const physicalProof=JSON.parse(physicalProofRaw);
 const instanceContract=JSON.parse(instanceContractRaw);
+const instancePopulation=JSON.parse(instancePopulationRaw);
 import neoProjection from '../../../docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json';
 
 type PreviewRoot=HTMLElement;
@@ -36,9 +38,9 @@ export const publicTirDictionary=async():Promise<ShapeDictionary>=>{
 };
 export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  const d=await publicTirDictionary();
- const [atlasDigest,geometryDigest,proofDigest,packetDigest]=await Promise.all([
+ const [atlasDigest,geometryDigest,proofDigest,packetDigest,populationDigest]=await Promise.all([
   sourceDigest(componentAtlasRaw),sourceDigest(geometryAtlasRaw),
-  sourceDigest(physicalProofRaw),sourceDigest(instanceContractRaw)]);
+  sourceDigest(physicalProofRaw),sourceDigest(instanceContractRaw),sourceDigest(instancePopulationRaw)]);
  let active=1;
  root.innerHTML=`<article class="panel"><p class="eyebrow">Cognigrex / Raphael shape language</p><h2>TIR/173 — contextual geometry component</h2>
  <p class="muted">Public metadata-only review. The existing Raphael catalogue has 173 named research roles and 157 numeric payload references. Private coordinates and source meanings are never loaded on this public surface.</p>
@@ -58,6 +60,8 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  <div class="route-preview" id="tir-interaction-review" aria-live="polite"></div>
  <div class="form-grid"><label class="field"><span>Existing CGX component archetype · optional evidence comparison</span><select id="tir-archetype"></select></label></div>
  <div class="route-preview" id="tir-archetype-review" aria-live="polite"></div>
+ <div class="form-grid"><label class="field"><span>Existing CGX component instance · exact matching register candidate</span><select id="tir-instance"></select></label></div>
+ <div class="route-preview" id="tir-instance-review" aria-live="polite"></div>
  <div class="form-grid"><label class="field"><span>T173 shorthand · exact review command</span>
  <input type="text" id="tir-intent-command" value="SELECT T173:001" maxlength="240" spellcheck="false" autocomplete="off" aria-describedby="tir-intent-help"/></label></div>
  <p class="muted" id="tir-intent-help">Exact syntax: SELECT T173:001 or another registered operation. Unknown, multi-role, privileged and incomplete natural-language instructions abstain; no commands execute.</p>
@@ -78,6 +82,7 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  const intuitive=el<HTMLSelectElement>(root,'tir-intuitive'),deliberative=el<HTMLSelectElement>(root,'tir-deliberative'),hydration=el<HTMLSelectElement>(root,'tir-hydration');
  const ruleSelect=el<HTMLSelectElement>(root,'tir-interaction-rule');
  const archetypeSelect=el<HTMLSelectElement>(root,'tir-archetype');
+ const instanceSelect=el<HTMLSelectElement>(root,'tir-instance');
  const intentInput=el<HTMLInputElement>(root,'tir-intent-command');
  const neoFile=el<HTMLInputElement>(root,'tir-neo-file');
  const neoCase=el<HTMLSelectElement>(root,'tir-neo-case');
@@ -85,7 +90,18 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  const none=document.createElement('option');none.value='';none.textContent='No archetype assigned — do not infer material';archetypeSelect.append(none);
  for(const item of geometryAtlas.records){const option=document.createElement('option');option.value=item.ID;option.textContent=`${item.ID} · ${item.Family} · ${item['Component Archetype']}`;archetypeSelect.append(option);}
  const opts=d.roles.map((s,i)=>`<option value="${i+1}">${s.role} • ${s.name}</option>`).join('');
- choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>;physical_interaction_review:ReturnType<typeof planAtlasInteraction>;intent_binding_review:ReturnType<typeof bindTirIntentToExistingPlans>;archetype_review:ReturnType<typeof reviewTirComponentArchetype>}|null;
+ const syncInstanceOptions=():void=>{
+  const previous=instanceSelect.value;
+  instanceSelect.replaceChildren();
+  const empty=document.createElement('option');empty.value='';empty.textContent='No registered instance selected';instanceSelect.append(empty);
+  for(const record of instancePopulation.records){if(record.archetype_id!==archetypeSelect.value)continue;
+   const option=document.createElement('option');option.value=record.instance_id;
+   option.textContent=`${record.instance_id} · ${record.proof_stage} · ${record.binding_state} / ${record.physical_state}`;
+   instanceSelect.append(option);
+  }
+  if([...instanceSelect.options].some(option=>option.value===previous))instanceSelect.value=previous;
+ };
+ choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>;physical_interaction_review:ReturnType<typeof planAtlasInteraction>;intent_binding_review:ReturnType<typeof bindTirIntentToExistingPlans>;archetype_review:ReturnType<typeof reviewTirComponentArchetype>;instance_review:ReturnType<typeof reviewTirExistingInstance>}|null;
  let localReview:ReturnType<typeof reviewLocalNeoBatch>|null=null;
  let localFileSha:string|null=null;
  const showLocalReview=():void=>{
@@ -160,18 +176,25 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
     archetype_id:archetypeSelect.value||null,
     source_claims:{geometry_atlas_sha256:geometryDigest,proof_ladder_sha256:proofDigest,
      instance_contract_sha256:packetDigest}});
-   last={capsule:cap,lens,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding,archetype_review:archetypeReview};
+   const instanceReview=reviewTirExistingInstance(d,cap,geometryAtlas,physicalProof,instanceContract,instancePopulation,{
+    archetype_id:archetypeSelect.value||null,instance_id:instanceSelect.value||null,
+    source_claims:{geometry_atlas_sha256:geometryDigest,proof_ladder_sha256:proofDigest,
+     instance_contract_sha256:packetDigest,instance_register_sha256:populationDigest}});
+   last={capsule:cap,lens,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding,archetype_review:archetypeReview,instance_review:instanceReview};
    el(root,'tir-display').textContent=`Selected ${cap.shape_role} | reference mesh ${String(cap.geometry_ref)} | binary state ${hex(pack173(st)).slice(0,18)}… | three lanes ${packedTriad.length}B | ${voices.conflict?'VOICE CONFLICT':'voices compatible'} | ${voices.epistemic} | LOAD ${h} PLAN ONLY`;
    el(root,'tir-intent-human').textContent=`${intentBinding.human.summary} | ${intentBinding.human.interpretation} | Requires: ${intentBinding.human.missing_inputs.join(', ')||'independent evidence and authority'} | ${intentBinding.machine.status}`;
+   el(root,'tir-instance-review').textContent=`${instanceReview.human.summary} | ${instanceReview.human.interpretation} | Next: ${instanceReview.human.next_binding}`;
    el(root,'tir-archetype-review').textContent=`${archetypeReview.human.summary} | ${archetypeReview.human.interpretation} | ${archetypeReview.human.physical_state} | ${archetypeReview.human.proof_stages}`;
    el(root,'tir-interaction-review').textContent=`${physical.human.title} | ${physical.human.summary} | ${physical.human.interpretation} | Requires: ${physical.required_variables.geometry.concat(physical.required_variables.state).join(', ')||'defined source parameters'} | Test: ${physical.human.next_test} | ${physical.human.boundary}`;
    el(root,'tir-context').textContent=`${lens.human.description} Apparent scale ${lens.human.view_scale}. Identity unchanged; relation not established. Void/fine detail remain explicit.`;
-   el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,environment_lens:lens.context,human:lens.human,machine:p.machine,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding,archetype_review:archetypeReview,negative_space:p.negative_space,binary_transport:p.transport},null,2);
-  }catch(error){last=null;el(root,'tir-display').textContent=error instanceof Error?error.message:'Invalid TIR input';el(root,'tir-interaction-review').textContent='Interaction plan unavailable';el(root,'tir-archetype-review').textContent='Component archetype review unavailable';el(root,'tir-intent-human').textContent='Shorthand review unavailable';el(root,'tir-machine').textContent='';}
+   el(root,'tir-machine').textContent=JSON.stringify({capsule:cap,environment_lens:lens.context,human:lens.human,machine:p.machine,triad:voices,load_review_plan:load,physical_interaction_review:physical,intent_binding_review:intentBinding,archetype_review:archetypeReview,instance_review:instanceReview,negative_space:p.negative_space,binary_transport:p.transport},null,2);
+  }catch(error){last=null;el(root,'tir-display').textContent=error instanceof Error?error.message:'Invalid TIR input';el(root,'tir-interaction-review').textContent='Interaction plan unavailable';el(root,'tir-archetype-review').textContent='Component archetype review unavailable';el(root,'tir-instance-review').textContent='Component instance review unavailable';el(root,'tir-intent-human').textContent='Shorthand review unavailable';el(root,'tir-machine').textContent='';}
  };
- for(const x of [other,states,environment,spatial,perspective,scale,intuitive,deliberative,hydration,ruleSelect,archetypeSelect])x.addEventListener('change',display);
+ for(const x of [other,states,environment,spatial,perspective,scale,intuitive,deliberative,hydration,ruleSelect,instanceSelect])x.addEventListener('change',display);
+ archetypeSelect.addEventListener('change',()=>{syncInstanceOptions();display();});
  choose.addEventListener('change',()=>{intentInput.value='SELECT T173:'+choose.value.padStart(3,'0');display();});
  intentInput.addEventListener('input',display);
  el(root,'tir-export').addEventListener('click',()=>{if(!last)return;const blob=new Blob([JSON.stringify(last,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='tir173-guios-review-context.json';a.click();URL.revokeObjectURL(url);});
+ syncInstanceOptions();
  display();
 }
