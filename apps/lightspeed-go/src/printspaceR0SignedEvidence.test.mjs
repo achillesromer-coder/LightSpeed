@@ -183,3 +183,13 @@ test('invalid clocks and unauthorized schema cannot create any admission',()=>{
  const z=construct();z.trust.keys='NEW_ROOT';
  hold(z,'UNTRUSTED_ROOT_PIN_SET');
 });
+
+test('noncanonical own keys are rejected before statement or review verification',()=>{
+  for(const value of [{},null,7]){
+    const x=construct();
+    const statement=x.request.role_receipts[0].statement;
+    Object.defineProperty(statement.assertions,'__proto__',{value,enumerable:true});
+    assert.throws(()=>canonicalR0StatementBytes(statement));
+    assert.equal(run(x).state,'HOLD');
+  }
+});

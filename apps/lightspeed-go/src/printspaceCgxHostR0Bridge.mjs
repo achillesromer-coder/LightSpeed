@@ -24,7 +24,7 @@ function canonical(value, depth=0){
   if(Array.isArray(value))return value.map(v=>canonical(v,depth+1));
   if(obj(value)){
     const out={};for(const k of Object.keys(value).sort()){
-      if(BAD.has(k.toLowerCase()))throw Error('PRIVATE_AUTHORITY_INPUT');
+      if(k==='__proto__'||BAD.has(k.toLowerCase()))throw Error('PRIVATE_AUTHORITY_INPUT');
       out[k]=canonical(value[k],depth+1);
     }
     return out;

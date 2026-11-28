@@ -114,3 +114,14 @@ test('missing pins and private token rejected without source leakage',()=>{
   assert.equal(out.state,'HOLD');
   assert.equal(JSON.stringify(out).includes('SECRET'),false);
 });
+
+test('noncanonical own keys cannot disappear from the pinned plan',()=>{
+  for(const value of [{},null,7]){
+    const f=fixture();
+    Object.defineProperty(f.input.plan,'__proto__',{value,enumerable:true});
+    assert.equal(run(f).state,'HOLD');
+  }
+  const f=fixture();
+  Object.defineProperty(f.input.plan.r0_cases[0],'__proto__',{value:{},enumerable:true});
+  assert.equal(run(f).state,'HOLD');
+});

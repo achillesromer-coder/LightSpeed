@@ -27,7 +27,7 @@ function canonical(value,depth=0){
   if(isRecord(value)){
     const out={};
     for(const key of Object.keys(value).sort()){
-      if(BAD.has(key.toLowerCase()))throw Error('PRIVATE_OR_DEVICE_FIELD');
+      if(key==='__proto__'||BAD.has(key.toLowerCase()))throw Error('PRIVATE_OR_DEVICE_FIELD');
       out[key]=canonical(value[key],depth+1);
     }
     return out;
