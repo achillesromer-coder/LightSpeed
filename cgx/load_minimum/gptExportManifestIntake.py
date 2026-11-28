@@ -43,12 +43,36 @@ def _safe_path(path: object) -> str:
     return path
 
 
+def _unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise IntakeHold("DUPLICATE_MANIFEST_JSON_KEY")
+        result[key] = value
+    return result
+
+
+def _reject_constant(value):
+    raise IntakeHold("NONFINITE_MANIFEST_JSON_NUMBER")
+
+
+def _finite_float(value):
+    import math
+    number = float(value)
+    if not math.isfinite(number):
+        raise IntakeHold("NONFINITE_MANIFEST_JSON_NUMBER")
+    return number
+
+
 def project_manifest_bytes(raw: bytes) -> dict:
     if not raw or len(raw) > MAX_MANIFEST_BYTES:
         raise IntakeHold("MANIFEST_SIZE_HOLD")
     try:
-        manifest = json.loads(raw)
-    except (ValueError, UnicodeError) as exc:
+        manifest = json.loads(raw, object_pairs_hook=_unique_object,
+                              parse_constant=_reject_constant, parse_float=_finite_float)
+    except IntakeHold:
+        raise
+    except (ValueError, UnicodeError, RecursionError) as exc:
         raise IntakeHold("INVALID_MANIFEST_JSON") from exc
 
     if (not isinstance(manifest, dict)
