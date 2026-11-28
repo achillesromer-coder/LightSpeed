@@ -463,11 +463,11 @@
   },
   "executionPolicy": {
     "status": "REVIEW_POLICY_NOT_RUNTIME_ENFORCEMENT",
-    "updated": "2026-11-25",
-    "normalRdcRemainingFloorPct": 21,
-    "emergencyRdcRemainingFloorPct": 20,
-    "emergencyUse": "Explicit emergency only; no normal work consumes reserve; stop at 20",
-    "quotaCheck": "Read current quota before any bounded batch; reserve worst-case calls and concurrent lane headroom; if unknown stop RDC",
+    "updated": "2026-11-28",
+    "normalRdcRemainingFloorPct": 16,
+    "emergencyRdcRemainingFloorPct": 15,
+    "emergencyUse": "Explicit independently justified emergency only; no normal work consumes reserve; stop at 15",
+    "quotaCheck": "Fresh provider quota before any bounded batch; reserve worst-case calls, conservative rounding and concurrent lane headroom; unknown means stop RDC",
     "routing": [
       "verified existing native/hosted execution where scope and leases permit",
       "direct Git or existing service connector",
@@ -548,6 +548,20 @@
           ]
         },
         "receiptTrust": "Caller-supplied metadata only; no cryptographic verification, native authority or dispatch."
+      },
+      "budgetRevision": {
+        "moduleSha256": "cbaadda21d410a3e95af21918f03476cc318607f119aaf7a0cf82cb1233b1fc2",
+        "previousModuleSha256": "84d23f5af914b8f16326cb3fa20362bb0aecb963581dbc7dc1f932e427e49864",
+        "policy": [
+          16,
+          15
+        ],
+        "freeRamFloorPct": 20,
+        "productChecks": 44,
+        "sharedWorldAssertions": 46,
+        "rebuildScenarios": 7,
+        "status": "PRIVATE_REVIEW_CANDIDATE_TESTED_PENDING_PACKAGE_READBACK",
+        "nativeEnforcement": false
       }
     },
     "historicalReviewCompatibility": {
@@ -569,6 +583,12 @@
       "unknownQuota": "HOLD",
       "normalEmergencySeparation": true,
       "nativeEnforcementVerified": false
+    },
+    "priorBudgetPolicy": {
+      "updated": "2026-11-25",
+      "normalRdcRemainingFloorPct": 21,
+      "emergencyRdcRemainingFloorPct": 20,
+      "sourceCommit": "c8b5e13528e68973d99035094dd981bfe927629f"
     }
   },
   "mobileRouting": {
