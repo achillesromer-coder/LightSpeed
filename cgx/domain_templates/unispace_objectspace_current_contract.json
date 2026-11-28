@@ -402,6 +402,35 @@
       "sourceOccurrenceAclRequired": true,
       "gateClosureClaimed": false,
       "nativeAdmission": false
+    },
+    "printspaceR0Convergence": {
+      "status": "SELECTIVE_SOURCE_INTEGRATION_CANDIDATE",
+      "sourcePR": 236,
+      "sourceCommit": "fa2cac69b6ff0fbafee9c26fc08dd62fa07930a1",
+      "sourceBlobs": {
+        "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs": "3e685b4e0c548ac7fabfa292ab7ac7b67ac9bd47",
+        "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs": "322b463ffc8a91b4e396c97a15e710844e2cb4ec",
+        "apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs": "511837d780a7080e5050eac239f5d7ee8be924b5",
+        "apps/lightspeed-go/src/printspaceR0SignedEvidence.test.mjs": "aaa5ea654f554a4838750738a42784ce91d77f2c",
+        "apps/lightspeed-go/src/printspaceR0BatchSweep.mjs": "4d8241853c2ff67f0ff7657c48f2c8ec279f7e3a",
+        "apps/lightspeed-go/src/printspaceR0BatchSweep.test.mjs": "fd5f19255a6c4c2e716cdf11e6ea8df1f4517c0d",
+        "cgx/manufacturing/printspace_cgx.py": "d68045dc73201aa7b7021f7ba80657228537979c",
+        "cgx/manufacturing/printspace_host_preflight.py": "42a11d2dc33c6d2e7ddf7d3a952363659aa35f3e",
+        "cgx/manufacturing/virtual_factory.py": "2618d22d86ebe1393c3dafbcb2b4bc33217569fd",
+        "cgx/manufacturing/printspace_virtual_factory_catalog_v0_1.json": "bde15eed2be9421f575f1e143b1d142a876c7617",
+        "cgx/manufacturing/printspace_host_r0_review_v0_1.json": "3c49ca265eb53f891df5f9547daff19810e1abdc",
+        "tests/test_printspace_virtual_factory.py": "6fca0102ceeb3805a5ab67ff6fc2c231eed8451b",
+        "tests/test_printspace_host_preflight.py": "a31dea91708d742a6a1f46a006e9ed787ff3db0c"
+      },
+      "existingHostGateBlob": "188876828bef557ca1f50f618f8a418b049262a9",
+      "existingLoadPlanBlob": "ca7d935d03f2408694aaad9eee0bd2111b5b46a7",
+      "scope": "Existing virtual factory catalogue and R0 host preflight, Node-only host/LOAD review bridge, three-role signature and bounded batch review. No new runtime or datastore.",
+      "exclusions": "Existing historical archive pins unchanged; standalone SQLite reference ledger and atomic adapter not folded pending shared OperationalStore reconciliation. No physical gate closure, machine control, native admission, independent issuer authentication, source hydration or public release.",
+      "sourceHydration": false,
+      "nativeAdmission": false,
+      "physicalQualification": false,
+      "execution": false,
+      "publicRelease": false
     }
   },
   "release": {
