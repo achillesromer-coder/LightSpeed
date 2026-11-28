@@ -1,0 +1,910 @@
+{
+  "schema": "CGX-PRINTSPACE-PRE-DBR-ARCHIVE-REGISTER/0.1",
+  "created_date": "2026-11-22",
+  "register_id": "PC01-PRE-DBR-20261122-001",
+  "status": "PROPOSED / READ_ONLY / NO_LIVE_DBR_MUTATION",
+  "domain": "Romer.cgx / PrintSpace / PC01-NODE-001",
+  "authorities": {
+    "programme": "Type 1 Romer Cognigrex (Drive)",
+    "engineering": "Type 1 Systems Cognigrex (specialist evidence)",
+    "implementation": "achillesromer-coder/LightSpeed / review/pc01-raphael-printspace-crosswalk-20261122",
+    "pre_dbr_handoff": "Achilles P.A / ACR3 / Type 1 Operations Cognigrex",
+    "archive_destination_semantics": "Cognigrex.cgx:/archive-dbr",
+    "provenance_reference": "docs/connector-handoff/FINAL_HOME_CANONICAL_CONSOLIDATION_2026-08-28.md",
+    "execution_owner": "Achilles under separately authorised owner/specialist gate"
+  },
+  "invariant_policy": {
+    "archive_execution_authorised": false,
+    "delete_execution_authorised": false,
+    "overwrite_execution_authorised": false,
+    "dbr_finalised": false,
+    "owner_approved": false,
+    "receipts_synthetic": false,
+    "no_file_moves_performed": true,
+    "git_history_and_legacy_bytes_retained": true,
+    "unknown_references_are_holds": true,
+    "no_cross_domain_authority_inheritance": true,
+    "material_evidence_unaltered": true,
+    "protected_remote_desktop_reserve_pct": 25,
+    "emergency_remote_desktop_floor_pct": 24,
+    "rule": "Registration is a proposal; Achilles must independently verify source and successor hashes, unique-content/dependency scan, rights and recovery before any archive mutation, and separately authorise any deletion."
+  },
+  "classification_classes": [
+    "SUPERSEDED",
+    "SOURCE_REFERENCE",
+    "EVIDENCE_ACTIVE",
+    "EVIDENCE_ARCHIVE_CANDIDATE",
+    "HOLD_REVIEW"
+  ],
+  "dispositions": [
+    "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+    "RETAIN_CANONICAL",
+    "RETAIN_SOURCE_REFERENCE",
+    "RETAIN_EVIDENCE",
+    "HOLD_UNTIL_EVIDENCE_CAPTURE"
+  ],
+  "candidates": [
+    {
+      "id": "PC01-ARCH-001",
+      "classification": "SUPERSEDED",
+      "disposition": "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+      "source": {
+        "type": "git_blob",
+        "repository": "achillesromer-coder/LightSpeed",
+        "path": "tools/compile_printspace_review.py",
+        "git_ref": "0d8f2c128a829ea6f639f4af4db228c3b7d064cb",
+        "git_blob_sha1": "306cad8b8b67ccb73ed67766affdc607db8dfdcf",
+        "readback_verified": true,
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/0d8f2c128a829ea6f639f4af4db228c3b7d064cb/tools/compile_printspace_review.py"
+      },
+      "successor": {
+        "type": "active_review_branch_file",
+        "repository": "achillesromer-coder/LightSpeed",
+        "git_ref": "review/pc01-raphael-printspace-crosswalk-20261122",
+        "path": "cgx/manufacturing/review_gate.py",
+        "git_blob_sha1": "a6b964cfbacde5598053d3fc37391181b17cfc5c",
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/review/pc01-raphael-printspace-crosswalk-20261122/cgx/manufacturing/review_gate.py"
+      },
+      "observed_state": "Historical standalone prototype; later deleted from this working branch, bytes retained in immutable Git lineage",
+      "relationship": "REFACTOR_REPLACES_ROUTING_NOT_BYTE_IDENTICAL",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "tests/test_printspace_review_gate.py",
+        ".github/workflows/cgx-component-atlas-validation.yml"
+      ],
+      "restore": "Checkout exact source commit and path without rewriting the canonical active branch",
+      "outstanding_gates": [
+        "Morpheus/owner compare obsolete implementation behavior with current review gate",
+        "scan active references and runtime imports",
+        "record explicit semantic disposition and hash readback in real DBR"
+      ],
+      "action_for_achilles": "Mark archived/superseded lineage in canonical DBR after evidence; do not delete Git commit history or active canonical gate",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    },
+    {
+      "id": "PC01-ARCH-002",
+      "classification": "SUPERSEDED",
+      "disposition": "READY_FOR_ACHILLES_ARCHIVE_REVIEW",
+      "source": {
+        "type": "git_blob",
+        "repository": "achillesromer-coder/LightSpeed",
+        "path": "tests/test_printspace_review.py",
+        "git_ref": "e301f0723070bedb82ac5c98be93c533eb19e59f",
+        "git_blob_sha1": "e686b4ce74a506e554a6eccfd77e1fd97dbc4766",
+        "readback_verified": true,
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/e301f0723070bedb82ac5c98be93c533eb19e59f/tests/test_printspace_review.py"
+      },
+      "successor": {
+        "type": "active_review_branch_file",
+        "repository": "achillesromer-coder/LightSpeed",
+        "git_ref": "review/pc01-raphael-printspace-crosswalk-20261122",
+        "path": "tests/test_printspace_review_gate.py",
+        "git_blob_sha1": "1fdfd3ac207d4a8f9b6bf6a5cdfc180a0ae1033c",
+        "read_url": "https://github.com/achillesromer-coder/LightSpeed/blob/review/pc01-raphael-printspace-crosswalk-20261122/tests/test_printspace_review_gate.py"
+      },
+      "observed_state": "Standalone prototype tests deleted on review branch after canonical package review tests were added",
+      "relationship": "TEST_COVERAGE_REFACTORED_NOT_BYTE_IDENTICAL",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "tests/test_printspace_review_gate.py",
+        "tests/test_run_cgx_printspace_batch.py"
+      ],
+      "restore": "Checkout exact historical test file at retained Git commit",
+      "outstanding_gates": [
+        "compare negative and positive assertions with successor suite",
+        "verify no coverage regression and full suite green",
+        "register supersession and restore procedure under real DBR"
+      ],
+      "action_for_achilles": "Classify historical test revision as superseded lineage; preserve Git history and evidence links",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    },
+    {
+      "id": "PC01-ARCH-003",
+      "classification": "EVIDENCE_ARCHIVE_CANDIDATE",
+      "disposition": "HOLD_UNTIL_EVIDENCE_CAPTURE",
+      "source": {
+        "type": "github_actions_artifact",
+        "repository": "achillesromer-coder/LightSpeed",
+        "run_id": 44966504303,
+        "artifact_id": 14732115075,
+        "name": "pc01-printspace-sequential-regression",
+        "archive_sha256": "3027f5ed0fb04d294491ba9c0c439d876d8afbd4c301fc0a5e1f25fdeed8d5ad",
+        "expires_utc": "2026-12-22T00:25:27Z",
+        "workflow_url": "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966504303"
+      },
+      "successor": {
+        "type": "github_actions_artifact",
+        "repository": "achillesromer-coder/LightSpeed",
+        "run_id": 44966882823,
+        "artifact_id": 14731609373,
+        "archive_sha256": "7de4f06606eb6e780300a1f02d0c907e2adce0aa71f036eb8c7801b2435e56b3"
+      },
+      "observed_state": "Earlier successful 12-stage CI result. Later 13-stage batch is a distinct run, NOT byte-identical or a replacement for its execution history",
+      "relationship": "EARLIER_RUN_DISTINCT_EVIDENCE",
+      "unique_content_proven_identical": false,
+      "evidence_refs": [
+        "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966504303",
+        "https://github.com/achillesromer-coder/LightSpeed/actions/runs/44966882823"
+      ],
+      "restore": "Retain original workflow artifact or independent immutable object with verified SHA256 and readback",
+      "outstanding_gates": [
+        "capture original artifact before expiry",
+        "hash and index its original run receipts in parent-owned DBR",
+        "preserve chronological run provenance before any provider-artifact expiry",
+        "separate owner approval required for archive migration"
+      ],
+      "action_for_achilles": "Preserve immutable chronological execution evidence, optionally migrate to controlled archive after exact SHA256 readback; no deletion instruction",
+      "archive_allowed_now": false,
+      "deletion_allowed_now": false,
+      "acknowledgement_receipt": null
+    }
+  ],
+  "protected_active": [
+    {
+      "id": "PC01-PROT-001",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/CGX_PRINTABLE_SOLID_STATE_PORTFOLIO_2026-10-07.md",
+      "git_blob_sha1": "662847f2a987fb4ae964cdb981019c1a33fa9d80",
+      "reason": "Original portfolio intent, material class assumptions and historical implementation context not proven semantically absorbed by new compiler."
+    },
+    {
+      "id": "PC01-PROT-002",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/CGX_PRINTABLE_TECH_CATALOGUE_INDEX_2026-10-07.md",
+      "git_blob_sha1": "595c7b509e6bbe17d7739a25d4ad78e398b810cb",
+      "reason": "81 technology entries are source-reference lineage and not a one-to-one duplicate of 411 component archetypes."
+    },
+    {
+      "id": "PC01-PROT-003",
+      "classification": "SOURCE_REFERENCE",
+      "disposition": "RETAIN_SOURCE_REFERENCE",
+      "path": "docs/engineering/PC01_PRINTCEPTOR_OPERATIONAL_CONVERGENCE_2026-10-09.md",
+      "git_blob_sha1": "05c7926722490e29043014911d7f26ce09ebfad2",
+      "reason": "Legacy chronology and original PC01 functional intent remains citable, not proven redundant."
+    },
+    {
+      "id": "PC01-PROT-004",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
+      "git_blob_sha1": "b87893936f3dcf953423189de07931bf4ae4b664",
+      "reason": "Active PC01 source-derived contract and machine-not-built/evidence holds."
+    },
+    {
+      "id": "PC01-PROT-005",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json",
+      "git_blob_sha1": "bfa360ebf74659c8d0c831713ccc2f5ee7421d8d",
+      "reason": "Current provenance-only 411-row matrix projection; source remains authoritative in Drive."
+    },
+    {
+      "id": "PC01-PROT-006",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/review_gate.py",
+      "git_blob_sha1": "9ea0edfef002cee340b3c5f1208cbb60019300da",
+      "reason": "Current source-hash-bound canonical CGX manufacturing IR review, including the directed witness interface planning projection"
+    },
+    {
+      "id": "PC01-PROT-007",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14731609373,
+      "archive_sha256": "7de4f06606eb6e780300a1f02d0c907e2adce0aa71f036eb8c7801b2435e56b3",
+      "reason": "Historical independently checked 13-stage CI receipt, retain chronological source and execution provenance; superseded by later regression coverage but NOT byte-identical"
+    },
+    {
+      "id": "PC01-PROT-008",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+      "git_blob_sha1": "049b58731afb7633e16e0a36fafa011c77fedd36",
+      "reason": "411-entry geometry atlas is the existing canonical engineering implementation mirror, not redundant with a hash-only 24-field matrix projection."
+    },
+    {
+      "id": "PC01-PROT-009",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/raphael_component_geometry_search_v0_1.json",
+      "git_blob_sha1": "fd18ea0d1d966f74e980592070396fd6208f10a0",
+      "reason": "Raphael search-variable source lineage is not equal to admitted mesh assets or substitutable by the new preflight."
+    },
+    {
+      "id": "PC01-PROT-010",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/domain_templates/cgx_printable_solid_state_extension_2026-10-07.json",
+      "git_blob_sha1": "17f6be96c78c2816d5997aaf19cfe5481fc0382f",
+      "reason": "Original printable solid-state engineering extension includes distinct ontology/source semantics and must be retained."
+    },
+    {
+      "id": "PC01-PROT-011",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/compiler.py",
+      "git_blob_sha1": "db75aacf07cb64fc9eb94af81c79d8befdd6f996",
+      "reason": "Canonical manufacturing IR builder; PrintSpace review gate is an overlay, not a replacement."
+    },
+    {
+      "id": "PC01-PROT-012",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printstack.py",
+      "git_blob_sha1": "bbd47e8adbbc19a577103e6e92065f34c72b3c70",
+      "reason": "Canonical printable 4D stack and compound decomposition generator."
+    },
+    {
+      "id": "PC01-PROT-013",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/binding.py",
+      "git_blob_sha1": "ee8d435c0788aca32db117de4f5ff54fe1705956",
+      "reason": "Exact CGXI source, lot, tool and witness coupon evidence-bound resolver."
+    },
+    {
+      "id": "PC01-PROT-014",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/volumetric.py",
+      "git_blob_sha1": "c42dbebcda27dad7251844ad847487eeb91cfd6b",
+      "reason": "Canonical volumetric topology component and associated deterministic resolution."
+    },
+    {
+      "id": "PC01-PROT-015",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/manufacturing_ir_contract_v0_1.json",
+      "git_blob_sha1": "ee41de7ea927ad1d28fcdcf327a70754ad43cd74",
+      "reason": "Owner-derived manufacturing IR contract, namespaces and source/evidence precedence rules."
+    },
+    {
+      "id": "PC01-PROT-016",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/composition.py",
+      "git_blob_sha1": "6ba5328700d3ca76c433f578815ef24f09b6767a",
+      "reason": "Frozen canonical digital reference/placement graph; source geometry and translation arrays copied, not aliased; exact convex contacts."
+    },
+    {
+      "id": "PC01-PROT-017",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_composite_pilot_v0_1.json",
+      "git_blob_sha1": "373b09756ebf8f57546c903eebdc947804b2452f",
+      "reason": "Current synthetic three-region validation fixture; not a physical qualification, retain for reproducibility."
+    },
+    {
+      "id": "PC01-PROT-018",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/type1_volumetric_kernel_v0_1.json",
+      "git_blob_sha1": "c5e92038495a15a66fb6008925a1bb3e92d7bd8b",
+      "reason": "Existing forty-record VGK geometry/topology kernel source of shapes and reference contracts."
+    },
+    {
+      "id": "PC01-PROT-019",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tools/verify_unispace_product.py",
+      "git_blob_sha1": "59918f899e792fd516907fb93d1c46d2d82b3a3a",
+      "reason": "Existing bounded exact convex integer mesh canonicalizer reused rather than reimplemented."
+    },
+    {
+      "id": "PC01-PROT-020",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+      "git_blob_sha1": "ca7d935d03f2408694aaad9eee0bd2111b5b46a7",
+      "reason": "Existing LOAD.cgx review-only Alexandria H0 lens contract; not a native activation."
+    },
+    {
+      "id": "PC01-PROT-021",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/cgxUniSpaceLoadCommandSurface.mjs",
+      "git_blob_sha1": "7863387d3253e4020de5aadea1de3254b0850511",
+      "reason": "Existing LOAD/CCC child FileSpace command projection, review-only and non-executing."
+    },
+    {
+      "id": "PC01-PROT-022",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/exact_contact.py",
+      "git_blob_sha1": "580093dabcefbe4ba3fa471c7cc65b00ed9386ea",
+      "reason": "Active bounded exact rational convex contact analysis; reused by composition; independent physical interface qualification remains unverified."
+    },
+    {
+      "id": "PC01-PROT-023",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/interface_qualification.py",
+      "git_blob_sha1": "787e0a11cc5d909840717f602a1ad38241e59618",
+      "reason": "Canonical PrintSpace read-only source-index and directed material-coupon planning adapter; does not authenticate external receipts"
+    },
+    {
+      "id": "PC01-PROT-024",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_interface_witness_plan_v0_1.json",
+      "git_blob_sha1": "a2236e3873e1053b7d409743fcd1bb43db13de17",
+      "reason": "Synthetic source-matrix row selection fixture for unmeasured four-direction witness-plan testing; no material lot evidence"
+    },
+    {
+      "id": "PC01-PROT-025",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/solid_metrics.py",
+      "git_blob_sha1": "8568281d5fd22d1b33e0e7b5d0f4ab4de5e98653",
+      "reason": "Exact convex nominal volume and first moments; no Boolean union, material density or physical mass qualification."
+    },
+    {
+      "id": "PC01-PROT-026",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/digital_service_stack.py",
+      "git_blob_sha1": "808396ae5ebfdadb8f415a03caca8fb61cc556bb",
+      "reason": "Existing canonical 12-service dependency DAG; optional static keep-out/tolerance source crosswalk and original-input reverse replay, non-executing."
+    },
+    {
+      "id": "PC01-PROT-027",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14734346016,
+      "archive_sha256": "b6a767f1c2e9057ea478eff9b2f4fd5ca0b88b37047aa3def742bb0ad2c49522",
+      "reason": "Full 19-stage canonical digital service-stack/regression readback, synthetic nominal solid metrics, four directional coupon plans and PASS_DIGITAL_ONLY reverse-audit artifact; provider expiry 2026-12-22; Achilles to preserve independently before expiry"
+    },
+    {
+      "id": "PC01-PROT-028",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/tolerance_clearance.py",
+      "git_blob_sha1": "eaa9b62ccc1697eced5203654dfcc4cbda9baf61",
+      "reason": "Conservative static bounding-envelope micrometre screen with real tool sweep, physical placement uncertainty and C0 explicitly unverified."
+    },
+    {
+      "id": "PC01-PROT-029",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_tolerance_static_screen_v0_1.json",
+      "git_blob_sha1": "cfa0dbbaddb55b4cec22d93c2b2efcd524ab6898",
+      "reason": "Synthetic, unmeasured 50/75/25 micrometre placement-error and fixed keep-out fixture; not real calibration or production clearance."
+    },
+    {
+      "id": "PC01-PROT-030",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14734629721,
+      "archive_sha256": "8cf47ea0945f72977f003ac27f8714c65369d26702a0391f4587ad82b2f90618",
+      "reason": "Independent 20-stage service/tolerance regression artifact, exact 125/100um synthetic face-gap budgets, STATIC AABB keep-out screening, optional 12-service immutable manifest and PASS_DIGITAL_ONLY reverse replay; expires 2026-12-22; capture to authorised owner evidence store before expiry."
+    },
+    {
+      "id": "PC01-PROT-031",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/cross_domain_emulation.py",
+      "git_blob_sha1": "ef9aed87b0e50baae1e9334fd0668490839df6a4",
+      "reason": "21-stage bounded source-anchored analytical electrothermal and expansion sweep; synthetic constitutive assumptions with no external solver or machine authority."
+    },
+    {
+      "id": "PC01-PROT-032",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/pc01_synthetic_cross_sweep_v0_1.json",
+      "git_blob_sha1": "19058e134fdb9d0798b24ef0d1f77bfc3963722c",
+      "reason": "216-case six-factor synthetic scenario source; equation hash populated only from live canonical catalogue at runtime and no physical material parameters attested."
+    },
+    {
+      "id": "PC01-PROT-033",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+      "git_blob_sha1": "ff65474eb744273d8502d11417321cc35e6fae00",
+      "reason": "Existing canonical Type-I twenty-equation-kernel source; emulator references relevant primitive laws and numeric-versus-symbolic gates, not a second numerical authority."
+    },
+    {
+      "id": "PC01-PROT-034",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14734969656,
+      "archive_sha256": "298008b3679f74f15515d4e0caafa5b33ebadcac4d1a418aee6b082b8efb31d7",
+      "reason": "Independently inspected 21-stage source-bound analytical cross-domain emulation archive, 216 synthetic scenarios, 15 paired factorial interactions, numerical energy residual tests and existing 12-service reverse source; provider expiry 2026-12-22 pending owner-authorised durable retention."
+    },
+    {
+      "id": "PC01-PROT-035",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_virtual_factory_catalog_v0_1.json",
+      "git_blob_sha1": "bde15eed2be9421f575f1e143b1d142a876c7617",
+      "reason": "Unqualified source-indexed printer/product/environment hierarchy; not source CAD, qualified material BOM or operating machine profile"
+    },
+    {
+      "id": "PC01-PROT-036",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/virtual_factory.py",
+      "git_blob_sha1": "2618d22d86ebe1393c3dafbcb2b4bc33217569fd",
+      "reason": "Canonical read-only source-derived multi-product printer view, 756-case size/role sweep and reverse source replay"
+    },
+    {
+      "id": "PC01-PROT-037",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_studio_v0_1.html",
+      "git_blob_sha1": "6aee579b385ebcd92481539b1ba61876a0643828",
+      "reason": "Existing single-window viewer enhanced with all five read-only workspace facets and explicit false authority flags"
+    },
+    {
+      "id": "PC01-PROT-038",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_studio.py",
+      "git_blob_sha1": "3bc031096696a3e631f28dde6598f40339f4d7c4",
+      "reason": "Reproducible same-window studio generator, no new renderer or runtime"
+    },
+    {
+      "id": "PC01-PROT-039",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_virtual_factory.py",
+      "git_blob_sha1": "6fca0102ceeb3805a5ab67ff6fc2c231eed8451b",
+      "reason": "Deterministic 756 synthetic cases, hierarchy, safety and negative source/authority replay regression"
+    },
+    {
+      "id": "PC01-PROT-040",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_VIRTUAL_FACTORY_RELEASE_GATES_2026-11-22.md",
+      "git_blob_sha1": "33efb2875eba76b09ec2222d8c0ec02b67ed6fbe",
+      "reason": "Engineering acceptance, device supply boundaries, in-situ limits and commercialisation governance handoff"
+    },
+    {
+      "id": "PC01-PROT-041",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14736430893,
+      "archive_sha256": "21774ba102f995d3d04504d26e198b2487ed3a04813a7bc9ca4554d44ab9639b",
+      "reason": "Verified 22-stage integrated CI receipt including source-bound 216-case electrothermal emulation, bounded 756-case virtual-factory scenarios, source generator build check, original geometry, witness/source review and 12-service reverse audit; 22/22 pass and no log hash mismatches; provider artifact expires 2026-12-22, requires separately approved durable owner evidence capture."
+    },
+    {
+      "id": "PC01-PROT-042",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx.py",
+      "git_blob_sha1": "d68045dc73201aa7b7021f7ba80657228537979c",
+      "reason": "In-place source-replayed five-facet routing on single Cognigrex parent and Romer child; deny unadmitted native ternary and T173 meshes"
+    },
+    {
+      "id": "PC01-PROT-043",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_bundle_v0_1.json",
+      "git_blob_sha1": "8362ea0fbc05dff11424a118322f0a495c9413a0",
+      "reason": "80 source-pinned conceptual object facets; exact canonical hash graph; no actual CAD/material/source bytes embedded"
+    },
+    {
+      "id": "PC01-PROT-044",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_h0_v0_1.json",
+      "git_blob_sha1": "7ec8809bb7f010735cbfe4e7644a12d8823f806a",
+      "reason": "Regenerated exact nonhydrating H0 namespace under existing Romer child, not independent printspace root"
+    },
+    {
+      "id": "PC01-PROT-045",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_cgx_lite_v0_1.json",
+      "git_blob_sha1": "204370b11898ad84ad9ac0c3596f22396bf0f3c4",
+      "reason": "Deterministic conventional zlib transport fixture, bounded decompression and canonical SHA readback, NOT native ternary compression"
+    },
+    {
+      "id": "PC01-PROT-046",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_cgx_bundle.py",
+      "git_blob_sha1": "586b3827c9871168707c1252645799e9d42f4130",
+      "reason": "Reproducible source-to-graph H0 and portable lite builder with --check drift gating"
+    },
+    {
+      "id": "PC01-PROT-047",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_cgx_bundle.py",
+      "git_blob_sha1": "04bbb44a6dccdebc0c1a3dd31b92b55f7dc00b4c",
+      "reason": "Tests all five source-replayed facets on three products, source/rights/ternary/T173 negative gates"
+    },
+    {
+      "id": "PC01-PROT-048",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_CGX_FILESPACE_FACETS_2026-11-22.md",
+      "git_blob_sha1": "5d2fbee5f52e54e9cce176ed38eedb9961d44bad",
+      "reason": "In-place one root source-hash routing and geometry/transport proof ceiling"
+    },
+    {
+      "id": "PC01-PROT-049",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14737720027,
+      "archive_sha256": "1a6674969946242563ee5d9090d8532d9ff1f94432e08fd0cb6bfc3c9861974d",
+      "reason": "Independently read and SHA256/length-verified 23-stage PrintSpace digital-only CI including CGX 80-facet source graph/H0/selective hydration, virtual factory 756 cases, 216 analytic model cases and 12-service back-down review. All 23 steps PASS, zero log integrity mismatches. Artifact provider expiry 2026-12-22; durable owner evidence copy needs separate authorisation."
+    },
+    {
+      "id": "PC01-PROT-050",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_host_preflight.py",
+      "git_blob_sha1": "42a11d2dc33c6d2e7ddf7d3a952363659aa35f3e",
+      "reason": "Read-only exact FileSpace source and R0 candidate identity/rights review; no native Object_ID admission"
+    },
+    {
+      "id": "PC01-PROT-051",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_host_r0_review_v0_1.json",
+      "git_blob_sha1": "3c49ca265eb53f891df5f9547daff19810e1abdc",
+      "reason": "Regenerated exact R0 source handoff after existing H0 nesting, zero native identity admission"
+    },
+    {
+      "id": "PC01-PROT-052",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs",
+      "git_blob_sha1": "47dffb311400888c03f432c75b95c703a92392c3",
+      "reason": "Uses existing UniSpace HostObjectContextGate and LoadLibraryLensPlan; no source hydration, permission or DBR grant"
+    },
+    {
+      "id": "PC01-PROT-053",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs",
+      "git_blob_sha1": "fb58bc411b40722104a81811145a42c7a9d74680",
+      "reason": "Node interop and negative source/rights/collision tests with synthetic host responses only"
+    },
+    {
+      "id": "PC01-PROT-054",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_host_preflight.py",
+      "git_blob_sha1": "a31dea91708d742a6a1f46a006e9ed787ff3db0c",
+      "reason": "Python source-catalogue back-down exact identity and auth/secret rejection tests"
+    },
+    {
+      "id": "PC01-PROT-055",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/build_printspace_host_preflight.py",
+      "git_blob_sha1": "ca427db12531daa4abca62786f8362858b7b4fac",
+      "reason": "Reproducible source-only R0 manifest with --check drift gate"
+    },
+    {
+      "id": "PC01-PROT-056",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_HOST_CROSSWALK_2026-11-22.md",
+      "git_blob_sha1": "92f384ef6cbdfb40cffe6e4642646e82f154e5d8",
+      "reason": "Authoritative source/rights/ACL/DBR and machine proof acceptance criteria"
+    },
+    {
+      "id": "PC01-PROT-057",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14737873157,
+      "archive_sha256": "fc0450043d3c2dbba7f97dfad62d98ed284449f2209eb9497867cdc42aba7d3c",
+      "reason": "Verified 24-stage PrintSpace CGX -> UniSpace native R0 review-only crosswalk regression, canonical 3-product no-ID fixture, full source backtrace and actual UniSpace/LightSpeed GO test/build. All 24 sequential stages PASS and 0 archived log hash/length mismatches; digital-only. Artifact provider expiry 2026-12-22, owner-approved durable evidence capture remains necessary."
+    },
+    {
+      "id": "PC01-PROT-058",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs",
+      "git_blob_sha1": "6dacc7d85f30cadc1a32736313d2c9e995166bd6",
+      "reason": "Read-only Ed25519 registry/rights/host three-role R0 verifier with externally pinned public key fingerprints, nonce/expiry/revocation and explicit no-native authority"
+    },
+    {
+      "id": "PC01-PROT-059",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0SignedEvidence.test.mjs",
+      "git_blob_sha1": "0001f5e875a8b038c34183cfe2b4ea1b94968ac7",
+      "reason": "In-memory synthetic 3-role cryptographic source/identity/rights hold and negative replay/tamper tests; no owner private keys"
+    },
+    {
+      "id": "PC01-PROT-060",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_THREE_ROLE_SIGNATURE_REVIEW_2026-11-22.md",
+      "git_blob_sha1": "752ed1200cd1ba948fcf235d6ac94b099da9537a",
+      "reason": "Evidence trust root, source registry, rights/ACL, revocation ledger and R0-only operational acceptance checklist"
+    },
+    {
+      "id": "PC01-PROT-061",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14738715892,
+      "archive_sha256": "ab5dbae64db1a471f599df8edc099577168d235d6d9a780e5908f49468df84c9",
+      "reason": "Independently read and SHA256/length-verified 24-stage PrintSpace source/geometry/CGX/UniSpace CI, with unchanged three-product zero-native-ID R0 review and backtrace. This checkpoint includes three-role Ed25519 verifier syntax, and actual LightSpeed GO Vitest separately passed all 10 synthetic cryptographic tests (286 total). No real owner trust roots, DBR, machine, rights attestation. GitHub artifact expires 2026-12-22; approved durable owner retention still required."
+    },
+    {
+      "id": "PC01-PROT-062",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0BatchSweep.mjs",
+      "git_blob_sha1": "4d8241853c2ff67f0ff7657c48f2c8ec279f7e3a",
+      "reason": "Bounded 512-case deterministic Ed25519 R0 review batching and within-batch nonce collision holds; negative-only history hints, no actual challenge ledger"
+    },
+    {
+      "id": "PC01-PROT-063",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0BatchSweep.test.mjs",
+      "git_blob_sha1": "fd5f19255a6c4c2e716cdf11e6ea8df1f4517c0d",
+      "reason": "256-case signed positive/negative sweep and 512-case duplicate-challenge failure, cryptographic root/identity/clock checks and input back-down tests"
+    },
+    {
+      "id": "PC01-PROT-064",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_r0_batch_smoke.py",
+      "git_blob_sha1": "c3d0d7ab03ab2d4b193bc9bc2c7bae93e85122e5",
+      "reason": "No-npm Node integration checks for existing 25-stage sequential PrintSpace regression"
+    },
+    {
+      "id": "PC01-PROT-065",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_BATCH_SWEEP_EXECUTION_2026-11-22.md",
+      "git_blob_sha1": "6d0736abce00d2da2f1bbab10f6da07669442e86",
+      "reason": "Sweep contracts, no-authority proof ceiling, latency baseline and real host ledger requirements"
+    },
+    {
+      "id": "PC01-PROT-066",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14738334759,
+      "archive_sha256": "fdd7052ef255348d000dd83d915e0ca4da97f3ce0ba0872725cd4d2c7c128df9",
+      "reason": "Independent 25-stage CGX PrintSpace sequential CI receipt with no log-byte/SHA256 mismatches, including bounded Node R0 batch review and 256/512-case synthetic Ed25519 sweeps tested in LightSpeed GO. No persistent host nonce ledger, rights or actual PC01 release. Provider expiry 2026-12-22; authorised durable owner retention pending."
+    },
+    {
+      "id": "PC01-PROT-067",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0AtomicReview.mjs",
+      "git_blob_sha1": "8a2fdc4b2a2c35764521097a16ec3256bcecc0c2",
+      "reason": "Fail-closed signed R0 verify-first host atomic nonce adapter; no authenticated owner ledger or native release"
+    },
+    {
+      "id": "PC01-PROT-068",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "apps/lightspeed-go/src/printspaceR0AtomicReview.test.mjs",
+      "git_blob_sha1": "6d238bd3828101ffaba76deeab677365e4ad9b3e",
+      "reason": "Real Ed25519 synthetic signatures; host SQLite worker concurrency, cross-product duplicates, restart and unavailable-ledger negative tests"
+    },
+    {
+      "id": "PC01-PROT-069",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/printspace_r0_sqlite_reference_ledger.py",
+      "git_blob_sha1": "59e33891cb77bc019b92549dadb2cac31debd7c7",
+      "reason": "Isolated test-only SQLite WAL atomic unique nonce insert; not owner production DBR or persistent service"
+    },
+    {
+      "id": "PC01-PROT-070",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_r0_atomic_ledger_smoke.py",
+      "git_blob_sha1": "fb24aeac72c355c40aa35be951b54e013f5ea614",
+      "reason": "Parallel test subprocesses prove isolated transaction uniqueness and malformed input denial"
+    },
+    {
+      "id": "PC01-PROT-071",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_R0_ATOMIC_LEDGER_REFERENCE_2026-11-22.md",
+      "git_blob_sha1": "ff757a11558af3bf23f852c3c97099dad818f489",
+      "reason": "Exact host integration, independent trust/root/source/rights gating and empirical ledger requirements"
+    },
+    {
+      "id": "PC01-PROT-072",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739043653,
+      "archive_sha256": "b9f2eb8eb21c49634c51e819d1b85e12a00e6cc7285243a4a5474b3ded6bb8ea",
+      "reason": "Independently verified 26-stage PrintSpace sequential CI, including real three-role R0 signature verification before SQLite reference unique atomic insert; 26/26 PASS and zero archived log hash/byte mismatches, with LightSpeed GO 305 test cases passed. Not a production owner ledger/DBR, native trust registry, real source rights or machine C0; provider artifact expires 2026-12-22 and durable owner retention remains separately gated."
+    },
+    {
+      "id": "PC01-PROT-073",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/package_printspace_software.py",
+      "git_blob_sha1": "73e809030237be3146d7db59068f7d7faca25dab",
+      "reason": "Private RC2 deterministic packaging from same source objects and unchanged eight source assets"
+    },
+    {
+      "id": "PC01-PROT-074",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_software_release.py",
+      "git_blob_sha1": "93ffe96388a5588a5f3745f142c987c6a104b09e",
+      "reason": "Private RC2 manifest/hash, single-pane UI and release authority regression"
+    },
+    {
+      "id": "PC01-PROT-075",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_SOFTWARE_RC_GATE_2026-11-22.md",
+      "git_blob_sha1": "aa90de4cc458aefd4be0797cfae41dcff7f008c3",
+      "reason": "Existing private software release gate reconciled in place for rc.2 five-space source projection and explicit native/rights/physical holds; prior rc.1 preserved"
+    },
+    {
+      "id": "PC01-PROT-076",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739736412,
+      "archive_sha256": "9108d834184010bc7d3b1f19b17aa14959cebd672a250e95307244ff6322ab8b",
+      "reason": "Private PrintSpace Studio 0.1.0-rc.1 evaluation CI artifact. Inner 61,343-byte ZIP SHA256 d40efd048a03ae0586ab2f43e37577f1c5f98b458494d4b2efd7fa6394c17e1e is byte-for-byte identical to independent local build; manifest and sidecar integrity checked. Public distribution, native admission and machine permissions remain false. Provider expiry 2026-12-22; owner-authorised durable retention pending."
+    },
+    {
+      "id": "PC01-PROT-077",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739463189,
+      "archive_sha256": "38d0f5389349e77bce21adab0279f3e2697733991b657cf69394ec717da95640",
+      "reason": "Independently inspected canonical 27-stage PrintSpace digital/software regression receipt: 27/27 PASS, zero log-byte/SHA256 mismatches, 18.236 seconds recorded serial suite including private RC package tests. No public distribution, physical manufacture, DBR or mint authority. Provider expiry 2026-12-22; durable owner retention pending."
+    },
+    {
+      "id": "PC01-PROT-078",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/__init__.py",
+      "git_blob_sha1": "5708a2262cfd10da2a590171808eee20ec990100",
+      "reason": "Existing manufacturing public facade exposes source-replayed shared facet and reverse auditor"
+    },
+    {
+      "id": "PC01-PROT-079",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740017039,
+      "archive_sha256": "4bfa7007bb7c64b40559032ea5bad178c5fac8729b258db3dcc9d4e1a96922e3",
+      "reason": "Exact final CI-created private rc.2 package container with software ZIP bytes sha256 2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2, byte-for-byte local match; no public release, provider expires 2026-12-22"
+    },
+    {
+      "id": "PC01-PROT-080",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14739797368,
+      "archive_sha256": "f265fc2ab1a7acfb90e1bb4cb08f69b4daa1fb49ce7c837fc25fcb62ab4821c6",
+      "reason": "Independent 27-stage review regression PASS including source-aligned H0/R0 nested roots, negative T173/native ternary and private rc.2 build; all 27 logs match recorded SHA256 and byte lengths; provider expires 2026-12-22"
+    },
+    {
+      "id": "PC01-PROT-081",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+      "git_blob_sha1": "060ec29e90913dc593f2498c3319d3725ca07792",
+      "reason": "16 open release-native-physical gates with exact private-rc2 evidence, five-lane read-only handoff and no native or owner approval"
+    },
+    {
+      "id": "PC01-PROT-082",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/validate_printspace_product_handoff.py",
+      "git_blob_sha1": "a2348c1cd33919847458be69c89e6a8c31d24f8b",
+      "reason": "Fail-closed exact release zip SHA256/source/owner sequence/automation/archives review validator and non-authorising CI receipt"
+    },
+    {
+      "id": "PC01-PROT-083",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_product_handoff.py",
+      "git_blob_sha1": "51eaeeecc73f78e438beafc4449dea09ea4670ca",
+      "reason": "Source-only adversarial tests against fake release acceptance, stage switch, wrong count and weakened archive gates"
+    },
+    {
+      "id": "PC01-PROT-084",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/PRINTSPACE_PRODUCTISATION_OPEN_THREADS_AND_AUTOMATED_HANDOFF_2026-11-22.md",
+      "git_blob_sha1": "554aa7ffec306a7b111b75184c1512eb39ca751c",
+      "reason": "Counted productisation inventory and existing coordinator handoff contract; no public publication or FileSpace activation"
+    },
+    {
+      "id": "PC01-PROT-085",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740637628,
+      "archive_sha256": "605c091567a7fc7901b47d38c1698dccbe6824b9b98f8f71e22068223324af58",
+      "reason": "Source-bound PrintSpace 28-stage sequential regression and 16 open product gate handoff receipt; all 28 logs independently size/hash checked; private rc2 pinned; source-only with no release/DBR authority; provider expiry 2026-12-22."
+    },
+    {
+      "id": "PC01-PROT-086",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": null,
+      "artifact_id": 14740194018,
+      "archive_sha256": "260fb34252cc1934763ad85183c523e22c54f6980ed05d051b3ad247ccd83248",
+      "reason": "Final exact-head GitHub private software 0.1.0-rc.2 CI wrapper. Inner ZIP 63404 bytes SHA256 2f81a22ac0d00e22086d5e3f0d77f3026a4a971f1bb6a4e0267f704efb4911c2, byte-identical to independently inspected original. Not signed or publicly authorised. Expires 2026-12-22."
+    },
+    {
+      "id": "PC01-PROT-087",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "scripts/audit_printspace_rc_static.py",
+      "git_blob_sha1": "b38069559b41a1e0e48eb416033d9f06884b6fba",
+      "reason": "Immutable private RC2 offline static security/accessibility audit, no independent owner sign-off"
+    },
+    {
+      "id": "PC01-PROT-088",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "tests/test_printspace_rc_static.py",
+      "git_blob_sha1": "230b640237849f0468e30fd093d00ec39bf1cd12",
+      "reason": "Tamper/authority/immutable RC2 static audit adversarial regressions"
+    },
+    {
+      "id": "PC01-PROT-089",
+      "classification": "EVIDENCE_ACTIVE",
+      "disposition": "RETAIN_EVIDENCE",
+      "path": "docs/engineering/ACHILLES_PRINTSPACE_RC2_REVIEW_EXECUTION_2026-11-22.md",
+      "git_blob_sha1": "a6767783d47e338f133c92e961795ef067863d05",
+      "reason": "Source-qualified owner-private RC2 handoff instructions for existing Achilles review and Neo execution"
+    }
+  ],
+  "archive_review_gates": [
+    "EXACT_NATIVE_SOURCE_IDENTITY_AND_HASH_READBACK",
+    "CANONICAL_OWNER_AND_LATEST_REVISION_CONFIRMED",
+    "UNIQUE_CONTENT_AND_REFERENCE_SCAN",
+    "SEMANTIC_CROSSWALK_AND_NONLOSS_PROOF",
+    "RIGHTS_AND_PRIVACY_CLASSIFICATION",
+    "PARENT_DESTINATION_AND_VERSIONED_RECOVERY_PROOF",
+    "INDEPENDENT_REGRESSION_AND_NEGATIVE_TESTS",
+    "ACHILLES_REVIEW_RECEIPT",
+    "SEPARATE_OWNER_AUTHORITY_FOR_MUTATION",
+    "POST_ARCHIVE_READBACK_AND_ROLLBACK",
+    "DBR_LINK_AND_HANDOFF_CLOSEOUT"
+  ],
+  "next_safe_action": "Achilles reviews each candidate against existing ACR3/Operations/Parent archive_dbr. Do not mint, move, delete, expire or overwrite from this register."
+}

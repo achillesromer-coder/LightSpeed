@@ -123,5 +123,33 @@
     "content-addressed-transfer",
     "verified-readback",
     "receipt-before-promotion"
-  ]
+  ],
+  "application_routing": {
+    "status": "source-review / presentation only / physical-device conformance required",
+    "product_contract": "unispace_objectspace_current_contract.json",
+    "route_resolver": "unispace_mobile_routes.cjs",
+    "route_regression": "unispace_mobile_routes.test.cjs",
+    "semantic_root": "cgx://cgx.cgx",
+    "fallback_order": [
+      "registered internal CGX view",
+      "authorized existing provider connector",
+      "fixed HTTPS app link resolved by OS or browser",
+      "user-selected native launcher entry after device qualification"
+    ],
+    "route_selection": "explicit foreground user action; no automatic launch or transfer",
+    "native_discovery": "HOLD until scoped device host and explicit user grant",
+    "icon_policy": "semantic glyph until OS-resolved app label and icon are observed; no installed-app inference",
+    "data_handoff": "selected file or typed object; explicit destination and permission; current lease and receiver readback for cross-node transfer",
+    "unsupported": "HOLD or safe browser fallback; no arbitrary intents, privileged embedding or app-private data",
+    "physical_acceptance": [
+      "open verified GUIOS in owner Android browser",
+      "open one allowed HTTPS destination and observe app or browser outcome",
+      "return to GUIOS and verify internal navigation",
+      "observe unavailable route without dispatch",
+      "test explicit selected-file share and denial only when native adapter exists",
+      "verify signed capability/readback through existing host and peer handshake"
+    ],
+    "native_authority": false,
+    "device_verified": false
+  }
 }

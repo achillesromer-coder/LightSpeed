@@ -1,0 +1,19 @@
+/* Source-qualified existing localhost Achilles operator context. */
+.ls-achilles-local-panel{margin:12px 0 16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel);min-width:0;display:grid;gap:11px}
+.ls-achilles-local-heading{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.ls-achilles-local-heading h2{font-size:19px;margin:2px 0 6px}
+.ls-achilles-local-heading p{margin:0;line-height:1.45}
+.ls-achilles-local-kicker{color:var(--teal);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.ls-achilles-local-muted{color:var(--muted);font-size:12px;line-height:1.5}
+.ls-achilles-local-hold{font-size:11px;flex:none;border:1px solid var(--line);border-radius:100px;padding:6px 10px;color:var(--muted)}
+.ls-achilles-local-observation{font-size:12px;line-height:1.55;padding:9px 11px;margin:0;background:var(--panel2);border-radius:9px}
+.ls-achilles-local-link{display:inline-flex;width:fit-content;padding:9px 13px;border:1px solid var(--teal);border-radius:10px;color:var(--teal);font-weight:650;font-size:12px;text-decoration:none}
+.ls-achilles-local-link:hover{background:var(--panel2)}
+.ls-achilles-local-link:focus-visible,.ls-achilles-local-facet-tabs button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.ls-achilles-local-facet-tabs{display:flex;flex-wrap:wrap;gap:6px}
+.ls-achilles-local-facet-tabs button{font:inherit;font-size:11px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--muted)}
+.ls-achilles-local-facet-tabs button[aria-pressed=true]{color:var(--text);background:var(--panel2);border-color:var(--teal)}
+.ls-achilles-local-detail{padding:11px 12px;border:1px solid var(--line);border-radius:10px}
+.ls-achilles-local-detail h3{font-size:14px;margin:0 0 7px}
+.ls-achilles-local-detail p{margin:5px 0 0;font-size:12px;line-height:1.5}
+@media(max-width:560px){.ls-achilles-local-panel{padding:12px}.ls-achilles-local-hold{order:2}.ls-achilles-local-facet-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.ls-achilles-local-facet-tabs button{min-width:0}}

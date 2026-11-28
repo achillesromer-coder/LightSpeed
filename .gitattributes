@@ -12,3 +12,6 @@ apps/lightspeed-go/dist/** text eol=lf
 assets/models/*.obj text eol=lf
 assets/type1-svg/** text eol=lf
 assets/previews/*.png binary
+
+# Preserve the archived attribution notice byte for byte.
+tools/ANTIPRISM_COPYING.txt -text

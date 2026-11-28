@@ -1,0 +1,737 @@
+{
+  "attestations": {
+    "cad_source_verified": false,
+    "interplanetary_conditions_qualified": false,
+    "material_lots_verified": false,
+    "native_dbr_written": false,
+    "physical_machine_authorised": false,
+    "physical_prints_verified": false,
+    "processes_qualified": false,
+    "real_devices_modelled": false,
+    "real_power_consumption_modelled": false,
+    "rights_qualified": false,
+    "software_release_approved": false
+  },
+  "catalogue_id": "CGX-PF-DIODE-TO-PHONE-20261122",
+  "environments": [
+    {
+      "ambient_pressure_pa_assumed": 101325,
+      "enclosure": "Workshop guard enclosure",
+      "gravity_m_s2_assumed": 9.81,
+      "id": "terrestrial",
+      "status": "ASSUMED_UNCALIBRATED",
+      "title": "Terrestrial workshop"
+    },
+    {
+      "ambient_pressure_pa_assumed": 101325,
+      "enclosure": "Atmosphere-controlled (unverified)",
+      "gravity_m_s2_assumed": 9.81,
+      "id": "controlled",
+      "status": "ASSUMED_PURGE_HISTORY_MISSING",
+      "title": "Controlled enclosure"
+    },
+    {
+      "ambient_pressure_pa_assumed": 0,
+      "enclosure": "Sealed remote processing cell",
+      "gravity_m_s2_assumed": 1.62,
+      "id": "in_situ",
+      "status": "ILLUSTRATIVE_NOT_SPACE_QUALIFIED",
+      "title": "In-situ / remote environment"
+    }
+  ],
+  "printer_families": [
+    {
+      "capabilities": [
+        "shells",
+        "fixtures"
+      ],
+      "id": "structural",
+      "limitations": [
+        "no microelectronics qualification"
+      ],
+      "ref": "UTP-PF-STRUCT-001",
+      "title": "Structural deposition",
+      "tool": "Structural head",
+      "view_colour": "#52b2ed"
+    },
+    {
+      "capabilities": [
+        "traces (concept)",
+        "dielectric layers (concept)"
+      ],
+      "id": "functional",
+      "limitations": [
+        "no actual line resolution or dielectric qualification"
+      ],
+      "ref": "UTP-PF-FUNC-001",
+      "title": "Functional deposition",
+      "tool": "Fine-feature head",
+      "view_colour": "#edb878"
+    },
+    {
+      "capabilities": [
+        "reinforcement routes (concept)"
+      ],
+      "id": "fiber",
+      "limitations": [
+        "no fibre path or tension calibration"
+      ],
+      "ref": "UTP-PF-FIBER-001",
+      "title": "Fibre reinforcement",
+      "tool": "Fibre routing head",
+      "view_colour": "#acb7ff"
+    },
+    {
+      "capabilities": [
+        "multi-head sequencing",
+        "external-part insertion"
+      ],
+      "id": "hybrid",
+      "limitations": [
+        "tool-change tolerance not measured"
+      ],
+      "ref": "UTP-PF-HYBRID-001",
+      "title": "Hybrid assembly cell",
+      "tool": "Tool-change carriage",
+      "view_colour": "#83e7ca"
+    },
+    {
+      "capabilities": [
+        "feedstock conditioning (concept)"
+      ],
+      "id": "feedstock",
+      "limitations": [
+        "no validated chemistry or storage constraints"
+      ],
+      "ref": "UTP-PF-FEED-001",
+      "title": "Feedstock preparation",
+      "tool": "Feedstock station",
+      "view_colour": "#ffc68c"
+    },
+    {
+      "capabilities": [
+        "inspection workflow"
+      ],
+      "id": "metrology",
+      "limitations": [
+        "no calibrated hardware available"
+      ],
+      "ref": "UTP-PF-METRO-001",
+      "title": "Measurement and witness",
+      "tool": "Inspection station",
+      "view_colour": "#b9e0ff"
+    },
+    {
+      "capabilities": [
+        "modular remote deployment planning"
+      ],
+      "id": "mobile",
+      "limitations": [
+        "no vacuum, low-g or thermal cycling qualification"
+      ],
+      "ref": "UTP-PF-MOBILE-001",
+      "title": "Mobile / in-situ platform",
+      "tool": "Sealed service head",
+      "view_colour": "#d5adff"
+    }
+  ],
+  "process_state": "NON_ACTUATING_TIMELINE_AND_GEOMETRY_ONLY",
+  "products": [
+    {
+      "bounds_mm": [
+        8,
+        8,
+        5
+      ],
+      "id": "diode",
+      "key": "CGX-PC01-DIODE-DEMO",
+      "parts": [
+        {
+          "colour": "#5294c4",
+          "id": "d-substrate",
+          "kind": "substrate",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "structural",
+          "size": [
+            4,
+            4,
+            2
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Structural substrate",
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "colour": "#dbaf66",
+          "id": "d-dielectric",
+          "kind": "dielectric",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "functional",
+          "size": [
+            4,
+            4,
+            1
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Interlayer",
+          "xyz": [
+            0,
+            0,
+            2
+          ]
+        },
+        {
+          "colour": "#69d7bd",
+          "id": "d-trace",
+          "kind": "trace",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "functional",
+          "size": [
+            4,
+            4,
+            1
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Conductor candidate",
+          "xyz": [
+            0,
+            0,
+            3
+          ]
+        },
+        {
+          "colour": "#c2d1e6",
+          "id": "d-terminal",
+          "kind": "contact",
+          "note": "Contact and real diode junction not fabricated",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            2,
+            2,
+            1
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "External terminal concept",
+          "xyz": [
+            4,
+            1,
+            2
+          ]
+        }
+      ],
+      "readiness": "DIGITAL_ONLY",
+      "steps": [
+        [
+          "prepare",
+          "PREPARE",
+          "structural",
+          "d-substrate"
+        ],
+        [
+          "deposit",
+          "STRUCTURE",
+          "structural",
+          "d-substrate"
+        ],
+        [
+          "layer",
+          "INTERLAYER",
+          "functional",
+          "d-dielectric"
+        ],
+        [
+          "trace",
+          "CONDUCTIVE CANDIDATE",
+          "functional",
+          "d-trace"
+        ],
+        [
+          "insert",
+          "EXTERNAL CONTACT",
+          "hybrid",
+          "d-terminal"
+        ],
+        [
+          "inspect",
+          "WITNESS HOLD",
+          "metrology",
+          null
+        ]
+      ],
+      "subtitle": "Three-region PC01 digital coupon, not a certified PN semiconductor",
+      "title": "Diode / interlayer demonstrator"
+    },
+    {
+      "bounds_mm": [
+        44,
+        32,
+        8
+      ],
+      "id": "board",
+      "key": "CGX-BOARD-ASSEMBLY-DEMO",
+      "parts": [
+        {
+          "colour": "#3f8f87",
+          "id": "b-board",
+          "kind": "substrate",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "structural",
+          "size": [
+            36,
+            24,
+            2
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Board substrate",
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "colour": "#edb878",
+          "id": "b-trace1",
+          "kind": "trace",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "functional",
+          "size": [
+            30,
+            1,
+            0.5
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Signal routing",
+          "xyz": [
+            2,
+            5,
+            2
+          ]
+        },
+        {
+          "colour": "#edb878",
+          "id": "b-trace2",
+          "kind": "trace",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "functional",
+          "size": [
+            28,
+            1,
+            0.5
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Return routing",
+          "xyz": [
+            2,
+            15,
+            2
+          ]
+        },
+        {
+          "colour": "#6fc0e5",
+          "id": "b-diode",
+          "kind": "component",
+          "note": "",
+          "origin": "external",
+          "parent": "diode",
+          "printer_family": "hybrid",
+          "size": [
+            4,
+            4,
+            2
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Diode functional block",
+          "xyz": [
+            5,
+            9,
+            2.5
+          ]
+        },
+        {
+          "colour": "#9aa6c7",
+          "id": "b-chip",
+          "kind": "chip",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            10,
+            10,
+            2.5
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "External IC",
+          "xyz": [
+            18,
+            8,
+            2.5
+          ]
+        },
+        {
+          "colour": "#bcc4d5",
+          "id": "b-connect",
+          "kind": "connector",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            5,
+            9,
+            3
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "External connector",
+          "xyz": [
+            31,
+            6,
+            2
+          ]
+        }
+      ],
+      "readiness": "DIGITAL_ONLY",
+      "steps": [
+        [
+          "prepare",
+          "PREPARE BOARD",
+          "structural",
+          "b-board"
+        ],
+        [
+          "base",
+          "DEPOSIT SUBSTRATE",
+          "structural",
+          "b-board"
+        ],
+        [
+          "route",
+          "ROUTE SIGNALS",
+          "functional",
+          "b-trace1"
+        ],
+        [
+          "return",
+          "ROUTE RETURN",
+          "functional",
+          "b-trace2"
+        ],
+        [
+          "diode",
+          "INSERT DIODE",
+          "hybrid",
+          "b-diode"
+        ],
+        [
+          "ic",
+          "INSERT IC",
+          "hybrid",
+          "b-chip"
+        ],
+        [
+          "conn",
+          "CONNECT",
+          "hybrid",
+          "b-connect"
+        ],
+        [
+          "inspect",
+          "WITNESS HOLD",
+          "metrology",
+          null
+        ]
+      ],
+      "subtitle": "Illustrative PCB assembly with externally supplied semiconductor components",
+      "title": "Board / sensor-module demonstrator"
+    },
+    {
+      "bounds_mm": [
+        90,
+        180,
+        20
+      ],
+      "id": "phone",
+      "key": "CGX-PHONE-SYSTEM-DEMO",
+      "parts": [
+        {
+          "colour": "#5d728e",
+          "id": "p-shell",
+          "kind": "chassis",
+          "note": "",
+          "origin": "digital",
+          "parent": null,
+          "printer_family": "structural",
+          "size": [
+            75,
+            160,
+            4
+          ],
+          "status": "UNQUALIFIED_DIGITAL",
+          "title": "Structural chassis",
+          "xyz": [
+            0,
+            0,
+            0
+          ]
+        },
+        {
+          "colour": "#4eab9b",
+          "id": "p-board",
+          "kind": "module",
+          "note": "",
+          "origin": "hybrid",
+          "parent": "board",
+          "printer_family": "hybrid",
+          "size": [
+            54,
+            72,
+            3
+          ],
+          "status": "UNQUALIFIED_ASSEMBLY",
+          "title": "Board module",
+          "xyz": [
+            10,
+            38,
+            4
+          ]
+        },
+        {
+          "colour": "#a5b8dd",
+          "id": "p-soc",
+          "kind": "chip",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            20,
+            22,
+            3
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Processor / memory",
+          "xyz": [
+            25,
+            54,
+            7
+          ]
+        },
+        {
+          "colour": "#b1c49a",
+          "id": "p-battery",
+          "kind": "battery",
+          "note": "Cell chemistry and battery safety remain completely external",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            56,
+            35,
+            5
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Battery pack",
+          "xyz": [
+            9,
+            114,
+            4
+          ]
+        },
+        {
+          "colour": "#ddad87",
+          "id": "p-rf",
+          "kind": "rf",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            66,
+            15,
+            2
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "RF / antenna assembly",
+          "xyz": [
+            4,
+            12,
+            4
+          ]
+        },
+        {
+          "colour": "#9ec9ec",
+          "id": "p-camera",
+          "kind": "camera",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            12,
+            12,
+            6
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Camera module",
+          "xyz": [
+            55,
+            15,
+            4
+          ]
+        },
+        {
+          "colour": "#578db5",
+          "id": "p-display",
+          "kind": "display",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            69,
+            154,
+            3
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Display assembly",
+          "xyz": [
+            3,
+            3,
+            12
+          ]
+        },
+        {
+          "colour": "#c5dbea",
+          "id": "p-cover",
+          "kind": "cover",
+          "note": "",
+          "origin": "external",
+          "parent": null,
+          "printer_family": "hybrid",
+          "size": [
+            71,
+            156,
+            1
+          ],
+          "status": "SOURCE_REQUIRED",
+          "title": "Protective cover",
+          "xyz": [
+            2,
+            2,
+            16
+          ]
+        }
+      ],
+      "readiness": "ASSEMBLY_CONCEPT_ONLY",
+      "steps": [
+        [
+          "prepare",
+          "PREPARE CELL",
+          "hybrid",
+          null
+        ],
+        [
+          "shell",
+          "PRINT CHASSIS CONCEPT",
+          "structural",
+          "p-shell"
+        ],
+        [
+          "board",
+          "ASSEMBLE BOARD MODULE",
+          "hybrid",
+          "p-board"
+        ],
+        [
+          "soc",
+          "INSERT PROCESSOR",
+          "hybrid",
+          "p-soc"
+        ],
+        [
+          "battery",
+          "INSERT BATTERY",
+          "hybrid",
+          "p-battery"
+        ],
+        [
+          "rf",
+          "INSERT RF/CAMERA",
+          "hybrid",
+          "p-rf"
+        ],
+        [
+          "camera",
+          "INSERT CAMERA",
+          "hybrid",
+          "p-camera"
+        ],
+        [
+          "screen",
+          "FIT DISPLAY",
+          "hybrid",
+          "p-display"
+        ],
+        [
+          "cover",
+          "SEAL COVER",
+          "hybrid",
+          "p-cover"
+        ],
+        [
+          "inspect",
+          "WITNESS HOLD",
+          "metrology",
+          null
+        ]
+      ],
+      "subtitle": "Conceptual enclosure + display + processor + battery + antennas: not a monolithically printed phone",
+      "title": "Phone-scale hybrid assembly"
+    }
+  ],
+  "release_gates": [
+    "design provenance and licensing",
+    "validated CAD units and geometry incidence",
+    "sourced material lots",
+    "bidirectional process compatibility",
+    "calibrated equipment and tool envelopes",
+    "independent C0 machine safety",
+    "controlled terrestrial or in-situ process environment",
+    "physical reference coupons and uncertainty",
+    "functional subsystem metrology",
+    "native parent DBR / release approval"
+  ],
+  "render_model": "RECTANGULAR_CONCEPT_BLOCKS_NOT_SOURCE_CAD",
+  "schema": "CGX-PRINTSPACE-VIRTUAL-FACTORY-CATALOGUE/0.1",
+  "source_refs": {
+    "equations": "cgx/component_atlas/type1_equation_kernel_v0_1.json",
+    "geometry": "cgx.manufacturing.composition",
+    "load": "apps/lightspeed-go/src/cgxLoadLibraryLensPlan.mjs",
+    "manufacturing_ir": "cgx.manufacturing.compiler",
+    "materials": "cgx/manufacturing/printspace_owner_matrix_projection_v0_1.json",
+    "pc01": "cgx/component_atlas/pc01_printceptor_operational_contract_v0_1.json",
+    "raphael": "cgx/component_atlas/component_geometry_atlas_v0_1.json",
+    "simulation": "cgx.manufacturing.cross_domain_emulation"
+  },
+  "status": "SYNTHETIC_DIGITAL_DESIGN_REVIEW_ONLY",
+  "units": "mm"
+}

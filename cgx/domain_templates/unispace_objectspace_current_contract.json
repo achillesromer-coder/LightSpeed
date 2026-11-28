@@ -1,0 +1,871 @@
+{
+  "schema": "cgx.unispace.objectspace.contract/1",
+  "status": "SOURCE_ONLY_REVIEW_NO_NATIVE_ADMISSION",
+  "parent": "cgx:root:cognigrex",
+  "product": "UniSpace",
+  "interface": "GUIOS.CGX.ai",
+  "repositoryCanonicalPath": "cgx/domain_templates/unispace_objectspace_current_contract.json",
+  "changePolicy": {
+    "canonicalPathStable": true,
+    "editInPlace": true,
+    "reasonLogAppendOnly": true,
+    "artifactDigestPerEdit": true,
+    "reviewBranch": "ops/canonical-queue-index-20261115",
+    "noDuplicateRoot": true
+  },
+  "compatibility": {
+    "reused": [
+      "LOAD.Lite",
+      "LOAD/Alexandria",
+      "FileSpace R0-R3",
+      "DataSpace authenticated exchange",
+      "Frontier Overlay Resolve",
+      "CCC rights and capability index",
+      "GUIOS CGX.ai",
+      "CGX object/3D renderer adapters",
+      "LightSpeed generated interface compiler",
+      "LightSpeed spatial homebase",
+      "fiction/empirical semantic mirror",
+      "RomerGrex solar and interplanetary workbench"
+    ],
+    "noImpliedDeployment": true,
+    "loadReuseEvidence": {
+      "sourceReviewPR": 205,
+      "sourceHead": "e5d78107c04a2e396f6bd3aaa5ab9592a6ce7796",
+      "targetHeadBefore": "b20b4144474dbb54c1be807205f54526431fff0f",
+      "identicalBlobs": {
+        "cgx/load_minimum/loadSemanticViewport.mjs": "600dd07416dc66586ad1bb35b253e14a34df9962",
+        "cgx/load_minimum/loadFractalReference.mjs": "0ad1e92afba9dfb20bb9b9b030527f4069bce7ac",
+        "cgx/load_minimum/cgxLoadFeaturePlanner.mjs": "58392a9662be2a0dd4b790eed9a737feff9738c6"
+      },
+      "action": "Reuse identical existing modules; no duplicate implementation; remaining PR delta not certified equivalent."
+    }
+  },
+  "objectContract": {
+    "independentAxes": {
+      "source": [
+        "unresolved",
+        "reference_only",
+        "captured_local",
+        "independently_qualified"
+      ],
+      "hydration": [
+        "H0",
+        "H1",
+        "H2",
+        "H3"
+      ],
+      "geometry": [
+        "none",
+        "illustrative",
+        "source_bound",
+        "verified"
+      ],
+      "completeness": [
+        "missing",
+        "partial",
+        "full"
+      ],
+      "access": [
+        "view",
+        "inspect",
+        "pass",
+        "comment",
+        "edit",
+        "derive",
+        "build",
+        "share",
+        "publish",
+        "mint",
+        "execute"
+      ],
+      "epistemic": [
+        "empirical",
+        "inferred",
+        "simulated",
+        "fictional",
+        "hybrid"
+      ]
+    },
+    "derivative": {
+      "newLocalId": true,
+      "originalUntouched": true,
+      "creativeHistorySticky": true,
+      "sourceReferencesRetained": true,
+      "ownerPrivateUntilApproved": true
+    },
+    "unavailableAssets": {
+      "previewWithoutByteTransfer": true,
+      "frontierDistinctIdentity": true,
+      "cannotBuildWithoutLicence": true
+    },
+    "assemblies": {
+      "componentRightsIndependent": true,
+      "partialSupported": true,
+      "assemblyMintOptional": true
+    },
+    "dynamicUI": {
+      "controlsFromObjectAndEntitlement": true,
+      "firstPersonSpaceAndContext": true,
+      "presentationNotSourceAuthority": true
+    },
+    "provenance": {
+      "contributionModes": [
+        "manual",
+        "AI-assisted",
+        "AI-generated",
+        "render-only",
+        "external-reference"
+      ],
+      "aiContributionPercentageInvented": false
+    },
+    "nativeAdmission": false,
+    "nestedFacetBridge": {
+      "status": "SOURCE_REVIEW_CANDIDATE",
+      "schema": "CGX-LOAD-R0-NESTED-FACET-PLAN/0.1",
+      "module": "cgx/load_minimum/loadFractalReference.mjs#planR0NestedFacets",
+      "priorReferenceBlob": "0ad1e92afba9dfb20bb9b9b030527f4069bce7ac",
+      "model": "Existing R0 tuple identities and typed occurrence edges; shared child references, acyclic full supplied closure",
+      "human": "Nested top-down disclosure; repeated child is reference",
+      "machine": "Dependency-first unique candidates; exact R0 tuples at H2",
+      "fileSpace": "Original R0 custody unchanged",
+      "dataSpace": "Reference plan only; no transport",
+      "loadLite": "Existing root-only planR0ReferenceHydration remains bootstrap",
+      "adapter": "Existing operator_ref/operator_version; optional EVM ABI reference binding with matching R0 digest, chain, address, selector and runtime code hash claim",
+      "limits": {
+        "maxNodes": 256,
+        "maxDepth": 32,
+        "maxMetadataBytes": 1048576,
+        "publicLevel": 0
+      },
+      "sourceHydration": false,
+      "sourceDigestIndependentVerification": false,
+      "nativeAdmission": false,
+      "chainExecution": false,
+      "transactionConstruction": false,
+      "sourceCompression": false,
+      "geometryProof": false,
+      "semanticDeduplication": false,
+      "release": false
+    },
+    "contractShorthand": {
+      "schema": "CGX-COMMITMENT-SHORTHAND/1",
+      "status": "SOURCE_REVIEW_CANDIDATE",
+      "library": "cgx/load_minimum/contractShorthand.mjs",
+      "entrypoints": [
+        "packContract",
+        "unpackContract",
+        "projectContract",
+        "prepareContractSignature",
+        "verifyContractSignature",
+        "indexContractComposition",
+        "contractPayloadDigest",
+        "verifyContractLineage",
+        "prepareEip712Commitment",
+        "bindNativeSignaturePayload",
+        "commitmentReviewEventDigest",
+        "reviewCommitmentJournal",
+        "prepareReviewEvidence",
+        "verifyReviewEvidence",
+        "prepareReviewStatusStatement",
+        "reviewStatusStatementDigest",
+        "reviewEvidenceAuthority"
+      ],
+      "primitives": [
+        "oblige",
+        "permit",
+        "prohibit",
+        "declare"
+      ],
+      "configurationPolicy": "Composable suggested classes, not exhaustive legal taxonomy; no inferred clauses or consent",
+      "geometry": "Symbolic ternary constituent paths, revision-local; stable IDs retained; not T173 physical shape claims",
+      "source": "Exact original source and residual refs preserved; reversible declared metadata only",
+      "signing": "Unsigned domain-separated CGX byte intent; external signature profiles held for native payload adapter",
+      "nestedBinding": "cgx-commitments/1 under existing planR0NestedFacets contract facet",
+      "compatibility": {
+        "executionLease": {
+          "path": "cgx/domain_templates/execution_lease_contract.json",
+          "gitBlob": "637de5a3b904b5df0e865dd8f9477b3e7750c3d7"
+        },
+        "nodeExchange": {
+          "path": "cgx/domain_templates/node_exchange_contract.json",
+          "gitBlob": "5ac9dee791cc6d653007360dee49d40c57e6ccab"
+        },
+        "sourceEnvelope": {
+          "path": "cgx/domain_templates/source_envelope_contract.json",
+          "gitBlob": "0839fb67855c434892c509c4c9dfb812b79328a4"
+        },
+        "evm": "Existing smart_contract facet unchanged"
+      },
+      "signatureVerified": false,
+      "legalValidityVerified": false,
+      "leaseIssued": false,
+      "executionAuthorized": false,
+      "nativeAdmission": false,
+      "signingVerification": "WebCrypto Ed25519 exact recomputed CGX preimage, caller-supplied raw public key; mathematical validity only; external profiles held",
+      "signingFixture": "Ephemeral Node-generated keypair regression; no owner keys or signatures",
+      "compositionIndex": {
+        "mask": "four primitive presence bits, 15 nonempty patterns; three symbolic trits",
+        "equivalence": false,
+        "classification": "candidate configuration suggestions only"
+      },
+      "revisionChain": {
+        "digest": "SHA256_UTF8_JSON_EXACT_CGX_TUPLE_V1",
+        "scope": "supplied contiguous history only",
+        "authority": false
+      },
+      "externalSignatureBridge": {
+        "profiles": [
+          "external-eip712",
+          "external-jws",
+          "external-cose",
+          "external-pades",
+          "external-cades",
+          "external-jades",
+          "external-provider"
+        ],
+        "eip712": "unsigned CGX-specific typed data; explicit chainId/verifyingContract; not existing contract compatibility or transaction",
+        "payload": "exact supplied byte hash and intent hash binding, not native semantics/signature proof",
+        "nativeVerification": false,
+        "replayProtection": false,
+        "execution": false
+      },
+      "priorQualifiedCommit": "c117a69e1079cb49b52142e747b4a7d4d1da644c",
+      "lifecycleReview": {
+        "schema": "CGX-COMMITMENT-REVIEW-JOURNAL/1",
+        "eventSchema": "CGX-COMMITMENT-REVIEW-EVENT/1",
+        "model": "Separate exact-revision hash-linked report/dispute/reopen journal, no mutation of signed tuple",
+        "conditions": "Explicit typed observed values only, exact decimal/integer comparison, no default from declared variables",
+        "dependencies": "Bottom-up recomputation; dispute and reopen invalidate downstream readiness",
+        "authority": "Reported criteria only; no fact, consent, legal fulfilment, clock, signer or global history proof",
+        "effects": false
+      },
+      "evidenceProof": {
+        "schema": "CGX-COMMITMENT-EVIDENCE-INTENT/1",
+        "check": "CGX-COMMITMENT-EVIDENCE-CHECK/1",
+        "binding": "Exact revision, event digest, reporter and declared identity, ordered evidence refs and computed byte hashes, key/challenge/context/time window",
+        "crypto": "Ed25519 mathematical verification only with caller-supplied key",
+        "limits": {
+          "members": 32,
+          "memberBytes": 1048576,
+          "totalBytes": 4194304,
+          "windowHours": 24
+        },
+        "replay": "Supplied challenge list and clock screening only; no trusted nonce store or consumption",
+        "custodyVerified": false,
+        "truthVerified": false,
+        "identityVerified": false,
+        "revocationVerified": false,
+        "execution": false
+      },
+      "statusStatementReview": {
+        "schema": "CGX-COMMITMENT-REVIEW-STATUS/1",
+        "check": "CGX-COMMITMENT-AUTHORITY-REVIEW/1",
+        "binding": "Exact evidence intent, revision, reporter, key, challenge, signed status, authority and lease references; caller-pinned issuer key, statement digest and minimum sequence",
+        "freshnessMinutes": 15,
+        "independentIssuerTrust": false,
+        "currentRevocationVerified": false,
+        "durableNonceConsumption": false,
+        "execution": false,
+        "existingAuthorityContracts": [
+          "cgx/domain_templates/execution_lease_contract.json",
+          "cgx/domain_templates/node_exchange_contract.json",
+          "cgx/domain_templates/root_authority_decision_receipt_2026-10-01.json"
+        ]
+      },
+      "challengeStorage": {
+        "status": "SOURCE_REVIEW_CANDIDATE_NOT_WIRED",
+        "store": "desktop/LightSpeed_Runtime/lightspeed_runtime/operational_store.py",
+        "method": "_record_commitment_challenge_claim",
+        "eventKind": "commitment_challenge_claim",
+        "schema": "CGX-COMMITMENT-CHALLENGE-CLAIM/1",
+        "key": "SHA256(domain prefix + decoded challenge); global within one store across all scopes",
+        "storage": "Existing operational_events, BEGIN IMMEDIATE; first insert only, immutable identical retry, conflict on changed scope",
+        "authority": "Requires independently authenticated native dispatcher; no public binding, no trusted lease, issuer, clock or revocation proof",
+        "distributedReplayVerified": false,
+        "executionAuthorized": false
+      }
+    }
+  },
+  "portability": {
+    "classicBytePreservingCompanion": true,
+    "readerWriterDeclensions": [
+      ".cgx.html",
+      ".html.cgx",
+      ".cgx.ai",
+      ".ai.cgx",
+      ".cgx.pdf",
+      ".pdf.cgx",
+      ".cgx.minecraft"
+    ],
+    "suffixDoesNotProveConversion": true,
+    "portableSnapshot": {
+      "privateStateSensitive": true,
+      "renderAndComputeState": true,
+      "sourceReferences": true,
+      "integrityDigestOnly": true
+    }
+  },
+  "crossGrex": {
+    "romerSolar": "existing separate simulation/workbench source; integrate by verified source reference, not rewrite",
+    "solarScientificStatus": "simulate/reference unless independent physical evidence validates",
+    "AI": "three independently configurable model instances; native distributed model backends unverified",
+    "externalGames": "unaffiliated portal link unless licensed official adapter",
+    "solarEventEngine": {
+      "path": "cgx/domain_templates/unispace_solar_event_engine.mjs",
+      "blob": "d42ba450490152388b328e59648b8ea2e0fd28fc",
+      "reviewCommit": "1a32c511177cd32328ca1b39ebaeadb82f27c8f5",
+      "admission": "SOURCE_ONLY_REVIEW",
+      "functions": [
+        "photon",
+        "passage",
+        "fluxScenario",
+        "refine",
+        "selfTest"
+      ],
+      "testEvidence": {
+        "passed": 17,
+        "total": 17,
+        "environment": "isolated JavaScript execution before commit; browser/native not verified"
+      },
+      "frame": "synthetic-heliocentric-ecliptic-inertial",
+      "epistemic": "simulated",
+      "source": "captured_local",
+      "hydration": "H0",
+      "geometry": "illustrative",
+      "completeness": "partial",
+      "access": [
+        "view",
+        "inspect",
+        "derive"
+      ],
+      "plasmaValidity": "launch shell to conservative 80 AU cutoff; no forecast or inferred plasma flux",
+      "outerSolarSystem": "vacuum photon and gravity reference only; no CME extrapolation to Oort cloud",
+      "next": [
+        "transform DONKI frame using epoch ephemerides",
+        "validate with NOAA and spacecraft observations",
+        "replace circular phase with SPICE",
+        "integrate existing GUIOS object action adapter and isolated snapshots",
+        "native authority and rights gates remain held"
+      ]
+    },
+    "scientificAdmission": {
+      "status": "SOURCE_REVIEW_CONTRACT_NOT_RUNTIME_ENFORCEMENT",
+      "existingRoot": "cgx:root:cognigrex",
+      "gateRegister": {
+        "path": "cgx/review/unispace_crossspace_gate_register_v0_1.json",
+        "blob": "ba58ef20210ac5338fda786f60592ccc7b22b9f7",
+        "printspaceGateIds": [
+          "PHYS-01",
+          "PHYS-02",
+          "PHYS-03",
+          "PHYS-04",
+          "PHYS-05"
+        ]
+      },
+      "classification": {
+        "visualPreset": "VISUAL_PRESET_ONLY",
+        "synthetic": "simulated",
+        "deduction": "inferred",
+        "hypothesis": "inferred",
+        "fiction": "fictional",
+        "measurement": "empirical"
+      },
+      "measurementRequirements": [
+        "source occurrence and rights",
+        "method and instrument or dataset",
+        "units and coordinate frame where applicable",
+        "timestamp or epoch",
+        "uncertainty and calibration or stated limitations",
+        "independent validation for physical claims"
+      ],
+      "geometryRequirements": [
+        "original coordinates and incidence",
+        "units and coordinate frame",
+        "mesh topology and dimensional checks",
+        "independent geometry verification",
+        "separate render provenance"
+      ],
+      "codec": {
+        "t173": "CANDIDATE_REVERSIBLE_CODEC_NOT_PHYSICS_PROOF",
+        "t174": "RESERVED_NONMINTABLE",
+        "binaryFallback": true
+      },
+      "physicalQualification": {
+        "meshPassIsNotMachineAuthority": true,
+        "simulationPassIsNotMeasurement": true,
+        "visualPresetIsNotMeteorology": true,
+        "materialDirectionRequiresIndependentCoupons": true,
+        "environmentalScaleTransferRequiresIndependentEvidence": true,
+        "physicalActuationAuthorised": false
+      },
+      "sourceOccurrenceAclRequired": true,
+      "gateClosureClaimed": false,
+      "nativeAdmission": false
+    },
+    "printspaceR0Convergence": {
+      "status": "SELECTIVE_SOURCE_INTEGRATION_CANDIDATE",
+      "sourcePR": 236,
+      "sourceCommit": "fa2cac69b6ff0fbafee9c26fc08dd62fa07930a1",
+      "sourceBlobs": {
+        "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.mjs": "3e685b4e0c548ac7fabfa292ab7ac7b67ac9bd47",
+        "apps/lightspeed-go/src/printspaceCgxHostR0Bridge.test.mjs": "322b463ffc8a91b4e396c97a15e710844e2cb4ec",
+        "apps/lightspeed-go/src/printspaceR0SignedEvidence.mjs": "511837d780a7080e5050eac239f5d7ee8be924b5",
+        "apps/lightspeed-go/src/printspaceR0SignedEvidence.test.mjs": "aaa5ea654f554a4838750738a42784ce91d77f2c",
+        "apps/lightspeed-go/src/printspaceR0BatchSweep.mjs": "4d8241853c2ff67f0ff7657c48f2c8ec279f7e3a",
+        "apps/lightspeed-go/src/printspaceR0BatchSweep.test.mjs": "fd5f19255a6c4c2e716cdf11e6ea8df1f4517c0d",
+        "cgx/manufacturing/printspace_cgx.py": "d68045dc73201aa7b7021f7ba80657228537979c",
+        "cgx/manufacturing/printspace_host_preflight.py": "42a11d2dc33c6d2e7ddf7d3a952363659aa35f3e",
+        "cgx/manufacturing/virtual_factory.py": "2618d22d86ebe1393c3dafbcb2b4bc33217569fd",
+        "cgx/manufacturing/printspace_virtual_factory_catalog_v0_1.json": "bde15eed2be9421f575f1e143b1d142a876c7617",
+        "cgx/manufacturing/printspace_host_r0_review_v0_1.json": "3c49ca265eb53f891df5f9547daff19810e1abdc",
+        "tests/test_printspace_virtual_factory.py": "6fca0102ceeb3805a5ab67ff6fc2c231eed8451b",
+        "tests/test_printspace_host_preflight.py": "a31dea91708d742a6a1f46a006e9ed787ff3db0c"
+      },
+      "existingHostGateBlob": "188876828bef557ca1f50f618f8a418b049262a9",
+      "existingLoadPlanBlob": "ca7d935d03f2408694aaad9eee0bd2111b5b46a7",
+      "scope": "Existing virtual factory catalogue and R0 host preflight, Node-only host/LOAD review bridge, three-role signature and bounded batch review. No new runtime or datastore.",
+      "exclusions": "Existing historical archive pins unchanged; standalone SQLite reference ledger and atomic adapter not folded pending shared OperationalStore reconciliation. No physical gate closure, machine control, native admission, independent issuer authentication, source hydration or public release.",
+      "sourceHydration": false,
+      "nativeAdmission": false,
+      "physicalQualification": false,
+      "execution": false,
+      "publicRelease": false
+    }
+  },
+  "release": {
+    "sourceRightsVerified": false,
+    "issuerAuthenticated": false,
+    "signedDBR": false,
+    "independentTwoNodeReadback": false,
+    "publicBundlePrivacyApproved": false,
+    "ownerPublicLaunchApproved": false,
+    "nativeMint": false,
+    "siteDeployment": false
+  },
+  "safety": {
+    "noPrivateSourceBytesIncluded": true,
+    "noCredentialsIncluded": true,
+    "noAuthorityInheritedFromSharedRoot": true,
+    "noUnconsentedDataExport": true
+  },
+  "productIdentity": {
+    "product": "UniSpace",
+    "product_id": "cgx:product:unispace",
+    "product_type": "GUIOS",
+    "product_type_expansion": "Generated Universatile Intelligent Operating System",
+    "canonical_parent": "cgx:root:cognigrex",
+    "UI_is_not_separate_product": true
+  },
+  "currentSourcePolicy": {
+    "editable_source_path": "cgx/domain_templates/unispace_objectspace_current_contract.json",
+    "private_worktree": "/CGX/Convergence/Current/",
+    "no_parallel_ui_product": true,
+    "commit_reasons_must_be_retained": true,
+    "public_immutable_credentials_included": false
+  },
+  "acceptanceSeparation": {
+    "offline_experience": "LOCAL_TEST_ONLY",
+    "three_model_slots": "DISTINCT_CONFIG_SHARED_SYMBOLIC_ENGINE",
+    "neural_model_training": "NOT_VERIFIED",
+    "native_LOAD_Lite": "HOLD",
+    "original_R0_and_rights": "HOLD",
+    "independent_native_DBR": "HOLD",
+    "CCC_contract_enforcement": "HOLD",
+    "public_bundle_privacy": "HOLD",
+    "public_release": "HOLD",
+    "achillesNativeAgent": "HOLD_CURRENT_HOST_AND_SIGNED_AUTHORITY",
+    "nativeAgentConvergence": "Reuse existing runtime entrypoint and operator; reconcile persistence-family source review against current ABI before installation; no second supervisor."
+  },
+  "releasePhases": [
+    "private-local-demonstration",
+    "independent-source-carrier-and-peer-pilot",
+    "public-safe-verified-preview",
+    "signed-authority-approved-native-operation"
+  ],
+  "signoff": {
+    "review_contract_only": true,
+    "mint": false,
+    "signedDBR": false,
+    "deploy": false,
+    "owner_release_approved": false
+  },
+  "executionPolicy": {
+    "status": "REVIEW_POLICY_NOT_RUNTIME_ENFORCEMENT",
+    "updated": "2026-11-28",
+    "normalRdcRemainingFloorPct": 16,
+    "emergencyRdcRemainingFloorPct": 15,
+    "emergencyUse": "Explicit independently justified emergency only; no normal work consumes reserve; stop at 15",
+    "quotaCheck": "Fresh provider quota before any bounded batch; reserve worst-case calls, conservative rounding and concurrent lane headroom; unknown means stop RDC",
+    "routing": [
+      "verified existing native/hosted execution where scope and leases permit",
+      "direct Git or existing service connector",
+      "bounded RDC only for genuinely host-only operations"
+    ],
+    "batch": {
+      "strategy": "dependency-ordered dynamic batches on existing execution routes",
+      "preflight": [
+        "exact current object/digest",
+        "scope and authority",
+        "dependency closure",
+        "resource headroom",
+        "concurrency and dirty-state check"
+      ],
+      "execution": [
+        "idempotent operations",
+        "bounded call budget",
+        "fail closed at first violated gate",
+        "retain per-operation result and reason"
+      ],
+      "reconciliation": [
+        "read back exact result",
+        "regress changed dependencies",
+        "fold only independently qualified changes",
+        "append reason and receipt to existing log"
+      ]
+    },
+    "currentWorktree": {
+      "policy": "edit existing path in place, no parallel product, root, store, scheduler, deployment or mint",
+      "disposition": "REQUIRE_PRIVATE_DIRTY_CHECKOUT_RECONCILIATION_BEFORE_PULL_RESET_OR_OVERWRITE",
+      "observation": "Private host details retained only in owner-controlled handoff; no source admission inferred."
+    },
+    "coordinatorPolicy": "Reuse five existing hourly lanes. No additional scheduler. Never infer execution or native admission from a handoff or source commit.",
+    "hostPolicy": "No restart unless owner is in standby; preserve existing stop markers, local agents, hardlinks and junctions.",
+    "nativeAuthority": "Unchanged; verified host ACL, signed lease, canonical DBR and independent peer readback required.",
+    "previewPlanner": {
+      "module": "CGX_Product_Contract.js",
+      "function": "planBatch",
+      "scope": "PRIVATE_CURRENT_REVIEW_ONLY",
+      "checks": 12,
+      "status": "LOCAL_TESTED_NOT_NATIVE_ENFORCEMENT",
+      "rules": [
+        "deterministic dependency ordering",
+        "same-revision receipt deduplication",
+        "missing or cyclic dependency hold",
+        "source qualification hold",
+        "fresh quota and conservative rounding",
+        "concurrent call reserve",
+        "20 percent RAM floor for RDC",
+        "dirty checkout and host-only gates",
+        "native route always held"
+      ],
+      "dispatchPerformed": false,
+      "executionAuthorized": false,
+      "receiptBinding": {
+        "status": "PRIVATE_CURRENT_TESTED_NO_NATIVE_ENFORCEMENT",
+        "version": 2,
+        "moduleSha256": "84d23f5af914b8f16326cb3fa20362bb0aecb963581dbc7dc1f932e427e49864",
+        "previousModuleSha256": "674c77c8420b33c57d8f9495c446956bc076edc29abbb13c9b4868ecae515b83",
+        "reuseRequires": [
+          "current source qualification",
+          "exact source and evidence digests",
+          "same review route",
+          "matching complete dependency receipt bindings",
+          "dependency order and current cycle checks"
+        ],
+        "externalDependencies": "Explicit pins and supplied complete acyclic receipt closure; in-plan dependencies cannot be concealed by external receipts.",
+        "legacyReceipts": "Preserve as history; re-review rather than reuse.",
+        "checks": {
+          "additional": 17,
+          "productTotal": 42,
+          "rebuildScenarios": 7,
+          "sharedWorld": 31,
+          "browserProduct": true,
+          "browserSharedWorldViewports": [
+            1440,
+            390
+          ]
+        },
+        "receiptTrust": "Caller-supplied metadata only; no cryptographic verification, native authority or dispatch."
+      },
+      "budgetRevision": {
+        "moduleSha256": "cbaadda21d410a3e95af21918f03476cc318607f119aaf7a0cf82cb1233b1fc2",
+        "previousModuleSha256": "84d23f5af914b8f16326cb3fa20362bb0aecb963581dbc7dc1f932e427e49864",
+        "policy": [
+          16,
+          15
+        ],
+        "freeRamFloorPct": 20,
+        "productChecks": 44,
+        "sharedWorldAssertions": 46,
+        "rebuildScenarios": 7,
+        "status": "PRIVATE_REVIEW_CANDIDATE_TESTED_PENDING_PACKAGE_READBACK",
+        "nativeEnforcement": false
+      }
+    },
+    "historicalReviewCompatibility": {
+      "status": "SOURCE_REVIEW_POLICY_ONLY",
+      "effectivePolicyRef": "#/executionPolicy",
+      "historicalReviewRef": {
+        "pr": 236,
+        "commit": "399b0c8721225bc82c0fa275d46e3b175fd5b9eb",
+        "register": "cgx/manufacturing/printspace_product_handoff_v0_1.json",
+        "registerBlob": "060ec29e90913dc593f2498c3319d3725ca07792",
+        "archiveRegister": "cgx/manufacturing/printspace_pre_dbr_archive_register_v0_1.json",
+        "archiveRegisterBlob": "20e2a5267feb4199ce274ed0fca1d50fbb368c24",
+        "normalRdcRemainingFloorPct": 25,
+        "emergencyRdcRemainingFloorPct": 24
+      },
+      "precedence": "Historical validators attest the recorded checkpoint only; current execution must use the canonical executionPolicy floors. Historical PASS cannot grant a lease or dispatch.",
+      "preserveHistoricalBytes": true,
+      "requireFreshQuota": true,
+      "unknownQuota": "HOLD",
+      "normalEmergencySeparation": true,
+      "nativeEnforcementVerified": false
+    },
+    "priorBudgetPolicy": {
+      "updated": "2026-11-25",
+      "normalRdcRemainingFloorPct": 21,
+      "emergencyRdcRemainingFloorPct": 20,
+      "sourceCommit": "c8b5e13528e68973d99035094dd981bfe927629f"
+    }
+  },
+  "mobileRouting": {
+    "status": "SOURCE_ONLY_REVIEW",
+    "module": "cgx/domain_templates/unispace_mobile_routes.cjs",
+    "blob": "786804431d6a66e32d3ed320cb12729462eed8aa",
+    "reviewCommit": "47e4f43186b8f4556d9164688e3ff343ec41bf5a",
+    "routes": {
+      "https": 9,
+      "internalCandidates": 12
+    },
+    "icons": "semantic icon keys; native app artwork requires device-side resolution",
+    "selection": "explicit foreground user action; OS app-link or browser fallback; no claim of installed application",
+    "nativeBridge": {
+      "installedAppDiscovery": false,
+      "launchVerified": false,
+      "shareVerified": false,
+      "authority": false
+    },
+    "security": [
+      "fixed HTTPS allowlist",
+      "no arbitrary intent URI",
+      "no automatic launches",
+      "noopener noreferrer",
+      "no private data or credentials in route",
+      "unregistered internal views held"
+    ],
+    "testEvidence": {
+      "assertions": 17,
+      "environment": "isolated Node.js source test; device and UI not tested"
+    },
+    "next": [
+      "bind to existing GUIOS view registry",
+      "qualify user-selected Android package and icon lookup through scoped native host",
+      "verify supported app links, browser fallback, native share and return navigation on owner device",
+      "retain existing authority and release gates"
+    ]
+  },
+  "interactionProjection": {
+    "status": "REVIEW_SOURCE_ONLY",
+    "module": "cgx/load_minimum/unispaceInteractionShell.cjs",
+    "sourceCommit": "1aafd3f544b9f5336d5e4d4273e9c879f048073a",
+    "reuse": "Existing application, toolkit and workspace controls; no competing engine or authority",
+    "verification": {
+      "viewportWidths": [
+        360,
+        390,
+        424,
+        768,
+        1440
+      ],
+      "browserReviewCandidatePassed": true,
+      "nativeDeviceAcceptance": false,
+      "currentPackageIntegration": false
+    },
+    "next": "Reconcile concurrent work, integrate into existing build and repeat complete regression before promotion.",
+    "privateCurrentAcceptance": {
+      "status": "LOCAL_TESTED_PRIVATE_REVIEW",
+      "presentationModule": "CGX_Presentation.js",
+      "viewportChecks": [
+        1440,
+        390
+      ],
+      "sourceInspector": "CGX_File_Resolve.js",
+      "sharedRoot": true,
+      "nativeDeviceBenchmark": false,
+      "publicRelease": false
+    },
+    "sharedWorld": {
+      "status": "PRIVATE_CURRENT_BROWSER_TESTED",
+      "world": "cgx:world:earth",
+      "sourceModule": "CGX_Geo_View.js",
+      "sourceSha256": "2992f4e73750873baa658f6bcebad24c78c9ced3e6a19d27b19e615ace376b6f",
+      "frame": "WGS84",
+      "renderers": [
+        "generalised local map",
+        "generalised local orthographic globe"
+      ],
+      "sharedState": [
+        "focus",
+        "epoch",
+        "zoom",
+        "source occurrences",
+        "epistemic classification"
+      ],
+      "routing": "Contextual user intent and device width/bandwidth; no provider transmission until explicit action.",
+      "providers": {
+        "maps": "documented Maps URL handoff",
+        "earth": "external Earth plus local KML export; no Earth client embed API",
+        "wikipedia": "explicit source search",
+        "commons": "explicit media search"
+      },
+      "testEvidence": {
+        "pureAssertions": 31,
+        "desktopMobileBrowser": true,
+        "rebuildScenarios": 6,
+        "productAssertions": 25,
+        "originalEarthAndECWRecovery": true
+      },
+      "limits": [
+        "No live Maps SDK or Maps Embed credentials tested",
+        "Historical geographic renderers retained as exact-source evidence",
+        "No native admission or inference asserted"
+      ]
+    },
+    "tir173": {
+      "status": "SELECTIVE_SOURCE_INTEGRATION_REVIEW_ONLY",
+      "sourceCommit": "23a43e43f288057376e6de722a78c07001a136a7",
+      "sourcePR": 238,
+      "sourceWorkflowRuns": [
+        {
+          "id": 45967799942,
+          "name": "LS GO Sites Side Edit Validation",
+          "conclusion": "success"
+        },
+        {
+          "id": 45967799938,
+          "name": "TIR173 GUIOS review contract",
+          "conclusion": "success"
+        },
+        {
+          "id": 45967799993,
+          "name": "Merovingian Project Routing",
+          "conclusion": "success"
+        }
+      ],
+      "runtime": "cgx/runtime/tir173",
+      "sourceBlobs": {
+        "cgx/runtime/tir173/tir173_composition.d.mts": "ea508f3c08474946f94e94c329cc54c3dc053b5c",
+        "cgx/runtime/tir173/tir173_composition.mjs": "706cb7faf698fb65819b41f2bc97b4a11e2b7669",
+        "cgx/runtime/tir173/tir173_context.d.mts": "f334b61f3c60cf1e4950227c114d879f9983a787",
+        "cgx/runtime/tir173/tir173_context.mjs": "3e7f283517f94c3f7e31d393791e45c5b1183e5d",
+        "cgx/runtime/tir173/tir173_context.test.mjs": "247431782544f7bd19b684fcaf51b756bacbc0c1",
+        "cgx/runtime/tir173/tir173_core.d.mts": "d4d5f517722d66ec02e71273d38b52055659c5fa",
+        "cgx/runtime/tir173/tir173_core.mjs": "2c6fd62448a906c648f44b2b722ed6089cdf8b53",
+        "cgx/runtime/tir173/tir173_interaction.d.mts": "32ef3572a81d8f946ab0b3d17ecf59b07e608cd9",
+        "cgx/runtime/tir173/tir173_interaction.mjs": "54c81af763078391345e478814db87a8d040cb87",
+        "cgx/runtime/tir173/tir173_interaction.test.mjs": "95adcb3d793d3e9e479a3ab1eea4d99501a92e9e",
+        "cgx/runtime/tir173/tir173_interaction_atlas.test.mjs": "2a32993396c1494c431b3f20abb8cfc598f619b5",
+        "cgx/runtime/tir173/tir173_load_bridge.d.mts": "6daf72b19e93c46d7c82217abe45a63bed06848a",
+        "cgx/runtime/tir173/tir173_load_bridge.mjs": "db29cb4eee55e8fcd31b294a4a6e854575ddaa7f",
+        "cgx/runtime/tir173/tir173_public.test.mjs": "474519c255a51784fed2aae9fea740e0479cc2ea",
+        "docs/agent-ingestion/local-agent-homes/Z+2_Neo/pilots/raphael_temporal/geometry_language/T173_NEO_ROLE_PROJECTION.review.json": "65063103705c9b0332fdc1b2d3d45484acf45e06"
+      },
+      "existingAtlas": {
+        "path": "cgx/component_atlas/component_interaction_map_v0_1.json",
+        "gitBlob": "d0d9ff20d2361201eeb5cbd2f1ad344384b69b44",
+        "reused": true
+      },
+      "resolver": "LOAD.cgx existing review-plan seam",
+      "bootstrap": "LOAD.Lite",
+      "authority": "REVIEW_ONLY",
+      "destinationCombinedCI": {
+        "commit": "88571f44ccea142a4352a30852dc2ac826135bf2",
+        "passed": 11,
+        "runIds": [
+          45969621909,
+          45969621929,
+          45969621930,
+          45969622180,
+          45969621976,
+          45969621908,
+          45969621879,
+          45969621906,
+          45969621984,
+          45969621937,
+          45969621854
+        ]
+      },
+      "nativeAdmission": false,
+      "sourceHydration": false,
+      "geometryProof": false,
+      "modelTraining": false,
+      "executionPerformed": false,
+      "interfaceMount": "SOURCE_MOUNT_CANDIDATE_NOT_BROWSER_ACCEPTED",
+      "currentPackageIntegration": false,
+      "scope": "Five runtime modules, five type declarations, four regression files and existing public-safe role projection. No source main.ts/styles.css replacement or pilot history merge.",
+      "interfaceModule": "apps/lightspeed-go/src/tir173PublicPreview.ts",
+      "mount": "Existing Objects disclosure; lazy dynamic import, no new tab",
+      "sourceByteDigest": "SHA-256 of original UTF-8 role projection",
+      "publicLoadBoundary": "Existing projectUniSpaceLoadLens returns HOLD without exact object context; no fabricated resolver output",
+      "existingInstanceReview": {
+        "status": "SELECTIVE_SOURCE_REVIEW_CANDIDATE",
+        "sourceCommit": "23237775aaa7e521a7861f611f15b2ecbc8e2bc7",
+        "sourceModuleBlob": "dc53bf13df06ee338f8fb9a1aa6823cb4854d1d0",
+        "sourceDeclarationBlob": "a1d45440e6d32b0174091e5f02221ad882140adf",
+        "sourceTestBlob": "f71732847940984c4102699160be0c2e3d78a972",
+        "scope": "Eight unbound original P0-P3 instance envelopes; exact CGA selection; P0 distinct identity mandatory; output fields required. No physical measurement, equivalence, rights, native authority or execution.",
+        "existingSourceBlobs": {
+          "cgx/component_atlas/component_geometry_atlas_v0_1.json": "049b58731afb7633e16e0a36fafa011c77fedd36",
+          "cgx/component_atlas/component_instance_build_packet_contract_v0_1.json": "fe80065938a4fb6bc3a2d35e1feddcdad7577188",
+          "cgx/component_atlas/component_instance_population_v0_1.json": "82b03b2d7d8bc6e3e2203bc929de2b2f737c1e74",
+          "cgx/component_atlas/component_physical_proof_ladder_v0_1.json": "b2d71f0921595dbc8c3e759cefa5100dbcf126a6"
+        },
+        "nativeAdmission": false,
+        "physicalQualification": false,
+        "publicRelease": false
+      }
+    }
+  },
+  "manualIntake": {
+    "status": "PRIVATE_R0_CAPTURE_REVIEW_ONLY",
+    "module": "cgx/load_minimum/manual_intake_review.py",
+    "sourceCommit": "b8e458450ae4b8f50e89646c47e2da255f93f6b3",
+    "carrier": "Existing CGXBYTE17",
+    "separation": [
+      "exact source bytes",
+      "occurrence-specific provenance",
+      "structural data projection",
+      "semantic review candidate"
+    ],
+    "verification": {
+      "independentExactInverseReadback": true,
+      "nativeAdmission": false,
+      "canonicalDataSpaceAdmission": false,
+      "sourceDeletion": false
+    },
+    "retirementGate": [
+      "complete source and occurrence inventory",
+      "rights and ACL qualification",
+      "metadata and alternate-stream preservation where applicable",
+      "canonical data and semantic admission",
+      "independent exact recovery and replay",
+      "no unresolved dependency or concurrent edit"
+    ],
+    "driveOriginals": "READ_ONLY",
+    "next": "Expand qualified parser coverage and bounded intake through existing LOAD; preserve originals until retirement gates pass.",
+    "privateReviewAdapter": {
+      "status": "LOCAL_EXECUTABLE_REVIEW_TESTED_NOT_NATIVE_ADMISSION",
+      "scope": "Owner-controlled existing Current source package",
+      "captureModule": "CGX_File_Intake.py",
+      "presentationModule": "CGX_File_Resolve.js",
+      "sourceRederivation": true,
+      "check": "Recompute bounded inert projection and compare its complete typed summary and all section bytes to the preserved source; reject internally consistent fabricated projections.",
+      "browser": "Digest verification on selected section hydration; browser alone does not certify derivation.",
+      "supportedReview": [
+        "exact source bytes",
+        "inert text",
+        "OOXML worksheet cells and stored formulas",
+        "bounded raster preview"
+      ],
+      "limits": [
+        "No formula evaluation or full workbook semantic interpretation",
+        "No source-rights, provider-native revision or independent native DBR assertion",
+        "No source deletion"
+      ],
+      "nativeAdmission": false,
+      "sourceDeleted": false
+    }
+  }
+}

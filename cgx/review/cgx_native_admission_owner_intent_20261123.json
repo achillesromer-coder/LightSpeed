@@ -1,0 +1,132 @@
+{
+  "schema": "CGX-NATIVE-ADMISSION-OWNER-INTENT/0.1",
+  "root": "cgx:root:cognigrex",
+  "record_date": "2026-11-23",
+  "record_class": "CHAT_RECORDED_OWNER_INTENT_NOT_NATIVE_SIGNED_LEASE",
+  "source_pr": 228,
+  "instructions": {
+    "native_admission": "OWNER_PERMITTED_CONDITIONAL_ON_INDEPENDENT_PEER_AND_ACHILLES_REVIEW",
+    "canonical_writes": "OWNER_PERMITTED_CONDITIONAL_ON_CURRENT_LEASE_SCOPE_RIGHTS_AND_ROLLBACK",
+    "test_chain_deployment": "OWNER_PERMITTED_ONLY_UNDER_EXISTING_SAFE_MAINTENANCE_PROCEDURE",
+    "offchain_dry_run": "APPROVED_FOR_ISOLATED_FIXTURE_AND_VALIDATION",
+    "onchain_mint": "HELD_SEPARATE_ISSUER_SIGNER_DBR_AND_RELEASE_GATE"
+  },
+  "native_authority": {
+    "host_owner_identity_independently_verified": false,
+    "peer_independent_review_verified": false,
+    "achilles_assurance_receipt_verified": false,
+    "native_lease_signature_verified": false,
+    "file_scope_acl_verified": false,
+    "native_dbr_readback_verified": false,
+    "independent_cold_recovery_verified": false,
+    "deployed_runtime_exact_revision_verified": false,
+    "current_native_execution_allowed": false,
+    "current_canonical_write_allowed": false,
+    "current_mint_allowed": false
+  },
+  "observations": {
+    "source_branch": "ops/canonical-queue-index-20261115",
+    "last_known_tested_github_head": "a89debf022198381837d770750df1f711761cb46",
+    "local_head_observed": "07471087911ca540a4e48630f5ed478cb6325633",
+    "local_checkout_dirty_count": 3,
+    "runtime_changed_mappings": 61,
+    "runtime_total_mappings": 757,
+    "live_ports_observed": [
+      4173,
+      4174,
+      8080,
+      8765
+    ],
+    "main_merged": false,
+    "hosted_native_held": true,
+    "hosted_peer_unverified": true,
+    "last_hosted_desktop_report": "2026-10-13T13:10:34.846Z"
+  },
+  "bounded_test_chain": [
+    {
+      "id": "T0",
+      "name": "Local and Git source/dirty inventory",
+      "effect": "READ_ONLY",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T1",
+      "name": "Ephemeral owner-scoped checkpoint and nonce/revoke negative regression",
+      "effect": "ISOLATED_TEST_ONLY",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T2",
+      "name": "Ephemeral FileSpace hash transfer and rollback under allowlisted temp roots",
+      "effect": "ISOLATED_TEST_ONLY",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T3",
+      "name": "Independent Achilles and peer signing/authentication review",
+      "effect": "HOST_REVIEW_REQUIRED",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T4",
+      "name": "Owner standby, clean main, backup/service stop, exact native deployment",
+      "effect": "LIVE_EFFECTFUL_REQUIRES_VERIFIED_GATE",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T5",
+      "name": "Cold readback, owner ACL revocation, signed DBR peer recovery",
+      "effect": "LIVE_EFFECTFUL_REQUIRES_VERIFIED_GATE",
+      "passed_on_current_machine": false
+    },
+    {
+      "id": "T6",
+      "name": "Mint candidate dry-run; separate on-chain acceptance only after signature/rights",
+      "effect": "OFFCHAIN_ONLY",
+      "passed_on_current_machine": false
+    }
+  ],
+  "constraints": [
+    "NO_SELF_SIGNING_AGENT_APPROVAL",
+    "NO_NEW_ROOT_DATABASE_SCHEDULER",
+    "NO_RESTART_WITHOUT_OWNER_STANDBY",
+    "NO_OVERWRITE_DIRTY_LOCAL_SOURCE",
+    "NO_PUBLIC_PRIVATE_ASSET_EXPOSURE",
+    "NO_MINT_BY_SOURCE_OR_CI_PASS"
+  ],
+  "source_state": "OWNER_INTENT_PRESERVED_NATIVE_ACTIONS_HELD_UNTIL_WITNESSED",
+  "owner_intent_addenda": [
+    {
+      "date": "2026-11-28",
+      "class": "CHAT_RECORDED_PERMISSION_NOT_SIGNED_NATIVE_LEASE",
+      "review_source": "e741fa95cdd26cdd9a2992ca59c9a2bf36484bab",
+      "scope": {
+        "native_admission": "PERMITTED_SUBJECT_TO_EXISTING_VERIFICATION_GATES",
+        "test_network_operations": "PERMITTED_SUBJECT_TO_EXISTING_SIGNER_CHAIN_SCOPE_AND_DBR_GATES",
+        "test_deployments": "PERMITTED_SUBJECT_TO_EXACT_SOURCE_ISOLATION_AND_ROLLBACK",
+        "offchain_fixtures": "PERMITTED",
+        "production_mint": "HELD",
+        "public_product_release": "HELD"
+      },
+      "interpretation": "Conservative test-only scope; no inference of production or public release authority from ambiguous wording.",
+      "observations": {
+        "hosted_site_user_authenticated": true,
+        "hosted_native_admitted": false,
+        "hosted_peer_verified": false,
+        "desktop_report_stale": true,
+        "desktop_report_at": "2026-10-13T13:10:34.846Z",
+        "rdc_remaining_rounded_pct": 22,
+        "normal_reserve_pct": 21,
+        "emergency_reserve_pct": 20,
+        "normal_host_work": "HOLD_NO_SAFE_ROUNDED_MARGIN"
+      },
+      "native_signed_lease_verified": false,
+      "issuer_verified": false,
+      "independent_peer_verified": false,
+      "canonical_dbr_verified": false,
+      "chain_transaction_observed": false,
+      "native_admission_performed": false,
+      "production_release_performed": false
+    }
+  ]
+}

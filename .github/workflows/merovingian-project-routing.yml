@@ -236,7 +236,7 @@ jobs:
         id: python_tests
         continue-on-error: true
         run: |
-          set -o pipefail
+          set -euo pipefail
           PYTHONPATH="desktop/LightSpeed_Runtime:desktop/Desktop_Hooks/LightSpeed" \
           python -m pytest -q \
             tests/test_cognigrex_local_stack.py \
@@ -250,6 +250,7 @@ jobs:
             tests/test_achilles_lsgo_recovery_snapshot.py \
             tests/test_achilles_file_space_launch_review_contract.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_launcher_exe.py \
+            desktop/Desktop_Hooks/LightSpeed/tests/test_operational_store.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_functions_hub_operator_surface.py \
             desktop/Desktop_Hooks/LightSpeed/tests/test_operator_home_export_gates.py \
             desktop/LightSpeed_Runtime/tests/test_cognigrex_supervisor.py \
@@ -267,7 +268,25 @@ jobs:
             desktop/LightSpeed_Runtime/tests/test_mark3_multi_unit.py \
             desktop/LightSpeed_Runtime/tests/test_representation_edge.py \
             desktop/LightSpeed_Runtime/tests/test_secure_settings_hub.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_native_checkpoint.py \
+            desktop/LightSpeed_Runtime/tests/test_cgx_persistence_preflight.py \
+            desktop/LightSpeed_Runtime/tests/test_node_exchange.py \
+            tests/test_reconcile_live_runtime.py \
+            tests/test_cgx_native_admission_owner_intent.py \
+            tests/test_cgx_native_test_chain_fixture_progress.py \
             2>&1 | tee python-tests.log
+          # The root tools namespace must not be shadowed by Desktop_Hooks/tools.
+          PYTHONPATH="$GITHUB_WORKSPACE" python -m pytest -q \
+            tests/test_cgx_agent_quadrant_test_mint.py \
+            tests/test_cgx_quadrant_test_mint_activation_handoff.py \
+            tests/test_printspace_virtual_factory.py \
+            tests/test_printspace_host_preflight.py \
+            2>&1 | tee -a python-tests.log
+          # Bounded CI-only fixture deployment; no wallet, live host, model or chain transaction.
+          fixture_out="$RUNNER_TEMP/cgx-quadrant-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          fixture_run="CI-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          python -m tools.cgx_agent_quadrant_test_mint --out "$fixture_out" --run-id "$fixture_run" | tee -a python-tests.log
+          python -m tools.cgx_agent_quadrant_test_mint --out "$fixture_out" --run-id "$fixture_run" --verify-only | tee -a python-tests.log
 
       - name: Set up Node
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6

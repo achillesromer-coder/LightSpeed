@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>FileSpace tutorial · UniSpace</title><link rel="stylesheet" href="unispace.css"></head>
+<body class="filespace"><header><a class="brand" href="index.html">UniSpace</a><nav><a href="#open">Open FileSpace</a></nav></header>
+<main><section id="open"><p class="edition">FileSpace / S91</p><h1>Open FileSpace</h1>
+<details><summary>How to open a carrier</summary>
+<ol><li>Keep <b>CGX.cgx</b> with this tutorial. If you downloaded the kit, extract its folder and open <b>FileSpace.html</b> in a browser.</li>
+<li>Select the carrier below. The reader checks its identity and opens the contents index locally. No account is required.</li>
+<li>Choose a geometric quadrant, then select a file to inspect its cell. Export the original bytes, or export the matching files as a source-linked JSON series.</li></ol></details>
+<label for="carrier">Choose a .cgx carrier</label> <input id="carrier" type="file" accept=".cgx"><p id="handshake" role="status">Waiting for a carrier.</p></section>
+<section id="workspace" hidden><h2>Explore FileSpace</h2><p id="identity"></p>
+<section id="geometry" hidden><h3>Raphael geometry</h3><p>Select a role or enter its five-digit ternary review address. Zero opens the empty state.</p>
+<label>Role <select id="role"></select></label> <label>Ternary address <input id="trits" size="6" maxlength="5" placeholder="00001"></label>
+<button id="resolve-address">Open address</button><p id="geometry-note" role="status"></p>
+<canvas id="mesh-view" width="480" height="280" aria-label="Orthographic wireframe of the selected source mesh" style="width:min(100%,480px);height:auto"></canvas>
+<button id="show-role">Inspect role record</button> <button id="show-mesh">Inspect mesh record</button></section>
+<div id="quadrants" class="sets" aria-label="Geometric quadrants"></div>
+<label>Filter paths <input type="search" id="query" placeholder="e.g. spec/CGX"></label>
+<p id="matches" aria-live="polite"></p><label for="members">Matching files</label>
+<select id="members" size="7" style="display:block;width:100%"></select>
+<p id="coordinate"></p>
+<button id="preview">Preview file</button> <details class="exports"><summary>Export options</summary><button id="export">Export original file</button> <button id="series">Export filtered series</button></details>
+<p id="action" role="status"></p><pre id="excerpt" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:18rem;overflow:auto"></pre></section>
+<footer><p>The reader needs a browser with local file selection, SHA-256 and raw DEFLATE support. Series exports are limited to 64 files and 512 KiB of source bytes. Narrow the filter for larger sets.</p><a href="index.html">Product overview</a></footer>
+</main><script src="filespace.js"></script></body></html>

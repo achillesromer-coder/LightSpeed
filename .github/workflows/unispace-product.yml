@@ -1,9 +1,9 @@
 name: UniSpace product carrier
 on:
   push:
-    paths: ['UniSpace/**', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
+    paths: ['UniSpace/**', 'cgx/domain_templates/unispace_mobile_routes*.cjs', 'cgx/load_minimum/**', 'cgx/load_minimum/cgxLoadFeaturePlanner*.mjs', 'cgx/load_minimum/loadFractalReference*.mjs', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
   pull_request:
-    paths: ['UniSpace/**', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
+    paths: ['UniSpace/**', 'cgx/domain_templates/unispace_mobile_routes*.cjs', 'cgx/load_minimum/**', 'cgx/load_minimum/cgxLoadFeaturePlanner*.mjs', 'cgx/load_minimum/loadFractalReference*.mjs', 'tools/verify_unispace_product.py', 'tests/test_unispace_product.py', '.github/workflows/unispace-product.yml']
 permissions:
   contents: read
 jobs:
@@ -17,3 +17,14 @@ jobs:
           python-version: '3.12'
       - run: python tools/verify_unispace_product.py
       - run: python -m unittest discover -s tests -p test_unispace_product.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify UniSpace mobile route authority and allowlist
+        run: node --test cgx/domain_templates/unispace_mobile_routes.test.cjs
+      - name: Verify LOAD review planner and reversible reference shorthand
+        run: node --test cgx/load_minimum/cgxLoadFeaturePlanner.test.mjs cgx/load_minimum/loadFractalReference.test.mjs
+      - name: Run LOAD private source-only regressions
+        run: node --test cgx/load_minimum/unispaceSourceInspector.test.mjs cgx/load_minimum/unispaceDropPreflight.test.mjs cgx/load_minimum/unispacePrivateCockpitDom.test.mjs
+      - name: Verify lossless manual intake and occurrence isolation
+        run: python -m unittest discover -s cgx/load_minimum -p test_manual_intake_review.py

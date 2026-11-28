@@ -1969,13 +1969,22 @@ def test_node_exchange_status_reads_host_root_registry_without_activating_peer_c
     )
     monkeypatch.setenv("LIGHTSPEED_NODE_ID", "bouwerbase")
     monkeypatch.setenv("LIGHTSPEED_NODE_ROOT_REGISTRY", str(registry))
-    monkeypatch.delenv("LIGHTSPEED_PEER_NODES", raising=False)
+    monkeypatch.setenv("LIGHTSPEED_PEER_NODES", " BOUWERBASE, second-device, second-device ")
     client = TestClient(ls_go_bridge.create_app(tmp_path))
 
     exchange = client.get("/api/v1/status").json()["node_exchange"]
 
     assert exchange["activation"]["host_root_registry_ready"] is True
+    assert exchange["configured_peer_nodes"] == ["second-device"]
+    assert exchange["transport"]["peer_transport_verified"] is False
+    assert exchange["compute"]["peer_nodes"] == []
     assert exchange["activation"]["typed_transfer_queue_ready"] is True
+    read_only = json.loads(registry.read_text(encoding="utf-8"))
+    read_only["roots"][0]["access"] = "read"
+    registry.write_text(json.dumps(read_only), encoding="utf-8")
+    read_status = client.get("/api/v1/status").json()["node_exchange"]
+    assert read_status["activation"]["host_root_registry_ready"] is True
+    assert read_status["activation"]["typed_transfer_queue_ready"] is False
     assert exchange["activation"]["peer_compute_queue_ready"] is False
     assert exchange["compute"]["peer_compute_verified"] is False
 

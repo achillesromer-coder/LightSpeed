@@ -1,0 +1,33 @@
+{
+  "schema": "CGX-PRINTSPACE-INTERFACE-WITNESS-PLAN/0.1",
+  "source_scope": "OWNER_MATRIX_PLANNING_CLASS_ONLY",
+  "source_revision": "2026-11-22",
+  "evidence_state": "UNMEASURED",
+  "geometry_composite_hash": "55b8de2df57a8b19ecda4d5ab0ed0619de57789e21e793ea2170a68b00dfb613",
+  "manufacturing_ir_ref": "cgx://manufacturing/build/pc01-three-layer-coupon",
+  "manufacturing_ir_configuration_hash": null,
+  "owner_projection_sha256": "28a30a888c5391cb4e7ec21f4d757b1bb869bb253e127cd360be9e613880cc68",
+  "region_selections": [
+    {
+      "instance_id": "structure",
+      "material_slot": "structural",
+      "matrix_id": "T1M-0257",
+      "archetype_id": "CGA-M-001",
+      "directional_sha256": "79e1f684061160701bfbef7da797aedba6f05e7317025c35acb6cfb5e45efdc0"
+    },
+    {
+      "instance_id": "interface",
+      "material_slot": "interlayer",
+      "matrix_id": "T1M-0409",
+      "archetype_id": "CGA-DIEL-001",
+      "directional_sha256": "186095ddb9bb75a50104abbe62eaa5f2015e6aecca7c7ef28eb2e958cdab0663"
+    },
+    {
+      "instance_id": "conductive",
+      "material_slot": "conductive",
+      "matrix_id": "T1M-0039",
+      "archetype_id": "CGA-I-001",
+      "directional_sha256": "55ad6b189c9b1c9f562f7ee9402a9b48f4c83ea072787039b46d163dc420bab7"
+    }
+  ]
+}

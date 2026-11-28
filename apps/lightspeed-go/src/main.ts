@@ -26,6 +26,8 @@ import {
   planNodeCompute,
   planNodeTransfer,
   readDesktopStatus,
+  readCgxDynamicSurface,
+  readCgxFamilyTopology,
   readPendingCommands,
   remoteAccessPresentation,
   removePendingCommand,
@@ -47,6 +49,7 @@ import {
   type ReviewRecord,
 } from "./desktopBridge";
 import { escapeHtml, loadNeoExchange, renderExchangePanel } from "./neoExchange";
+import { mountCgxNativeCheckpointUi } from "./cgxNativeCheckpointUi";
 import {
   bindProjectBrowseButtons,
   bindProjectFileOpenButtons,
@@ -101,10 +104,12 @@ app.innerHTML = `
       <button class="tab active" data-view="command">Command</button>
       <button class="tab" data-view="activity">Activity</button>
       <button class="tab" data-view="objects">Objects</button>
+      <button class="tab" data-view="filespace">FileSpace</button>
       <button class="tab" data-view="system">System</button>
       <button class="tab" data-view="sources">Sources</button>
     </nav>
 
+    <section class="view" id="view-filespace"><p role="status" id="filespace-load"></p><iframe id="filespace-reader" title="CGX FileSpace reader" sandbox="allow-scripts allow-downloads" style="width:100%;height:76vh;border:0"></iframe></section>
     <section class="view active" id="view-command">
       <div class="command-layout">
         <article class="panel command-panel">
@@ -192,6 +197,10 @@ app.innerHTML = `
       <div id="object-review-catalogue" class="graph-stack">
         <article class="panel"><p class="muted">Reading the CGX object review catalogue…</p></article>
       </div>
+      <details class="panel" id="tir173-object-inspector">
+        <summary>TIR/173 · contextual geometry and evidence</summary>
+        <div id="tir173-object-mount"><p class="muted">Open to load the existing review-only geometry lens.</p></div>
+      </details>
       <div id="cgx-review-lens" class="graph-stack">
         <article class="panel"><p class="muted">Reading the internal .cgx review projection…</p></article>
       </div>
@@ -210,6 +219,7 @@ app.innerHTML = `
         <p>The system coordinates GO, Desktop, Git, Drive, agents and human oversight while retaining separate authority, resource limits and reviewable receipts.</p>
       </article>
       <div class="agent-grid">${agentRows.map(([name, role]) => `<article class="agent"><strong>${name}</strong><span>${role}</span></article>`).join("")}</div>
+      <article class="panel" id="cgx-capability-surface"><p class="eyebrow">Backend-derived CGX capabilities</p><h2>Owner sign-in required</h2><p class="muted">Route and role metadata are read from the current authenticated Desktop registry, not a separate UI catalogue.</p></article>
       <div class="two-column">
         <article class="panel"><p class="eyebrow">Execution path</p><h2>One project, one receipt chain</h2><div class="flow"><span>UniSpace</span><i>→</i><span>Achilles</span><i>→</i><span>Neo + floor</span><i>→</i><span>Desktop project</span><i>→</i><span>Drive receipt</span><i>→</i><span>GO decision</span></div></article>
         <article class="panel"><p class="eyebrow">Existing twin context</p><h2>Spaceport contract retained</h2><p class="muted">${twinZones.length} zones · ${facilityRecords.length} facility records · ${workbookTabs.length} workbook tabs. The twin remains bounded context, not the command-centre homepage.</p></article>
@@ -351,6 +361,7 @@ byId<HTMLFormElement>("owner-login-form").addEventListener("submit", async (even
   const passwordInput = byId<HTMLInputElement>("owner-password");
   try {
     applyOwnerAuth(await loginDesktopOwner(username, passwordInput.value));
+    if (ownerSessionToken) void refreshDesktop();
   } catch (error) {
     passwordInput.value = "";
     ownerAuthMessage("bad", error instanceof Error ? error.message : "Owner sign-in failed.");
@@ -402,6 +413,7 @@ byId<HTMLButtonElement>("owner-logout").addEventListener("click", async () => {
   byId<HTMLButtonElement>("owner-logout").hidden = true;
   byId("owner-auth-state").textContent = "Signed out";
   ownerAuthMessage("warn", "Owner session cleared from this page.");
+  byId("cgx-capability-surface").textContent = "Owner session cleared; capability projection hidden.";
 });
 
 const setNodePlanResult = (
@@ -855,6 +867,68 @@ const refreshDesktop = async (): Promise<void> => {
       byId<HTMLInputElement>("node-compute-target").value = nodeExchange.node_id;
     }
 
+    const capabilityMount = byId("cgx-capability-surface");
+    if (ownerSessionToken) {
+      const session = ownerSessionToken;
+      try {
+        const surface = await readCgxDynamicSurface(session);
+        if (session === ownerSessionToken) {
+          const roles = surface.roles.map((role) => `<span class="badge">${escapeHtml(role.floor)}</span>`).join(" ");
+          const routes = surface.routes.map((route) =>
+            `<span class="badge" title="${escapeHtml(route.gate)}">${escapeHtml(route.id)} · ${escapeHtml(route.state)}</span>`
+          ).join(" ");
+          capabilityMount.innerHTML = `<p class="eyebrow">Backend-derived CGX capabilities</p><h2>${surface.route_count} scoped routes · review-only</h2><p class="muted">Revision ${escapeHtml(surface.source_view_sha256.slice(0, 12))} · no execution or mint authorization inferred.</p><div class="flow">${roles}</div><details><summary>Registered capability catalogue</summary><div class="flow" style="flex-wrap:wrap">${routes}</div></details>`;
+          mountCgxNativeCheckpointUi(capabilityMount, surface, session, () => session === ownerSessionToken);
+          try {
+            const family = await readCgxFamilyTopology(session);
+            if (session === ownerSessionToken && capabilityMount.isConnected) {
+              const familyPanel = document.createElement("details");
+              const selectorRows = family.selectors.map((entry) =>
+                '<li><strong>' + escapeHtml(entry.selector) + '</strong> · ' +
+                entry.available_routes + ' available / ' + entry.gated_routes +
+                ' gated · native admission pending</li>'
+              ).join("");
+              const contentRows = family.content_groups.map((item) =>
+                '<li><strong>' + escapeHtml(item.display_name) + '</strong> · ' +
+                item.bytes + ' bytes · ' + escapeHtml(item.sha256.slice(0, 12)) +
+                (item.reference_names.length > 1
+                  ? ' · same-byte names: ' + item.reference_names.map(escapeHtml).join(' ≡ ')
+                  : '') +
+                ' · observation only, not native object admission</li>'
+              ).join("");
+              const retainedEmpty = family.retained_empty_carrier_names.length;
+              familyPanel.innerHTML =
+                '<summary>CGX family · ' + family.selector_count + ' registered selectors</summary>' +
+                '<p class="muted">' + family.installed_carrier_count +
+                ' observed .cgx filenames consolidated into ' + family.content_groups.length +
+                ' content groups (' + family.collapsed_alias_card_count +
+                ' duplicate display card(s) suppressed). Identical bytes do not prove semantic identity or native mint.</p>' +
+                '<ul>' + selectorRows + '</ul>' +
+                '<details><summary>One content card per unique hash</summary><ul>' +
+                contentRows + '</ul></details>' +
+                '<p class="muted">Storage namespace ' +
+                (family.storage_root_is_alias ? 'resolves through an existing alias/junction' : 'is a direct root') +
+                '. Zero-byte carrier holds: ' + retainedEmpty +
+                '. Deleted: ' + (family.deletion_performed ? 'yes' : 'no') +
+                '. No carrier aliases are deletion-authorised by this presentation.</p>';
+              capabilityMount.appendChild(familyPanel);
+            }
+          } catch {
+            if (session === ownerSessionToken && capabilityMount.isConnected) {
+              const note = document.createElement("p");
+              note.className = "muted";
+              note.textContent = "Family topology pending deployment or source admission.";
+              capabilityMount.appendChild(note);
+            }
+          }
+        }
+      } catch {
+        capabilityMount.textContent = "CGX capability projection unavailable; registry or owner session held.";
+      }
+    } else {
+      capabilityMount.textContent = "Sign in as owner to hydrate the read-only CGX capability projection.";
+    }
+
     try {
       const tasks = await listDesktopTasks();
       tasksMount.innerHTML = tasks.length ? tasks.map((task) => `<article class="task-card"><div><strong>${escapeHtml(String(task.title || "Untitled task"))}</strong><span>${escapeHtml(String(task.status || "unknown"))} · ${escapeHtml(String(task.priority || "normal"))}</span><small>Task ${escapeHtml(String(task.id || ""))}</small></div></article>`).join("") : `<p class="muted">Desktop queue is clear.</p>`;
@@ -912,6 +986,7 @@ const refreshDesktop = async (): Promise<void> => {
     byId("node-exchange-transfer").textContent = "Desktop bridge is offline.";
     byId("node-exchange-compute").textContent = "Desktop bridge is offline.";
     byId("node-exchange-boundary").textContent = "Start the local Desktop bridge before planning transfer or compute.";
+    byId("cgx-capability-surface").textContent = "Desktop offline; CGX capability projection unavailable.";
     byId("project-count").textContent = "0";
     tasksMount.innerHTML = `<p class="muted">Desktop is offline. Commands can still be saved, copied or downloaded.</p>`;
     byId("desktop-projects").innerHTML = `<p class="muted">Project registry unavailable while Desktop is offline.</p>`;
@@ -983,10 +1058,36 @@ void loadNeoExchange(async () => {
   return response.json();
 }).then((exchange) => { exchangeMount.innerHTML = renderExchangePanel(exchange); });
 
+const tir173Inspector = byId<HTMLDetailsElement>("tir173-object-inspector");
+const tir173Mount = byId("tir173-object-mount");
+tir173Inspector.addEventListener("toggle", () => {
+  if (!tir173Inspector.open || tir173Mount.dataset.state === "loading" || tir173Mount.dataset.state === "ready") return;
+  tir173Mount.dataset.state = "loading";
+  tir173Mount.textContent = "Loading contextual review lens…";
+  void import("./tir173PublicPreview").then(({ mountTir173PublicPreview }) =>
+    mountTir173PublicPreview(tir173Mount)
+  ).then(() => {
+    tir173Mount.dataset.state = "ready";
+  }).catch(() => {
+    tir173Mount.dataset.state = "failed";
+    tir173Mount.textContent = "Review lens unavailable. Close and reopen to retry.";
+  });
+});
+
 const activateView = (view: string): void => {
-  const target = document.querySelector<HTMLButtonElement>(`.tab[data-view="${view}"]`)
-    ? view
-    : "command";
+  const target = Array.from(document.querySelectorAll<HTMLButtonElement>(".tab")).find(
+    button => button.dataset.view === view
+  )?.dataset.view || "command";
+  if (target === "filespace") {
+    const frame = document.querySelector<HTMLIFrameElement>("#filespace-reader")!;
+    if (!frame.srcdoc) {
+      void import("./filespaceReader").then(({ readerDocument }) => {
+        if (!frame.srcdoc) frame.srcdoc = readerDocument();
+      }).catch(() => {
+        document.querySelector("#filespace-load")!.textContent = "The FileSpace reader could not load. Reopen this view to retry.";
+      });
+    }
+  }
   document.querySelectorAll(".tab").forEach((item) => item.classList.remove("active"));
   document.querySelectorAll(".view").forEach((item) => item.classList.remove("active"));
   document.querySelector<HTMLButtonElement>(`.tab[data-view="${target}"]`)?.classList.add("active");

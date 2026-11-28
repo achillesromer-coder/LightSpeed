@@ -1,0 +1,1602 @@
+{
+  "schema": "cgx.neo.t173.reference-review/0.1",
+  "status": "PUBLIC_SAFE_SOURCE_DERIVED_DRY_RUN_ONLY",
+  "date": "2026-11-26",
+  "owner": "Neo within Cognigrex parent; no new authority",
+  "source_class": "PRIVATE_RESEARCH_REVIEW_NOT_REPRODUCED_IN_PUBLIC_GIT",
+  "source_filename": "Owner-private Raphael T173 HTML research source; exact bytes held outside Git",
+  "source_dataset_sha256": null,
+  "source_root_pointer": "Owner-private Library; authorize source hydration through existing FileSpace",
+  "role_count": 173,
+  "mesh_payload_count": 157,
+  "role_excess_over_payload": 16,
+  "nine_documented_conventional_aliases": [
+    "T173:058",
+    "T173:146",
+    "T173:147",
+    "T173:148",
+    "T173:149",
+    "T173:150",
+    "T173:151",
+    "T173:156",
+    "T173:157"
+  ],
+  "seven_proposed_distinctness_workitems": [
+    "T173:131",
+    "T173:132",
+    "T173:133",
+    "T173:134",
+    "T173:135",
+    "T173:136",
+    "T173:137"
+  ],
+  "nonconvex_reference_review_count": 26,
+  "sentinel": "T173:174 RESERVED_NULL_NOT_OBJECT",
+  "authority": {
+    "geometry_proof": false,
+    "model_trained": false,
+    "native_mint": false,
+    "signed_dbr": false,
+    "automatic_exec": false,
+    "public_release": false
+  },
+  "lexicon_version": "cgx.geometry_ternary_language/0.1",
+  "slots": [
+    {
+      "slot": "T173:001",
+      "geometry_role": "RAP-SLOT-001",
+      "mesh_ref": "1",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:002",
+      "geometry_role": "RAP-SLOT-002",
+      "mesh_ref": "2",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:003",
+      "geometry_role": "RAP-SLOT-003",
+      "mesh_ref": "3",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:004",
+      "geometry_role": "RAP-SLOT-004",
+      "mesh_ref": "4",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:005",
+      "geometry_role": "RAP-SLOT-005",
+      "mesh_ref": "5",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:006",
+      "geometry_role": "RAP-SLOT-006",
+      "mesh_ref": "6",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:007",
+      "geometry_role": "RAP-SLOT-007",
+      "mesh_ref": "7",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:008",
+      "geometry_role": "RAP-SLOT-008",
+      "mesh_ref": "8",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:009",
+      "geometry_role": "RAP-SLOT-009",
+      "mesh_ref": "9",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:010",
+      "geometry_role": "RAP-SLOT-010",
+      "mesh_ref": "10",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:011",
+      "geometry_role": "RAP-SLOT-011",
+      "mesh_ref": "11",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:012",
+      "geometry_role": "RAP-SLOT-012",
+      "mesh_ref": "12",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:013",
+      "geometry_role": "RAP-SLOT-013",
+      "mesh_ref": "13",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:014",
+      "geometry_role": "RAP-SLOT-014",
+      "mesh_ref": "58",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:015",
+      "geometry_role": "RAP-SLOT-015",
+      "mesh_ref": "15",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:016",
+      "geometry_role": "RAP-SLOT-016",
+      "mesh_ref": "16",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:017",
+      "geometry_role": "RAP-SLOT-017",
+      "mesh_ref": "17",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:018",
+      "geometry_role": "RAP-SLOT-018",
+      "mesh_ref": "18",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:019",
+      "geometry_role": "RAP-SLOT-019",
+      "mesh_ref": "19",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:020",
+      "geometry_role": "RAP-SLOT-020",
+      "mesh_ref": "20",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:021",
+      "geometry_role": "RAP-SLOT-021",
+      "mesh_ref": "21",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:022",
+      "geometry_role": "RAP-SLOT-022",
+      "mesh_ref": "22",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:023",
+      "geometry_role": "RAP-SLOT-023",
+      "mesh_ref": "23",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:024",
+      "geometry_role": "RAP-SLOT-024",
+      "mesh_ref": "24",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:025",
+      "geometry_role": "RAP-SLOT-025",
+      "mesh_ref": "25",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:026",
+      "geometry_role": "RAP-SLOT-026",
+      "mesh_ref": "26",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:027",
+      "geometry_role": "RAP-SLOT-027",
+      "mesh_ref": "27",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:028",
+      "geometry_role": "RAP-SLOT-028",
+      "mesh_ref": "28",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:029",
+      "geometry_role": "RAP-SLOT-029",
+      "mesh_ref": "29",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:030",
+      "geometry_role": "RAP-SLOT-030",
+      "mesh_ref": "30",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:031",
+      "geometry_role": "RAP-SLOT-031",
+      "mesh_ref": "31",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:032",
+      "geometry_role": "RAP-SLOT-032",
+      "mesh_ref": "32",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:033",
+      "geometry_role": "RAP-SLOT-033",
+      "mesh_ref": "33",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:034",
+      "geometry_role": "RAP-SLOT-034",
+      "mesh_ref": "34",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:035",
+      "geometry_role": "RAP-SLOT-035",
+      "mesh_ref": "35",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:036",
+      "geometry_role": "RAP-SLOT-036",
+      "mesh_ref": "36",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:037",
+      "geometry_role": "RAP-SLOT-037",
+      "mesh_ref": "37",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:038",
+      "geometry_role": "RAP-SLOT-038",
+      "mesh_ref": "38",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:039",
+      "geometry_role": "RAP-SLOT-039",
+      "mesh_ref": "39",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:040",
+      "geometry_role": "RAP-SLOT-040",
+      "mesh_ref": "40",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:041",
+      "geometry_role": "RAP-SLOT-041",
+      "mesh_ref": "41",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:042",
+      "geometry_role": "RAP-SLOT-042",
+      "mesh_ref": "42",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:043",
+      "geometry_role": "RAP-SLOT-043",
+      "mesh_ref": "43",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:044",
+      "geometry_role": "RAP-SLOT-044",
+      "mesh_ref": "44",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:045",
+      "geometry_role": "RAP-SLOT-045",
+      "mesh_ref": "45",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:046",
+      "geometry_role": "RAP-SLOT-046",
+      "mesh_ref": "46",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:047",
+      "geometry_role": "RAP-SLOT-047",
+      "mesh_ref": "47",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:048",
+      "geometry_role": "RAP-SLOT-048",
+      "mesh_ref": "48",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:049",
+      "geometry_role": "RAP-SLOT-049",
+      "mesh_ref": "49",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:050",
+      "geometry_role": "RAP-SLOT-050",
+      "mesh_ref": "50",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:051",
+      "geometry_role": "RAP-SLOT-051",
+      "mesh_ref": "51",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:052",
+      "geometry_role": "RAP-SLOT-052",
+      "mesh_ref": "52",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:053",
+      "geometry_role": "RAP-SLOT-053",
+      "mesh_ref": "53",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:054",
+      "geometry_role": "RAP-SLOT-054",
+      "mesh_ref": "54",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:055",
+      "geometry_role": "RAP-SLOT-055",
+      "mesh_ref": "55",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:056",
+      "geometry_role": "RAP-SLOT-056",
+      "mesh_ref": "56",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:057",
+      "geometry_role": "RAP-SLOT-057",
+      "mesh_ref": "57",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:058",
+      "geometry_role": "RAP-SLOT-058",
+      "mesh_ref": "58",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:059",
+      "geometry_role": "RAP-SLOT-059",
+      "mesh_ref": "59",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:060",
+      "geometry_role": "RAP-SLOT-060",
+      "mesh_ref": "60",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:061",
+      "geometry_role": "RAP-SLOT-061",
+      "mesh_ref": "61",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:062",
+      "geometry_role": "RAP-SLOT-062",
+      "mesh_ref": "62",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:063",
+      "geometry_role": "RAP-SLOT-063",
+      "mesh_ref": "63",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:064",
+      "geometry_role": "RAP-SLOT-064",
+      "mesh_ref": "64",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:065",
+      "geometry_role": "RAP-SLOT-065",
+      "mesh_ref": "65",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:066",
+      "geometry_role": "RAP-SLOT-066",
+      "mesh_ref": "66",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:067",
+      "geometry_role": "RAP-SLOT-067",
+      "mesh_ref": "67",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:068",
+      "geometry_role": "RAP-SLOT-068",
+      "mesh_ref": "68",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:069",
+      "geometry_role": "RAP-SLOT-069",
+      "mesh_ref": "69",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:070",
+      "geometry_role": "RAP-SLOT-070",
+      "mesh_ref": "70",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:071",
+      "geometry_role": "RAP-SLOT-071",
+      "mesh_ref": "71",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:072",
+      "geometry_role": "RAP-SLOT-072",
+      "mesh_ref": "72",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:073",
+      "geometry_role": "RAP-SLOT-073",
+      "mesh_ref": "73",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:074",
+      "geometry_role": "RAP-SLOT-074",
+      "mesh_ref": "74",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:075",
+      "geometry_role": "RAP-SLOT-075",
+      "mesh_ref": "75",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:076",
+      "geometry_role": "RAP-SLOT-076",
+      "mesh_ref": "76",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:077",
+      "geometry_role": "RAP-SLOT-077",
+      "mesh_ref": "77",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:078",
+      "geometry_role": "RAP-SLOT-078",
+      "mesh_ref": "78",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:079",
+      "geometry_role": "RAP-SLOT-079",
+      "mesh_ref": "79",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:080",
+      "geometry_role": "RAP-SLOT-080",
+      "mesh_ref": "80",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:081",
+      "geometry_role": "RAP-SLOT-081",
+      "mesh_ref": "81",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:082",
+      "geometry_role": "RAP-SLOT-082",
+      "mesh_ref": "82",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:083",
+      "geometry_role": "RAP-SLOT-083",
+      "mesh_ref": "83",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:084",
+      "geometry_role": "RAP-SLOT-084",
+      "mesh_ref": "84",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:085",
+      "geometry_role": "RAP-SLOT-085",
+      "mesh_ref": "85",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:086",
+      "geometry_role": "RAP-SLOT-086",
+      "mesh_ref": "86",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:087",
+      "geometry_role": "RAP-SLOT-087",
+      "mesh_ref": "87",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:088",
+      "geometry_role": "RAP-SLOT-088",
+      "mesh_ref": "88",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:089",
+      "geometry_role": "RAP-SLOT-089",
+      "mesh_ref": "89",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:090",
+      "geometry_role": "RAP-SLOT-090",
+      "mesh_ref": "90",
+      "class": "NUMERIC_REFERENCE_CORRECTION_REQUIRES_REVIEW",
+      "qualifier": "REFERENCE_CORRECTION_HOLD",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:091",
+      "geometry_role": "RAP-SLOT-091",
+      "mesh_ref": "91",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:092",
+      "geometry_role": "RAP-SLOT-092",
+      "mesh_ref": "92",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:093",
+      "geometry_role": "RAP-SLOT-093",
+      "mesh_ref": "93",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:094",
+      "geometry_role": "RAP-SLOT-094",
+      "mesh_ref": "94",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:095",
+      "geometry_role": "RAP-SLOT-095",
+      "mesh_ref": "95",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:096",
+      "geometry_role": "RAP-SLOT-096",
+      "mesh_ref": "96",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:097",
+      "geometry_role": "RAP-SLOT-097",
+      "mesh_ref": "97",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:098",
+      "geometry_role": "RAP-SLOT-098",
+      "mesh_ref": "98",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:099",
+      "geometry_role": "RAP-SLOT-099",
+      "mesh_ref": "99",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:100",
+      "geometry_role": "RAP-SLOT-100",
+      "mesh_ref": "100",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:101",
+      "geometry_role": "RAP-SLOT-101",
+      "mesh_ref": "101",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:102",
+      "geometry_role": "RAP-SLOT-102",
+      "mesh_ref": "102",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:103",
+      "geometry_role": "RAP-SLOT-103",
+      "mesh_ref": "103",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:104",
+      "geometry_role": "RAP-SLOT-104",
+      "mesh_ref": "104",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:105",
+      "geometry_role": "RAP-SLOT-105",
+      "mesh_ref": "105",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:106",
+      "geometry_role": "RAP-SLOT-106",
+      "mesh_ref": "106",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:107",      "geometry_role": "RAP-SLOT-107",
+      "mesh_ref": "107",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:108",
+      "geometry_role": "RAP-SLOT-108",
+      "mesh_ref": "108",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:109",
+      "geometry_role": "RAP-SLOT-109",
+      "mesh_ref": "109",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:110",
+      "geometry_role": "RAP-SLOT-110",
+      "mesh_ref": "110",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:111",
+      "geometry_role": "RAP-SLOT-111",
+      "mesh_ref": "111",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:112",
+      "geometry_role": "RAP-SLOT-112",
+      "mesh_ref": "112",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:113",
+      "geometry_role": "RAP-SLOT-113",
+      "mesh_ref": "113",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:114",
+      "geometry_role": "RAP-SLOT-114",
+      "mesh_ref": "114",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:115",
+      "geometry_role": "RAP-SLOT-115",
+      "mesh_ref": "115",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:116",
+      "geometry_role": "RAP-SLOT-116",
+      "mesh_ref": "116",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:117",
+      "geometry_role": "RAP-SLOT-117",
+      "mesh_ref": "117",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:118",
+      "geometry_role": "RAP-SLOT-118",
+      "mesh_ref": "118",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:119",
+      "geometry_role": "RAP-SLOT-119",
+      "mesh_ref": "119",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:120",
+      "geometry_role": "RAP-SLOT-120",
+      "mesh_ref": "120",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:121",
+      "geometry_role": "RAP-SLOT-121",
+      "mesh_ref": "121",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:122",
+      "geometry_role": "RAP-SLOT-122",
+      "mesh_ref": "122",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:123",
+      "geometry_role": "RAP-SLOT-123",
+      "mesh_ref": "123",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:124",
+      "geometry_role": "RAP-SLOT-124",
+      "mesh_ref": "124",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:125",
+      "geometry_role": "RAP-SLOT-125",
+      "mesh_ref": "125",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:126",
+      "geometry_role": "RAP-SLOT-126",
+      "mesh_ref": "126",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:127",
+      "geometry_role": "RAP-SLOT-127",
+      "mesh_ref": "127",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:128",
+      "geometry_role": "RAP-SLOT-128",
+      "mesh_ref": "128",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:129",
+      "geometry_role": "RAP-SLOT-129",
+      "mesh_ref": "129",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:130",
+      "geometry_role": "RAP-SLOT-130",
+      "mesh_ref": "130",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:131",
+      "geometry_role": "RAP-SLOT-131",
+      "mesh_ref": "144",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:132",
+      "geometry_role": "RAP-SLOT-132",
+      "mesh_ref": "144",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:133",
+      "geometry_role": "RAP-SLOT-133",
+      "mesh_ref": "145",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:134",
+      "geometry_role": "RAP-SLOT-134",
+      "mesh_ref": "145",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:135",
+      "geometry_role": "RAP-SLOT-135",
+      "mesh_ref": "116",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:136",
+      "geometry_role": "RAP-SLOT-136",
+      "mesh_ref": "117",
+      "class": "FUNCTIONAL_OVERLAY_NOT_DISTINCT_SOLID",
+      "qualifier": "FUNCTIONAL_OVERLAY_UNPROVEN_SOLID",
+      "face_semantics": "overlay_labels_not_polygon_faces",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:137",
+      "geometry_role": "RAP-SLOT-137",
+      "mesh_ref": "93",
+      "class": "PROVISIONAL_ALIAS_NOT_DISTINCT_SOLID",
+      "qualifier": "PROVISIONAL_GEOMETRY_HOLD",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:138",
+      "geometry_role": "RAP-SLOT-138",
+      "mesh_ref": "138",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:139",
+      "geometry_role": "RAP-SLOT-139",
+      "mesh_ref": "139",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:140",
+      "geometry_role": "RAP-SLOT-140",
+      "mesh_ref": "140",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:141",
+      "geometry_role": "RAP-SLOT-141",
+      "mesh_ref": "141",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:142",
+      "geometry_role": "RAP-SLOT-142",
+      "mesh_ref": "142",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:143",
+      "geometry_role": "RAP-SLOT-143",
+      "mesh_ref": "143",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:144",
+      "geometry_role": "RAP-SLOT-144",
+      "mesh_ref": "144",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:145",
+      "geometry_role": "RAP-SLOT-145",
+      "mesh_ref": "145",
+      "class": "NUMERIC_REFERENCE_WITH_BASIC_LOCAL_TOPOLOGY",
+      "qualifier": "BASIC_STRUCTURE_CHECK_ONLY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:146",
+      "geometry_role": "RAP-SLOT-146",
+      "mesh_ref": "8",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:147",
+      "geometry_role": "RAP-SLOT-147",
+      "mesh_ref": "9",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:148",
+      "geometry_role": "RAP-SLOT-148",
+      "mesh_ref": "10",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:149",
+      "geometry_role": "RAP-SLOT-149",
+      "mesh_ref": "11",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:150",
+      "geometry_role": "RAP-SLOT-150",
+      "mesh_ref": "12",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:151",
+      "geometry_role": "RAP-SLOT-151",
+      "mesh_ref": "13",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:152",
+      "geometry_role": "RAP-SLOT-152",
+      "mesh_ref": "152",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:153",
+      "geometry_role": "RAP-SLOT-153",
+      "mesh_ref": "153",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:154",
+      "geometry_role": "RAP-SLOT-154",
+      "mesh_ref": "154",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:155",
+      "geometry_role": "RAP-SLOT-155",
+      "mesh_ref": "155",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:156",
+      "geometry_role": "RAP-SLOT-156",
+      "mesh_ref": "114",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:157",
+      "geometry_role": "RAP-SLOT-157",
+      "mesh_ref": "116",
+      "class": "DOCUMENTED_CONVENTIONAL_ALIAS",
+      "qualifier": "ALIASED_GEOMETRY",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:158",
+      "geometry_role": "RAP-SLOT-158",
+      "mesh_ref": "158",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:159",
+      "geometry_role": "RAP-SLOT-159",
+      "mesh_ref": "159",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:160",
+      "geometry_role": "RAP-SLOT-160",
+      "mesh_ref": "160",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:161",
+      "geometry_role": "RAP-SLOT-161",
+      "mesh_ref": "161",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:162",
+      "geometry_role": "RAP-SLOT-162",
+      "mesh_ref": "162",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:163",
+      "geometry_role": "RAP-SLOT-163",
+      "mesh_ref": "163",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:164",
+      "geometry_role": "RAP-SLOT-164",
+      "mesh_ref": "164",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:165",
+      "geometry_role": "RAP-SLOT-165",
+      "mesh_ref": "165",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:166",
+      "geometry_role": "RAP-SLOT-166",
+      "mesh_ref": "166",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:167",
+      "geometry_role": "RAP-SLOT-167",
+      "mesh_ref": "167",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:168",
+      "geometry_role": "RAP-SLOT-168",
+      "mesh_ref": "168",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:169",
+      "geometry_role": "RAP-SLOT-169",
+      "mesh_ref": "169",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:170",
+      "geometry_role": "RAP-SLOT-170",
+      "mesh_ref": "170",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:171",
+      "geometry_role": "RAP-SLOT-171",
+      "mesh_ref": "171",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:172",
+      "geometry_role": "RAP-SLOT-172",
+      "mesh_ref": "172",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    },
+    {
+      "slot": "T173:173",
+      "geometry_role": "RAP-SLOT-173",
+      "mesh_ref": "173",
+      "class": "NUMERIC_REFERENCE_REQUIRES_INDEPENDENT_ASSURANCE",
+      "qualifier": "NUMERIC_GENERATED_PENDING_INDEPENDENT_CHECK",
+      "face_semantics": "mesh_polygons_referential",
+      "native_admitted": false
+    }
+  ]
+}
