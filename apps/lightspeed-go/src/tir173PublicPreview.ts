@@ -6,6 +6,7 @@ import { bindTirIntentToExistingPlans } from '../../../cgx/runtime/tir173/tir173
 import { reviewTirComponentArchetype } from '../../../cgx/runtime/tir173/tir173_archetype_evidence.mjs';
 import { planExistingLoadTIR } from '../../../cgx/runtime/tir173/tir173_load_bridge.mjs';
 import { listAtlasInteractions, planAtlasInteraction } from '../../../cgx/runtime/tir173/tir173_interaction.mjs';
+import { reviewLocalNeoBatch } from '../../../cgx/runtime/tir173/tir173_neo_review_import.mjs';
 import componentAtlasRaw from '../../../cgx/component_atlas/component_interaction_map_v0_1.json?raw';
 const componentAtlas=JSON.parse(componentAtlasRaw);
 import geometryAtlasRaw from '../../../cgx/component_atlas/component_geometry_atlas_v0_1.json?raw';
@@ -61,6 +62,12 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  <input type="text" id="tir-intent-command" value="SELECT T173:001" maxlength="240" spellcheck="false" autocomplete="off" aria-describedby="tir-intent-help"/></label></div>
  <p class="muted" id="tir-intent-help">Exact syntax: SELECT T173:001 or another registered operation. Unknown, multi-role, privileged and incomplete natural-language instructions abstain; no commands execute.</p>
  <div class="route-preview" id="tir-intent-human" aria-live="polite"></div>
+ <div class="form-grid"><label class="field"><span>Neo / Achilles local triadic review · optional user-selected JSON</span>
+ <input id="tir-neo-file" type="file" accept=".json,application/json" aria-describedby="tir-neo-help"/></label>
+ <label class="field"><span>Local review case</span><select id="tir-neo-case" disabled><option value="">Select a local packet first</option></select></label></div>
+ <p class="muted" id="tir-neo-help">Local review-only import: browser reads a user-selected file in memory, never automatically uploads, persists or executes it. This display is separate from the selected public shape; source SHA-256 is not proof of model weight validity.</p>
+ <div class="route-preview" id="tir-neo-human" aria-live="polite">No local Neo review packet selected.</div>
+ <pre id="tir-neo-machine" style="white-space:pre-wrap;overflow-wrap:anywhere;max-height:240px;overflow:auto"></pre>
  <p class="muted">The shape remains identical across lenses. The three state lines can disagree without being collapsed to neutral. LOAD and LOAD.Lite share the existing resolver; this surface produces a plan only, never hydration or admission.</p>
  <div class="route-preview" id="tir-context" aria-live="polite"></div>
  <div class="route-preview" id="tir-display"></div><div class="actions"><button type="button" id="tir-export">Export synchronized review context</button></div>
@@ -72,11 +79,50 @@ export async function mountTir173PublicPreview(root:PreviewRoot):Promise<void>{
  const ruleSelect=el<HTMLSelectElement>(root,'tir-interaction-rule');
  const archetypeSelect=el<HTMLSelectElement>(root,'tir-archetype');
  const intentInput=el<HTMLInputElement>(root,'tir-intent-command');
+ const neoFile=el<HTMLInputElement>(root,'tir-neo-file');
+ const neoCase=el<HTMLSelectElement>(root,'tir-neo-case');
  for(const rule of listAtlasInteractions(componentAtlas,{limit:75})){const option=document.createElement('option');option.value=rule.id;option.textContent=`${rule.id} • ${rule.source_family} → ${rule.target_family} (${rule.interaction})`;ruleSelect.append(option);}
  const none=document.createElement('option');none.value='';none.textContent='No archetype assigned — do not infer material';archetypeSelect.append(none);
  for(const item of geometryAtlas.records){const option=document.createElement('option');option.value=item.ID;option.textContent=`${item.ID} · ${item.Family} · ${item['Component Archetype']}`;archetypeSelect.append(option);}
  const opts=d.roles.map((s,i)=>`<option value="${i+1}">${s.role} • ${s.name}</option>`).join('');
  choose.innerHTML=opts;other.innerHTML=opts;other.value='2';let last=null as {capsule:ReturnType<typeof makeCapsule>;lens:ReturnType<typeof projectGuiosContext>;triad:ReturnType<typeof reconcileThreeVoices>;load_review_plan:ReturnType<typeof planExistingLoadTIR>;physical_interaction_review:ReturnType<typeof planAtlasInteraction>;intent_binding_review:ReturnType<typeof bindTirIntentToExistingPlans>;archetype_review:ReturnType<typeof reviewTirComponentArchetype>}|null;
+ let localReview:ReturnType<typeof reviewLocalNeoBatch>|null=null;
+ let localFileSha:string|null=null;
+ const showLocalReview=():void=>{
+  const human=el(root,'tir-neo-human'),machine=el(root,'tir-neo-machine');
+  const caseIndex=Number(neoCase.value);
+  const selected=localReview?.items[caseIndex];
+  if(!selected){human.textContent='No valid local Neo review case selected.';machine.textContent='';return;}
+  human.textContent=`${selected.human_summary} | Guard: ${selected.status} | Learned suggestion: ${selected.model_candidate||'none'} | Assurance: ${selected.assurance} | No native effects.`;
+  machine.textContent=JSON.stringify({
+   local_selected_file_sha256:localFileSha,
+   packet_import_status:'UNTRUSTED_LOCAL_PREVIEW_ONLY',
+   checkpoint_sha256_claim:localReview?.checkpoint_sha256_claim,
+   model_weights_verified_by_browser:false,
+   imported_case:selected,
+   native_admitted:false,execution:false,public_publish_authorized:false
+  },null,2);
+ };
+ neoCase.addEventListener('change',showLocalReview);
+ neoFile.addEventListener('change',async()=>{
+  try{
+   const file=neoFile.files?.[0];
+   if(!file){localReview=null;localFileSha=null;neoCase.disabled=true;showLocalReview();return;}
+   if(file.size>200_000)throw new Error('Local review packet exceeds the 200 kB inspection limit');
+   const raw=await file.text();
+   const validated=reviewLocalNeoBatch(JSON.parse(raw));
+   const hash=await sourceDigest(raw);
+   localReview=validated;localFileSha=hash;
+   neoCase.replaceChildren();
+   for(const item of validated.items){const option=document.createElement('option');
+    option.value=String(item.index-1);option.textContent=`${item.index} · ${item.status}`;neoCase.append(option);}
+   neoCase.disabled=false;neoCase.value='0';showLocalReview();
+  }catch(error){
+   localReview=null;localFileSha=null;neoCase.disabled=true;neoCase.replaceChildren();
+   el(root,'tir-neo-human').textContent='Local review packet refused: '+(error instanceof Error?error.message:'invalid file');
+   el(root,'tir-neo-machine').textContent='';
+  }
+ });
  const display=():void=>{
   try{
    active=Number(choose.value);const b=Number(other.value),value=Number(states.value) as Trit;
